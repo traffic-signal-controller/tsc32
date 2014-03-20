@@ -40,7 +40,7 @@ typedef unsigned int Uint32;
 #define SERIAL0  "/dev/ttySAC0"    //串口1
 #define SERIAL1  "/dev/ttySAC1"    //串口2
 #define SERIAL2  "/dev/ttySAC2"    //串口3
-#define SERIAL3	 "/dev/ttySAC3"    //rs485口
+#define SERIAL3  "/dev/ttySAC3"    //rs485口
 #define RS485    "/dev/rs485io"   //rs485驱动
 
 #define DEV_RTC "/dev/rtc0"
