@@ -28,7 +28,7 @@ static CLampBoard*    pLamp   = CLampBoard::CreateInstance();
 static CPowerBoard*   pPower = CPowerBoard::CreateInstance();
 static CManaKernel*   pWorkParaManager = CManaKernel::CreateInstance();
 static CMacControl*   pMacControl      = CMacControl::CreateInstance();  	 // MOD:0514 9:41
-static Manual*        pManual      = Manual::CreateInstance();               // ADD:0514 9:42	
+//static Manual*        pManual      = Manual::CreateInstance();               // ADD:0514 9:42	
 static CDetector*      pDetector    = CDetector::CreateInstance() ;  		 //ADD: 20130709 945	
 static CPscMode * pCPscMode = CPscMode::CreateInstance() ;	
 static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
@@ -83,7 +83,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
 	
 	
-	pManual->DoManual() ;     // ADD:0514 9:42
+	//pManual->DoManual() ;     // ADD:0514 9:42
 	
 	if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 		pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
