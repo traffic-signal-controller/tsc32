@@ -1,4 +1,0 @@
----- MODE_PSC1 匹配 (3 in 3 文件) ----
-ComDef.h:	MODE_PSC1 = 1 , //一次过街模式
-PscMode.cpp:	if ( MODE_PSC1 == m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue )
-TscTimer.cpp:	if ((MODE_PSC1 == pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue &&2 != pWorkParaManager->m_pRunData->ucStageCount)
