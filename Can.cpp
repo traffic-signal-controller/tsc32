@@ -131,28 +131,28 @@ bool Can::Send(SCanFrame& sendFrame)
 		switch(erronum)
 		{
 			case EBADF :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d can socket ŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d can socket 错误的文件描述符!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EFAULT :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ÄÚŽæ¶ÁÈ¡ŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d 错误的地址!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case ENOTSOCK :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d can socketŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d can Socket操作在一个非socket上!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EINTR :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ÐÅºÅÖÐ¶ÏŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d EINTR系统调用被阻止!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EAGAIN :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d EAGAINŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d EAGAIN资源暂时不能获得!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case ENOBUFS :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ÏµÍ³ÄÚŽæ²»×ã!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d ENOBUFS没有可用的缓存空间!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EINVAL :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ²ÎÊýŽ«µÝŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d EINVAL无效的参数!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			default :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d errno = %d!\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
+				ACE_DEBUG((LM_DEBUG,"%s:%d errno = %d!\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
 				break ;
 			
 			return false ;
@@ -163,11 +163,11 @@ bool Can::Send(SCanFrame& sendFrame)
 
 	if ( ulBytes == sizeof(struct can_frame) )
 	{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d ¿ªÆôCANÖžÊŸµÆ!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+		ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 		pMainBoardLed->DoCanLed();
 	}
 #endif	
-		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
+		ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
 	return true;
 }
 
@@ -221,7 +221,7 @@ void Can::BuildCanId(Ulong u1CanMsgType
 	Ulong ulCanIdTmp = 0;
 
 	ulCanIdTmp = ulCanIdTmp | B2B_PROTOCOL_V00;  
-	ulCanIdTmp = ulCanIdTmp | (0xff << 4);   //±£ÁôÎ»  err	
+	ulCanIdTmp = ulCanIdTmp | (0xff << 4);   //保留部分  err	
 	ulCanIdTmp = ulCanIdTmp | (u1RemodeAddr << 12);
 	ulCanIdTmp = ulCanIdTmp | (u1FrameMode  << 18);
 	ulCanIdTmp = ulCanIdTmp | (u1ModuleAddr << 20);
@@ -341,7 +341,7 @@ void * Can::RunCanRecv(void *arg)
 	}
 	else if ( 0 == iRetCnt )  //timeout
 	{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d timeout\n",__FILE__,__LINE__));
+		ACE_DEBUG((LM_DEBUG,"%s:%d timeout\n",__FILE__,__LINE__));
 		 continue ;
 	}
 	else
@@ -414,36 +414,36 @@ void * Can::DealCanData(void* arg)
 		switch(u1ModuleAddr)
 		{
 			case BOARD_ADDR_LAMP1:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP1!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP1!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP1, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP2:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP2!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP2!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP2, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP3:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP3!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP3!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP3, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP4:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP4!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP4!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP4, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP5:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP5!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP5!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP5, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_POWER:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from POWER!%X !\n",u1ModuleAddr));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from POWER!%X !\n",u1ModuleAddr));
 				pPower->RecvPowerCan(BOARD_ADDR_POWER,sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_DETECTOR1:
 			//case BOARD_ADDR_ALLDETECTOR :     // ADD: 2013 0723 0945 test mode
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR1!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR1!\n"));
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR1, sRecvFrameTmp);// ADD: 2013 0710 1039	
 				break;
 			case BOARD_ADDR_DETECTOR2:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR2\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR2\n"));
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR2, sRecvFrameTmp);// ADD: 2013 0710 1039	
 				break;
 			case BOARD_ADDR_INTEDET1 :
@@ -453,15 +453,15 @@ void * Can::DealCanData(void* arg)
 				ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET2\n"));				
 				break;
 			case BOARD_ADDR_FLASH:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from FLASH!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from FLASH!\n"));
 				pFlash->RecvFlashCan(sRecvFrameTmp) ; //ADD: 2013 0712 1543
 				break;
 			case BOARD_ADDR_HARD_CONTROL:
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from MACCONTROL!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from MACCONTROL!\n"));
 				pMacControl->RecvMacCan(sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LED :
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from LedBoard!\n"));
+				ACE_DEBUG((LM_DEBUG,"\nRecv from LedBoard!\n"));
 				break ;
 			default:
 				ACE_DEBUG((LM_DEBUG,"\nRecv from UNKNOW ADDR :%2X !\n",u1ModuleAddr));

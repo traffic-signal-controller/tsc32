@@ -81,8 +81,6 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 {
 	
 	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-	
-	
 	//pManual->DoManual() ;     // ADD:0514 9:42
 	
 	if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
@@ -102,9 +100,10 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	case 2: 		
 		CPowerBoard::iHeartBeat++;
-		if(CPowerBoard::iHeartBeat >1)
-		{			
-			ACE_OS::system("up link set can0 up type can restart");
+		if(CPowerBoard::iHeartBeat >2)
+		{
+			ACE_DEBUG((LM_DEBUG,"\n%s:%d 重起Can总线!\n",__FILE__,__LINE__));
+			//ACE_OS::system("up link set can0 up type can restart");
 			CPowerBoard::iHeartBeat = 0;	
 			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);			
 		}
@@ -112,11 +111,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 
 	case 3:
-		
 		if(ucModeType != MODE_TSC &&  pWorkParaManager->m_bFinishBoot)
 		{
 			pCPscMode->DealButton();
-			
 		}
 		break;
 
@@ -125,35 +122,27 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		//	pDetector->GetOccupy();  //
 		
 		break;
-
 	case 5://500ms 执行一次
-		
-		
-		pLamp->SendLamp();   //4žöµÆ¿Ø°åÐÅÏ¢·¢ËÍ	
+		pLamp->SendLamp();		//给所有灯控板发送灯色数据
 		pMainBoardLed->DoRunLed();	
 		break;
 	case 6:
 		//pFlashMac->FlashHeartBeat() ;
 		pMainBoardLed->DoLedBoardShow();   //ADD :2013 0809 1600
-		
 		break;
-	case 7://700ºÁÃëŒì²âÒ»ŽÎÐÄÌøcan×ÜÏß
-	
-		pPower->HeartBeat();  //ÐÄÌø		
+	case 7://700ms 发送心跳数据给电源板
+		pPower->HeartBeat();
 		break;
 
 	case 8:	
-		
 		if(ucModeType != MODE_TSC && pWorkParaManager->m_bFinishBoot)
 			pCPscMode->DealButton();
 		break;
-
 	case 9:
 		if(pWorkParaManager->m_pRunData->bIsChkLght == true )
 			pLamp->CheckLight();// check Lampboard status and red&green conflict
 		
 		break;
-
 	default:
 	
 		break;

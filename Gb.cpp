@@ -96,6 +96,7 @@ static void* BroadCast(void* arg)
 	ACE_INET_Addr addrBroadcast(DEFAULT_BROADCAST_PORT),addrRemote;
 	ACE_SOCK_Dgram_Bcast udpBcast(addrBroadcast);
 	char buf[10];
+	char hostname[MAXHOSTNAMELEN];
 	Byte pHwEther[6] = {0};
 	Byte pIp[4]      = {0};
 	Byte pMask[4]    = {0};
@@ -103,8 +104,9 @@ static void* BroadCast(void* arg)
 	Byte sBroadcastMessage[64] = {0};
 	Byte ucSendCount = 0;
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
-	pGbtMsgQueue->GetNetPara(pHwEther , pIp , pMask , pGateway);
+	pGbtMsgQueue->GetNetParaByAce(pIp ,hostname);
 	Uint iPort = pGbtMsgQueue->iPort ;    //ADD:201309250900 
+	ACE_DEBUG((LM_DEBUG,"\nIP= %d.%d.%d.%d  PortNum = %d\n  HostName = %s",pIp[0],pIp[1],pIp[2],pIp[3] ,iPort ,hostname));
 	ACE_DEBUG((LM_DEBUG,"\nMAC=%02x:%02x:%02x:%02x:%02x:%02x IP= %d.%d.%d.%d MASK=%d.%d.%d.%d GateWay=%d.%d.%d.%d PortNum = %d\n",pHwEther[0],pHwEther[1],pHwEther[2],pHwEther[3],pHwEther[4],pHwEther[5],pIp[0],pIp[1],pIp[2],pIp[3],pMask[0],pMask[1],pMask[2],pMask[3],pGateway[0], pGateway[1],pGateway[2], pGateway[3] ,iPort ));
 
 	for(;;)

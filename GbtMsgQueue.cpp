@@ -3844,14 +3844,14 @@ int CGbtMsgQueue::CheckMsg(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 		return -1;
 	}
 
-	if ( (int)iBufLen < MIN_GBT_MSG_LEN ) //ÏûÏ¢³€¶ÈÌ«¶Ì
+	if ( (int)iBufLen < MIN_GBT_MSG_LEN ) //协议的消息长度短
 	{
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[0] = 0x86;
 							//(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0 ) | GBT_ERR_ACK; 
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[1] = GBT_ERROR_SHORT;
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[2] = 0;
 	}
-	else if ( (pBuf[0]&0xf)<GBT_SEEK_REQ || (pBuf[0]&0xf)>GBT_SET_REQ_NOACK || ((pBuf[0]>>7)&1)!=1 ) //²Ù×÷ÀàÐÍŽíÎó
+	else if ( (pBuf[0]&0xf)<GBT_SEEK_REQ || (pBuf[0]&0xf)>GBT_SET_REQ_NOACK || ((pBuf[0]>>7)&1)!=1 ) //协议其它问题
 	{
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[0] = 0x86;
 							//(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0 ) | GBT_ERR_ACK;
@@ -3860,7 +3860,7 @@ int CGbtMsgQueue::CheckMsg(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 	}
 	else
 	{
-		return 1; //ÕýÈ·µÄÏûÏ¢
+		return 1; //协议正确
 	}
 
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = 3;
@@ -4238,9 +4238,26 @@ int CGbtMsgQueue::GbtCtrl2TscCtrl(Byte ucctrl)
 		return -1;
 	}
 }
-
-
-
+/**************************************************************
+Function:       CGbtMsgQueue::UpdateNetPara
+Description:    永久修改网络配置信息，这里不对其它参数进行修改比较子网掩码，网关等
+				这里主要是针对m3352核心板
+Input:         	cIp      - ip地址
+Output:        	无
+Return:         无
+***************************************************************/
+void CGbtMsgQueue::UpdateNetPara(Byte* pIp)
+{
+	char cIpCmd[64] = {0};
+	Byte cIp[4]      = {0};
+	if ( pIp != NULL )
+	{
+		ACE_OS::memcpy(cIp,pIp,4);
+	}
+	ACE_OS::sprintf(cIpCmd , "eeprom net set ip %d.%d.%d.%d\n",
+		cIp[0] , cIp[1] , cIp[2] , cIp[3] ) ;
+	system(cIpCmd);
+}
 /**************************************************************
 Function:       CGbtMsgQueue::ReworkNetPara
 Description:    修改网络配置信息
@@ -4347,7 +4364,62 @@ void CGbtMsgQueue::RecordNetPara(/*char* pHwEtherCmd ,*/ char* pIpAndMaskCmd , c
 	}
 }
 
+/**************************************************************
+Function:       CGbtMsgQueue::GetNetParaByAce
+Description:    获取物理地址 ip地址 掩码 网关
+Input:        	addr_array_result - ip地址的数组
+				host_name - 主机名称
+Output:        	无
+Return:         无
+***************************************************************/
+void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
+{
+#ifdef WINDOWS
+//在windows 系统下在调用网络的情况，必需先执行以下两句
+		WSADATA wsaData;
+		if (WSAStartup(MAKEWORD(2,2),&wsaData) != 0) return 0;	
+#endif
 
+	//得到主机名
+	char hostname[MAXHOSTNAMELEN];
+    ACE_OS::hostname(hostname, sizeof (hostname));
+	phost_name = hostname;
+	printf("host name is %s\n", hostname);
+	printf("--------------------------\n");
+
+
+    ACE_INET_Addr* addr_array1; 
+    size_t count = 0; 
+    if (ACE::get_ip_interfaces(count, addr_array1) != 0)
+	{
+        return ; 
+	}
+
+	//可以装下IPv6地址（46），IPv4为INET_ADDRSTRLEN（16）
+    char address[INET6_ADDRSTRLEN];
+	//为了最后要删除空间，所以定义新的变量
+	 ACE_INET_Addr* addr_array2 = addr_array1; 
+
+    for(size_t i=0; i<count; i++)
+    { 
+		unsigned int net_order_ip = htonl(addr_array2->get_ip_address());
+		struct in_addr *paddr_stru = (in_addr*)&net_order_ip;
+		InterceptStr(ACE_OS::inet_ntoa(*paddr_stru),(char*)".",pip,3);
+		
+		printf("format 0: %s\n", ACE_OS::inet_ntoa(*paddr_stru));
+
+		addr_array2->addr_to_string(address, sizeof (address), 1);
+		printf("format 1: %s\n", address);
+        addr_array2++;
+		printf("--------------------------\n");
+	
+    }
+
+	//记得要delete[] addr_array;  
+	delete[] addr_array1;
+
+	//getchar();
+}
 /**************************************************************
 Function:       CGbtMsgQueue::GetNetPara
 Description:    获取物理地址 ip地址 掩码 网关
