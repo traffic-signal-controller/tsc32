@@ -5410,7 +5410,7 @@ bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong
 	CSqliteRst  qryRst;
 
 	ACE_OS::memset(sSql, 0 , LARGE_BUF_SIZE);
-	if ( *pMaxId < 800 )
+	if ( *pMaxId < 3000 )
 	{
 		uiCurEventId = *pMaxId + 1;
 		ACE_OS::sprintf(sSql, "insert into %s values( %u, %u, %lu, %lu,datetime('now','localtime'))",
@@ -5437,7 +5437,7 @@ bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong
 
 		uiCurEventId++;
 
-		*pMinId = uiCurEventId > 800 ? 1 : uiCurEventId; 
+		*pMinId = uiCurEventId > 3000 ? 1 : uiCurEventId; 
 	}
 
     if ( !ExecuteCmd(sSql) )
