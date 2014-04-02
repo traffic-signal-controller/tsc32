@@ -15,6 +15,7 @@ History:	20130910 添加控制器LCD状态显示信息
 #include "ComFunc.h"  		//ADD:201309081048
 #include "PowerBoard.h"     //ADD:201309091530
 #include "GbtMsgQueue.h"
+#include "PscMode.h"
 /*
 控制器功能类型枚举
 */
@@ -43,8 +44,9 @@ enum
 	CTRLBOARD_LCD_SCHEDULE	     = 0x05 , //控制器LCD显示信号机处于多时段控制
 	CTRLBOARD_LCD_VECHE	    	 = 0x06 , //控制器LCD显示信号机处于感应控制
 	CTRLBOARD_LCD_ADAPTIVE	     = 0x07 , //控制器LCD显示信号机处于自适应控制
-	CTRLBOARD_LCD_UTCS	     	 = 0x08  //控制器LCD显示信号机处于协调控制
-	
+	CTRLBOARD_LCD_UTCS	     	 = 0x08 , //控制器LCD显示信号机处于协调控制
+	CTRLBOARD_LCD_PSC            = 0x09   //控制器LCD显示信号机处于PSC模式
+
 };
 
 CMacControl::CMacControl()
@@ -257,8 +259,8 @@ void CMacControl::RecvMacCan(SCanFrame sRecvCanTmp)
 			m_ucAddHot   = (sRecvCanTmp.pCanData[4] >> 4) & 0x1;
 			m_ucReduHot  = (sRecvCanTmp.pCanData[4] >> 5) & 0x1;
 			m_ucCabinet  = (sRecvCanTmp.pCanData[4] >> 6) & 0x1;
-			ACE_DEBUG((LM_DEBUG,"%s:%d DoorFront: %d  m_ucDoor: %d Back Temp:%d℃ Hum:%d\n"	,__FILE__,__LINE__,m_ucDoorFront,m_ucDoorBack,m_ucTemp,m_ucHum)); //MOD:0604 1415
-			
+			CPscMode::CreateInstance()->m_ucBtnNum = sRecvCanTmp.pCanData[5];
+			//ACE_DEBUG((LM_DEBUG,"%s:%d PscButton:%d\n"	,__FILE__,__LINE__,sRecvCanTmp.pCanData[5])); //MOD:0604 1415			
 			break ;
 		case CTRLBOARD_HEAD_CFGSET1 :
 			break ;
@@ -288,6 +290,7 @@ Byte CMacControl::GetCtrlStaus()
 {
 	Byte uiCtrl ,uiWorkStaus ,uiLcdCtrl;
 	CManaKernel * pManaKernel = CManaKernel::CreateInstance();
+	
 	uiWorkStaus = pManaKernel->m_pRunData->uiWorkStatus ;
 	uiCtrl =pManaKernel->m_pRunData->uiCtrl;
 	switch(uiWorkStaus)
@@ -318,12 +321,17 @@ Byte CMacControl::GetCtrlStaus()
 				uiLcdCtrl = CTRLBOARD_LCD_ADAPTIVE ;
 				break ;
 			case CTRL_UTCS :
+			case CTRL_WIRELESS:
+			case CTRL_LINE:
 				uiLcdCtrl = CTRLBOARD_LCD_UTCS ;
 				break ;
 			default:
 				break ;
-
 			}
+		if(pManaKernel->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue != MODE_TSC)
+		{
+			return CTRLBOARD_LCD_PSC ;
+		}
 		break ;
 	
 	default :
