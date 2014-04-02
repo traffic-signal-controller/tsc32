@@ -71,7 +71,7 @@ public:
 	bool bTmpPattern ;     //是否处于特殊方案号中
 	bool bUTS ;            //是否存在中心
 	bool bDegrade ;        //是否处于降级状态
-
+	bool bChkManul ;       //用于判断系统启动初始手控状态
 private:
 	CManaKernel();
 	~CManaKernel();
@@ -129,7 +129,7 @@ private:
 	bool ExitStageStretchPhase(SScheduleTime* pScheduleTime);
 
 	void ValidSoftWare() ;  //ADD 201310221450
-	
+	void SetLampColor(Byte ColorType); //ADD 201403251519	
 	
 	bool m_bRestart;        //是否重启 gbt协议测试部分
 
