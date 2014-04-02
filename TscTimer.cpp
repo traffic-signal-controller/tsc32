@@ -81,7 +81,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 {
 	
 	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-	
+	static Uint iCanRestartNum = 0 ;
 	
 	pManual->DoManual() ;     // ADD:0514 9:42
 	
@@ -106,7 +106,10 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		{			
 			ACE_OS::system("up link set can0 up type can restart");
 			CPowerBoard::iHeartBeat = 0;	
-			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);			
+			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);	
+			iCanRestartNum++;
+			if(iCanRestartNum >= 50)	
+				ACE_OS::system("reboot");	
 		}
 		pPower->CheckVoltage();
 		break;
@@ -114,8 +117,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 3:
 		
 		if(ucModeType != MODE_TSC &&  pWorkParaManager->m_bFinishBoot)
-		{
+		{			
 			pCPscMode->DealButton();
+			pMacControl->GetEnvSts();			
 			
 		}
 		break;
@@ -145,7 +149,10 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 8:	
 		
 		if(ucModeType != MODE_TSC && pWorkParaManager->m_bFinishBoot)
+		{
 			pCPscMode->DealButton();
+			pMacControl->GetEnvSts();
+		}	
 		break;
 
 	case 9:
