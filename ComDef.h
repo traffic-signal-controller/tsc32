@@ -386,7 +386,7 @@ enum
 	LED_BOARD_SHOW  = 2 
 
 };
-
+const int MAX_ADJUST_CYCLE = 3;
 
 
 
