@@ -271,6 +271,20 @@ enum
 	CNTDOWN_NORMAL       //普通倒计时
 };
 
+/*受控按钮状态*/
+enum
+{
+	MAC_CTRL_NOTHING    = 0x00 , //未有任何手控操作
+	MAC_CTRL_ALLOFF     = 0x01 , //灭灯
+	MAC_CTRL_ALLRED     = 0x02 , //全红
+	MAC_CTRL_FLASH      = 0x03 , //黄闪
+	MAC_CTRL_NEXT_PHASE = 0x04 , //下一相位
+	MAC_CTRL_NEXT_DIR   = 0x05 , //下一方向
+	MAC_CTRL_NEXT_STEP  = 0x06 , //步进
+	MAC_CTRL_OTHER      = 0x07 , //保留
+	MAC_CTRL_MANUL      = 0x08
+
+};
 /*
 *信号机特定功能类型枚举
 */
@@ -372,10 +386,7 @@ enum
 	LED_BOARD_SHOW  = 2 
 
 };
-const int MAX_ADJUST_CYCLE = 3;
-const int MAX_PLUS_SCALE   = 30;  //一个周期增加的最大比例 
-const int MAX_MINU_SCALE   = 20;  //每个周期减少的最大比例
-const int PLUS_LINE        = 50;  //增加的界线
+
 
 
 
