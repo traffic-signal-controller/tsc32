@@ -9,7 +9,7 @@ public:
 	static CMainBoardLed* CreateInstance();
 
 	void DoModeLed(bool bLed3Value,bool bLed4Value);
-	void DoTscPscLed();
+	void DoTscPscLed(bool btsc);
 	void DoAutoLed(bool bValue);
 	void DoRunLed();
 	void DoCanLed();
