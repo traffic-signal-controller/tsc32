@@ -223,7 +223,7 @@ private:
 	SGbtDealData  m_sGbtDealData[MAX_CLIENT_NUM];
 	
 
-	/*ÁÙÊ±Žæ·ÅÊýŸÝ*/
+	/**/
 	int m_iManualCtrlNo;
 	int m_iSystemCtrlNo;
 };
