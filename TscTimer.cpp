@@ -103,7 +103,8 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 2: 		
 		CPowerBoard::iHeartBeat++;
 		if(CPowerBoard::iHeartBeat >1)
-		{			
+		{
+			ACE_DEBUG((LM_DEBUG,"%s:%d can0 death 900ms and insert to log !\n",__FILE__,__LINE__));
 			ACE_OS::system("up link set can0 up type can restart");
 			CPowerBoard::iHeartBeat = 0;	
 			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);	
