@@ -21,7 +21,9 @@ History:
 #include <sys/time.h>
 #endif
 
-
+const int MAX_PLUS_SCALE   = 30;  //一个周期增加的最大比例 
+const int MAX_MINU_SCALE   = 20;  //每个周期减少的最大比例
+const int PLUS_LINE        = 50;  //增加的界线
 /**************************************************************
 Function:        CWirelessCoord::IsMasterMachine
 Description:     判断是否是无线协调主机		
@@ -268,11 +270,11 @@ void CWirelessCoord::GetAdjust()
 		iCycle = m_iCycle;
 	}
 
-	for ( i = 0; i < MAX_STEP; i++ )
-	{
-		m_iAdjustSecond[i] = 0;
-	}
-
+	//for ( i = 0; i < MAX_STEP; i++ )
+	//{
+		//m_iAdjustSecond[i] = 0;
+	//}
+	ACE_OS::memset(m_iAdjustSecond,0,MAX_STEP);
 	if ( m_bPlus )
 	{
 		iMaxAdjustCnt = iCycle * MAX_PLUS_SCALE / 100;   //每个周期最大的增加的调整数
@@ -360,10 +362,11 @@ void CWirelessCoord::OverCycle(/*SStepInfo* pRunStepInfo*/)
 
 	if ( 0 == m_iAdjustCnt ) 
 	{
-		for (int i = 0; i < MAX_STEP; i++)
-		{
-			m_iAdjustSecond[i] = 0;
-		}
+		//for (int i = 0; i < MAX_STEP; i++)
+		//{
+			//m_iAdjustSecond[i] = 0;
+		//}
+		ACE_OS::memset(m_iAdjustSecond,0,MAX_STEP);
 		return;
 	}
 	else
