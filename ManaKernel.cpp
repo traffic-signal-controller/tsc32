@@ -28,6 +28,7 @@ History:    201308010930  添加48个灯泡检测的配置数据库表和表处理
 #include "FlashMac.h"
 #include "Rs485.h"
 #include "ComFunc.h" 
+#include "Manual.h"
 
 
 
@@ -73,6 +74,7 @@ CManaKernel::CManaKernel()
 	bValidSoftWare = true ;
 	bUTS  = false ;
 	bDegrade = false ; //ADD:201311121140
+	bChkManul = true ;
 	iCntFlashTime = 0 ;
 	ACE_OS::memset(m_pTscConfig->sOverlapPhase,0,MAX_OVERLAP_PHASE*sizeof(SOverlapPhase));
 	ACE_OS::memset(m_pTscConfig , 0 , sizeof(STscConfig) );
@@ -150,9 +152,14 @@ void CManaKernel::InitWorkPara()
 							    	,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
 
 	CMainBoardLed::CreateInstance()->DoModeLed(false,true);
-	CMainBoardLed::CreateInstance()->DoAutoLed(true);
-	CMainBoardLed::CreateInstance()->DoTscPscLed();
-	
+	if(m_pTscConfig->sSpecFun[FUN_COMMU_PARA].ucValue== MAC_CTRL_NOTHING)
+		CMainBoardLed::CreateInstance()->DoAutoLed(true);
+	else		
+		CMainBoardLed::CreateInstance()->DoAutoLed(false);
+	if(m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue==MODE_TSC)
+		CMainBoardLed::CreateInstance()->DoTscPscLed(true);
+	else			
+		CMainBoardLed::CreateInstance()->DoTscPscLed(false);
 }
 
 
@@ -1172,15 +1179,15 @@ void CManaKernel::OverCycle()
 
 			case CTRL_WIRELESS:
 				iCurTimePatternId = m_pRunData->ucTimePatternId > 0 ? m_pRunData->ucTimePatternId : 1;
-				if ( CTRL_WIRELESS != m_pRunData->uiScheduleCtrl
-					|| m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset > 99 
-					|| CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue == 0 )
-				{
-					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
-					m_pRunData->uiCtrl    = CTRL_SCHEDULE;
-					ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_WIRELESS,CTRL_SCHEDULE));
-					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
-				}
+				//if ( CTRL_WIRELESS != m_pRunData->uiScheduleCtrl
+					//|| m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset > 99 
+					//|| CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue == 0 )
+				//{
+					//m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
+					//m_pRunData->uiCtrl    = CTRL_SCHEDULE;
+					//ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_WIRELESS,CTRL_SCHEDULE));
+					//SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
+				//}
 				break;
 			default:
 				iCurTimePatternId = m_pRunData->ucTimePatternId > 0 ? m_pRunData->ucTimePatternId : 1;
@@ -1439,23 +1446,8 @@ void CManaKernel::ResetRunData(Byte ucTime)
 			CLampBoard::CreateInstance()->SendLamp();
 			/******************* 黄闪之前，发送熄灯信号，避免黄闪不整齐**************************************/
 			m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;
-
-			for ( int i=0; i<MAX_LAMP_BOARD; i++ )
-			{
-				for ( int j=0; j<MAX_LAMP_NUM_PER_BOARD; j++ )
-				{
-					if ( (j%3) == LAMP_COLOR_YELLOW )
-					{
-						m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j]    = 1;
-						m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 1;
-					}
-					else
-					{
-						m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j]    = 0;
-						m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
-					}
-				}
-			}
+			SetLampColor(1);
+			
 		}
 		
 		m_bSpeStatus = true;
@@ -1485,24 +1477,8 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		
 		ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );		
 		
-		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;
-
-		for ( int i=0; i<MAX_LAMP_BOARD; i++ )
-		{
-			for ( int j=0; j<MAX_LAMP_NUM_PER_BOARD; j++ )
-			{
-				if ( (j%3) == LAMP_COLOR_RED )
-				{
-					m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j] = 1;
-				}
-				else
-				{
-					m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
-				}
-				m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
-			}
-		}
-		
+		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;		
+		SetLampColor(2);
 		m_bSpeStatus = true;
 	}
 	else if ( m_pRunData->uiWorkStatus == SIGNALOFF )  //关灯
@@ -1519,25 +1495,37 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		m_pRunData->ucStepNo     = 0;
 		m_pRunData->ucStepNum    = 1;
 		
-		ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );
-
-		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;
-
-		for ( int i=0; i<MAX_LAMP_BOARD; i++ )
-		{
-			for ( int j=0; j<MAX_LAMP_NUM_PER_BOARD; j++ )
-			{
-				m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j]    = 0;
-				m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
-			}
-		}
+		//ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );
+		SetLampColor(0);
+		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;		
 	
 		m_bSpeStatus = true;
 	}
 	else if ( m_pRunData->uiWorkStatus == STANDARD )  //标准
 	{
-		
-
+		if(bChkManul==true)
+		{			
+			Manual * pManual = Manual::CreateInstance();
+			bChkManul = false ;
+			if (m_pTscConfig->sSpecFun[FUN_COMMU_PARA].ucValue== MAC_CTRL_FLASH)
+			{
+				ACE_DEBUG((LM_DEBUG,"%s:%d 系统初始进入手控黄闪状态!\n" ,__FILE__,__LINE__));
+				SwitchCtrl(CTRL_PANEL);				
+				m_pRunData->uiWorkStatus = FLASH ;
+				pManual->SetPanelStaus(MAC_CTRL_FLASH);	
+				SetLampColor(1) ;
+				return ;
+			}
+			else if (m_pTscConfig->sSpecFun[FUN_COMMU_PARA].ucValue== MAC_CTRL_ALLRED)
+			{
+				ACE_DEBUG((LM_DEBUG,"%s:%d 系统初始进入手控全红状态!\n" ,__FILE__,__LINE__));
+				SwitchCtrl(CTRL_PANEL);					
+				m_pRunData->uiWorkStatus = ALLRED ;
+				pManual->SetPanelStaus(ALLRED);
+				SetLampColor(2) ;
+				return ;
+			}			
+		}
 		ACE_DEBUG((LM_DEBUG,"%s:%d ResetRunDate 开始进入标准状态 构造动态数据,call GetRunDataStandard()\n" ,__FILE__,__LINE__));
 		GetRunDataStandard(); //正常地构造动态数据
 		m_bSpeStatus = false;
@@ -1613,8 +1601,8 @@ void CManaKernel::GetRunDataStandard()
 			ACE_OS::memset(m_pTscConfig->sSchedule+iIndex,0,sizeof(SSchedule));
 		}
 	}
-
-	ucCurScheduleId         = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday()); //从时基调度表获得当天的时段表号
+	if(!bNewDay)
+		ucCurScheduleId = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday()); //从时基调度表获得当天的时段表号
 	
 	//根据时段信息重新获取配时方案号
 	Byte ucCurCtrl          = m_pRunData->uiCtrl;
@@ -1767,7 +1755,7 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 					if(ucWeek ==0)
 						ucWeek = 7 ;  //ACE 周日值位0
 					if ((((m_pTscConfig->sTimeGroup[i].ucDayWithWeek)>>ucWeek) & 0x1)
-						&& ( ( m_pTscConfig->sTimeGroup[i].ucDayWithWeek & 0xfe) != 0xef ) )
+						&& ( ( m_pTscConfig->sTimeGroup[i].ucDayWithWeek & 0xfe) != 0xfe ) )
 					{
 						ACE_DEBUG((LM_DEBUG,"%s:%d  ucScheduleId = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[i].ucScheduleId));
 						return m_pTscConfig->sTimeGroup[i].ucScheduleId;
@@ -1814,6 +1802,8 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 			
 			if ( (m_pTscConfig->sTimeGroup[i].usMonth>>ucMonth) &0x1 )//月份正确 b1:1月 b12:12
 			{
+				if(ucWeek ==0)     //MOD:201403311117
+					ucWeek = 7 ;  //ACE 周日值位0
 				if ( ( (m_pTscConfig->sTimeGroup[i].ucDayWithWeek>>(ucWeek)) & 0x1 ) //b1：周日 b2：周1 
 					&& ( (m_pTscConfig->sTimeGroup[i].uiDayWithMonth>>ucDay) & 0x1 ) )  //b1:1号 b2
 				{
@@ -4728,3 +4718,57 @@ void CManaKernel::ValidSoftWare()
 		else
 			bValidSoftWare = false ;
 	}
+
+
+void CManaKernel::SetLampColor(Byte ColorType)
+{
+
+	if(ColorType == 0)//OFF
+	{
+		ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );
+	}
+	else if(ColorType == 1)//FLASH
+	{
+		for ( int i=0; i<MAX_LAMP_BOARD; i++ )
+			{
+				for ( int j=0; j<MAX_LAMP_NUM_PER_BOARD; j++ )
+				{
+					if ( (j%3) == LAMP_COLOR_YELLOW )
+					{
+						m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j]    = 1;
+						m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 1;
+					}
+					else
+					{
+						m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j]    = 0;
+						m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
+					}
+				}
+			}
+
+	}
+	else if(ColorType == 2)//RED
+	{
+		for ( int i=0; i<MAX_LAMP_BOARD; i++ )
+		{
+			for ( int j=0; j<MAX_LAMP_NUM_PER_BOARD; j++ )
+			{
+				if ( (j%3) == LAMP_COLOR_RED )
+				{
+					m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j] = 1;
+				}
+				else
+				{
+					m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
+				}
+				m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
+			}
+		}
+
+
+	}
+
+
+
+}
+
