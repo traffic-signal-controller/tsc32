@@ -16,12 +16,13 @@ History:    2013.05.29 修改按钮按下和松开的处理。
 #include "MainBoardLed.h"
 #include "ManaKernel.h"
 #include "GbtMsgQueue.h"
+#include "DbInstance.h"
 
 #define MANUAL_TO_AUTO_TIME 10  //无人手控状态切换到自动运行状态时间，单位分钟
 
 /*
 当前手控状态类型枚举
-*/
+
 enum
 {
 	MAC_CTRL_NOTHING    = 0x00 , //未有任何手控操作
@@ -33,7 +34,7 @@ enum
 	MAC_CTRL_NEXT_STEP  = 0x06 , //步进
 	MAC_CTRL_OTHER      = 0x07 , //保留
 };
-
+*/
 static int key_value = 0;
 static int deadmanual = 0 ;
 CManaKernel * pManaKernel = CManaKernel::CreateInstance();
@@ -275,6 +276,14 @@ void Manual::DoManual()
 		else
 			return ;	
 	}
+	if(m_ucManualSts == MAC_CTRL_FLASH)
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , MAC_CTRL_FLASH);
+	else if(m_ucManualSts ==MAC_CTRL_ALLRED)
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , MAC_CTRL_ALLRED);
+	else if(m_ucManual == 1)
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , MAC_CTRL_MANUL);
+	else
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , MAC_CTRL_NOTHING);
 	ACE_DEBUG((LM_DEBUG,"%s:%d Manual:%d lastManal:%d ManualSts:%d  lastManualSts:%d	\n",__FILE__,__LINE__,m_ucManual,m_ucLastManual,m_ucManualSts,m_ucLastManualSts));
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
 	ACE_OS::memset( &sTscMsg    , 0 , sizeof(SThreadMsg));
@@ -395,5 +404,9 @@ void Manual::DoManual()
 
 }
 
+void Manual::SetPanelStaus(Byte ucStatus)
+{
+	m_ucManualSts = ucStatus ;
 
+}
 
