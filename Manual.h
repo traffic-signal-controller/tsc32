@@ -13,10 +13,11 @@ public:
 	virtual ~Manual();
 	static Manual* CreateInstance();
 	void DoManual();
+	void SetPanelStaus(Byte ucStatus);
 private:
 	Byte m_ucManualSts;  //ÊÖ¿Ø×´Ì¬
 	Byte m_ucManual;     //0×Ô¶¯ÔËĞĞ 1ÊÖ¶¯¿ØÖÆ
-	Byte m_ucRedFlash ; //ÊÖ¶¯È«ºì¿ØÖÆ»òÕß»ÆÉÁ¿ØÖÆ 1-È«ºì»ò»ÆÉ 0-È«ºì»ÆÉÁ¹éÎ»
+	Byte m_ucRedFlash ; //ÊÖ¶¯È«ºì¿ØÖÆ»òÕß»ÆÉÁ¿ØÖÆ 1-È«ºì»ò»Æ?0-È«ºì»ÆÉÁ¹éÎ»
 	Byte m_ucLastManual;     //Ö®Ç°ÊÇ·ñÎªÊÖ¶¯µÄ
 	Byte m_ucLastManualSts;  //Ö®Ç°µÄÊÖ¶¯×´Ì¬
 	void OpenDev();
