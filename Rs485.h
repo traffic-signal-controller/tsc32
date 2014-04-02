@@ -23,7 +23,7 @@ private:
 
 	int  m_iRs485Ctrlfd;
 	int  m_iRs485DataFd;
-	int  m_iRs485Led;
+	//int  m_iRs485Led;
 };
 
 #endif //_CRS485_H_
