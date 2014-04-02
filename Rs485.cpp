@@ -41,7 +41,7 @@ Return:         нч
 ***************************************************************/
 CRs485::CRs485()
 {
-	m_iRs485Led = LED_RS485_OFF;
+	//m_iRs485Led = LED_RS485_OFF;
 	OpenRs485();
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init RS485 object ok !\n",__FILE__,__LINE__));
 }
@@ -143,14 +143,14 @@ bool CRs485::Send(Byte* pBuffer, int iSize)
 		return false;
 	}
 
-	if ( LED_RS485_ON == m_iRs485Led  )
-	{
-		m_iRs485Led	= LED_RS485_OFF;
-	}
-	else
-	{
-		m_iRs485Led	= LED_RS485_ON;
-	}
+	//if ( LED_RS485_ON == m_iRs485Led  )
+	//{
+		//m_iRs485Led	= LED_RS485_OFF;
+	//}
+	//else
+	//{
+		//m_iRs485Led	= LED_RS485_ON;
+	//}
 //	CMainBoardLed::CreateInstance()->OperateLed(m_iRs485Led);
 
 	return true;
@@ -197,7 +197,6 @@ void CRs485::Reopen()
 #ifndef WINDOWS
 	close(m_iRs485Ctrlfd);
 #endif
-
 	OpenRs485();
 }
 
