@@ -12,6 +12,7 @@ History:
 #include "PowerBoard.h"
 #include "LampBoard.h"
 #include "GaCountDown.h"
+#define PUSH_INTERNAL 40
 
 /*
 行人按钮模式状态类型枚举
@@ -47,9 +48,8 @@ Return:         无
 CPscMode::CPscMode()
 {	
 	InitPara();
-#ifdef TSC_DEBUG
-	ACE_DEBUG((LM_DEBUG,"create CPscMode\n"));
-#endif
+	ACE_DEBUG((LM_DEBUG,"%s:%d Init PscMode Object !\n",__FILE__,__LINE__));
+
 }
 
 /**************************************************************
@@ -61,9 +61,7 @@ Return:         无
 ***************************************************************/
 CPscMode::~CPscMode()
 {
-#ifdef TSC_DEBUG
-	ACE_DEBUG((LM_DEBUG,"delete CPscMode\n"));
-#endif
+	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct PscMode Object !\n",__FILE__,__LINE__));
 }
 
 /**************************************************************
@@ -76,7 +74,6 @@ Return:         静态对象指针
 CPscMode* CPscMode::CreateInstance()
 {
 	static CPscMode oPscMode;
-
 	return &oPscMode;
 }
 
@@ -97,6 +94,7 @@ void CPscMode::InitPara()
 	m_pWorkParaManager  = CManaKernel::CreateInstance();
 	m_bStartCntCown     = false;
 	m_ucBtnNum = 0 ;
+	m_ucNextTime = 0 ;
 }
 
 
@@ -115,9 +113,8 @@ void CPscMode::DealButton()
 	Byte ucStageCross1      = 0;
 	Byte ucStageCross2      = 0;
 	Byte ucButton           = 0;
-	//CPowerBoard::CreateInstance()->m_ucCurFootBtn;
+	time_t ucNow            = time(NULL);
 	static GBT_DB::SpecFun* pSpecFun = m_pWorkParaManager->m_pTscConfig->sSpecFun;
-
 	while ( ucIndex < MAX_PUSHS )
 	{
 		if ( (m_ucBtnNum >> ucIndex) & 1 )
@@ -137,27 +134,13 @@ void CPscMode::DealButton()
 		ucIndex++;
 	}
 	
-	if ( !bPressBtn || PSC_STAND_STATUS != m_ucPscStatus )
-	{
-		//printf("\niCtn = %d\n",iCtn);
+	if ( !bPressBtn || PSC_STAND_STATUS != m_ucPscStatus || (ucNow -m_ucNextTime < PUSH_INTERNAL))
+	{		
 		m_ucBtnNum = 0 ;
 		return;
-	}
+	}	
+	ACE_DEBUG((LM_DEBUG,"%s:%d Push button number:%d\n",__FILE__,__LINE__,m_ucBtnNum));
 	
-	ACE_DEBUG((LM_DEBUG,"%s:%d You have push button number is %d\n",__FILE__,__LINE__,m_ucBtnNum));
-	/*if ( iType > 3 )
-	{
-		return;
-	}
-	else
-	{
-		if ( 0 == iType || 1 == iType )
-		{
-			m_bBoxPush[PSC_LEFT_PUSH2]  = true;
-			m_bBoxPush[PSC_RIGHT_PUSH2] = true;
-		}
-	}*/
-
 	m_ucCurStep = m_pWorkParaManager->m_pRunData->ucStepNo;
 	if ( pSpecFun[FUN_STAND_STAGEID].ucValue > 0 )
 	{
@@ -204,7 +187,7 @@ void CPscMode::DealButton()
 
 		m_ucPscStatus = PSC_WAIT_PG_STATUS;
 	}
-
+	/*
 	if ( !m_bStartCntCown )  //周期重新开始
 	{
 		m_bStartCntCown = true;
@@ -213,7 +196,7 @@ void CPscMode::DealButton()
 		CGaCountDown::CreateInstance()->GaSendStepPer();
 		#endif
 	}
-
+	*/
 }
 
 
@@ -226,20 +209,22 @@ Return:         无
 ***************************************************************/
 void CPscMode::DecTime()
 {
-	if ( ( (m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_PRINT_FLAG].ucValue>>7) & 1 )  != 0 )
+	/*if ( ( (m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_PRINT_FLAG].ucValue>>7) & 1 )  != 0 )
 	{
 		ACE_DEBUG((LM_DEBUG,"Psc:%d ctrl:%d status:%d stage:%d stepNo:%d ucElapseTime:%d,ucStepTime:%d\n",
 		m_ucPscStatus , m_pWorkParaManager->m_pRunData->uiCtrl , m_pWorkParaManager->m_pRunData->uiWorkStatus 
 		, m_pWorkParaManager->m_pRunData->ucStageNo , m_pWorkParaManager->m_pRunData->ucStepNo 
 		, m_pWorkParaManager->m_pRunData->ucElapseTime , m_pWorkParaManager->m_pRunData->ucStepTime));
-	}
+	}*/
 
 	if ( ( m_ucPscStatus == PSC_STAND_STATUS )	|| (CTRL_MANUAL == m_pWorkParaManager->m_pRunData->uiCtrl ) 
 		|| ( ( CTRL_PANEL == m_pWorkParaManager->m_pRunData->uiCtrl ) &&   ( (SIGNALOFF == m_pWorkParaManager->m_pRunData->uiWorkStatus ) 
 		|| (ALLRED == m_pWorkParaManager->m_pRunData->uiWorkStatus)   || (FLASH == m_pWorkParaManager->m_pRunData->uiWorkStatus ) 
 			 ) ) ) 
 		//手动控制或(面板关灯、全红、黄闪)
-	{
+	{		
+		//ACE_DEBUG((LM_DEBUG,"%s:%d m_pRunData->uiOldCtrl =%d m_pRunData->uiCtrl = %d \n" ,__FILE__,__LINE__,m_pWorkParaManager->m_pRunData->uiOldCtrl,m_pWorkParaManager->m_pRunData->uiCtrl));
+
 		return;
 	}
 
@@ -247,14 +232,14 @@ void CPscMode::DecTime()
 
 	if ( m_pWorkParaManager->m_pRunData->ucElapseTime >= m_pWorkParaManager->m_pRunData->ucStepTime )
 	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d Psc begin next step !\n",__FILE__,__LINE__));
 		GoNextStep();
 	}
-
-	if ( m_bStartCntCown 
-		&& m_pWorkParaManager->m_pRunData->ucElapseTime != m_pWorkParaManager->m_pRunData->ucStepTime - 1 )  
-		//避免二次发送倒计时信息
-	{
-	}
+	//避免二次发送倒计时信息
+	//if ( m_bStartCntCown && m_pWorkParaManager->m_pRunData->ucElapseTime != m_pWorkParaManager->m_pRunData->ucStepTime - 1 )  
+//	{
+//		;
+//	}
 }
 
 
@@ -267,14 +252,13 @@ Return:         无
 ***************************************************************/
 void CPscMode::GoNextStep()
 {
-	if ( ( (m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_PRINT_FLAG].ucValue>>7) & 1 )  != 0 )
-	{
-		ACE_DEBUG((LM_DEBUG,"\n%s:%d GoNextSetp\n" , CPSCMODE_FILE , __LINE__));
-	}
+	//if ( ( (m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_PRINT_FLAG].ucValue>>7) & 1 )  != 0 )
+	//{
+	//ACE_DEBUG((LM_DEBUG,"%s:%d Psc GoNextSetp!\n" , CPSCMODE_FILE , __LINE__));
+	//}
 	
 	Byte ucNextStage      = 0;
 	STscRunData* pRunData = m_pWorkParaManager->m_pRunData;
-
 	pRunData->ucStepNo++;
 /*	
 	if ( !m_bStep1ToStep2
@@ -305,21 +289,7 @@ void CPscMode::GoNextStep()
 		{
 			pRunData->ucStepNo = m_ucStandStep;
 
-			m_bStartCntCown = false;
-
-			if ( ( (m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_PRINT_FLAG].ucValue>>7) & 1 )  != 0 )
-			{
-				ACE_DEBUG((LM_DEBUG,"\n%s:%d OverCycle\n" , CPSCMODE_FILE , __LINE__));
-			}
-
-			/*if ( 0 == iType )
-			{
-				iType = 1;
-			}
-			else if ( 1 == iType )
-			{
-				iType = 2;
-			}*/
+			m_bStartCntCown = false;			
 		}
 //	}
 
@@ -334,14 +304,14 @@ void CPscMode::GoNextStep()
 		pRunData->ucStageNo = ucNextStage;
 		PscSwitchStatus();
 	}
-
+	/*
 	if ( m_bStartCntCown )
 	{
 		#ifdef GA_COUNT_DOWN
 		CGaCountDown::CreateInstance()->GaSendStepPer();
 		#endif
 	}
-	
+	*/
 }
 
 
@@ -382,16 +352,14 @@ void CPscMode::PscSwitchStatus()
 	}
 
 	if ( m_ucPscStatus == PSC_STAND_STATUS )
-	{
-		for ( int iIndex = 0; iIndex < MAX_PUSHS; iIndex++ )
-		{
-			m_bBoxPush[iIndex] = false;
-		}
+	{		
+		ACE_OS::memset(m_bBoxPush,0,MAX_PUSHS);
 		if ( m_pWorkParaManager->m_pRunData->bNeedUpdate )
 		{
 			m_pWorkParaManager->UpdateConfig();
 		}
 		m_pWorkParaManager->GetRunDataStandard();
+		m_ucNextTime = time(NULL);
 	}
 }
 
