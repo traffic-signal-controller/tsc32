@@ -101,14 +101,14 @@ void CMainBoardLed::DoModeLed(bool bLed3Value,bool bLed4Value)
 }
 
 /************设置TSC/PSC指示灯显示状态, 使用GPK0 IO口***********/
-void CMainBoardLed::DoTscPscLed()
+void CMainBoardLed::DoTscPscLed(bool btsc)
 {
 	
-	static bool bValue = true; 
+	//static bool bValue = true; 
 	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 4);
+	ioctl(m_iLedFd, btsc, 4);
 	#endif
-	bValue = !bValue;
+	//bValue = !bValue;
 }
 
 /************设置Auto指示灯显示状态, 使用GPK2 IO口**************/
