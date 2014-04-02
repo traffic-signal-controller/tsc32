@@ -4,6 +4,7 @@
 #include "ComStruct.h"
 #include "ManaKernel.h"
 #include "ComDef.h"
+#include "time.h"
 #define CPSCMODE_FILE "CPscMode.cpp"
 
 const int MAX_PUSHS = 8;   //最大的行人按钮数
@@ -49,6 +50,7 @@ private:
 	Byte m_ucStandStep;    //标准步伐号
 	Byte m_ucCrossStep1;   //行人通过步伐号1
 	Byte m_ucCrossStep2;   //行人通过步伐号2
+	time_t m_ucNextTime ;   //用于记录行人通行结束时间，用于计算两次行人按钮生效间隔时间。
 
 	CManaKernel* m_pWorkParaManager;
 };
