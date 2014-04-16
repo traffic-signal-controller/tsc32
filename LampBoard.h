@@ -17,20 +17,20 @@ public:
 	void SetLamp(Byte* pLampOn,Byte* pLampFlash);
 	void SetSeriousFlash(bool isflash);
 	bool IsFlash() ;	
-	//µÆÉ«ÊýŸÝ 
+	//灯色数据 
 	void SendLamp();
 	void SendSingleLamp(Byte ucLampBoardId);
-	//µÆ¿Ø°åÏÂ·¢ÅäÖÃÊýŸÝ£¬ÈçµÆÅÝŒì²â¿ª¹Ø£¬ºìÂÌ³åÍ»Œì²â¿ª¹Ø
+	//灯控板下发配置数据，如灯泡检测开关，红绿冲突检测开关
 	void SendCfg();
 	void SendSingleCfg(Byte ucLampBoardId);
-	//µÆÅÝŒì²âÊýŸÝ£¬ºìÂÌ³åÍ»Œì²âÊýŸÝ
+	//灯泡检测数据，红绿冲突检测数据
 	void CheckLight();
 	void CheckSingleLight(Byte ucLampBoardId);
-	//µÆÅÝµçÁ÷Œì²âœá¹ûÊýŸÝ
+	//灯泡电流检测结果数据
 	void CheckLampElect(Byte ucLampBoardId,Byte ucType);
 	void CheckSingleElect(Byte ucLampBoardId);
 	void CheckElect();
-	//µÆ¿Ø°å°åÔØÎÂ¶ÈŒì²âµÄÎÂ¶ÈÖµ
+	//灯控板板载温度检测的温度值
 	void CheckTemp();
 	void CheckSingleTemp(Byte ucLampBoardId);
 	void RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp); //ADD: 2013 0712 CAN接收灯泡检测数据

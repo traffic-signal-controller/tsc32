@@ -1,1 +1,2 @@
----- Device busy 匹配 (0 in 0 文件) ----
+---- tcsetattr error 匹配 (1 in 1 文件) ----
+SerialCtrl.cpp:		ACE_DEBUG((LM_DEBUG,"tcsetattr error 读取不到数据时会回传-1，并且设置errno为EAGAIN。\n"));
