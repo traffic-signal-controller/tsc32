@@ -131,28 +131,28 @@ bool Can::Send(SCanFrame& sendFrame)
 		switch(erronum)
 		{
 			case EBADF :
-				ACE_DEBUG((LM_DEBUG,"%s:%d can socket 错误的文件描述符!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d can socket 错误的文件描述符!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EFAULT :
-				ACE_DEBUG((LM_DEBUG,"%s:%d 错误的地址!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d 错误的地址!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case ENOTSOCK :
-				ACE_DEBUG((LM_DEBUG,"%s:%d can Socket操作在一个非socket上!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d can Socket操作在一个非socket上!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EINTR :
-				ACE_DEBUG((LM_DEBUG,"%s:%d EINTR系统调用被阻止!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d EINTR系统调用被阻止!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EAGAIN :
-				ACE_DEBUG((LM_DEBUG,"%s:%d EAGAIN资源暂时不能获得!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d EAGAIN资源暂时不能获得!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case ENOBUFS :
-				ACE_DEBUG((LM_DEBUG,"%s:%d ENOBUFS没有可用的缓存空间!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d ENOBUFS没有可用的缓存空间!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			case EINVAL :
-				ACE_DEBUG((LM_DEBUG,"%s:%d EINVAL无效的参数!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d EINVAL无效的参数!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 				break ;
 			default :
-				ACE_DEBUG((LM_DEBUG,"%s:%d errno = %d!\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d errno = %d!\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
 				break ;
 			
 			return false ;
@@ -163,11 +163,11 @@ bool Can::Send(SCanFrame& sendFrame)
 
 	if ( ulBytes == sizeof(struct can_frame) )
 	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MODå:20130523 14 25
 		pMainBoardLed->DoCanLed();
 	}
 #endif	
-		ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
+		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
 	return true;
 }
 
@@ -341,7 +341,7 @@ void * Can::RunCanRecv(void *arg)
 	}
 	else if ( 0 == iRetCnt )  //timeout
 	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d timeout\n",__FILE__,__LINE__));
+		//ACE_DEBUG((LM_DEBUG,"%s:%d timeout\n",__FILE__,__LINE__));
 		 continue ;
 	}
 	else
