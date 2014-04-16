@@ -123,7 +123,7 @@ void CSerialCtrl::OpenSerial(short iSerNum)
 	terminfo.c_cflag = CREAD | CS8 | CLOCAL | B38400;
 	if (tcsetattr(iTmpSerFd, TCSANOW, &terminfo) == -1)
 	{
-		ACE_DEBUG((LM_DEBUG,"tcsetattr error\n"));
+		ACE_DEBUG((LM_DEBUG,"tcsetattr error 读取不到数据时会回传-1，并且设置errno为EAGAIN。\n"));
 		close(iTmpSerFd);
 		if(iSerNum == SERIALNUM1)
 		{

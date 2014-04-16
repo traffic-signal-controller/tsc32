@@ -102,7 +102,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		CPowerBoard::iHeartBeat++;
 		if(CPowerBoard::iHeartBeat >2)
 		{
-			ACE_DEBUG((LM_DEBUG,"\n%s:%d 重起Can总线!\n",__FILE__,__LINE__));
+			//ACE_DEBUG((LM_DEBUG,"\n%s:%d 重起Can总线!\n",__FILE__,__LINE__));
 			//ACE_OS::system("up link set can0 up type can restart");
 			CPowerBoard::iHeartBeat = 0;	
 			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);			
