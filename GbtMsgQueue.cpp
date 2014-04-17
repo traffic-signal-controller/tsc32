@@ -720,6 +720,21 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 
 		}
 		break ;
+	case OBJECT_POWERBOARD_CFG : //电源板配置扩展对象ADD:20140402
+		if ( GBT_SEEK_REQ == ucRecvOptType )  //查询
+		{
+			
+			Byte ucQueryType =( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
+			GetPowerCfg(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,&iSendIndex,ucQueryType);  
+
+		}
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
+		{
+			SetPowerCfg(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex);
+
+		}
+		break ;
+
 	case OBJECT_DET_EXTCFG :    //检测器扩展配置对象
 		if ( GBT_SEEK_REQ == ucRecvOptType )  //查询
 		{
@@ -1682,6 +1697,92 @@ void  CGbtMsgQueue::SetFlashCtrl(Byte* pBuf,int& iRecvIndex)
 			pFlashMac->m_ucSetSyType    = pBuf[iRecvIndex++] ;
 				
 			pFlashMac->FlashCfgSet();
+			break ;
+		default:
+			break ;
+	}
+	return ;
+}
+
+/**************************************************************
+	Function:		CGbtMsgQueue::GetPowerCfg
+	Description:  电源板配置信息设置	
+	Input:		pBuf	 接收帧地址指针
+				iSendIndex     发送帧当前写地址
+Output:         pBuf   发送帧地址指针
+	Return: 		无
+***************************************************************/
+void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
+{
+	CPowerBoard *pPowerBoard = CPowerBoard::CreateInstance();	
+	switch(ucQueryType)
+		{
+		case 0x02 :    //请求电源板发送电压数据
+			pPowerBoard->CheckVoltage();
+			ACE_OS::sleep(ACE_Time_Value(0, 30000));
+			pBuf[*iSendIndex] = pPowerBoard->m_iStongVoltage ;  //强电电压
+			*iSendIndex += 1 ;		
+			pBuf[*iSendIndex] = pPowerBoard->m_iWeakVoltage  ;  //弱电电?	
+			*iSendIndex += 1 ;		
+			pBuf[*iSendIndex] = pPowerBoard->m_iBusVoltage ;  //总线电压
+			*iSendIndex += 1 ;
+			break ;
+		case 0x03 :	   //请求电源模块发送配置数据	
+		{
+			Byte VolPlan = 0 ;
+			pPowerBoard->GetPowerBoardCfg();
+			ACE_OS::sleep(ACE_Time_Value(0, 30000));
+		//	printf("get powerd 0x3\n");
+		
+			pBuf[*iSendIndex] = pPowerBoard->m_iGetWarnHighVol;
+			*iSendIndex += 1 ;
+			pBuf[*iSendIndex] = //pPowerBoard->m_iGetWarnLowVol ;
+			*iSendIndex += 1 ;
+			VolPlan |= pPowerBoard->m_ucGetStongHighVolPlan ;
+			VolPlan |= pPowerBoard->m_ucGetStongLowVolPlan <<2 ;
+			VolPlan |=  pPowerBoard->m_ucGetWeakHighVolPlan << 4 ;
+			VolPlan |= pPowerBoard->m_ucGetWeakLowVolPlan << 6 ;
+			pBuf[*iSendIndex] = VolPlan ;
+			*iSendIndex += 1 ;
+			pBuf[*iSendIndex] = pPowerBoard->m_ucSetWatchCfg ;	
+			*iSendIndex += 1 ;
+			
+		//	printf("get powerd 0x3 -2\n");
+		}
+			break ;
+		 default:
+		 	break ;
+		}
+
+}
+
+/**************************************************************
+	Function:		CGbtMsgQueue::SetPowerCfg
+	Description:  电源板配置信息设置	
+	Input:		pBuf	 接收帧地址指针
+				iRecvIndex 接收帧当前读取地址
+	Output: 		无
+	Return: 		无
+***************************************************************/
+void  CGbtMsgQueue::SetPowerCfg(Byte* pBuf,int& iRecvIndex)	
+{
+	Byte Tmp = pBuf[iRecvIndex++];
+	CPowerBoard *pPowerBoard = CPowerBoard::CreateInstance();
+	switch(Tmp)
+	{
+		
+		case 0x04 :	   //下发电源模块配置数据
+		{
+			Byte tmp1 = pBuf[iRecvIndex++];
+			Byte tmp2 = pBuf[iRecvIndex++];
+			Byte tmp3 = pBuf[iRecvIndex++];
+			Byte tmp4 = pBuf[iRecvIndex++];
+			pPowerBoard->SetPowerCfgData(tmp1,tmp2,tmp3,tmp4);
+			pPowerBoard->SetPowerBoardCfg();
+		}
+			break ;
+		case 0x05 :	   //心跳命令
+			pPowerBoard->HeartBeat();			
 			break ;
 		default:
 			break ;
@@ -4205,6 +4306,7 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_PSCBTN_NUM :         //模拟8位行人按钮输入
 		case OBJECT_TMPPATTERN_CFG :     //临时12方向随机组合，放行60秒默认
 		case OBJECT_SYSFUNC_CFG :        //系统其他功能设置
+		case OBJECT_POWERBOARD_CFG :       //电源板配置
 			return true;
 		default:
 			return false;

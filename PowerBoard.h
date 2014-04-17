@@ -22,6 +22,7 @@ public:
 	//主控板发送给电源模块配置数据
 	void SetPowerBoardCfg();
 
+	void SetPowerCfgData(Byte m_ucWarnHighVol,Byte m_ucWarnLowVol,Byte m_ucVolPlan,Byte m_ucDogCfg);
 	//广播心跳 
 	void HeartBeat();
 	//接收电源板的Can数据并处理
@@ -33,10 +34,10 @@ private:
 	CPowerBoard();
 	~CPowerBoard();
 
-private:
+public:
 	//input
-	int m_iSetWarnHighVol;  //高压预警电压(设置值)
-	int m_iSetWarnLowVol;   //低压预警电压(设置值)
+	Byte m_iSetWarnHighVol;  //高压预警电压(设置值)
+	Byte m_iSetWarnLowVol;   //低压预警电压(设置值)
 	Byte m_ucSetStongHighVolPlan;  //强电高压预案
 	Byte m_ucSetStongLowVolPlan;   //强电低压预案
 	Byte m_ucSetWeakHighVolPlan;   //弱电高压预案
@@ -53,6 +54,7 @@ private:
 	Byte m_ucGetStongLowVolPlan;   //强电低压预案
 	Byte m_ucGetWeakHighVolPlan;   //弱电高压预案
 	Byte m_ucGetWeakLowVolPlan;    //弱电低压预案
+	Byte m_ucSetWatchCfg ;         //电源板看门狗设置 //ADD:201404021301
 	
 
 	ACE_Thread_Mutex  m_mutexVoltage;
