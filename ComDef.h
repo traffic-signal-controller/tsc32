@@ -343,8 +343,8 @@ const int MIN_GBT_MSG_LEN        = 3;     //gbt协议消息的最小长度
 const int MAX_CLIENT_NUM         = 4;     //最大的客户端连接数
 const int DEFAULT_GBT_PORT       = 8801;  //默认开辟的端口号
 const int DEFAULT_BROADCAST_PORT = 8808;  //默认开辟的端口号
-const Uint MAX_GBT_PORT          = 10024; //最大端口号    
-const Uint MIN_GBT_PORT          = 1024;  //最小端口号
+const int MAX_GBT_PORT          = 10024; //最大端口号    
+const int MIN_GBT_PORT          = 1024;  //最小端口号
 const int MAX_BUF_LEN            = 8192;  //最大帧的长度
 /*************************GBT协议消息处理常量定义************************/
 

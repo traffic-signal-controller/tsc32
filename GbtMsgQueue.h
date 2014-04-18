@@ -167,7 +167,7 @@ public:
 #else
 	ACE_SOCK_Dgram m_sockLocal;  //udp
 #endif
-	Uint iPort   ;               //MOD:201309250830
+	int iPort   ;               //MOD:201309250830
 private:
 	CGbtMsgQueue();
 	~CGbtMsgQueue();
@@ -228,7 +228,7 @@ private:
 	SGbtDealData  m_sGbtDealData[MAX_CLIENT_NUM];
 	
 
-	/*ÁÙÊ±Žæ·ÅÊýŸÝ*/
+	/*??????±????·??????????*/
 	int m_iManualCtrlNo;
 	int m_iSystemCtrlNo;
 };

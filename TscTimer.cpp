@@ -81,7 +81,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 {
 	
 	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-	static Uint iCanRestartNum = 0 ;
+	//static Uint iCanRestartNum = 0 ;
 	
 	pManual->DoManual() ;     // ADD:0514 9:42
 	
@@ -101,9 +101,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		pMacControl->SndLcdShow() ; //ADD:201309281710
 		break;
 	case 2: 		
-		CPowerBoard::iHeartBeat++;
+		//CPowerBoard::iHeartBeat++;
 		if(CPowerBoard::iHeartBeat >1)
-		{
+		{	/*
 			ACE_DEBUG((LM_DEBUG,"%s:%d can0 death 900ms and insert to log !\n",__FILE__,__LINE__));
 			ACE_OS::system("up link set can0 up type can restart");
 			CPowerBoard::iHeartBeat = 0;	
@@ -111,6 +111,8 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 			iCanRestartNum++;
 			if(iCanRestartNum >= 50)	
 				ACE_OS::system("reboot");	
+			*/
+			;
 		}
 		pPower->CheckVoltage();
 		break;
@@ -134,7 +136,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 5://500ms 执行一次
 		
 		
-		pLamp->SendLamp();   //4žöµÆ¿Ø°åÐÅÏ¢·¢ËÍ	
+		pLamp->SendLamp();   //4????????????°??????????·??????	
 		pMainBoardLed->DoRunLed();	
 		break;
 	case 6:
@@ -142,9 +144,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		pMainBoardLed->DoLedBoardShow();   //ADD :2013 0809 1600
 		
 		break;
-	case 7://700ºÁÃëŒì²âÒ»ŽÎÐÄÌøcan×ÜÏß
+	case 7://700??????????ì????????????????????can×??????
 	
-		pPower->HeartBeat();  //ÐÄÌø		
+		pPower->HeartBeat();  //????????		
 		break;
 
 	case 8:	
@@ -167,7 +169,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	}
 	m_ucTick++;
-	if ( m_ucTick >= m_ucMaxTick )  //100ºÁÃë¶šÊ±Æ÷,10ŽÎ1Ãë
+	if ( m_ucTick >= m_ucMaxTick )  //100??????????????±??÷,10????1????
 	{
 		if ( m_bWatchdog )
 		{
