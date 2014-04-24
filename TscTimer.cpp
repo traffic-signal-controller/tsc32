@@ -90,7 +90,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	{
 	case 0: 		
 		ChooseDecTime();		
-		pLamp->SendLamp();
+		pLamp->SendLamp();//4	////4个灯控板信息发送
 		pMainBoardLed->DoRunLed();  
 		break;
 	case 1:
@@ -148,7 +148,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	}
 	m_ucTick++;
-	if ( m_ucTick >= m_ucMaxTick )  //100ºÁÃë¶šÊ±Æ÷,10ŽÎ1Ãë
+	if ( m_ucTick >= m_ucMaxTick )  ////100毫秒定时器,10次1秒
 	{
 		if ( m_bWatchdog )
 		{
