@@ -60,7 +60,15 @@ Return:         无
 void WatchDog::OpenWatchdog()
 {
 #ifndef WINDOWS
-	m_watchdogFd = open(DEV_WATCHDOG, O_WRONLY, 0);
+	
+	m_watchdogFd = open(DEV_WATCHDOG, O_WRONLY);
+	timeout = 3;
+	ioctl(m_watchdogFd, WDIOC_SETTIMEOUT, &timeout);
+	ioctl(m_watchdogFd, WDIOC_GETTIMEOUT, &timeout);
+	ACE_DEBUG((LM_DEBUG,"%s:%d The timeout was is %d seconds\n",__FILE__,__LINE__,timeout));
+	
+	//下面为forlinux核心板里的代码
+	//m_watchdogFd = open(DEV_WATCHDOG, O_WRONLY, 0);
 #endif
 }
 
@@ -96,7 +104,7 @@ void WatchDog::FillWatchdog(char cData)
 	if(m_watchdogFd > 0)
 	{
 		write(m_watchdogFd, &cData, sizeof(cData));
-		//ACE_DEBUG((LM_DEBUG,"%s:%d filldog\n",__FILE__,__LINE__));
+		ACE_DEBUG((LM_DEBUG,"%s:%d filldog\n",__FILE__,__LINE__));
 	}
 #endif
 

@@ -1,7 +1,13 @@
 #ifndef _WATCHDOG_H_
 #define _WATCHDOG_H_
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include "ComStruct.h"
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/watchdog.h>
 
 #define DEV_WATCHDOG  "/dev/watchdog"
 
@@ -15,7 +21,7 @@ public:
 private:
 	WatchDog();
 	~WatchDog();
-
+	int timeout;
 	int m_watchdogFd;
 };
 
