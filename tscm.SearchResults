@@ -1,2 +1,4 @@
----- tcsetattr error 匹配 (1 in 1 文件) ----
-SerialCtrl.cpp:		ACE_DEBUG((LM_DEBUG,"tcsetattr error 读取不到数据时会回传-1，并且设置errno为EAGAIN。\n"));
+---- power 匹配 (3 in 1 文件) ----
+Sqlite3.h:** of 8.  Some allocators round up to a larger multiple or to a power of 2.
+Sqlite3.h:** (a power of two between 512 and 32768) plus a little extra for each
+Sqlite3.h:** be allocated by the cache.  ^szPage will not be a power of two.  ^szPage
