@@ -1,5 +1,5 @@
 #
-#	makefile for make Gb.aiton
+#	makefile for make Gb.aiton zlg
 #
 CROSS_COMPILE = arm-linux-
 CFLAGS  = -Wall  -I/usr/local/arm/4.3.2/arm-none-linux-gnueabi/libc/usr/include 
