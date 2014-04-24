@@ -103,8 +103,8 @@ void WatchDog::FillWatchdog(char cData)
 #ifndef WINDOWS
 	if(m_watchdogFd > 0)
 	{
-		write(m_watchdogFd, &cData, sizeof(cData));
-		ACE_DEBUG((LM_DEBUG,"%s:%d filldog\n",__FILE__,__LINE__));
+		write(m_watchdogFd, &cData, sizeof(cData)); //喂狗操作，如果输入字符‘V’，可以关闭看门狗
+		/ACE_DEBUG((LM_DEBUG,"%s:%d filldog\n",__FILE__,__LINE__));
 	}
 #endif
 

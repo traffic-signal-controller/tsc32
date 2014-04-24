@@ -1,4 +1,0 @@
----- power Æ¥Åä (3 in 1 ÎÄ¼þ) ----
-Sqlite3.h:** of 8.  Some allocators round up to a larger multiple or to a power of 2.
-Sqlite3.h:** (a power of two between 512 and 32768) plus a little extra for each
-Sqlite3.h:** be allocated by the cache.  ^szPage will not be a power of two.  ^szPage
