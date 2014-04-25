@@ -1,20 +1,14 @@
 #
 #	makefile for make Gb.aiton zlg
 #
-CROSS_COMPILE = arm-linux-
-CFLAGS  = -Wall  -I/usr/local/arm/4.3.2/arm-none-linux-gnueabi/libc/usr/include 
-LDFLAGS = /usr/local/arm/4.3.2/lib
-SQLLIB  = /opt/sqlite-autoconf-3071401/build/lib/libsqlite3.so
-LINKFLAG = #-static
-CC  = arm-linux-g++
-#CC  = g++
-# -DNDEBUG -g 
+CROSS_COMPILE = /home/lurenhua/arm-2011.03/bin/arm-none-linux-gnueabi-
+CFLAGS  = -Wall  -I/home/lurenhua/arm-2011.03/arm-none-linux-gnueabi/libc/usr/include 
+SQLLIB  = /home/lurenhua/sqlite-autoconf-3080403/build/lib/libsqlite3.so
+CC  = $(CROSS_COMPILE)g++
 LIB     =  -L $(ACE_ROOT)/ace  -l pthread  -l rt -l dl  # -L$(ACE_ROOT)/ace -lACE
 ACELIB =  $(ACE_ROOT)/ace/libACE.so
-PTHREADLIB= # $(LDFLAGS)/libpthread.a
-RTLIB= # $(LDFLAGS)/librt.a
-DLLIB= # $(LDFLAGS)/libdl.a
 DEST =  Gb.aiton
+
 all:	$(DEST) Makefile
 %.o: %.cpp
 	$(CC) -c $(CFLAGS) $< -o $@ $(INCLUDE) -I$(ACE_ROOT) -L$(ACE_ROOT)/ace
@@ -30,8 +24,8 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
 	 	  MacControl.o	 Manual.o		 SignalDefaultData.o  SerialCtrl.o
 
 
-	$(CC) $(LIB) $(CFLAGS) $(LINKFLAG) \
-	$(ACELIB) $(PTHREADLIB) $(RTLIB) $(DLLIB) $(SQLLIB) \
+	$(CC) $(LIB) $(CFLAGS) \
+	$(ACELIB) $(SQLLIB) \
 		GbtTimer.o      PowerBoard.o    IoOperate.o     \
         DbInstance.o   GbtDb.o         PscMode.o       TscMsgQueue.o     \
         Detector.o     Gps.o           Rs485.o         TscTimer.o        \
