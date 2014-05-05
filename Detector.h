@@ -118,9 +118,10 @@ public:
 
 public:
 	
-	Byte m_ucActiveBoard1;   //1  - 16 »î¶¯µÄŒì²âÆ÷°å
+	Byte m_ucActiveBoard1;   //1  //1-16
 	Byte m_ucActiveBoard2;   //17 - 32 »î¶¯µÄŒì²âÆ÷°å
-	Byte m_ucActiveBoard3;	//33 - 48
+	Byte m_ucActiveBoard3;	//33 -64
+	Byte m_ucActiveBoard4 ; //65-96
 	bool m_bErrFlag[MAX_DETECTOR];      //ŽíÎó±êÖŸ
 
 	bool m_bRecordSts[MAX_DET_BOARD];      //ÉÏÒ»ŽÎŒÇÂŒŒì²â°åµÄÍšÐÅ×ŽÌ¬

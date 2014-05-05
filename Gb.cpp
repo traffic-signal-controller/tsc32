@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 		ationMutex.release();
 		return -1;
 	}
+	//ACE_OS::sleep(5); //等待初始化系统静态对象 201405041045
 	//CheckSystemTime(); //检查修正系统时间	
 	RunGb();	       //系统核心入口函数
 	ationMutex.release();

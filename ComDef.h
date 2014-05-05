@@ -66,7 +66,7 @@ enum
 	DATA_HEAD_OTHER   = 3   //未定义，保留
 };
 
-/* DELETE 20130920
+
 const int DET_STAT_CYCLE = 60;   //占有率统计的周期 1分钟
 enum
 {
@@ -75,7 +75,7 @@ enum
 	DETECTOR_BOARD1           = 2  ,  //检测器板1
 	DETECTOR_BOARD2           = 3     //检测器板2
 };
-*/
+
 
 
 
@@ -101,6 +101,8 @@ const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //
 const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
 const int MAX_DET_BOARD          = 4;    //最大检测器板数量
 const int MAX_DETECTOR_PER_BOARD = 16;   //每块板包含的检测器数量
+const int MAX_INTERFACE_PER_BOARD =32 ;  //每块接口板包含的通道数量
+
 const int MAX_DETECTOR           = MAX_DET_BOARD * MAX_DETECTOR_PER_BOARD;   //最大检测器数量
 
 const int MAX_SPESTATUS_CYCLE    = 10;   //时段表里定义的特殊状态周期时长 

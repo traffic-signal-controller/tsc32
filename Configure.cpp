@@ -3,7 +3,7 @@
  *     功能: 提供类和方法,实现从配置文件读取参数值 
  *     作者: 鲁仁华 
  *     联系: renhualu@live.com 
- * 最近修改: 2013-4-15 
+ * 最近修改: 2014-4-25 
  *     版本: v1.0.2 
   ==================================================================================================*/  
   
@@ -29,6 +29,10 @@ Configure::Configure():impExp_(NULL)
 		ACE_DEBUG((LM_DEBUG,"%s:%d Init configure file fail !\n",__FILE__,__LINE__));
 			 
 	}
+	if(open("tsc.ini") == -1)
+	{
+		cout<<"open configure file error!\n";	
+  	}
              
 }
  
@@ -80,12 +84,12 @@ bool Configure::InitConfig()
 	{	
 		if((fConfig = ACE_OS::fopen(ACE_TEXT("tsc.ini"), "w+")) == NULL)
 			return false ;
-		ACE_OS::fputs("\n#Traffic Signal Control Configure",fConfig);
+		ACE_OS::fputs("#Traffic Signal Control Configure",fConfig);
 		ACE_OS::fputs("\n[APPDESCRIP]",fConfig);
 		ACE_OS::fputs("\napplication   =Gb.aiton",fConfig);
 		ACE_OS::fputs("\ndatebase      =GbAitonTsc.db",fConfig);
-		ACE_OS::fputs("\nversion       = 1.0.1",fConfig);
-		ACE_OS::fputs("\ndescription   = 32 Phase Traffic Singal Controner",fConfig);
+		ACE_OS::fputs("\nversion       =1.0.1",fConfig);
+		ACE_OS::fputs("\ndescription   =32 Phase Traffic Singal Controner",fConfig);
 		
 		ACE_OS::fputs("\n[COMMUNICATION]",fConfig);
 		ACE_OS::fputs("\nstandard      =GBT20999",fConfig);
@@ -95,9 +99,9 @@ bool Configure::InitConfig()
 		ACE_OS::fputs("\n[CONTACT]",fConfig);
 		ACE_OS::fputs("\ncompany       =XiaMenAiTon",fConfig);
 		ACE_OS::fputs("\nlinkman       =Chen",fConfig);
-		ACE_OS::fputs("\ntelephone     = 0592-5212811",fConfig);
-		ACE_OS::fputs("\naddress       = No151,BanMei,HuLi,XiaMen,FuJian,China",fConfig);
-		ACE_OS::fputs("\nWebSite       = http://www.aiton.com.cn	",fConfig);
+		ACE_OS::fputs("\ntelephone     =0592-5212811",fConfig);
+		ACE_OS::fputs("\naddress       =No151,BanMei,HuLi,XiaMen,FuJian,China",fConfig);
+		ACE_OS::fputs("\nWebSite       =http://www.aiton.com.cn	",fConfig);
 		ACE_OS::fclose(fConfig);
 		return true ;
 	}
