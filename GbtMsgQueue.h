@@ -156,7 +156,7 @@ public:
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex);
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId);
 	void ReworkNetPara(Byte* cIp ,Byte* cMask,Byte* cGateWay);
-	void RecordNetPara(/*char* pHwEtherCmd ,*/ char* pIpAndMaskCmd , char* pGatewayCmd );
+	void RecordNetPara( Byte* pIp , Byte* pMask , Byte* pGateway  );
 	void GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* pGateway);
 	void InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCnt);
 

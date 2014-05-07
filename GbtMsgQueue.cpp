@@ -4412,10 +4412,10 @@ void CGbtMsgQueue::ReworkNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay)
 
 
 	ACE_OS::sprintf(cIpAndMaskCmd , "/sbin/ifconfig eth0 %d.%d.%d.%d netmask %d.%d.%d.%d up\n",
-		cIp[0]   , cIp[1]   , cIp[2]   , cIp[3] , 
-		cMask[0] , cMask[1] , cMask[2] , cMask[3] ) ;
+									cIp[0]   , cIp[1]   , cIp[2]   , cIp[3] , 
+									cMask[0] , cMask[1] , cMask[2] , cMask[3] ) ;
 	ACE_OS::sprintf(cGatewayCmd , "/sbin/route add default gw %d.%d.%d.%d\n",
-		cGateWay[0] , cGateWay[1] , cGateWay[2] , cGateWay[3] ) ;
+									cGateWay[0] , cGateWay[1] , cGateWay[2] , cGateWay[3] ) ;
 
 	system("/sbin/ifconfig eth0 down\n");	
 	system(cIpAndMaskCmd);
@@ -4434,53 +4434,54 @@ Input:
 Output:        	无
 Return:         无
 ***************************************************************/
-void CGbtMsgQueue::RecordNetPara(/*char* pHwEtherCmd ,*/ char* pIpAndMaskCmd , char* pGatewayCmd )
+void CGbtMsgQueue::RecordNetPara(Byte* pIp , Byte* pMask , Byte* pGateway )
 {
-	FILE* fpRcs    = NULL;
-	FILE* fpRcsTmp = NULL;
-	char  sTmp[1024] = {0};
-
-	//if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/init.d/rcS", "r") ) )
-	if ( NULL == ( fpRcs = ACE_OS::fopen("rcS", "r") ) )
+	FILE* fpRcs      = NULL;	
+	char  sTmp[200] = {0};
+	char  sline[50] = {0};
+	char IP[20]={0};
+	char Mask[20]={0};
+	char Gateway[20]={0};
+	if(pIp != NULL)
+		ACE_OS::sprintf(IP , "IP=%d.%d.%d.%d\n",pIp[0],pIp[1],pIp[2],pIp[3]);   
+	if(pMask != NULL)
+		ACE_OS::sprintf(Mask , "Mask=%d.%d.%d.%d\n",pMask[0],pMask[1],pMask[2],pMask[3]);	
+	if(pGateway!= NULL)
+		ACE_OS::sprintf(Gateway , "Gateway=%d.%d.%d.%d\n",pGateway[0],pGateway[1],pGateway[2],pGateway[3]); 
+	if (!( fpRcs = ACE_OS::fopen("/etc/eth0-setting", "r")))
 	{
-		return;
+		ACE_OS::printf("Cant open eth0-setting!\n");
+		return;		
 	}
-
-	//if ( (fpRcsTmp = ACE_OS::fopen("/etc/init.d/rcS_tmp", "w")) != NULL ) 
-	if ( (fpRcsTmp = ACE_OS::fopen("rcS_tmp", "w")) != NULL ) 
+	while( !feof(fpRcs))
 	{
-		while ( fgets(sTmp , 1024 , fpRcs) != NULL ) 
+		 if( !fgets( sline, 50, fpRcs ) )
+				continue;
+		// ACE_OS::printf("%s",sline);
+		 if(ACE_OS::strstr( sline, "IP=") && pIp != NULL )
+		 {
+			ACE_OS::strcat(sTmp, IP);			
+		 }
+		else if(ACE_OS::strstr( sline, "Mask=") && pMask != NULL)
 		{
-			/*
-			if ( strstr(sTmp , "hw") != NULL && strstr(sTmp , "ether") != NULL )
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::memcpy(sTmp , pHwEtherCmd , strlen(pHwEtherCmd) );
-			}
-			else*/ if ( strstr(sTmp , "eth0") != NULL && strstr(sTmp , "netmask") != NULL ) 
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::memcpy(sTmp , pIpAndMaskCmd , strlen(pIpAndMaskCmd) );
-			}
-			else if ( strstr(sTmp , "default") != NULL && strstr(sTmp , "gw") != NULL ) 
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::memcpy(sTmp , pGatewayCmd , strlen(pGatewayCmd) );
-			}
-			fputs(sTmp, fpRcsTmp);
-			ACE_OS::memset(sTmp , 0 , 1024);
+			ACE_OS::strcat(sTmp, Mask);
 		}
-		fclose(fpRcs);
-		fclose(fpRcsTmp);
-#ifdef LINUX
-		TscCopyFile((char*)"/etc/init.d/rcS_tmp" , (char*)"/etc/init.d/rcS");
-		remove((char*)"/etc/init.d/rcS_tmp");
-#endif
-	} 
-	else 
-	{
-		fclose(fpRcs);
-	}
+		else if(ACE_OS::strstr( sline, "Gateway=") && pGateway!= NULL)
+		{
+			ACE_OS::strcat(sTmp, Gateway);
+		}
+		else
+		{			
+		   ACE_OS::strcat(sTmp, sline );		
+		}
+	 }
+	 
+	 ACE_OS::fclose(fpRcs);
+	 if(!(fpRcs = ACE_OS::fopen("/etc/eth0-setting", "w+" )))
+		return;
+	 //ACE_OS::printf("%s",sTmp);
+	 ACE_OS::fprintf(fpRcs, "%s", sTmp );	
+	 ACE_OS::fclose(fpRcs);		
 }
 
 
@@ -4498,14 +4499,11 @@ void CGbtMsgQueue::GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* p
 {
 	FILE* fpRcs      = NULL;
 	char* pStart     = NULL;
-	//char* pEnd       = NULL;
 	char  sTmp[200] = {0};
-
 	if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/eth0-setting", "r") ) )
 	{
 		return;
 	}
-
 	while ( fgets(sTmp , 100 , fpRcs) != NULL ) 
 	{
 		if ( (pStart=strstr(sTmp , "MAC=")) != NULL )
@@ -4557,75 +4555,32 @@ void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCn
 		if ( (pEnd = strstr(pStrart,pstr)) != NULL )
 		{
 			ACE_OS::strncpy(sTmp , pStrart , pEnd - pStrart);
-			pData[ucIndex] = atoi(sTmp);
-			
+			if(*pstr == ':')
+				pData[ucIndex] = strtol(sTmp,NULL,16);
+			else
+				pData[ucIndex] = atoi(sTmp);			
 			pStrart = ++pEnd;
 			ACE_OS::memset(sTmp , 0 , 8);
-		}
-	
+		}	
 		ucIndex++;
 	}
 
 	if ( (pEnd = strstr(pStrart," ")) != NULL )
 	{
 		ACE_OS::strncpy(sTmp , pStrart , pEnd - pStrart);
-		pData[ucIndex] = atoi(sTmp);
+		if(*pstr == ':')
+			pData[ucIndex] = strtol(sTmp,NULL,16);
+		else
+			pData[ucIndex] = atoi(sTmp);
 	}
 	else
 	{
-		pData[ucIndex] = atoi(pStrart);
+		if(*pstr == ':')
+			pData[ucIndex] = strtol(pStrart,NULL,16);
+		else
+			pData[ucIndex] = atoi(pStrart);
 	}
 }
-
-
-/**************************************************************
-Function:       CGbtMsgQueue::ReworkIp
-Description:    修改ip，永久生效
-Input:        	ucIp1 - 192
-		        ucIp2 - 168     
-                ucIp3 - 1
-                ucIp4 - 20
-Output:        	无
-Return:         无
-***************************************************************/
-void CGbtMsgQueue::ReworkIp(Byte ucIp1,Byte ucIp2,Byte ucIp3,Byte ucIp4)
-{
-	FILE* fpRcs    = NULL;
-	FILE* fpRcsTmp = NULL;
-	char  sTmp[1024] = {0};
-	
-	if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/init.d/rcS", "r") ) )
-	{
-		return;
-	}
-	
-	if ( (fpRcsTmp = ACE_OS::fopen("/etc/init.d/rcS_tmp", "w")) != NULL ) 
-	{
-		while ( fgets(sTmp , 1024 , fpRcs) != NULL ) 
-		{
-			if ( strstr(sTmp , "eth0") != NULL && strstr(sTmp , "netmask") != NULL )
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::sprintf(sTmp, "/sbin/ifconfig eth0 %d.%d.%d.%d\n"
-					        , ucIp1 , ucIp2 , ucIp3 , ucIp4);
-			}
-			fputs(sTmp, fpRcsTmp);
-			ACE_OS::memset(sTmp , 0 , 1024);
-		}
-		fclose(fpRcs);
-		fclose(fpRcsTmp);
-#ifdef LINUX
-		TscCopyFile((char*)"/etc/init.d/rcS_tmp" , (char*)"/etc/init.d/rcS");
-		remove("/etc/init.d/rcS_tmp");
-#endif
-	} 
-	else 
-	{
-		fclose(fpRcs);
-	}
-}
-
-
 
 /**************************************************************
 Function:       CGbtMsgQueue::TscCopyFile

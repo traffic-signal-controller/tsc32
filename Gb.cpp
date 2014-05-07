@@ -106,7 +106,7 @@ static void* BroadCast(void* arg)
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
 	pGbtMsgQueue->GetNetPara(pHwEther , pIp , pMask , pGateway);
 	Uint iPort = pGbtMsgQueue->iPort ;    //ADD:201309250900 
-	ACE_DEBUG((LM_DEBUG,"\nMAC=%02x:%02x:%02x:%02x:%02x:%02x IP= %d.%d.%d.%d MASK=%d.%d.%d.%d GateWay=%d.%d.%d.%d PortNum = %d\n",pHwEther[0],pHwEther[1],pHwEther[2],pHwEther[3],pHwEther[4],pHwEther[5],pIp[0],pIp[1],pIp[2],pIp[3],pMask[0],pMask[1],pMask[2],pMask[3],pGateway[0], pGateway[1],pGateway[2], pGateway[3] ,iPort ));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d MAC=%02x:%02x:%02x:%02x:%02x:%02x IP= %d.%d.%d.%d MASK=%d.%d.%d.%d GateWay=%d.%d.%d.%d PortNum = %d\n",__FILE__,__LINE__,pHwEther[0],pHwEther[1],pHwEther[2],pHwEther[3],pHwEther[4],pHwEther[5],pIp[0],pIp[1],pIp[2],pIp[3],pMask[0],pMask[1],pMask[2],pMask[3],pGateway[0], pGateway[1],pGateway[2], pGateway[3] ,iPort ));
 
 	for(;;)
 	{
