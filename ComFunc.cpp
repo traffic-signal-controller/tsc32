@@ -238,6 +238,7 @@ Return:         нч
 void RecordTscStartTime()
 {
 #ifdef LINUX
+/*
 	FILE* file = NULL;
 	char tmp[64] = {0};
 	struct tm *now;
@@ -256,9 +257,11 @@ void RecordTscStartTime()
 	fputs(tmp,file);
 	fclose(file);
 	AdjustFileSize((char*)"TscRun.log",100);
-#endif
+*/ 
 	//unsigned long mRestart = 0 ;
 	//(CDbInstance::m_cGbtTscDb).GetSystemData("ucDownloadFlag",mRestart);
+	ACE_OS::system("echo newer version:$(date) tsc restart !>> TscRun.log");
+	#endif
 	CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_REBOOT,0,0,0,0);	
 }
 
