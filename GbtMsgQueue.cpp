@@ -1629,11 +1629,45 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 			break ;
 			}
 		case 0x04 :
-			;
+		{ 
+			Byte updatetype = pBuf[iRecvIndex++] ;
+			if(updatetype == 0x01)
+			{
+				ACE_OS::system("mv -f Gb.aiton Gb.aiton.bak");
+			}
+			else if(updatetype == 0x2)
+			{
+				ACE_OS::system("chmod 777 Gb*") ;
+				ACE_OS::system("reboot") ;
+			}
+			else if(updatetype == 0x03)
+			{
+				ACE_OS::system("rm -f Gb.aiton") ;
+				ACE_OS::system("mv -f Gb.aiton.bak Gb.aiton");
+				ACE_OS::system("reboot") ;
+			}
 			break ;
+		}
 		case 0x05:
-			;
+		{
+			Byte updatetype = pBuf[iRecvIndex++] ;
+			if(updatetype == 0x01)
+			{
+				ACE_OS::system("mv -f GbAitonTsc.db GbAitonTsc.db.bak");
+			}
+			else if(updatetype == 0x2)
+			{
+				ACE_OS::system("chmod 777 GbAitonTsc*") ;
+				ACE_OS::system("reboot") ;
+			}
+			else if(updatetype == 0x03)
+			{
+				ACE_OS::system("rm -f GbAitonTsc.db") ;
+				ACE_OS::system("mv -f GbAitonTsc.db.bak GbAitonTsc.db");
+				ACE_OS::system("reboot") ;
+			}
 			break ;
+		}		
 		default:
 			break ;
 	}
