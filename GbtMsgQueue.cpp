@@ -4421,7 +4421,7 @@ void CGbtMsgQueue::ReworkNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay)
 	system(cIpAndMaskCmd);
 	system(cGatewayCmd);	
 	
-	RecordNetPara( cIpAndMaskCmd , cGatewayCmd );	
+	RecordNetPara(pIp , pMask , pGateWay);
 }
 
 
