@@ -917,27 +917,44 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 	pBuf[iSendIndex++] = ucTmp;
 	ucTmp = pTscCfg->sSpecFun[FUN_PORT_LOW].ucValue;
 	pBuf[iSendIndex++] = ucTmp;
-
 	//ip
-	pBuf[iSendIndex]   = pIp[0];
-	pBuf[iSendIndex+1] = pIp[1];
-	pBuf[iSendIndex+2] = pIp[2];
-	pBuf[iSendIndex+3] = pIp[3];
-	iSendIndex += 16;
+	
+		pBuf[iSendIndex]   = pIp[0];
+	
+		pBuf[iSendIndex+1] = pIp[1];
+	
+		pBuf[iSendIndex+2] = pIp[2];
+	
+		pBuf[iSendIndex+3] = pIp[3];
+	
+		
+	
+	
+	
+		//net mask
+	
+		pBuf[iSendIndex+4]	 = pMask[0];
+	
+		pBuf[iSendIndex+5] = pMask[1];
+	
+		pBuf[iSendIndex+6] = pMask[2];
+	
+		pBuf[iSendIndex+7] = pMask[3];
+	
+	
+	
+		//gate way
+	
+		pBuf[iSendIndex+8]	 = pGateway[0];
+	
+		pBuf[iSendIndex+9] = pGateway[1];
+	
+		pBuf[iSendIndex+10] = pGateway[2];
+	
+		pBuf[iSendIndex+11] = pGateway[3];
+	
+		iSendIndex += 12;
 
-	//net mask
-	pBuf[iSendIndex]   = pMask[0];
-	pBuf[iSendIndex+1] = pMask[1];
-	pBuf[iSendIndex+2] = pMask[2];
-	pBuf[iSendIndex+3] = pMask[3];
-	iSendIndex += 16;
-
-	//gate way
-	pBuf[iSendIndex]   = pGateway[0];
-	pBuf[iSendIndex+1] = pGateway[1];
-	pBuf[iSendIndex+2] = pGateway[2];
-	pBuf[iSendIndex+3] = pGateway[3];
-	iSendIndex += 16;
 	
 	/*
 	pBuf[iSendIndex++] = pHwEther[0];
@@ -1041,7 +1058,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			pBuf[iSendIndex+1] = pIp[1];
 			pBuf[iSendIndex+2] = pIp[2];
 			pBuf[iSendIndex+3] = pIp[3];
-			iSendIndex += 16;
+			iSendIndex += 4;
 			break;
 		case 7: //net mask
 			GetNetPara(pHwEther , pIp , pMask , pGateway);
@@ -1049,7 +1066,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			pBuf[iSendIndex+1] = pMask[1];
 			pBuf[iSendIndex+2] = pMask[2];
 			pBuf[iSendIndex+3] = pMask[3];
-			iSendIndex += 16;
+			iSendIndex += 4;
 			break;
 		case 8: //gate way
 			GetNetPara(pHwEther , pIp , pMask , pGateway);
@@ -1057,7 +1074,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			pBuf[iSendIndex+1] = pGateway[1];
 			pBuf[iSendIndex+2] = pGateway[2];
 			pBuf[iSendIndex+3] = pGateway[3];
-			iSendIndex += 16;
+			iSendIndex += 4;
 			break;
 		case 9:  //倒计时类型
 			ucTmp = pTscCfg->sSpecFun[FUN_COUNT_DOWN].ucValue;
@@ -1173,32 +1190,22 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	cIp[1] = *(pBuf+iRecvIndex + 1);
 	cIp[2] = *(pBuf+iRecvIndex + 2);
 	cIp[3] = *(pBuf+iRecvIndex + 3);
-	iRecvIndex += 16;
+	//iRecvIndex += 16;
 
 	//????????????????
-	cMask[0] = *(pBuf+iRecvIndex);
-	cMask[1] = *(pBuf+iRecvIndex + 1);
-	cMask[2] = *(pBuf+iRecvIndex + 2);
-	cMask[3] = *(pBuf+iRecvIndex + 3);
-	iRecvIndex += 16;
+	cMask[0] = *(pBuf+iRecvIndex+4);
+	cMask[1] = *(pBuf+iRecvIndex + 5);
+	cMask[2] = *(pBuf+iRecvIndex + 6);
+	cMask[3] = *(pBuf+iRecvIndex + 7);
+	//iRecvIndex += 16;
 
 	//????????IP??????·
-	cGateWay[0] = *(pBuf+iRecvIndex);
-	cGateWay[1] = *(pBuf+iRecvIndex + 1);
-	cGateWay[2] = *(pBuf+iRecvIndex + 2);
-	cGateWay[3] = *(pBuf+iRecvIndex + 3);
-	iRecvIndex += 16;
+	cGateWay[0] = *(pBuf+iRecvIndex+8);
+	cGateWay[1] = *(pBuf+iRecvIndex + 9);
+	cGateWay[2] = *(pBuf+iRecvIndex + 10);
+	cGateWay[3] = *(pBuf+iRecvIndex + 11);
+	iRecvIndex += 12;
 
-	//??????í??????· ????????????????
-	/*
-	cHwEther[0] = *(pBuf+iRecvIndex);
-	cHwEther[1] = *(pBuf+iRecvIndex + 1);
-	cHwEther[2] = *(pBuf+iRecvIndex + 2);
-	cHwEther[3] = *(pBuf+iRecvIndex + 3);
-	cHwEther[4] = *(pBuf+iRecvIndex + 4);
-	cHwEther[5] = *(pBuf+iRecvIndex + 5);
-	iRecvIndex += 6;
-	*/
 
 	ReworkNetPara(cIp,cMask,cGateWay);
 
@@ -1309,7 +1316,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			cIp[1] = *(pBuf+iRecvIndex + 1);
 			cIp[2] = *(pBuf+iRecvIndex + 2);
 			cIp[3] = *(pBuf+iRecvIndex + 3);
-			iRecvIndex += 16;
+			iRecvIndex += 4;
 			ReworkNetPara(cIp,NULL,NULL);
 			break;
 		case 7: //掩码
@@ -1317,7 +1324,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			cMask[1] = *(pBuf+iRecvIndex + 1);
 			cMask[2] = *(pBuf+iRecvIndex + 2);
 			cMask[3] = *(pBuf+iRecvIndex + 3);
-			iRecvIndex += 16;
+			iRecvIndex += 4;
 			ReworkNetPara(NULL,cMask,NULL);
 			break;
 		case 8:  //网关
@@ -1325,7 +1332,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			cGateWay[1] = *(pBuf+iRecvIndex + 1);
 			cGateWay[2] = *(pBuf+iRecvIndex + 2);
 			cGateWay[3] = *(pBuf+iRecvIndex + 3);
-			iRecvIndex += 16;
+			iRecvIndex += 4;
 			ReworkNetPara(NULL,NULL,cGateWay);
 			break;
 		case 9: //倒计时类型
