@@ -8,9 +8,8 @@ Description:通用处理函数
 Version:    V1.0
 History:    201310081456  yiodng testmem()
 ***************************************************************/
-#include<sys/ioctl.h>
+#include <sys/ioctl.h>
 #include <fcntl.h>
-
 #include "ComFunc.h"
 #include "ManaKernel.h"
 #include "DbInstance.h"
@@ -421,6 +420,108 @@ int GetSysEnyDevId(char *SysEnyDevId)
       
      return 0;
 }
+/**************************************************************
+Function:       GetMainBroadCdKey
+Description:    保存设置设备ID加密存储
+Input:          CdKey ：系统加密ID指针 
+Output:         无
+Return:         -1 - 产生加密设备ID失败 0 -产生加密设备ID成功
+***************************************************************/
+int GetMainBroadCdKey(char *CdKey)
+{
 
+	char CCdkey[8] = {0};
+	if(!Cdkey::GetCdkey(CCdkey))
+	{
+		return -1;
+	}
+     ACE_OS::strcpy(CdKey,CCdkey); 
+     ACE_DEBUG((LM_DEBUG,"%s:%d cdkey : %x !\n",__FILE__,__LINE__,&CdKey));
+     return 0;
+}
+
+bool VaildSN()
+{
+	char fileSN[8] = {0};
+	char deviceSN[8] = {0};
+	int i,bol;
+	ReadTscSN(fileSN);
+	GetMainBroadCdKey(deviceSN);
+	for(i=0; i<8; i++) 
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d fileSN: 0x%x  deviceSN: 0x%x!\n",__FILE__,__LINE__,fileSN[i],deviceSN[i]));
+	}
+	bol = ACE_OS::strcmp(fileSN,deviceSN);
+	if(bol == 0)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d sn VAILD TRUE !\n",__FILE__,__LINE__));
+		return true;
+	}
+	else
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d SN vaild false !\n",__FILE__,__LINE__));
+		return false;
+	}
+}
+
+void ReadTscSN(char *cdkey)
+{
+	
+	char tmp[8];
+	FILE *infile;
+	int rc;
+	infile = fopen("sn.dat", "rb");
+	if(infile == NULL)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d read File error !\n",__FILE__,__LINE__));
+		return ;
+	}
+	rc = fread(tmp,sizeof(char), 8,infile);
+	if(rc ==0)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d read File error !\n",__FILE__,__LINE__));
+		return ;
+	}
+	ACE_OS::strcpy(cdkey,tmp); 
+	fclose(infile);
+}
+
+/**************************************************************
+Function:       RecordTscStartTime
+Description:    记录系统开始运行时间，并写入日志			
+Input:          无        
+Output:         无
+Return:         无
+***************************************************************/
+void RecordTscSN()
+{
+#ifdef LINUX
+	
+	char tmp[8] = {0};
+	int i;
+	FILE *outfile, *infile;
+	infile = fopen("sn.dat","rb");
+	if(infile != NULL)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d  the file is exsit !\n",__FILE__,__LINE__));
+		fclose(infile);
+		return ;
+	}
+	outfile = fopen("sn.dat", "wb" );
+	GetMainBroadCdKey(tmp);
+	if( outfile == NULL)
+    {
+        ACE_DEBUG((LM_DEBUG,"%s:%d  open file error !\n",__FILE__,__LINE__));
+        return;
+    }   
+	for(i=0; i<8; i++) 
+	{	
+		//fwrite( tmp, sizeof(char), 8, outfile );
+		ACE_DEBUG((LM_DEBUG,"%s:%d  0x%x !\n",__FILE__,__LINE__,tmp[i]));	
+	}
+	fwrite( tmp, sizeof(char), 8, outfile );
+	fclose(outfile);
+#endif	
+}
 
 
