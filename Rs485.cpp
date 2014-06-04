@@ -32,6 +32,9 @@ History:
 
 #endif
 
+#define RS485_OTHER  "/dev/ttyO5"    //485其它功能输出
+#define RS485    "/dev/ttyO4"   //用于倒计时输出
+
 /**************************************************************
 Function:       CRs485::CRs485
 Description:    CRs485类构造函数，初始化串口
@@ -90,7 +93,7 @@ void CRs485::OpenRs485()
 #ifndef WINDOWS 
 	m_iRs485Ctrlfd = open(RS485, 0);
 #endif
-	 m_iRs485DataFd = CSerialCtrl::CreateInstance()->GetSerialFd(3);
+	 m_iRs485DataFd = CSerialCtrl::CreateInstance()->GetSerialFd(4);
 	//m_iRs485DataFd = Serial2::CreateInstance()->GetSerial2Fd();
 
 	if( m_iRs485Ctrlfd < 0 || m_iRs485DataFd < 0 )
