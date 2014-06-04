@@ -25,14 +25,19 @@ History:
 #include <termios.h>
 #endif
 
-#define SERIAL0  "/dev/ttySAC0"    //串口0
-#define SERIAL1  "/dev/ttySAC1"    //串口1
-#define SERIAL2  "/dev/ttySAC2"    //串口2
-#define SERIAL3  "/dev/ttySAC3"    //串口3
+#define SERIAL0  "/dev/ttyO0"    //串口0
+#define SERIAL1  "/dev/ttyO1"    //串口1
+#define SERIAL2  "/dev/ttyO2"    //串口2
+#define SERIAL3  "/dev/ttyO3"    //串口3
+#define SERIAL4  "/dev/ttyO4"	//485
+#define SERIAL5  "/dev/ttyO5"    //485
 
 #define SERIALNUM1  1
 #define SERIALNUM2  2
 #define SERIALNUM3  3
+#define SERIALNUM4  4
+#define SERIALNUM5  5
+
 /**************************************************************
 Function:       CSerialCtrl::CSerialCtrl
 Description:    CSerialCtrl类构造函数，用于类初始化串口				
@@ -45,6 +50,8 @@ CSerialCtrl::CSerialCtrl()
 	m_iSerial1fd = -1;
 	m_iSerial2fd = -1;
 	m_iSerial3fd = -1;
+	m_iSerial4fd = -1;
+	m_iSerial5fd = -1;
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init SerialCom object ok !\n",__FILE__,__LINE__));
 }
 
@@ -69,6 +76,14 @@ CSerialCtrl::~CSerialCtrl()
 	else if( m_iSerial3fd > 0 )
 	{
 		close(m_iSerial3fd);
+	}
+	else if( m_iSerial4fd > 0 )
+	{
+		close(m_iSerial4fd);
+	}
+	else if( m_iSerial5fd > 0 )
+	{
+		close(m_iSerial5fd);
 	}
 	#endif
 	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct SerialCom object ok !\n",__FILE__,__LINE__));
@@ -116,7 +131,16 @@ void CSerialCtrl::OpenSerial(short iSerNum)
 		m_iSerial3fd = open(SERIAL3, O_RDWR | O_NOCTTY | O_NONBLOCK);
 		iTmpSerFd = m_iSerial3fd ;
 	}
-	
+	else if(iSerNum == SERIALNUM4)
+	{
+		m_iSerial4fd = open(SERIAL4, O_RDWR | O_NOCTTY | O_NONBLOCK);
+		iTmpSerFd = m_iSerial4fd ;
+	}
+	else if(iSerNum == SERIALNUM5)
+	{
+		m_iSerial5fd = open(SERIAL5, O_RDWR | O_NOCTTY | O_NONBLOCK);
+		iTmpSerFd = m_iSerial5fd ;
+	}
 	cfmakeraw(&terminfo);
 
 	terminfo.c_iflag |= IGNBRK | IGNPAR | IXANY;
@@ -136,6 +160,14 @@ void CSerialCtrl::OpenSerial(short iSerNum)
 		else if(iSerNum == SERIALNUM3)
 		{
 			m_iSerial3fd = -1 ;		
+		}
+		else if(iSerNum == SERIALNUM4)
+		{
+			m_iSerial4fd = -1 ;		
+		}
+		else if(iSerNum == SERIALNUM4)
+		{
+			m_iSerial4fd = -1 ;		
 		}
 	}
 #endif
@@ -163,6 +195,15 @@ int CSerialCtrl::GetSerialFd(short iSerNum)
 	{
 		iTmpSerFd = m_iSerial3fd  ;	
 	}
+	else if(iSerNum == SERIALNUM4)
+	{
+		iTmpSerFd = m_iSerial4fd  ;	
+	}
+	else if(iSerNum == SERIALNUM5)
+	{
+		iTmpSerFd = m_iSerial5fd  ;	
+	}
+	//
 	if ( iTmpSerFd < 0 )
 	{
 #ifndef WINDOWS
@@ -181,7 +222,14 @@ int CSerialCtrl::GetSerialFd(short iSerNum)
 		{
 			iTmpSerFd = m_iSerial3fd  ;	
 		}
-
+		else if(iSerNum == SERIALNUM4)
+		{
+			iTmpSerFd = m_iSerial4fd  ;	
+		}
+		else if(iSerNum == SERIALNUM5)
+		{
+			iTmpSerFd = m_iSerial5fd  ;	
+		}
 	}
 	return iTmpSerFd;
 }
