@@ -60,7 +60,8 @@ CGbtMsgQueue::CGbtMsgQueue()
 	
 	//iPort |= pTscCfg->sSpecFun[FUN_PORT_LOW].ucValue;
 	//iPort |= pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue << 8;
-	Configure::CreateInstance()->GetInteger("COMMUNICATION","port",iPort);
+	Configure::CreateInstance()->GetInteger(ACE_TEXT("COMMUNICATION"),ACE_TEXT("port"),iPort);
+	
 	if ( iPort > MAX_GBT_PORT || iPort < MIN_GBT_PORT )
 	{
 		iPort = DEFAULT_GBT_PORT; //UDP数据通信端口
@@ -917,53 +918,28 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 	pBuf[iSendIndex++] = ucTmp;
 	ucTmp = pTscCfg->sSpecFun[FUN_PORT_LOW].ucValue;
 	pBuf[iSendIndex++] = ucTmp;
-	//ip
-	
-		pBuf[iSendIndex]   = pIp[0];
-	
-		pBuf[iSendIndex+1] = pIp[1];
-	
-		pBuf[iSendIndex+2] = pIp[2];
-	
-		pBuf[iSendIndex+3] = pIp[3];
-	
-		
-	
-	
-	
-		//net mask
-	
-		pBuf[iSendIndex+4]	 = pMask[0];
-	
-		pBuf[iSendIndex+5] = pMask[1];
-	
-		pBuf[iSendIndex+6] = pMask[2];
-	
-		pBuf[iSendIndex+7] = pMask[3];
-	
-	
-	
-		//gate way
-	
-		pBuf[iSendIndex+8]	 = pGateway[0];
-	
-		pBuf[iSendIndex+9] = pGateway[1];
-	
-		pBuf[iSendIndex+10] = pGateway[2];
-	
-		pBuf[iSendIndex+11] = pGateway[3];
-	
-		iSendIndex += 12;
 
+	//ip
+	pBuf[iSendIndex]   = pIp[0];
+	pBuf[iSendIndex+1] = pIp[1];
+	pBuf[iSendIndex+2] = pIp[2];
+	pBuf[iSendIndex+3] = pIp[3];
+	//iSendIndex += 16;
+
+	//net mask
+	pBuf[iSendIndex+4]   = pMask[0];
+	pBuf[iSendIndex+5] = pMask[1];
+	pBuf[iSendIndex+6] = pMask[2];
+	pBuf[iSendIndex+7] = pMask[3];
+	//iSendIndex += 16;
+
+	//gate way
+	pBuf[iSendIndex+8]   = pGateway[0];
+	pBuf[iSendIndex+9] = pGateway[1];
+	pBuf[iSendIndex+10] = pGateway[2];
+	pBuf[iSendIndex+11] = pGateway[3];
+	iSendIndex += 12;
 	
-	/*
-	pBuf[iSendIndex++] = pHwEther[0];
-	pBuf[iSendIndex++] = pHwEther[1];
-	pBuf[iSendIndex++] = pHwEther[2];
-	pBuf[iSendIndex++] = pHwEther[3];
-	pBuf[iSendIndex++] = pHwEther[4];
-	pBuf[iSendIndex++] = pHwEther[5];
-	*/
 }
 
 
@@ -1185,7 +1161,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 
 	CManaKernel::CreateInstance()->SetUpdateBit();
 
-	//ip
+		//ip
 	cIp[0] = *(pBuf+iRecvIndex);
 	cIp[1] = *(pBuf+iRecvIndex + 1);
 	cIp[2] = *(pBuf+iRecvIndex + 2);
@@ -1205,8 +1181,6 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	cGateWay[2] = *(pBuf+iRecvIndex + 10);
 	cGateWay[3] = *(pBuf+iRecvIndex + 11);
 	iRecvIndex += 12;
-
-
 	ReworkNetPara(cIp,cMask,cGateWay);
 
 }
@@ -1636,7 +1610,7 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 			break ;
 			}
 		case 0x04 :
-		{ 
+			{
 			Byte updatetype = pBuf[iRecvIndex++] ;
 			if(updatetype == 0x01)
 			{
@@ -1653,10 +1627,11 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 				ACE_OS::system("mv -f Gb.aiton.bak Gb.aiton");
 				ACE_OS::system("reboot") ;
 			}
+			
 			break ;
-		}
+			}
 		case 0x05:
-		{
+			{
 			Byte updatetype = pBuf[iRecvIndex++] ;
 			if(updatetype == 0x01)
 			{
@@ -1673,8 +1648,10 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 				ACE_OS::system("mv -f GbAitonTsc.db.bak GbAitonTsc.db");
 				ACE_OS::system("reboot") ;
 			}
+			
 			break ;
-		}		
+			}
+			
 		default:
 			break ;
 	}
@@ -4170,14 +4147,14 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 		if ( ( iRecvCount = (pGbtMsgQueue->m_sockLocal).recv(pBuf, MAX_BUF_LEN,addrRemote))  != -1 )		
 		{
 
-			#if 1
-			ACE_DEBUG((LM_DEBUG,"%s:%d Get %d Byte udp data:  ",__FILE__,__LINE__,iRecvCount));
-			for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
-			{
-				ACE_DEBUG((LM_DEBUG,"%x ",pBuf[iIndex]));
-			}
-			ACE_DEBUG((LM_DEBUG,"\n"));
-			#endif
+			//#if 1
+			//ACE_DEBUG((LM_DEBUG,"%s:%d Get %d Byte udp data:  ",__FILE__,__LINE__,iRecvCount));
+			//for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
+			//{
+				//ACE_DEBUG((LM_DEBUG,"%x ",pBuf[iIndex]));
+			//}
+			//ACE_DEBUG((LM_DEBUG,"\n"));
+			//#endif
 
 			ucDealDataIndex = pGbtMsgQueue->GetDealDataIndex(false , addrRemote);
 			
@@ -4190,7 +4167,7 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 				ACE_OS::memcpy(sMsg.pDataBuf,pBuf,iRecvCount);
 
 				pGbtMsgQueue->SendGbtMsg(&sMsg,sizeof(sMsg));
-				ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
+				//ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
 			}
 			else
 			{	///超过4个客户大小，无法再接收新数据
@@ -4419,29 +4396,27 @@ void CGbtMsgQueue::ReworkNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay)
 
 
 	ACE_OS::sprintf(cIpAndMaskCmd , "/sbin/ifconfig eth0 %d.%d.%d.%d netmask %d.%d.%d.%d up\n",
-									cIp[0]   , cIp[1]   , cIp[2]   , cIp[3] , 
-									cMask[0] , cMask[1] , cMask[2] , cMask[3] ) ;
+									cIp[0]   , cIp[1]   , cIp[2]   , cIp[3] , cMask[0] , cMask[1] , cMask[2] , cMask[3] ) ;
 	ACE_OS::sprintf(cGatewayCmd , "/sbin/route add default gw %d.%d.%d.%d\n",
-									cGateWay[0] , cGateWay[1] , cGateWay[2] , cGateWay[3] ) ;
-
-	system("/sbin/ifconfig eth0 down\n");	
-	system(cIpAndMaskCmd);
-	system(cGatewayCmd);	
-	
-	RecordNetPara(pIp , pMask , pGateWay);
+								   cGateWay[0] , cGateWay[1] , cGateWay[2] , cGateWay[3] ) ;
+	ACE_OS::system("/sbin/ifconfig eth0 down\n");	
+	ACE_OS::system(cIpAndMaskCmd);
+	ACE_OS::system(cGatewayCmd);	
+	//ACE_OS::printf("ip:mask: %s",cIpAndMaskCmd);	
+	//ACE_OS::printf("gateway: %s",cGatewayCmd);	
+	RecordNetPara(pIp , pMask , pGateWay);	
 }
 
 
 /**************************************************************
 Function:       CGbtMsgQueue::RecordNetPara
-Description:    永久修改网络配置参数
-Input:        
+Description:    永久修改网络配置参数Input:        
 				pIpAndMaskCmd - ip地址和网关命令
 				pGatewayCmd   - 网关命令
 Output:        	无
 Return:         无
 ***************************************************************/
-void CGbtMsgQueue::RecordNetPara(Byte* pIp , Byte* pMask , Byte* pGateway )
+void CGbtMsgQueue::RecordNetPara( Byte* pIp , Byte* pMask , Byte* pGateway )
 {
 	FILE* fpRcs      = NULL;	
 	char  sTmp[200] = {0};
@@ -4488,7 +4463,7 @@ void CGbtMsgQueue::RecordNetPara(Byte* pIp , Byte* pMask , Byte* pGateway )
 		return;
 	 //ACE_OS::printf("%s",sTmp);
 	 ACE_OS::fprintf(fpRcs, "%s", sTmp );	
-	 ACE_OS::fclose(fpRcs);		
+	 ACE_OS::fclose(fpRcs);	
 }
 
 
@@ -4505,9 +4480,10 @@ Return:         无
 void CGbtMsgQueue::GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* pGateway)
 {
 	FILE* fpRcs      = NULL;
-	char* pStart     = NULL;
+	char* pStart     = NULL;	
 	char  sTmp[200] = {0};
-	if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/eth0-setting", "r") ) )
+
+	if ( !(fpRcs = ACE_OS::fopen("/etc/eth0-setting", "r") ) )
 	{
 		return;
 	}
@@ -4565,13 +4541,14 @@ void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCn
 			if(*pstr == ':')
 				pData[ucIndex] = strtol(sTmp,NULL,16);
 			else
-				pData[ucIndex] = atoi(sTmp);			
+				pData[ucIndex] = atoi(sTmp);
+			
 			pStrart = ++pEnd;
 			ACE_OS::memset(sTmp , 0 , 8);
-		}	
+		}
+	
 		ucIndex++;
 	}
-
 	if ( (pEnd = strstr(pStrart," ")) != NULL )
 	{
 		ACE_OS::strncpy(sTmp , pStrart , pEnd - pStrart);
@@ -4579,6 +4556,7 @@ void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCn
 			pData[ucIndex] = strtol(sTmp,NULL,16);
 		else
 			pData[ucIndex] = atoi(sTmp);
+		
 	}
 	else
 	{
@@ -4588,6 +4566,8 @@ void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCn
 			pData[ucIndex] = atoi(pStrart);
 	}
 }
+
+
 
 /**************************************************************
 Function:       CGbtMsgQueue::TscCopyFile

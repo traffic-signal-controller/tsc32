@@ -140,8 +140,8 @@ void CManaKernel::InitWorkPara()
 	m_pRunData->bNeedUpdate  = false;
 	m_pRunData->ucLockPhase  = 0;
 	m_pRunData->bOldLock     = false;
-	m_pRunData->uiCtrl       = CTRL_SCHEDULE;
-	m_pRunData->uiOldCtrl    = CTRL_SCHEDULE;
+	m_pRunData->uiCtrl       = CTRL_UNKNOWN;
+	m_pRunData->uiOldCtrl    = CTRL_UNKNOWN;
 	m_pRunData->uiWorkStatus = FLASH;
 	m_pRunData->bStartFlash  = true;
 	m_pRunData->bIsChkLght   = false ;
@@ -434,7 +434,7 @@ void CManaKernel::SelectDataFromDb()
 		{
 			sscanf(pModule->strDevNode.GetData(),"DET-%d-%d",&iBoardIndex,&iDetId);			
 			m_pTscConfig->iDetCfg[iBoardIndex] = iDetId;
-			ACE_DEBUG((LM_DEBUG,"%s : %d m_pTscConfig->iDetCfg[%d] = %d\n",__FILE__,__LINE__,iBoardIndex,iDetId));
+			//ACE_DEBUG((LM_DEBUG,"%s : %d m_pTscConfig->iDetCfg[%d] = %d\n",__FILE__,__LINE__,iBoardIndex,iDetId));
 		}
 		pModule++;	
 		iIndex++;
@@ -1191,7 +1191,8 @@ void CManaKernel::OverCycle()
 				break;
 			default:
 				iCurTimePatternId = m_pRunData->ucTimePatternId > 0 ? m_pRunData->ucTimePatternId : 1;
-				if ( CDetector::CreateInstance()->HaveDetBoard() /*&& m_bPhaseDetCfg*/ 
+				/****************************************************************************************
+				if ( CDetector::CreateInstance()->HaveDetBoard() && m_bPhaseDetCfg*
 					&& CTRL_VEHACTUATED == m_pRunData->uiScheduleCtrl )  //存在检测器板且有配置检测器参数
 				{
 					ACE_DEBUG((LM_DEBUG,"%s:%d  switch break ",__FILE__,__LINE__));
@@ -1203,7 +1204,8 @@ void CManaKernel::OverCycle()
 					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
 					break;
 				}
-				else if ( CTRL_WIRELESS == m_pRunData->uiScheduleCtrl && m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset < 99 
+				****************************************************************************************/
+				 if ( CTRL_WIRELESS == m_pRunData->uiScheduleCtrl && m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset < 99 
 					&& CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )  //设置相位差并且开启gps
 				{
 					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
@@ -2844,7 +2846,12 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 		return;
 	}
 	
-	if ( (CTRL_MANUAL == m_pRunData->uiCtrl) && m_bSpePhase )  //当前的控制方式为手动特定相位，准备去除手动
+	if(uiCtrl == CTRL_SCHEDULE && m_pRunData->uiCtrl == CTRL_VEHACTUATED)
+	{
+		m_pRunData->bNeedUpdate = true ; //从感应降级到多时段，因为绿长由最小绿改变位实际阶段步长，需要重读数据库加载绿步时间 ADD:201405221200
+
+	} 
+	if((CTRL_MANUAL == m_pRunData->uiCtrl) && m_bSpePhase )  //当前的控制方式为手动特定相位，准备去除手动
 	{
 		SThreadMsg sTscMsgSts;
 		sTscMsgSts.ulType             = TSC_MSG_SWITCH_STATUS;  
@@ -2862,14 +2869,17 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 			if(m_pRunData->uiCtrl == CTRL_SCHEDULE )         //防止重复写入控制方式更改日志
 				return ;
 			else
-				uiCtrl    = CTRL_SCHEDULE;			
-			CMainBoardLed::CreateInstance()->DoModeLed(true,true);								
+				uiCtrl    = CTRL_SCHEDULE;	
+				bDegrade = true ;		
+			CMainBoardLed::CreateInstance()->DoModeLed(true,true);	
+										
 			ACE_DEBUG((LM_DEBUG,"%s:%d when no DecBoard ,new uiCtrl = %d \n" ,__FILE__,__LINE__,uiCtrl));
 		}
 		else if ( CTRL_ACTIVATE != uiCtrl )
 		{
 			m_pRunData->bNeedUpdate = true;   //需要获取检测器信息
-			ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
+			CMainBoardLed::CreateInstance()->DoModeLed(false,true);
+			//ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
 		}
 	}
 	if ( uiCtrl == CTRL_LAST_CTRL )  //上次控制方式
@@ -4076,15 +4086,15 @@ Return:         无
 **********************************************************************************/
 void CManaKernel::GetStageDetector(int iStageNo)
 {
-	Byte ucDelPhase          = 0;
-	Byte ucOverlapPhaseIndex = 0;
+	//Byte ucDelPhase          = 0;
+	//Byte ucOverlapPhaseIndex = 0;
 	Byte ucPhaseIndex        = 0;
 	int iNextStage           = iStageNo + 1;
 	int iNextStep            = 0;
 	int iCurStepNo           = StageToStep(iStageNo);
 	Uint iCurAllowPhase      = m_pRunData->sStageStepInfo[iCurStepNo].uiAllowPhase;
 	int iNextAllowPhase      = 0;
-	Uint iCurOverlapPhase    = m_pRunData->sStageStepInfo[iCurStepNo].uiOverlapPhase;
+	//Uint iCurOverlapPhase    = m_pRunData->sStageStepInfo[iCurStepNo].uiOverlapPhase;
 	Uint iNextOverlapPhase   = 0;
 	unsigned int uiTmp       = 0;
  
@@ -4109,7 +4119,7 @@ void CManaKernel::GetStageDetector(int iStageNo)
 		}
 		ucPhaseIndex++;
 	}
-
+	/*
 	//跟随相位
 	while ( ucOverlapPhaseIndex < MAX_OVERLAP_PHASE )
 	{
@@ -4127,7 +4137,7 @@ void CManaKernel::GetStageDetector(int iStageNo)
 
 		ucOverlapPhaseIndex++;
 	}
-
+	*/
 	m_uiStagePhase[iStageNo] |= iCurAllowPhase;
 }
 

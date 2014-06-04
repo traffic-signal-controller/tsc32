@@ -181,15 +181,15 @@ ACE_INT32 iVal = 0;
 		else if ( 17 == m_iDetCfg[iIndex] )
 		{
 			m_ucActiveBoard2 = iIndex;    // 17 - 32 对应的检测器板  m_ucActiveBoard2=1 16-31
-		}
-		else if(33 == m_iDetCfg[iIndex])
+		}	
+		else if(33 == m_iDetCfg[iIndex])  // 33-64对应接口板
 		{
 			m_ucActiveBoard3 = iIndex;
 		}
-		else if(65 == m_iDetCfg[iIndex])
+		else if(65 == m_iDetCfg[iIndex]) // 65-96对应接口板
 		{
 			m_ucActiveBoard4 = iIndex;
-		}
+		}	
 	}	
 	ACE_DEBUG((LM_DEBUG,"%s:%d DetBoard1 index = %d ,DetBoard2 index = %d \n",__FILE__,__LINE__,m_ucActiveBoard1,m_ucActiveBoard2));
 }
@@ -640,12 +640,12 @@ Return:         无
  void CDetector::SearchAllStatus()
  {
 	Byte ucIndex = 0;
-	static int iTick = 0;
-	unsigned int uiTclCtl = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
+	//static int iTick = 0;
+	//Uint uiTclCtl = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
 
 	while ( ucIndex < MAX_DET_BOARD )
 	{
-		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&& ( m_iDetCfg[ucIndex] != 0 ) && iTick%5 == 0)
+		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&&  m_iDetCfg[ucIndex] != 0 )
 		{
 			
 			//SelectBrekonCardStatus(ucIndex, ucIndex);  //第iIndex片检测器板车辆状态及故障状态 MOD:20130723 1620
@@ -659,16 +659,11 @@ Return:         无
 		ucIndex++;
 	}
 		
-		iTick++;
-		if ( iTick >= MAX_REGET_TIME )  // 1S一次检查车检板状态和有无车情况
-		{
-			iTick = 0;
-		}
-	
-	if ( (CTRL_VEHACTUATED == uiTclCtl) || (CTRL_MAIN_PRIORITY == uiTclCtl) || (CTRL_SECOND_PRIORITY == uiTclCtl) ) 
-	{
-		IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
-	}
+		//iTick++;
+	//	if ( iTick >= MAX_REGET_TIME )  // 1S一次检查车检板状态和有无车情况
+		//{
+		//	iTick = 0;
+		//}
 
 }
 
@@ -1374,7 +1369,7 @@ Output:         无
 Return:         true:存在  false:不存在
 ***************************************************************/
 bool CDetector::HaveDetBoard()
-{		
+{	
 	int iDetId = 0;
 	int iMaxDetId = 0 ;
 	int iBoardIndex = 0;
@@ -1624,8 +1619,7 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		
 	Byte ucDetBoardIndex = 0;
 	Byte ucValueTmp = 0;
-	Byte RecvType = sRecvCanTmp.pCanData[0] & 0x3F ;		 
-	
+	Byte RecvType = sRecvCanTmp.pCanData[0] & 0x3F ;	
 	//ACE_DEBUG((LM_DEBUG,"%s:%d Get from DetBoard:%x!\n",__FILE__,__LINE__,ucBoardAddr));
 	switch ( ucBoardAddr )
 	{
@@ -1648,19 +1642,18 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		
 		if ( DET_HEAD_VEHSTS ==RecvType )
 		{			
-				//数据字节只使用到两个字节接口板4个字节
- 			for ( int i=1; i<sRecvCanTmp.ucCanDataLen; i++ )
+				//数据字节只使用到两个字节
+			for ( int i=1; i<sRecvCanTmp.ucCanDataLen; i++ )
 			{				
 				ucValueTmp = sRecvCanTmp.pCanData[i];			
 				Byte iDetId = 0 ;
 				for ( int j=0; j<8; j++ )
 				{
+					//iDetId = ucDetBoardIndex*16+(i-1)*8+j ;
 					if(ucDetBoardIndex <2)
-						iDetId = ucDetBoardIndex*16+(i-1)*8+j ;    //检测器板
+						iDetId = ucDetBoardIndex*16+(i-1)*8+j ;
 					else 
-						iDetId = (ucDetBoardIndex-1)*32+(i-1)*8+j ; //接口板
-					
-					
+						iDetId = (ucDetBoardIndex-1)*32+(i-1)*8+j ;
 					m_iDetStatus[iDetId] = (ucValueTmp >> j) & 0x01;
 					if((ucValueTmp >> j) & 0x1)
 					{
@@ -1693,9 +1686,9 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 				for ( int j=0; j<8; j++ )
 				{
 					if(j%2 == 0)
-					{
+					{						
 						if(ucDetBoardIndex >2)
-								return ; //接口板暂不处理状态
+							return ; //接口板暂不处理状态
 						ucDecId = 16*ucDetBoardIndex+(i-1)*4+j/2 ;
 						if (pManakernel->m_pTscConfig->sDetector[ucDecId].ucDetectorId == 0 || 
 							pManakernel->m_pTscConfig->sDetector[ucDecId].ucPhaseId == 0)     

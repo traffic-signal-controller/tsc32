@@ -8,7 +8,7 @@ SQLLIB  = /opt/sqlite-autoconf-3071401/build/lib/libsqlite3.so
 LINKFLAG = #-static
 CC  = arm-linux-g++
 #CC  = g++
-# -DNDEBUG -g 
+DEBUG =  
 LIB     =  -L $(ACE_ROOT)/ace  -l pthread  -l rt -l dl  # -L$(ACE_ROOT)/ace -lACE
 ACELIB =  $(ACE_ROOT)/ace/libACE.so
 PTHREADLIB= # $(LDFLAGS)/libpthread.a
@@ -17,7 +17,7 @@ DLLIB= # $(LDFLAGS)/libdl.a
 DEST =  Gb.aiton
 all:	$(DEST) Makefile
 %.o: %.cpp
-	$(CC) -c $(CFLAGS) $< -o $@ $(INCLUDE) -I$(ACE_ROOT) -L$(ACE_ROOT)/ace
+	$(CC) $(DEBUG) -c  $(CFLAGS) $< -o $@ $(INCLUDE) -I$(ACE_ROOT) -L$(ACE_ROOT)/ace
 clean:
 	rm -rf *.o *.aiton
 Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
@@ -30,7 +30,7 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
 	 	  MacControl.o	 Manual.o		 SignalDefaultData.o  SerialCtrl.o Configure.o
 
 
-	$(CC) $(LIB) $(CFLAGS) $(LINKFLAG) \
+	$(CC) $(DEBUG) $(LIB) $(CFLAGS) $(LINKFLAG) \
 	$(ACELIB) $(PTHREADLIB) $(RTLIB) $(DLLIB) $(SQLLIB) \
 		GbtTimer.o      PowerBoard.o    IoOperate.o     \
         DbInstance.o   GbtDb.o         PscMode.o       TscMsgQueue.o     \

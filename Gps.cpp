@@ -14,6 +14,7 @@ History:
 #include "TscMsgQueue.h"
 #include "GbtMsgQueue.h"
 #include "ManaKernel.h"
+#include "Rs485.h"
 
 #ifndef WINDOWS
 #include <strings.h>
@@ -87,15 +88,16 @@ void* CGps::RunGpsData(void* arg)
 	}	
 	ACE_DEBUG((LM_DEBUG,"\n%s:%d Begin to adjust GPS time!\n",__FILE__,__LINE__));
 	m_bNeedGps = true;
+	CRs485::CreateInstance()->CtrolGPPIo(0,10) ; //Open Gps io gpp10	
 #ifndef WINDOWS
 	while ( m_bNeedGps ) 
-	{
-		
-		if ( read(m_iGpsFd, pBuf,1) <= 0 )
+	{		
+		if ( read(m_iGpsFd, pBuf,128) <= 0 )
 		{
-			ACE_OS::sleep(ACE_Time_Value(0,100*1000));
+			ACE_OS::sleep(ACE_Time_Value(0,100*1000));			
 			continue;
-		}		
+		}
+	
 		if ( '$' == *pBuf )
 		{
 			pBuf++;
@@ -134,6 +136,7 @@ void* CGps::RunGpsData(void* arg)
 		{
 			pBuf = m_cBuf;
 		}
+
 	}
 	#endif
 
@@ -267,7 +270,7 @@ void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSe
 #ifndef WINDOWS
 	time_t Ttime;
 	struct tm *pTheTime, *pLocalTime;
-	FILE *fpGps = NULL;
+	//FILE *fpGps = NULL;
 	SThreadMsg sTscMsg;
 
 	Ttime = time(NULL);
@@ -281,21 +284,19 @@ void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSe
 	Ttime = mktime(pTheTime);
 
 	Ttime += 8 * 60 * 60;
-	if ( (Ttime > m_tLastTi) && (Ttime - m_tLastTi < 14400 ) )  
+	if ( (Ttime > m_tLastTi) && (Ttime - m_tLastTi < 300 ) )  
 	{	
 		m_bGpsTime = false ;
 		return;
 	}
 	m_bGpsTime = true ;
 	m_tLastTi = Ttime ;
-
 	pLocalTime = localtime(&Ttime);	
-	fpGps = fopen(GPSFILE,"a+");
-	if ( fpGps != NULL )
-	{
-		fprintf(fpGps, "gps time: %d-%d-%d %d:%02d:%02d\n", pLocalTime->tm_year+1900, pLocalTime->tm_mon+1,                               						   pLocalTime->tm_mday,pLocalTime->tm_hour, pLocalTime->tm_min, pLocalTime->tm_sec);
-		fclose(fpGps);
-	}
+	
+	char sgpstime[100]={0} ;
+	ACE_OS::sprintf(sgpstime,"echo SysTime:$(date) GpsTime: %d-%d-%d %d:%02d:%02d >>GpsTime.info", pLocalTime->tm_year+1900, pLocalTime->tm_mon	 +1,pLocalTime->tm_mday,pLocalTime->tm_hour, pLocalTime->tm_min, pLocalTime->tm_sec);	
+	ACE_OS::system(sgpstime);
+
 	Ttime += 8 * 60 * 60;
 	sTscMsg.ulType       = TSC_MSG_CORRECT_TIME;
 	sTscMsg.ucMsgOpt     = OBJECT_UTC_TIME;

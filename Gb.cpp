@@ -8,6 +8,7 @@ Version:    V1.0
 History:
 ***************************************************************/
 
+
 #include "ace/Process_Mutex.h"
 #include "ace/SOCK_Dgram_Bcast.h"
 
@@ -47,7 +48,9 @@ int main(int argc, char *argv[])
 	}
 	//ACE_OS::sleep(5); //等待初始化系统静态对象 201405041045
 	//CheckSystemTime(); //检查修正系统时间	
+
 	RunGb();	       //系统核心入口函数
+	 
 	ationMutex.release();
 	return 0; 
 }
@@ -68,6 +71,7 @@ static void* SignalMsgQueue(void *arg)
 }
 
 
+
 /**************************************************************
 Function:        GbtMsgQueue
 Description:    gbt消息处理队列线程函数。				
@@ -81,6 +85,7 @@ static void* GbtMsgQueue(void* arg)
 	CGbtMsgQueue::CreateInstance()->DealData();
 	return 0;
 }
+
 
 
 /**************************************************************

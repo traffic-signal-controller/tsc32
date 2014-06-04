@@ -156,7 +156,7 @@ public:
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex);
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId);
 	void ReworkNetPara(Byte* cIp ,Byte* cMask,Byte* cGateWay);
-	void RecordNetPara( Byte* pIp , Byte* pMask , Byte* pGateway  );
+	void RecordNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay);
 	void GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* pGateway);
 	void InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCnt);
 
@@ -197,7 +197,7 @@ private:
 	int GetManualCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl);
 
 	void TscCopyFile(char* fpSrc, char* fpDest);
-	void ReworkIp(Byte ucIp1,Byte ucIp2,Byte ucIp3,Byte ucIp4);
+	
 	
 	void GetWatchPara(Byte* pBuf,int *iSendIndex);
 	void GetModuleStatus(Byte* pBuf,int *iSendIndex);

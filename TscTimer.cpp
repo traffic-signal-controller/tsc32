@@ -80,13 +80,8 @@ Return:         0
 int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /* = 0 */)
 {
 	
-	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-	//static Uint iCanRestartNum = 0 ;
-	
-	pManual->DoManual() ;     // ADD:0514 9:42
-	
-	if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-		pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
+	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931	
+	pManual->DoManual() ;     // ADD:0514 9:42	
 	
 	switch ( m_ucTick )
 	{
@@ -97,23 +92,12 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	case 1:
 		//pMacControl->GetEnvSts(); 
-		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28		
+		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28	
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+		pDetector->SearchAllStatus();  //ADD: 2013 0723 1620	
 		pMacControl->SndLcdShow() ; //ADD:201309281710
 		break;
-	case 2: 		
-		//CPowerBoard::iHeartBeat++;
-		if(CPowerBoard::iHeartBeat >1)
-		{	/*
-			ACE_DEBUG((LM_DEBUG,"%s:%d can0 death 900ms and insert to log !\n",__FILE__,__LINE__));
-			ACE_OS::system("up link set can0 up type can restart");
-			CPowerBoard::iHeartBeat = 0;	
-			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);	
-			iCanRestartNum++;
-			if(iCanRestartNum >= 50)	
-				ACE_OS::system("reboot");	
-			*/
-			;
-		}
+	case 2: 	
 		pPower->CheckVoltage();
 		break;
 
@@ -130,7 +114,10 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 4:
 		//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 		//	pDetector->GetOccupy();  //
-		
+		if (pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )
+		{
+			pDetector->IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
+		}
 		break;
 
 	case 5://500ms 执行一次

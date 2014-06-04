@@ -16,6 +16,7 @@ public:
 	bool Send(Byte* pBuffer, int iSize);
 	bool Recvice(Byte* pBuffer , int iSize);
 	void Reopen();
+	void CtrolGPPIo(Byte iOnorOff, Byte iIo) ; //ADD 201405091700
 
 private:
 	CRs485();

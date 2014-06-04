@@ -438,10 +438,12 @@ void * Can::DealCanData(void* arg)
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR2, sRecvFrameTmp);// ADD: 2013 0710 1039	
 				break;
 			case BOARD_ADDR_INTEDET1 :
-				ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET1\n"));				
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET1\n"));
+				 pDector->RecvDetCan(BOARD_ADDR_INTEDET1, sRecvFrameTmp);// ADD: 2014 0504 1039					
 				break;
 			case BOARD_ADDR_INTEDET2 :
-				ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET2\n"));				
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET2\n"));	
+				pDector->RecvDetCan(BOARD_ADDR_INTEDET2, sRecvFrameTmp);// ADD: 2014 0504 1039					
 				break;
 			case BOARD_ADDR_FLASH:
 				pFlash->RecvFlashCan(sRecvFrameTmp) ; //ADD: 2013 0712 1543

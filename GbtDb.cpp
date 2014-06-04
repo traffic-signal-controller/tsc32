@@ -5167,7 +5167,7 @@ bool CGbtTscDb::DelEventLog(Byte uEvtTypeId ,Uint uStartTime ,Uint uEndTime)
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
         return false;
     }
-
+	return true ;
 }
 
 
@@ -5368,7 +5368,7 @@ bool CGbtTscDb::GetLogMaxMin(Uint32* pMaxId, Uint32* pMinId)
 	}
 
 	ACE_OS::memset(sSql, 0, LARGE_BUF_SIZE);
-	ACE_OS::sprintf(sSql, "select %s from %s where %s=(select min(%s) from %s)"
+	ACE_OS::sprintf(sSql, "select %s from %s where %s=(select min(%s) from %s limit 1)"
 							,Table_Desc[TBL_EVENTLOG].sFieldName[0]
 							,Table_Desc[TBL_EVENTLOG].sTblName
 							,Table_Desc[TBL_EVENTLOG].sFieldName[2]
@@ -5410,7 +5410,7 @@ bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong
 	CSqliteRst  qryRst;
 
 	ACE_OS::memset(sSql, 0 , LARGE_BUF_SIZE);
-	if ( *pMaxId < 3000 )
+	if ( *pMaxId < 255 )
 	{
 		uiCurEventId = *pMaxId + 1;
 		ACE_OS::sprintf(sSql, "insert into %s values( %u, %u, %lu, %lu,datetime('now','localtime'))",
@@ -5424,7 +5424,7 @@ bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong
 	else  
 	{
 		uiCurEventId = *pMinId;
-		ACE_OS::sprintf(sSql, "update %s set %s=%u,%s=%u,%s=%lu where %s=%u",
+		ACE_OS::sprintf(sSql, "update %s set %s=%u,%s=%u,%s=%lu ,%s = datetime('now','localtime') where %s=%u",
 			Table_Desc[TBL_EVENTLOG].sTblName,
 			Table_Desc[TBL_EVENTLOG].sFieldName[1],
 			uEvtType,
@@ -5432,12 +5432,14 @@ bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong
 			(int)tCurrent,
 			Table_Desc[TBL_EVENTLOG].sFieldName[3],
 			uEvtValue,
+			Table_Desc[TBL_EVENTLOG].sFieldName[4],
+			
 			Table_Desc[TBL_EVENTLOG].sFieldName[0],
 			uiCurEventId);
 
-		uiCurEventId++;
+			uiCurEventId++;
 
-		*pMinId = uiCurEventId > 3000 ? 1 : uiCurEventId; 
+		*pMinId = uiCurEventId > 255 ? 1 : uiCurEventId; 
 	}
 
     if ( !ExecuteCmd(sSql) )

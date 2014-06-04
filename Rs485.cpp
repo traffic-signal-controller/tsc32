@@ -311,3 +311,11 @@ int CRs485::SetOpt(int fd,int nSpeed,int nBits, char nEvent, int nStop)
 
 	return 0;
 }
+
+
+void CRs485::CtrolGPPIo(Byte iOnorOff, Byte iIo)
+{
+	#ifndef WINDOWS
+		ioctl(m_iRs485Ctrlfd, iOnorOff,iIo);
+	#endif
+}

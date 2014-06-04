@@ -29,11 +29,11 @@ Configure::Configure():impExp_(NULL)
 		ACE_DEBUG((LM_DEBUG,"%s:%d Init configure file fail !\n",__FILE__,__LINE__));
 			 
 	}
-	if(open("tsc.ini") == -1)
-	{
-		cout<<"open configure file error!\n";	
-  	}
-             
+     if(open("tsc.ini") == -1)
+  	{
+		cout<<"open configure file error!\n";
+	
+ 	 }      
 }
  
 Configure::~Configure()
@@ -84,7 +84,7 @@ bool Configure::InitConfig()
 	{	
 		if((fConfig = ACE_OS::fopen(ACE_TEXT("tsc.ini"), "w+")) == NULL)
 			return false ;
-		ACE_OS::fputs("#Traffic Signal Control Configure",fConfig);
+		ACE_OS::fputs("\n#Traffic Signal Control Configure",fConfig);
 		ACE_OS::fputs("\n[APPDESCRIP]",fConfig);
 		ACE_OS::fputs("\napplication   =Gb.aiton",fConfig);
 		ACE_OS::fputs("\ndatebase      =GbAitonTsc.db",fConfig);
