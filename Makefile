@@ -17,7 +17,7 @@ clean:
 Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
           DbInstance.o   GbtDb.o         PscMode.o       TscMsgQueue.o     	\
           Detector.o     Gps.o           Rs485.o         TscTimer.o         \
-          FlashMac.o     LampBoard.o       				  WatchDog.o         \
+          FlashMac.o     LampBoard.o     Cdkey.o  				  WatchDog.o         \
           GaCountDown.o  Log.o           Coordinate.o       \
           GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o 		\
           GbtMsgQueue.o  Gb.o            Can.o         	ComFunc.o		\
@@ -29,7 +29,7 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
 		GbtTimer.o      PowerBoard.o    IoOperate.o     \
         DbInstance.o   GbtDb.o         PscMode.o       TscMsgQueue.o     \
         Detector.o     Gps.o           Rs485.o         TscTimer.o        \
-        FlashMac.o     LampBoard.o      					WatchDog.o        \
+        FlashMac.o     LampBoard.o     Cdkey.o 					WatchDog.o        \
         GaCountDown.o  Log.o           Coordinate.o     \
         GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o      \
         GbtMsgQueue.o  Gb.o         	Can.o 			ComFunc.o      \
