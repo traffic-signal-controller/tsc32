@@ -1098,13 +1098,15 @@ void CManaKernel::OverCycle()
 	
 		if ( (m_pRunData->uiWorkStatus!=FLASH) && (m_pRunData->uiWorkStatus!=ALLRED) && (m_pRunData->uiWorkStatus!=SIGNALOFF) )
 		{
-			//ValidSoftWare();
-			//if(bValidSoftWare == false)
-			//{
-				//CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_SYSTEMCONTROL,254);
-				//return ;
-			//}	
-
+			//----->开启序列号验证
+			bValidSoftWare = VaildSN();
+			if(bValidSoftWare == false)
+			{
+				//pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);
+				CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_SYSTEMCONTROL,255);
+				return ;
+			}	//---------<结束序列号验证
+			
 			switch ( m_pRunData->uiCtrl )
 			{
 			case CTRL_MANUAL:
@@ -4718,8 +4720,8 @@ void CManaKernel::ValidSoftWare()
 	{
 		char SerialNum1[32]={0};
 		char SerialNum2[32]={0};
-		
-		(CDbInstance::m_cGbtTscDb).GetEypSerial(SerialNum1);
+		//在6410开发板上用的是，密码保存到数据库
+		//(CDbInstance::m_cGbtTscDb).GetEypSerial(SerialNum1);
 		GetSysEnyDevId(SerialNum2);
 
 		//ACE_DEBUG((LM_DEBUG,"%s:%d SerialNum1:%s SerialNum2:%s\n",__FILE__,__LINE__,SerialNum1,SerialNum2));
