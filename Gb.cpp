@@ -157,7 +157,7 @@ void RunGb()
 	
 	CManaKernel::CreateInstance()->InitWorkPara();  //初始化信号参数
 	RecordTscStartTime();   //记录系统开启时间
-	
+	RecordTscSN();
 	/********************************************************************************/
 	if ( ACE_Thread::spawn((ACE_THR_FUNC)SignalMsgQueue,  //开启信号核心控制队列
 							0,
