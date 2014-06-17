@@ -8,7 +8,8 @@ Version:    V1.0
 History:    2013.05.29 修改按钮按下和松开的处理。
 		  2013.05.31 添加当手动状态维护5分钟以上时自动切换为自动状态.。
 		  2013.09.10 修改按钮接收处理方式，简化代码。
-		  2014.010.06 修改按钮接受处理方式，由位移循环判断修改位读取键值进行判断
+		  2014.10.06 修改按钮接受处理方式，由位移循环判断修改位读取键值进行判断
+		  2014.05.22 沈阳16相位特殊处理，添加北东南西4个方向的按键。
 ********************************************************************************************/
 #include "Manual.h"
 #include "TscMsgQueue.h"
@@ -16,27 +17,22 @@ History:    2013.05.29 修改按钮按下和松开的处理。
 #include "MainBoardLed.h"
 #include "ManaKernel.h"
 #include "GbtMsgQueue.h"
-#include "DbInstance.h"
+#include "DbInstance.h"  //ADD:201403311050
 
 #define MANUAL_TO_AUTO_TIME 10  //无人手控状态切换到自动运行状态时间，单位分钟
 
-/*
-当前手控状态类型枚举
+#define NORTH 0
+#define EAST  1
+#define SOUTH 2
+#define WEST  3
+static Byte directype = 0x0 ;        //方向类型 0-北方 1- 东方 2- 南方 3-西方
+static Byte  lastdirectype = 0xff;  //保存上次方向按键值
+static bool bDirecControl = false ;
 
-enum
-{
-	MAC_CTRL_NOTHING    = 0x00 , //未有任何手控操作
-	MAC_CTRL_ALLOFF     = 0x01 , //灭灯
-	MAC_CTRL_ALLRED     = 0x02 , //全红
-	MAC_CTRL_FLASH      = 0x03 , //黄闪
-	MAC_CTRL_NEXT_PHASE = 0x04 , //下一相位
-	MAC_CTRL_NEXT_DIR   = 0x05 , //下一方向
-	MAC_CTRL_NEXT_STEP  = 0x06 , //步进
-	MAC_CTRL_OTHER      = 0x07 , //保留
-};
-*/
-static int key_value = 0;
-static int deadmanual = 0 ;
+static int key_value = 0x0;
+static int deadmanual = 0x0 ;
+
+
 CManaKernel * pManaKernel = CManaKernel::CreateInstance();
 
 SThreadMsg sTscMsg;
@@ -59,6 +55,7 @@ Manual::Manual()
 	ManualKey = 0 ; 
 	m_ucRedFlash = 0 ;
 	OpenDev();
+	ACE_DEBUG((LM_DEBUG,"%s:%dInit Manual Object ok !\n",__FILE__,__LINE__));
 }
 
 /**************************************************************
@@ -70,7 +67,7 @@ Return:         无
 ***************************************************************/
 Manual::~Manual() 
 {
-	;
+	ACE_DEBUG((LM_DEBUG,"Destruct Manual Object ok !\n"));
 }
 
 /**************************************************************
@@ -148,7 +145,8 @@ void Manual::DoManual()
 		{
 			case 0:
 			{
-				if(last_kval == 2)
+									
+				if(last_kval == 2 )
 				{
 					if (m_ucManual==1)
 					{
@@ -172,9 +170,11 @@ void Manual::DoManual()
 					pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,5,0,0,0);		
 					ACE_DEBUG((LM_DEBUG,"%s:%d Exit PANEL ALLREAD!\n",__FILE__,__LINE__));
 				}
+				else
+					return ;
 				break ;
 			}
-			case 3:
+			case 13:
 				{
 					if(m_ucManual==1)
 					{
@@ -186,7 +186,27 @@ void Manual::DoManual()
 					break ;
 				}
 			case 2:
-				{						
+			case 240:
+				{	
+					if(key_value == 240)
+					{				
+					 	bDirecControl = !bDirecControl ;
+						if(!bDirecControl)
+						{
+							if (m_ucManual==1)
+							{
+								ManualKey = 0 ;
+								m_ucManual = 0;	
+								lastdirectype = 0xff;							
+								m_ucManualSts = MAC_CTRL_NOTHING;
+								CMainBoardLed::CreateInstance()->DoAutoLed(true);						
+								pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,1,0,0,0);	
+								//ACE_DEBUG((LM_DEBUG,"%s:%d Get back to normal from wireless control! !\n",__FILE__,__LINE__));							
+							 break ; 	
+							}
+						
+						}				 
+					}					
 					if(last_kval == 0)
 					{					
 						m_ucManual = 1;
@@ -194,11 +214,10 @@ void Manual::DoManual()
 						pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,0,0,0,0);								
 						ACE_DEBUG((LM_DEBUG,"%s:%d PANEL Manual button be pushed!\n",__FILE__,__LINE__));			
 						
-					}
-	
+					}	
 					else
 						return ;
-				break ;
+					break ;
 				}
 			case 4:
 			{				
@@ -226,37 +245,49 @@ void Manual::DoManual()
 				ACE_DEBUG((LM_DEBUG,"%s:%d PANEL ALLRED button be pushed!\n",__FILE__,__LINE__));
 				break;			
 			
-			}		
-			case 18:
-			{
-				
+			}				
+			case 16:    //北方按键
+			case 32:    //东方按键
+			case 64:    //南方按键
+			case 128:   //西方按键
+			case 3 :   //面板下一方向
+			//case 3:
+			{										
 				if(m_ucManual==1)
-				{
-					if(ManualKey != 4)	
-						ManualKey =4 ;
-					m_ucManualSts = MAC_CTRL_NEXT_PHASE;
-				}				
-				ACE_DEBUG((LM_DEBUG,"%s:%d PANEL Next Stage button be pushed! \n",__FILE__,__LINE__));	
-				break ;
-			}			
-			case 34 :
-			{							
-				if(m_ucManual==1)
-				{
-					if(ManualKey != 5)	
-						ManualKey =5 ;
+				{					
 					m_ucManualSts =MAC_CTRL_NEXT_DIR;
+					switch(key_value)
+					{
+						case 16:						
+							directype = NORTH ;
+							ACE_DEBUG((LM_DEBUG,"%s:%d North Allow!! \n",__FILE__,__LINE__));
+							//break ;
+						case 32:						
+							directype = EAST ;
+							ACE_DEBUG((LM_DEBUG,"%s:%d East Allow!! \n",__FILE__,__LINE__));
+							//break ;
+						case 64:						
+							directype = SOUTH ;
+							//ACE_DEBUG((LM_DEBUG,"%s:%d South Allow!! \n",__FILE__,__LINE__));
+							break;
+						case 128:
+							directype = WEST ;
+							//ACE_DEBUG((LM_DEBUG,"%s:%d West Allow!! \n",__FILE__,__LINE__));
+							break ;
+						default:
+							break;
+					}
 				}	
-				ACE_DEBUG((LM_DEBUG,"%s:%d PANEL Next Direc button be pushed! \n",__FILE__,__LINE__));
-				break;				
-			
+				
+				break;
 			}
+		
 			default:
 				last_kval = key_value; 
 				return ;
 					
 		}
-		last_kval = key_value;  		
+		last_kval = key_value;  	
 
 		if ( m_ucManualSts == m_ucLastManualSts  && m_ucManual == m_ucLastManual )
 		{
@@ -275,7 +306,8 @@ void Manual::DoManual()
 		 }			
 		else
 			return ;	
-	}
+		}
+
 	if(m_ucManualSts == MAC_CTRL_FLASH)
 		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , MAC_CTRL_FLASH);
 	else if(m_ucManualSts ==MAC_CTRL_ALLRED)
@@ -309,9 +341,12 @@ void Manual::DoManual()
 	else if ( 1 == m_ucManual )  //手动
 	{
 		if ( 0 == m_ucLastManual )  //上次非手动
-		{			
-			pGbtMsgQueue->SendTscCommand(OBJECT_CURTSC_CTRL,4);
-			ACE_DEBUG((LM_DEBUG,"%s:%d First Send  Manual TscMsg! \n",__FILE__,__LINE__));
+		{	
+			if(bDirecControl == true)	
+				pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,253); //第一次进入方向按键手控，要全红
+			else
+				pGbtMsgQueue->SendTscCommand(OBJECT_CURTSC_CTRL,4); //其他进入手控只改变控制方式
+				ACE_DEBUG((LM_DEBUG,"%s:%d Begin change to  Manual Control! \n",__FILE__,__LINE__));
 		}		
 		if ( MAC_CTRL_NEXT_STEP == m_ucManualSts )  //步进
 		{
@@ -340,73 +375,60 @@ void Manual::DoManual()
 			ACE_DEBUG((LM_DEBUG,"%s:%d Send MAC_CTRL_NEXT_PHASE TscMsg !\n",__FILE__,__LINE__));
 			//pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,7,0,0,0);  上位机暂时不支持下一阶段日志
 		}
-		else if ( MAC_CTRL_NEXT_DIR == m_ucManualSts )  //下一方向
+		else if ( MAC_CTRL_NEXT_DIR == m_ucManualSts )  //遥控器北东南西按键控制特殊方案
 		{
+			if(lastdirectype == directype)
+				return ;
+			else
+				lastdirectype = directype ;
+			
 			if(pManaKernel->m_iTimePatternId == 0)
 			{	
 				pManaKernel->bTmpPattern = true ;
-				pManaKernel->m_iTimePatternId = 250;
-				sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //从特殊方案返回原来状态
-				sTscMsg.ucMsgOpt     = 0;
-				sTscMsg.uiMsgDataLen = 1;
-				sTscMsg.pDataBuf     = NULL;
-				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
+				pManaKernel->m_iTimePatternId = 250;//运行四方向切换				
 				ACE_DEBUG((LM_DEBUG,"%s:%d Send TSC_MSG_TIMEPATTERN -> 250 TscMsg !\n",__FILE__,__LINE__));
-			}
-			else if(pManaKernel->bNextDirec == false)
-			{
-				ACE_DEBUG((LM_DEBUG,"%s:%d Manual:bNextDirec being false ,waiting..... !\n",__FILE__,__LINE__));
-				return ;
-			}
-			else
-			{
-				if(pManaKernel->m_bNextPhase == true)
-					return ;
-				else
-				{
-					pManaKernel->m_bNextPhase = true ;
-				}
-				sTscMsg.ulType       = TSC_MSG_NEXT_STAGE;  //按阶段前进
-				sTscMsg.ucMsgOpt     = 0;
-				sTscMsg.uiMsgDataLen = 1;
-				sTscMsg.pDataBuf     = NULL;
-				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
-				ACE_DEBUG((LM_DEBUG,"%s:%d Send NEXTDIREC: MAC_CTRL_NEXT_DIR TscMsg!\n",__FILE__,__LINE__));
 			}			
-		}		
+			sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER; 
+			if(key_value == 3) 
+				sTscMsg.ucMsgOpt     = (directype++)%4;
+			else
+				sTscMsg.ucMsgOpt     = directype;
+			sTscMsg.uiMsgDataLen = 0;			
+			sTscMsg.pDataBuf     = NULL; 			
+			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));	
+			ACE_DEBUG((LM_DEBUG,"%s:%d Send DIRE=%d !\n",__FILE__,__LINE__,directype-1));
+					
+		}
 	}		
 	else if (0 == m_ucManual)  //无操作且非手动状态下
 	{		
 		if( MAC_CTRL_NOTHING == m_ucManualSts)
 		{	
-			ACE_DEBUG((LM_DEBUG,"%s:%d MAC_CTRL_NOTHING == m_ucManualSts \n",__FILE__,__LINE__));
-			if( m_ucLastManualSts == MAC_CTRL_NEXT_DIR)
+			//ACE_DEBUG((LM_DEBUG,"%s:%d MAC_CTRL_NOTHING == m_ucManualSts \n",__FILE__,__LINE__));
+			if( pManaKernel->m_iTimePatternId == 250)
 			{
-				pManaKernel->bNextDirec = false ;
+				//pManaKernel->bNextDirec = false ;
 				pManaKernel->m_iTimePatternId = 0;
 				pManaKernel->bTmpPattern = false ;
-				sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //从特殊方案返回原来状态
-				sTscMsg.ucMsgOpt     = 0;
-				sTscMsg.uiMsgDataLen = 1;
-				sTscMsg.pDataBuf     = NULL;
-				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
-				ACE_DEBUG((LM_DEBUG,"%s:%d send TSC_MSG_PATTER_RECOVER TscMsg !\n",__FILE__,__LINE__));				
-			}
-			else
-				pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0); //当按钮从面板黄闪或者全红复位			
+							
+			}		
+				pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0); //当按钮从面板黄闪或者全红复位	
+				ACE_DEBUG((LM_DEBUG,"\n%s:%d Set back to normal status !\n",__FILE__,__LINE__));	
+				
 		}
 
 	}
 	m_ucLastManualSts = m_ucManualSts;  //保存当前的手控状态
 	m_ucLastManual    = m_ucManual;     //保存当前的控制方式
 
-}
+	}
 
+	
 }
-
 void Manual::SetPanelStaus(Byte ucStatus)
 {
 	m_ucManualSts = ucStatus ;
 
 }
+
 

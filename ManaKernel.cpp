@@ -69,7 +69,7 @@ CManaKernel::CManaKernel()
 
 	m_pTscConfig = new STscConfig;      //信号机配置信息
 	m_pRunData   = new STscRunData;     //信号机动态参数信息
-	bNextDirec = false ;
+	//bNextDirec = false ;
 	bTmpPattern = false ;
 	bValidSoftWare = true ;
 	bUTS  = false ;
@@ -140,8 +140,8 @@ void CManaKernel::InitWorkPara()
 	m_pRunData->bNeedUpdate  = false;
 	m_pRunData->ucLockPhase  = 0;
 	m_pRunData->bOldLock     = false;
-	m_pRunData->uiCtrl       = CTRL_UNKNOWN;
-	m_pRunData->uiOldCtrl    = CTRL_UNKNOWN;
+	m_pRunData->uiCtrl       = CTRL_SCHEDULE;
+	m_pRunData->uiOldCtrl    = CTRL_SCHEDULE;
 	m_pRunData->uiWorkStatus = FLASH;
 	m_pRunData->bStartFlash  = true;
 	m_pRunData->bIsChkLght   = false ;
@@ -434,7 +434,7 @@ void CManaKernel::SelectDataFromDb()
 		{
 			sscanf(pModule->strDevNode.GetData(),"DET-%d-%d",&iBoardIndex,&iDetId);			
 			m_pTscConfig->iDetCfg[iBoardIndex] = iDetId;
-			//ACE_DEBUG((LM_DEBUG,"%s : %d m_pTscConfig->iDetCfg[%d] = %d\n",__FILE__,__LINE__,iBoardIndex,iDetId));
+			ACE_DEBUG((LM_DEBUG,"%s : %d m_pTscConfig->iDetCfg[%d] = %d\n",__FILE__,__LINE__,iBoardIndex,iDetId));
 		}
 		pModule++;	
 		iIndex++;
@@ -1191,8 +1191,7 @@ void CManaKernel::OverCycle()
 				break;
 			default:
 				iCurTimePatternId = m_pRunData->ucTimePatternId > 0 ? m_pRunData->ucTimePatternId : 1;
-				/****************************************************************************************
-				if ( CDetector::CreateInstance()->HaveDetBoard() && m_bPhaseDetCfg*
+				if ( CDetector::CreateInstance()->HaveDetBoard() /*&& m_bPhaseDetCfg*/ 
 					&& CTRL_VEHACTUATED == m_pRunData->uiScheduleCtrl )  //存在检测器板且有配置检测器参数
 				{
 					ACE_DEBUG((LM_DEBUG,"%s:%d  switch break ",__FILE__,__LINE__));
@@ -1204,8 +1203,7 @@ void CManaKernel::OverCycle()
 					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
 					break;
 				}
-				****************************************************************************************/
-				 if ( CTRL_WIRELESS == m_pRunData->uiScheduleCtrl && m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset < 99 
+				else if ( CTRL_WIRELESS == m_pRunData->uiScheduleCtrl && m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset < 99 
 					&& CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )  //设置相位差并且开启gps
 				{
 					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
@@ -1614,10 +1612,10 @@ void CManaKernel::GetRunDataStandard()
 	{
 		//ACE_DEBUG((LM_DEBUG,"%s:%d ((CTRL_PANEL == m_pRunData->uiCtrl ) || ( CTRL_UTCS == m_pRunData->uiCtrl ) )  && 			( m_iTimePatternId != 0 )\n",__FILE__,__LINE__));
 		ACE_DEBUG((LM_DEBUG,"%s:%d when m_iTimePatternId= %d >0 return !\n" ,__FILE__,__LINE__,m_iTimePatternId));
-		if(m_iTimePatternId == 250)
-		{
-			 CManaKernel::CreateInstance()->bNextDirec = true;
-		}
+		//if(m_iTimePatternId == 250)
+		//{
+			// CManaKernel::CreateInstance()->bNextDirec = true;
+		//}
 		ucCurTimePatternId = m_iTimePatternId;
 	}
 	else
@@ -1655,10 +1653,9 @@ void CManaKernel::GetRunDataStandard()
 ACE_DEBUG((LM_DEBUG,"%s:%d m_iTimePatternId2 = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
 		m_pRunData->ucTimePatternId = ucCurTimePatternId;
 				
-		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId) ||m_iTimePatternId == 251 || m_iTimePatternId == 250)
+		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId) ||m_iTimePatternId == 251 )
 		{
 			m_pRunData->ucScheduleTimeId = ucCurScheduleTimeId;
-
 			//重新加载动态数据的阶段配时信息sScheduleTime
 			if(!GetSonScheduleTime(ucCurScheduleTimeId))
 			{
@@ -2846,12 +2843,7 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 		return;
 	}
 	
-	if(uiCtrl == CTRL_SCHEDULE && m_pRunData->uiCtrl == CTRL_VEHACTUATED)
-	{
-		m_pRunData->bNeedUpdate = true ; //从感应降级到多时段，因为绿长由最小绿改变位实际阶段步长，需要重读数据库加载绿步时间 ADD:201405221200
-
-	} 
-	if((CTRL_MANUAL == m_pRunData->uiCtrl) && m_bSpePhase )  //当前的控制方式为手动特定相位，准备去除手动
+	if ( (CTRL_MANUAL == m_pRunData->uiCtrl) && m_bSpePhase )  //当前的控制方式为手动特定相位，准备去除手动
 	{
 		SThreadMsg sTscMsgSts;
 		sTscMsgSts.ulType             = TSC_MSG_SWITCH_STATUS;  
@@ -2869,17 +2861,14 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 			if(m_pRunData->uiCtrl == CTRL_SCHEDULE )         //防止重复写入控制方式更改日志
 				return ;
 			else
-				uiCtrl    = CTRL_SCHEDULE;	
-				bDegrade = true ;		
-			CMainBoardLed::CreateInstance()->DoModeLed(true,true);	
-										
+				uiCtrl    = CTRL_SCHEDULE;			
+			CMainBoardLed::CreateInstance()->DoModeLed(true,true);								
 			ACE_DEBUG((LM_DEBUG,"%s:%d when no DecBoard ,new uiCtrl = %d \n" ,__FILE__,__LINE__,uiCtrl));
 		}
 		else if ( CTRL_ACTIVATE != uiCtrl )
 		{
 			m_pRunData->bNeedUpdate = true;   //需要获取检测器信息
-			CMainBoardLed::CreateInstance()->DoModeLed(false,true);
-			//ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
+			ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
 		}
 	}
 	if ( uiCtrl == CTRL_LAST_CTRL )  //上次控制方式
@@ -2935,21 +2924,13 @@ Input:          无
 Output:         无
 Return:         无
 **********************************************************************************/
-void CManaKernel::ChangePatter()
+void CManaKernel::ChangePatter(Byte iParama)
 {
-	if ( IsLongStep(m_pRunData->ucStepNo) )
+	if(m_iTimePatternId == 250) //特殊方案-四方向放行
 	{
-		int iMinGreen = GetMaxStageMinGreen(m_pRunData->ucStepNo);
-		if ( m_pRunData->ucElapseTime < iMinGreen )
-		{			
-			ACE_OS::sleep(iMinGreen-m_pRunData->ucElapseTime);  //走完最小绿
-		}
+		 SetDirecChannelColor(iParama) ; //设置这个方向绿灯放行，不包括行人通道
+		 ACE_DEBUG((LM_DEBUG,"%s:%d Special Pattern:250,Allow Direc =%d \n" , __FILE__,__LINE__,iParama));
 	}
-	//CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL, 0);	
-	ResetRunData(0);
-	CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn
-		,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
-	ACE_DEBUG((LM_DEBUG,"%s:%d Change pattern\n" , __FILE__,__LINE__));
 		
 }
 
@@ -4086,15 +4067,15 @@ Return:         无
 **********************************************************************************/
 void CManaKernel::GetStageDetector(int iStageNo)
 {
-	//Byte ucDelPhase          = 0;
-	//Byte ucOverlapPhaseIndex = 0;
+	Byte ucDelPhase          = 0;
+	Byte ucOverlapPhaseIndex = 0;
 	Byte ucPhaseIndex        = 0;
 	int iNextStage           = iStageNo + 1;
 	int iNextStep            = 0;
 	int iCurStepNo           = StageToStep(iStageNo);
 	Uint iCurAllowPhase      = m_pRunData->sStageStepInfo[iCurStepNo].uiAllowPhase;
 	int iNextAllowPhase      = 0;
-	//Uint iCurOverlapPhase    = m_pRunData->sStageStepInfo[iCurStepNo].uiOverlapPhase;
+	Uint iCurOverlapPhase    = m_pRunData->sStageStepInfo[iCurStepNo].uiOverlapPhase;
 	Uint iNextOverlapPhase   = 0;
 	unsigned int uiTmp       = 0;
  
@@ -4119,7 +4100,7 @@ void CManaKernel::GetStageDetector(int iStageNo)
 		}
 		ucPhaseIndex++;
 	}
-	/*
+
 	//跟随相位
 	while ( ucOverlapPhaseIndex < MAX_OVERLAP_PHASE )
 	{
@@ -4137,7 +4118,7 @@ void CManaKernel::GetStageDetector(int iStageNo)
 
 		ucOverlapPhaseIndex++;
 	}
-	*/
+
 	m_uiStagePhase[iStageNo] |= iCurAllowPhase;
 }
 
@@ -4774,11 +4755,98 @@ void CManaKernel::SetLampColor(Byte ColorType)
 				m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
 			}
 		}
-
-
 	}
-
-
-
 }
 
+/**************************************************************
+Function:        CManaKernel::SetPhaseColor
+Description:    设置相位所属通道绿灯亮			
+Input:          bOverPhase -是否属于跟随相位 true-普通相位 false-跟随相位
+				iPhaseId   - 相位号   
+Output:         无
+Return:         无
+
+***************************************************************/
+void CManaKernel::SetPhaseColor(bool bOverPhase,Byte iPhaseId)
+{
+	Byte ucLampIndex = 0;
+	Byte ucSignalGrpNum   = 0;
+	Byte ucSignalGrpIndex = 0;
+	Byte ucSignalGrp[MAX_CHANNEL] = {0};
+	GetSignalGroupId(bOverPhase, iPhaseId, &ucSignalGrpNum , ucSignalGrp);
+	while ( ucSignalGrpIndex < ucSignalGrpNum )
+	{
+		ucLampIndex = ( ucSignalGrp[ucSignalGrpIndex] - 1 ) * 3; //相位组的red下标
+		ucLampIndex = ucLampIndex + 2;
+		m_ucLampOn[ucLampIndex] = 1;
+		ucSignalGrpIndex++;
+	}
+}
+
+
+/**************************************************************
+Function:        CManaKernel::GaGetDirLane
+Description:    判断方向值是否属于某个方向		
+Input:          ucTableId -方向值 内部包含方向和该方向的左直右行人通道类型
+				ucDir   - 方向类型 0-北方 1-东方 2-南方 3-西方  
+					  ucTableId   0      2      4     6
+Output:         无
+Return:         true- 属于该方向 false-不属于该方向
+***************************************************************/
+bool CManaKernel::GaGetDirLane(Byte ucTableId , Byte  ucDir )
+{
+	Byte ucDirCfg        = (ucTableId >> 5) & 0x07;
+	Byte ucCrossWalkFlag  = (ucTableId >> 3) & 0x03;
+	if(ucDirCfg == (ucDir*2)  && ucCrossWalkFlag ==0)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d ucTableId ==%d ucDir==%d !\n",__FILE__,__LINE__,ucTableId,ucDir));
+		return true ;
+	}
+	else
+		return false;
+}
+
+/**************************************************************
+Function:        CManaKernel::SetDirecChannelColor
+
+Description:    设置某个方向上绿灯放行		
+Input:          ucTableId -方向值 内部包含方向和该方向的左直右行人通道类型
+
+				ucDir   - 方向类型 0-北方 1-东方 2-南方 3-西方  
+Output:         无
+Return:         true- 属于该方向 false-不属于该方向
+***************************************************************/
+
+void CManaKernel::SetDirecChannelColor(Byte iDirecType)
+{
+	Byte ucIndex = 0;
+	Uint ucDirVaule = 0;
+	ACE_OS::memset(m_ucLampOn,0,MAX_LAMP);
+	ACE_OS::memset(m_ucLampFlash,0,MAX_LAMP);
+	//ACE_DEBUG((LM_DEBUG,"%s:%d ucIndex == %d ,MAX_DREC == %d !\n",__FILE__,__LINE__,ucIndex,MAX_DREC));
+	while(ucIndex< MAX_DREC)	
+	{
+		ucDirVaule = (m_pTscConfig->sPhaseToDirec[ucIndex]).ucId ;
+		//ACE_DEBUG((LM_DEBUG,"%s:%d ucDirVaule == %d !\n",__FILE__,__LINE__,ucDirVaule));
+		if((m_pTscConfig->sPhaseToDirec[ucIndex]).ucPhase>0 || (m_pTscConfig->sPhaseToDirec[ucIndex]).ucOverlapPhase>0)
+		{
+			
+			if(GaGetDirLane(ucDirVaule,iDirecType ))
+			{
+				if((m_pTscConfig->sPhaseToDirec[ucIndex]).ucPhase != 0)
+					SetPhaseColor(true,(m_pTscConfig->sPhaseToDirec[ucIndex]).ucPhase);
+				else if((m_pTscConfig->sPhaseToDirec[ucIndex]).ucOverlapPhase != 0)
+					SetPhaseColor(false,(m_pTscConfig->sPhaseToDirec[ucIndex]).ucOverlapPhase);
+			}
+
+		}
+		else
+		{
+			ucIndex++;
+			continue;
+		}
+		ucIndex++;
+	}
+	SetRedOtherLamp(m_ucLampOn);
+	CLampBoard::CreateInstance()->SetLamp(m_ucLampOn,m_ucLampFlash);
+}

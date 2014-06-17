@@ -54,10 +54,14 @@ public:
 	void SetCycleBit(bool bSetCycle);
 
 	bool IsVehile(); 		 //ADD: 201307241020
-	void ChangePatter();	 //ADD: 201309181530
+	void ChangePatter(Byte iParama);	 //ADD: 201406141530
 	void SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte ucLogVau3,Byte ucLogVau4); //ADD:201309251100
 
-	
+	/***********用于设置32相位北东南西遥控器按键*******************/
+	bool GaGetDirLane(Byte ucTableId , Byte  ucDir );   //ADD:201406141130 获取方向值是否属于某个方向
+	void SetDirecChannelColor(Byte iDirecType);         //DD:201406141130设置某个方向的相位通道放行绿灯，其他方向全红
+    void SetPhaseColor(bool bOverPhase,Byte iPhaseId) ; //ADD:201406141130 设置相位所属通道绿灯亮
+	/***********用于设置16相位北东南西遥控器按键*******************/
 
 	bool m_bFinishBoot;         //psc模式使用变量 开机完成过度步后进入可以进入psc模式
 	STscConfig* m_pTscConfig;   //信号机配置信息
@@ -67,7 +71,7 @@ public:
 	/*************按照特定配时方案号执行*************/
 	int m_iTimePatternId;    //指定的配时方案号  合法值1-32 0没有指定
 	
-	bool bNextDirec ;
+	//bool bNextDirec ;
 	bool bTmpPattern ;     //是否处于特殊方案号中
 	bool bUTS ;            //是否存在中心
 	bool bDegrade ;        //是否处于降级状态
