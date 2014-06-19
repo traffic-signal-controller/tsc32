@@ -28,7 +28,7 @@ History:    201308010930  添加48个灯泡检测的配置数据库表和表处理
 #include "FlashMac.h"
 #include "Rs485.h"
 #include "ComFunc.h" 
-
+#include "MainBackup.h"
 
 
 #define CNTDOWN_TIME 8
@@ -1331,12 +1331,14 @@ void CManaKernel::OverCycle()
 	}
 
 	CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn	,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
-
+ACE_DEBUG((LM_DEBUG,"%s:%d  ========= m_pRunData->ucStepNo =%d,m_pRunData->ucStepNum=%d\n",__FILE__,__LINE__,m_pRunData->ucStepNo,m_pRunData->ucStepNum));
 	if ( m_pRunData->bStartFlash ) 
 	{
 		m_pRunData->bStartFlash = false;
 	}
 	CwpmGetCntDownSecStep();
+	MainBackup::CreateInstance()->DoSendStep(m_pRunData->sStageStepInfo,m_pRunData->ucStepNum);
+	
 	//CLamp::CreateInstance()->SetOverCycle();
 	SetCycleBit(true);
 }
