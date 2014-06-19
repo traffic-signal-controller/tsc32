@@ -93,7 +93,7 @@ void CRs485::OpenRs485()
 #ifndef WINDOWS 
 	m_iRs485Ctrlfd = open(RS485, 0);
 #endif
-	 m_iRs485DataFd = CSerialCtrl::CreateInstance()->GetSerialFd(4);
+	 m_iRs485DataFd = CSerialCtrl::CreateInstance()->GetSerialFd4();
 	//m_iRs485DataFd = Serial2::CreateInstance()->GetSerial2Fd();
 
 	if( m_iRs485Ctrlfd < 0 || m_iRs485DataFd < 0 )

@@ -55,8 +55,8 @@ CLamp::CLamp()
 		m_ucLampBoardError[iIndex] = DEV_IS_CONNECTED;
 	}
 
-	m_iSerial1Fd =  CSerialCtrl::CreateInstance()->GetSerialFd(1);
-	m_iSerial2Fd =  CSerialCtrl::CreateInstance()->GetSerialFd(2);
+	//m_iSerial1Fd =  CSerialCtrl::CreateInstance()->GetSerialFd(1);
+	//m_iSerial2Fd =  CSerialCtrl::CreateInstance()->GetSerialFd(2);
 	m_pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
 
 	m_iGreenConflict = 0;

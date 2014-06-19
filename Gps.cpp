@@ -9,7 +9,6 @@ Version:    V1.0
 History:
 ***************************************************************/
 #include "Gps.h"
-//#include "Serial2.h"
 #include "SerialCtrl.h"
 #include "TscMsgQueue.h"
 #include "GbtMsgQueue.h"
@@ -22,7 +21,7 @@ History:
 bool   CGps::m_bNeedGps     = false;
 time_t CGps::m_tLastTi      = 0;
 //int    CGps::m_iGpsFd       = Serial2::CreateInstance()->GetSerial2Fd();//打开GPS连接串口
-int    CGps::m_iGpsFd  	    = CSerialCtrl::CreateInstance()->GetSerialFd(1);
+int    CGps::m_iGpsFd  	    = CSerialCtrl::CreateInstance()->GetSerialFd1();
 char   CGps::m_cBuf[128]    = {0};
 bool   CGps::m_bGpsTime = false ;
 
