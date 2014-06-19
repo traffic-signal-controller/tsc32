@@ -20,7 +20,7 @@ History:
 
 #include "MainBoardLed.h"
 #include "Detector.h"
-
+#include "MainBackup.h"
 #include "Gps.h"
 #include "Gb.h"
 #include "Can.h"
@@ -150,8 +150,8 @@ Return:         无
 ***************************************************************/
 void RunGb()
 {
-	ACE_thread_t  tThreadId[6];
-	ACE_hthread_t hThreadHandle[6];
+	ACE_thread_t  tThreadId[7];
+	ACE_hthread_t hThreadHandle[7];
 
 	(CDbInstance::m_cGbtTscDb).InitDb(DB_NAME);  //数据库类初始化
 	
@@ -261,7 +261,19 @@ void RunGb()
 			TscAceDebug((LM_DEBUG,"Error: CGps thread faild\n"));
 		}
 	}
-	
+
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)MainBackup::Recevie, //开启gps校时线程
+								0,
+								THR_NEW_LWP | THR_JOINABLE,
+								&tThreadId[7],
+								&hThreadHandle[7],
+								ACE_DEFAULT_THREAD_PRIORITY,
+								0,
+								ACE_DEFAULT_THREAD_STACKSIZE,
+								0) == -1 )
+		{
+			TscAceDebug((LM_DEBUG,"Error: CGps thread faild\n"));
+		}
 	
 	ACE_Thread::join(hThreadHandle[0]);   //回收线程资源
 	ACE_Thread::join(hThreadHandle[1]);
@@ -269,8 +281,8 @@ void RunGb()
 	ACE_Thread::join(hThreadHandle[3]);
 	ACE_Thread::join(hThreadHandle[4]);
 	ACE_Thread::join(hThreadHandle[5]);
-	ACE_Thread::join(hThreadHandle[6]);
-	//ACE_Thread::join(hThreadHandle[7]);
+	//ACE_Thread::join(hThreadHandle[6]);
+	ACE_Thread::join(hThreadHandle[7]);
 
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
 	{
