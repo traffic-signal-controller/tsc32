@@ -21,7 +21,7 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
           GaCountDown.o  Log.o           Coordinate.o       \
           GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o 		\
           GbtMsgQueue.o  Gb.o            Can.o         	ComFunc.o		\
-	 	  MacControl.o	 Manual.o		 SignalDefaultData.o  SerialCtrl.o
+	 	  MacControl.o	 MainBackup.o		 SignalDefaultData.o  SerialCtrl.o	Configure.o
 
 
 	$(CC) $(LIB) $(CFLAGS) \
@@ -33,7 +33,7 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
         GaCountDown.o  Log.o           Coordinate.o     \
         GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o      \
         GbtMsgQueue.o  Gb.o         	Can.o 			ComFunc.o      \
-		MacControl.o 	Manual.o 		SignalDefaultData.o	  SerialCtrl.o\
+		MacControl.o 	MainBackup.o 		SignalDefaultData.o	  SerialCtrl.o	Configure.o\
 	   -o Gb.aiton 
 
 release:
