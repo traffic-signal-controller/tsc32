@@ -414,54 +414,54 @@ void * Can::DealCanData(void* arg)
 		switch(u1ModuleAddr)
 		{
 			case BOARD_ADDR_LAMP1:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP1!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP1!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP1, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP2:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP2!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP2!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP2, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP3:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP3!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP3!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP3, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP4:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP4!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP4!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP4, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LAMP5:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP5!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from LAMP5!\n"));
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP5, sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_POWER:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from POWER!%X !\n",u1ModuleAddr));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from POWER!%X !\n",u1ModuleAddr));
 				pPower->RecvPowerCan(BOARD_ADDR_POWER,sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_DETECTOR1:
 			//case BOARD_ADDR_ALLDETECTOR :     // ADD: 2013 0723 0945 test mode
-				ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR1!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR1!\n"));
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR1, sRecvFrameTmp);// ADD: 2013 0710 1039	
 				break;
 			case BOARD_ADDR_DETECTOR2:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR2\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from DETECTOR2\n"));
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR2, sRecvFrameTmp);// ADD: 2013 0710 1039	
 				break;
 			case BOARD_ADDR_INTEDET1 :
-				ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET1\n"));				
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET1\n"));				
 				break;
 			case BOARD_ADDR_INTEDET2 :
-				ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET2\n"));				
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET2\n"));				
 				break;
 			case BOARD_ADDR_FLASH:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from FLASH!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from FLASH!\n"));
 				pFlash->RecvFlashCan(sRecvFrameTmp) ; //ADD: 2013 0712 1543
 				break;
 			case BOARD_ADDR_HARD_CONTROL:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from MACCONTROL!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from MACCONTROL!\n"));
 				pMacControl->RecvMacCan(sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LED :
-				ACE_DEBUG((LM_DEBUG,"\nRecv from LedBoard!\n"));
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from LedBoard!\n"));
 				break ;
 			default:
 				ACE_DEBUG((LM_DEBUG,"\nRecv from UNKNOW ADDR :%2X !\n",u1ModuleAddr));
