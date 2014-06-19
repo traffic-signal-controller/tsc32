@@ -29,6 +29,7 @@ History:
 #include "MainBoardLed.h"
 #include "ComFunc.h"
 #include "GaCountDown.h"
+#include "Configure.h"
 
 /**************************************************************
 Function:        CGbtMsgQueue::CGbtMsgQueue
@@ -51,16 +52,19 @@ CGbtMsgQueue::CGbtMsgQueue()
 	iPort     = 0;
 	m_pMsgQue = ACE_Message_Queue_Factory<ACE_MT_SYNCH>::create_static_message_queue();
 	
-	STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
+	//STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
 
 	for ( Byte i=0; i<MAX_CLIENT_NUM; i++ )
 	{
 		m_sGbtDealData[i].bIsDeal = false;
 	}
 	
-	iPort |= pTscCfg->sSpecFun[FUN_PORT_LOW].ucValue;
-	iPort |= pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue << 8;
-	
+	//iPort |= pTscCfg->sSpecFun[FUN_PORT_LOW].ucValue;
+	//iPort |= pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue << 8;
+	//信号机端口配置，改到配置文件中.这个存在一个bug，必需先调用showconfig 再调用读取某个值。否则就会报错
+	Configure::CreateInstance()->ShowConfig();
+	Configure::CreateInstance()->GetInteger("COMMUNICATION","port",iPort);
+	//Configure::ShowConfig();
 	if ( iPort > MAX_GBT_PORT || iPort < MIN_GBT_PORT )
 	{
 		iPort = DEFAULT_GBT_PORT; //UDP数据通信端口
@@ -707,7 +711,7 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			return;
 		}
 		break;
-		case OBJECT_YWFLASH_CFG:    //黄闪器扩展对象
+	case OBJECT_YWFLASH_CFG:    //黄闪器扩展对象
 		if ( GBT_SEEK_REQ == ucRecvOptType )  //查询
 		{
 
@@ -720,6 +724,22 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 
 		}
 		break ;
+	case OBJECT_POWERBOARD_CFG : //电源板配置扩展对象ADD:20140402
+		if ( GBT_SEEK_REQ == ucRecvOptType )  //查询
+		{
+			
+			Byte ucQueryType =( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
+			GetPowerCfg(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,&iSendIndex,ucQueryType);  
+
+		}
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
+		{
+			SetPowerCfg(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex);
+
+		}
+		break ;
+
+	
 	case OBJECT_DET_EXTCFG :    //检测器扩展配置对象
 		if ( GBT_SEEK_REQ == ucRecvOptType )  //查询
 		{
@@ -1682,6 +1702,92 @@ void  CGbtMsgQueue::SetFlashCtrl(Byte* pBuf,int& iRecvIndex)
 			pFlashMac->m_ucSetSyType    = pBuf[iRecvIndex++] ;
 				
 			pFlashMac->FlashCfgSet();
+			break ;
+		default:
+			break ;
+	}
+	return ;
+}
+
+/**************************************************************
+	Function:		CGbtMsgQueue::GetPowerCfg
+	Description:  电源板配置信息设置	
+	Input:		pBuf	 接收帧地址指针
+				iSendIndex     发送帧当前写地址
+Output:         pBuf   发送帧地址指针
+	Return: 		无
+***************************************************************/
+void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
+{
+	CPowerBoard *pPowerBoard = CPowerBoard::CreateInstance();	
+	switch(ucQueryType)
+		{
+		case 0x02 :    //请求电源板发送电压数据
+			pPowerBoard->CheckVoltage();
+			ACE_OS::sleep(ACE_Time_Value(0, 30000));
+			pBuf[*iSendIndex] = pPowerBoard->m_iStongVoltage ;  //强电电压
+			*iSendIndex += 1 ;		
+			pBuf[*iSendIndex] = pPowerBoard->m_iWeakVoltage  ;  //弱电电?	
+			*iSendIndex += 1 ;		
+			pBuf[*iSendIndex] = pPowerBoard->m_iBusVoltage ;  //总线电压
+			*iSendIndex += 1 ;
+			break ;
+		case 0x03 :	   //请求电源模块发送配置数据	
+		{
+			Byte VolPlan = 0 ;
+			pPowerBoard->GetPowerBoardCfg();
+			ACE_OS::sleep(ACE_Time_Value(0, 30000));
+		//	printf("get powerd 0x3\n");
+		
+			pBuf[*iSendIndex] = pPowerBoard->m_iGetWarnHighVol;
+			*iSendIndex += 1 ;
+			pBuf[*iSendIndex] = //pPowerBoard->m_iGetWarnLowVol ;
+			*iSendIndex += 1 ;
+			VolPlan |= pPowerBoard->m_ucGetStongHighVolPlan ;
+			VolPlan |= pPowerBoard->m_ucGetStongLowVolPlan <<2 ;
+			VolPlan |=  pPowerBoard->m_ucGetWeakHighVolPlan << 4 ;
+			VolPlan |= pPowerBoard->m_ucGetWeakLowVolPlan << 6 ;
+			pBuf[*iSendIndex] = VolPlan ;
+			*iSendIndex += 1 ;
+			pBuf[*iSendIndex] = pPowerBoard->m_ucSetWatchCfg ;	
+			*iSendIndex += 1 ;
+			
+		//	printf("get powerd 0x3 -2\n");
+		}
+			break ;
+		 default:
+		 	break ;
+		}
+
+}
+
+/**************************************************************
+	Function:		CGbtMsgQueue::SetPowerCfg
+	Description:  电源板配置信息设置	
+	Input:		pBuf	 接收帧地址指针
+				iRecvIndex 接收帧当前读取地址
+	Output: 		无
+	Return: 		无
+***************************************************************/
+void  CGbtMsgQueue::SetPowerCfg(Byte* pBuf,int& iRecvIndex)	
+{
+	Byte Tmp = pBuf[iRecvIndex++];
+	CPowerBoard *pPowerBoard = CPowerBoard::CreateInstance();
+	switch(Tmp)
+	{
+		
+		case 0x04 :	   //下发电源模块配置数据
+		{
+			Byte tmp1 = pBuf[iRecvIndex++];
+			Byte tmp2 = pBuf[iRecvIndex++];
+			Byte tmp3 = pBuf[iRecvIndex++];
+			Byte tmp4 = pBuf[iRecvIndex++];
+			pPowerBoard->SetPowerCfgData(tmp1,tmp2,tmp3,tmp4);
+			pPowerBoard->SetPowerBoardCfg();
+		}
+			break ;
+		case 0x05 :	   //心跳命令
+			pPowerBoard->HeartBeat();			
 			break ;
 		default:
 			break ;
@@ -3222,14 +3328,15 @@ Return:         true：发送成功    false：发送失败
 bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 {
 	//bool bRight = true;
+	CManaKernel *pManaKernel = CManaKernel::CreateInstance();
 	Uint uiTscCtrl    = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
 	Uint uiWorkStatus = CManaKernel::CreateInstance()->m_pRunData->uiWorkStatus;
 
 	switch ( ucObjType )
 	{
-		case OBJECT_CURTSC_CTRL:  /*ÐÅºÅ»ú¿ØÖÆ×ŽÌ¬*/
-			if ( (ucValue < 1) || (ucValue > 6) )
-			{
+		case OBJECT_CURTSC_CTRL:  						/*进入手控状态ucValue:4;ucValue:2联网；*/
+			if ( (ucValue < 1) || (ucValue > 6) )		//ucValue:3主机；ucValue:5多时段；ucValue:6线控
+			{											///
 				return false;
 			}
 			SThreadMsg sTscMsg;
@@ -3241,7 +3348,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 			break;
 		case OBJECT_SWITCH_MANUALCONTROL:   
-			if ( 0 == ucValue )
+			if ( 0 == ucValue )		//标准运行，有感应，多时段，联网等
 			{
 				SThreadMsg sTscMsg;
 				sTscMsg.ulType       = TSC_MSG_SWITCH_CTRL;  
@@ -3259,7 +3366,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				*((Byte*)sTscMsgSts.pDataBuf) = STANDARD; 
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
-			else if ( (ucValue>0) && (ucValue<33) )
+			else if ( (ucValue>0) && (ucValue<33) ) //进行手控中的某个特定时间方案
 			{
 				SThreadMsg sTscMsg;
 				sTscMsg.ulType       = TSC_MSG_SWITCH_CTRL;  
@@ -3278,7 +3385,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				*((Byte*)sTscMsgTm.pDataBuf) = ucValue; 
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgTm,sizeof(sTscMsgTm));
 			}
-			else if ( 253 == ucValue )
+			else if ( 253 == ucValue )	//进行全红控制
 			{
 				SThreadMsg sTscMsg;
 				sTscMsg.ulType       = TSC_MSG_SWITCH_CTRL;  
@@ -3296,7 +3403,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				*((Byte*)sTscMsgSts.pDataBuf) = ALLRED;  
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
-			else if ( 254 == ucValue )
+			else if ( 254 == ucValue )	//进行黄闪控制
 			{
 				SThreadMsg sTscMsg;
 				sTscMsg.ulType       = TSC_MSG_SWITCH_CTRL;  
@@ -3314,7 +3421,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				*((Byte*)sTscMsgSts.pDataBuf) = FLASH; 
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
-			else if ( 255 == ucValue )
+			else if ( 255 == ucValue )	//进行关灯控制
 			{
 				SThreadMsg sTscMsg;
 				sTscMsg.ulType       = TSC_MSG_SWITCH_CTRL;  
@@ -3432,7 +3539,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.ucMsgOpt     = 0;
 				sTscMsgSts.uiMsgDataLen = 1;
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
-				*((Byte*)sTscMsgSts.pDataBuf) = SIGNALOFF;  //¹ØµÆ
+				*((Byte*)sTscMsgSts.pDataBuf) = SIGNALOFF;  //关灯
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
 			else
@@ -3441,8 +3548,8 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			}
 			break;
 
-		case OBJECT_SWITCH_CONTROL:  /***¿ØÖÆ·œÊœ***/
-			if ( uiTscCtrl == CTRL_PANEL || ucValue == 0 )   //Ãæ°å¿ØÖÆ
+		case OBJECT_SWITCH_CONTROL:  /***控制方式切换***/
+			if ( uiTscCtrl == CTRL_PANEL || ucValue == 0 )   //当前如果是面板控制 或ucValue=0 无意义的
 			{
 				return false;
 			}
@@ -3566,9 +3673,9 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				return false;
 			}
 			break;
-
-		case OBJECT_SWITCH_STAGE: /*Ìøœ×¶Î*/
-			if ( (uiTscCtrl != CTRL_MANUAL)
+		
+		case OBJECT_SWITCH_STAGE: /*相位阶段切换*/
+			if ( (uiTscCtrl != CTRL_PANEL)
 				|| (uiWorkStatus != STANDARD ) )
 			{
 				return false;
@@ -3582,6 +3689,20 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
 				*((Byte*)sTscMsgSts.pDataBuf) = ucValue; 
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
+				
+			}
+			else if ( ucValue==0 )
+			{
+				if(pManaKernel->m_bNextPhase == true)
+					return false;
+				else
+					pManaKernel->m_bNextPhase = true ;
+				sTscMsg.ulType       = TSC_MSG_NEXT_STAGE;  //下一阶段
+				sTscMsg.ucMsgOpt     = 0;
+				sTscMsg.uiMsgDataLen = 1;
+				sTscMsg.pDataBuf     = NULL;
+				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
+				
 			}
 			else
 			{
@@ -3589,23 +3710,26 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			}
 			break;
 
-		case OBJECT_GOSTEP: /***²œœøÖžÁî***/ 
-			if ( (uiTscCtrl != CTRL_MANUAL)
+		case OBJECT_GOSTEP: /***步进和跳步操作***/ 
+			//ACE_DEBUG((LM_DEBUG,"%s:%d Send Next Step TscMsg ! uiTscCtrl%d uiWorkStatus%d\n",__FILE__,__LINE__,uiTscCtrl,uiWorkStatus));
+			if ( (uiTscCtrl != CTRL_PANEL)
 				|| (uiWorkStatus != STANDARD ) )
 			{
 				return false;
 			}
-			else if ( 0 == ucValue )  //²œœø
+			else if ( 0 == ucValue )  //步进操作
 			{
 				SThreadMsg sTscMsgSts;
-				sTscMsgSts.ulType       = TSC_MSG_LOCK_STEP;  
+				sTscMsgSts.ulType       = TSC_MSG_LOCK_STEP;  //锁定步伐
 				sTscMsgSts.ucMsgOpt     = 0;
 				sTscMsgSts.uiMsgDataLen = 1;
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
-				*((Byte*)sTscMsgSts.pDataBuf) = ucValue;
+				*((Byte*)sTscMsgSts.pDataBuf) = 0;
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
+				ACE_DEBUG((LM_DEBUG,"%s:%d Send Next Step TscMsg ! \n",__FILE__,__LINE__));
+				pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,6,0,0,0);
 			}
-			else if ( (ucValue > 0) && (ucValue < MAX_PHASE) )  //Ëø¶šÏàÎ»
+			else if ( (ucValue > 0) && (ucValue < MAX_PHASE) )  //锁定步伐后进行跳步
 			{
 				SThreadMsg sTscMsgSts;
 				sTscMsgSts.ulType       = TSC_MSG_LOCK_PHASE;  
@@ -4205,6 +4329,7 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_PSCBTN_NUM :         //模拟8位行人按钮输入
 		case OBJECT_TMPPATTERN_CFG :     //临时12方向随机组合，放行60秒默认
 		case OBJECT_SYSFUNC_CFG :        //系统其他功能设置
+		case OBJECT_POWERBOARD_CFG :       //电源板配置
 			return true;
 		default:
 			return false;

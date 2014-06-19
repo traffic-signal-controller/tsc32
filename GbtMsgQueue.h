@@ -128,7 +128,8 @@ enum
 	OBJECT_PSCBTN_NUM 	   = 0xee,    //模拟8位行人按钮输入 ADD:2013 0829 1540
 	OBJECT_TMPPATTERN_CFG  = 0xe6,    //12方向临时组合方案，默认60秒
 	OBJECT_SYSFUNC_CFG     = 0xe4,      //系统其他功能设置
-	OBJECT_SENDCLIENT_CNTDOWN = 0xe6
+	OBJECT_SENDCLIENT_CNTDOWN = 0xe6 ,
+	OBJECT_POWERBOARD_CFG     = 0xe7   //电源板配置
 };
 /*****************GBT协议对象标志类型和扩充协议标志类型那个枚举********************/
 
@@ -165,7 +166,7 @@ public:
 #else
 	ACE_SOCK_Dgram m_sockLocal;  //udp
 #endif
-	Uint iPort   ;               //MOD:201309250830
+	int iPort   ;               //MOD:201309250830
 private:
 	CGbtMsgQueue();
 	~CGbtMsgQueue();
@@ -203,6 +204,8 @@ private:
 	void PackTscExStatus(Byte ucDealDataIndex,void* pValue);
 	void GetFlashCfg(Byte* pBuf,int *iSendIndex) ;  //ADD: 2013 0808 10 30
 	void SetFlashCtrl(Byte* pBuf,int& iRecvIndex); //ADD 2013 0808 1430
+	void  GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType); //ADD:201404021520	
+	void  SetPowerCfg(Byte* pBuf,int& iRecvIndex) ;//ADD:201404021520
 
 	void GetDetCfg(Byte* pBuf,Byte ucBdIndex,Byte ucQueryType,int *iSendIndex) ; //ADD 20130821 1130
 	void SetDetCfg(Byte* pBuf,int& iRecvIndex) ; //ADD 2013 0821 1624
@@ -224,7 +227,7 @@ private:
 	SGbtDealData  m_sGbtDealData[MAX_CLIENT_NUM];
 	
 
-	/*ÁÙÊ±Žæ·ÅÊýŸÝ*/
+	/**/
 	int m_iManualCtrlNo;
 	int m_iSystemCtrlNo;
 };
