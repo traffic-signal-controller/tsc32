@@ -100,8 +100,6 @@ void CPowerBoard::CheckVoltage()
 
 	Can::CreateInstance()->Send(sSendFrameTmp);
 
-	//Can::PrintInfo(__FILE__,__LINE__,0,sSendFrameTmp);
-
 }
 
 
@@ -116,10 +114,10 @@ Return:         0
 void CPowerBoard::GetPowerBoardCfg()
 {
 	SCanFrame sSendFrameTmp;
-	SCanFrame sRecvFrameTmp;
+	//SCanFrame sRecvFrameTmp;
 
 	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
-	ACE_OS::memset(&sRecvFrameTmp , 0 , sizeof(SCanFrame));
+	//ACE_OS::memset(&sRecvFrameTmp , 0 , sizeof(SCanFrame));
 
 	Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN
 				  , FRAME_MODE_P2P   , BOARD_ADDR_POWER
@@ -129,70 +127,7 @@ void CPowerBoard::GetPowerBoardCfg()
 
 	Can::CreateInstance()->Send(sSendFrameTmp);
 
-	//Can::PrintInfo(__FILE__,__LINE__,0,sSendFrameTmp);
-
-
-	fd_set rfds;
-	struct timeval 	tv;
-	int iCanHandle = Can::CreateInstance()->GetHandle();
-	Ulong u1CanMsgType;
-	Ulong u1ModuleAddr;
-	Ulong u1FrameMode;
-	Ulong u1RemodeAddr;
-	Ulong ulProtocolVersion;
 	
-	FD_ZERO(&rfds);
-	FD_SET(iCanHandle, &rfds);
-	tv.tv_sec  = 0;
-	tv.tv_usec = 20000;
-	int iRetCnt = select(iCanHandle + 1, &rfds, NULL, NULL, &tv);
-	if ( -1 == iRetCnt )  //select error
-	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d select error\n",__FILE__,__LINE__));
-		return;
-	}
-	else if ( 0 == iRetCnt )  //timeout
-	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d timeout\n",__FILE__,__LINE__));
-		return;
-	}
-	else
-	{
-		Can::CreateInstance()->Recv(sRecvFrameTmp);
-
-		//Can::PrintInfo(__FILE__,__LINE__,0,sRecvFrameTmp);
-
-		Can::CreateInstance()->ExtractCanId(u1CanMsgType
-		            , u1ModuleAddr
-				    , u1FrameMode
-				    , u1RemodeAddr
-					, ulProtocolVersion
-				    , sRecvFrameTmp.ulCanId);
-		if ( BOARD_ADDR_POWER != u1ModuleAddr )
-		{
-			ACE_DEBUG((LM_DEBUG,"%s:%d u1ModuleAddr:%d error\n",__FILE__,__LINE__,u1ModuleAddr));
-			return;
-		}
-		if ( BOARD_ADDR_MAIN != u1RemodeAddr )
-		{
-			ACE_DEBUG((LM_DEBUG,"%s:%d u1RemodeAddr:%d error\n",__FILE__,__LINE__,u1RemodeAddr));
-			return;
-		}
-		if ( POWER_HEAD_CFG_GET != (sRecvFrameTmp.pCanData[0] & 0x3F) )
-		{
-			ACE_DEBUG((LM_DEBUG,"%s:%d Not POWER_HEAD_CFG_GET\n",__FILE__,__LINE__));
-			return;
-		}
-
-		m_iGetWarnHighVol = sRecvFrameTmp.pCanData[1] + 150;
-
-		m_iGetWarnLowVol  = sRecvFrameTmp.pCanData[2] + 150;
-
-		m_ucGetStongHighVolPlan = sRecvFrameTmp.pCanData[3] & 0x3;
-		m_ucGetStongLowVolPlan  = (sRecvFrameTmp.pCanData[3] >> 2 )& 0x3;
-		m_ucGetWeakHighVolPlan  = (sRecvFrameTmp.pCanData[3] >> 4 )& 0x3; 
-		m_ucGetWeakLowVolPlan   = (sRecvFrameTmp.pCanData[3] >> 6 )& 0x3; 
-	}
 }
 
 
@@ -206,91 +141,49 @@ Return:         0
 void CPowerBoard::SetPowerBoardCfg()
 {
 	SCanFrame sSendFrameTmp;
-	SCanFrame sRecvFrameTmp;
+	//SCanFrame sRecvFrameTmp;
 
 	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
-	ACE_OS::memset(&sRecvFrameTmp , 0 , sizeof(SCanFrame));
+	//ACE_OS::memset(&sRecvFrameTmp , 0 , sizeof(SCanFrame));
 
 	Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN
 				  , FRAME_MODE_P2P   , BOARD_ADDR_POWER
 				  , &(sSendFrameTmp.ulCanId));
 	sSendFrameTmp.pCanData[0] = ( DATA_HEAD_CHECK << 6 ) | POWER_HEAD_CFG_SET;
-	sRecvFrameTmp.pCanData[1] = m_iSetWarnHighVol - 150;
-	sRecvFrameTmp.pCanData[2] = m_iSetWarnLowVol - 150;
-	sRecvFrameTmp.pCanData[3] |= m_ucSetStongHighVolPlan;
-	sRecvFrameTmp.pCanData[3] |= m_ucSetStongLowVolPlan << 2;
-	sRecvFrameTmp.pCanData[3] |= m_ucSetWeakHighVolPlan << 4;
-	sRecvFrameTmp.pCanData[3] |= m_ucSetWeakLowVolPlan << 6;
-	sSendFrameTmp.ucCanDataLen = 4;
+	sSendFrameTmp.pCanData[1] = m_iSetWarnHighVol;
+	sSendFrameTmp.pCanData[2] = m_iSetWarnLowVol ;
+	sSendFrameTmp.pCanData[3] |= m_ucSetStongHighVolPlan;
+	sSendFrameTmp.pCanData[3] |= m_ucSetStongLowVolPlan << 2;
+	sSendFrameTmp.pCanData[3] |= m_ucSetWeakHighVolPlan << 4;
+	sSendFrameTmp.pCanData[3] |= m_ucSetWeakLowVolPlan << 6;
+	sSendFrameTmp.pCanData[4] = m_ucSetWatchCfg ;
+	sSendFrameTmp.ucCanDataLen = 5;
 
 	Can::CreateInstance()->Send(sSendFrameTmp);
 
-	//Can::PrintInfo(__FILE__,__LINE__,0,sSendFrameTmp);
-
-	//œÓÊÜµçÔŽ°åµÄ»ØžŽ  µÃµœÏàÓŠµÄ»·Ÿ³ÊýŸÝ
-	fd_set rfds;
-	struct timeval 	tv;
-	int iCanHandle = Can::CreateInstance()->GetHandle();
-	Ulong u1CanMsgType;
-	Ulong u1ModuleAddr;
-	Ulong u1FrameMode;
-	Ulong u1RemodeAddr;
-	Ulong ulProtocolVersion;
 	
-	FD_ZERO(&rfds);
-	FD_SET(iCanHandle, &rfds);
-	tv.tv_sec  = 0;
-	tv.tv_usec = 20000;
-	int iRetCnt = select(iCanHandle + 1, &rfds, NULL, NULL, &tv);
-	if ( -1 == iRetCnt )  //select error
-	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d select error\n",__FILE__,__LINE__));
-		return;
-	}
-	else if ( 0 == iRetCnt )  //timeout
-	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d timeout\n",__FILE__,__LINE__));
-		return;
-	}
-	else
-	{
-		Can::CreateInstance()->Recv(sRecvFrameTmp);
-
-		//Can::PrintInfo(__FILE__,__LINE__,0,sRecvFrameTmp);
-
-		Can::CreateInstance()->ExtractCanId(u1CanMsgType
-		            , u1ModuleAddr
-				    , u1FrameMode
-				    , u1RemodeAddr
-					, ulProtocolVersion
-				    , sRecvFrameTmp.ulCanId);
-		if ( BOARD_ADDR_POWER != u1ModuleAddr )
-		{
-			ACE_DEBUG((LM_DEBUG,"%s:%d u1ModuleAddr:%d error\n",__FILE__,__LINE__,u1ModuleAddr));
-			return;
-		}
-		if ( BOARD_ADDR_MAIN != u1RemodeAddr )
-		{
-			ACE_DEBUG((LM_DEBUG,"%s:%d u1RemodeAddr:%d error\n",__FILE__,__LINE__,u1RemodeAddr));
-			return;
-		}
-		if ( POWER_HEAD_CFG_SET != (sRecvFrameTmp.pCanData[0] & 0x3F) )
-		{
-			ACE_DEBUG((LM_DEBUG,"%s:%d Not POWER_HEAD_CFG_SET\n",__FILE__,__LINE__));
-			return;
-		}
-
-		m_iGetWarnHighVol = sRecvFrameTmp.pCanData[1] + 150;
-
-		m_iGetWarnLowVol  = sRecvFrameTmp.pCanData[2] + 150;
-
-		m_ucGetStongHighVolPlan = sRecvFrameTmp.pCanData[3] & 0x3;
-		m_ucGetStongLowVolPlan  = (sRecvFrameTmp.pCanData[3] >> 2 )& 0x3;
-		m_ucGetWeakHighVolPlan  = (sRecvFrameTmp.pCanData[3] >> 4 )& 0x3; 
-		m_ucGetWeakLowVolPlan   = (sRecvFrameTmp.pCanData[3] >> 6 )& 0x3; 
-	}
 }
+/**************************************************************
+Function:       CPowerBoard::SetPowerCfgData
+Description:    主控板设置电源板配置数据参数				
+Input:          WarnHighVol -高电压预警值
+		     WarnLowVol  -低电压预警值
+		     VolPlan         -电压控制方案
+		     Output:         无
+Return:         0
+***************************************************************/
 
+void CPowerBoard::SetPowerCfgData(Byte m_ucWarnHighVol,Byte m_ucWarnLowVol,Byte m_ucVolPlan,Byte m_ucDogCfg)
+{
+	m_iSetWarnHighVol = m_ucWarnHighVol  ;
+	m_iSetWarnLowVol  = m_ucWarnLowVol  ;
+	m_ucSetStongHighVolPlan = m_ucVolPlan &0x03 ;
+	m_ucSetStongLowVolPlan  = (m_ucVolPlan>>2) &0x03 ;
+	m_ucSetWeakHighVolPlan  = (m_ucVolPlan>>4) &0x03 ;
+	m_ucSetWeakLowVolPlan   = (m_ucVolPlan>>6) &0x03 ;
+	m_ucSetWatchCfg         =  m_ucDogCfg ;
+	return ;
+}
 
 /**************************************************************
 Function:       CPowerBoard::HeartBeat
@@ -341,6 +234,16 @@ void CPowerBoard::RecvPowerCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		
 			//ACE_DEBUG((LM_DEBUG,"%s:%d StongVol:%d WeakVol:%d BusVol:%d			\n",__FILE__,__LINE__,m_iStongVoltage,m_iWeakVoltage,m_iBusVoltage)); //MOD:0604 1738
 			break ;
+		case POWER_HEAD_CFG_GET :
+			m_iGetWarnHighVol = sRecvCanTmp.pCanData[1] + 150;
+			m_iGetWarnLowVol  = sRecvCanTmp.pCanData[2] + 150;
+			m_ucGetStongHighVolPlan = sRecvCanTmp.pCanData[3] & 0x3;
+			m_ucGetStongLowVolPlan  = (sRecvCanTmp.pCanData[3] >> 2 )& 0x3;
+			m_ucGetWeakHighVolPlan  = (sRecvCanTmp.pCanData[3] >> 4 )& 0x3; 
+			m_ucGetWeakLowVolPlan   = (sRecvCanTmp.pCanData[3] >> 6 )& 0x3;
+			m_ucSetWatchCfg  = sRecvCanTmp.pCanData[4];
+			ACE_DEBUG((LM_DEBUG,"%s:%d VolHigh:%d VolLow:%d VolPlan:%d PowerWatchDog:%d !\n",__FILE__,__LINE__,m_iGetWarnHighVol,m_iGetWarnLowVol,sRecvCanTmp.pCanData[3],m_ucSetWatchCfg));
+			break;
 		case POWER_HEAD_HEARBEAT :
 			 iHeartBeat = 0;
 			 //ACE_DEBUG((LM_DEBUG,"%s:%d Get from PowerBoard,iHeartBeat = %d		\n",__FILE__,__LINE__,iHeartBeat)); //MOD:0604 1738
