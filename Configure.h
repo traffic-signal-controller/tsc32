@@ -12,7 +12,8 @@ public:
        int open(const ACE_TCHAR * filename);
        int close();
 	   static Configure* CreateInstance();
-       
+       bool InitConfig();
+	   void ShowConfig();
 private:
 	Configure();
     ~Configure();
