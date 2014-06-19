@@ -21,14 +21,17 @@ History:
 #include "MacControl.h"
 #include "Manual.h"
 #include "GaCountDown.h"
-//#include "ComStruct.h"
+#include "MainBackup.h"
+
+
+
 /************************ADD:201309231530***************************/
 static CMainBoardLed* pMainBoardLed = CMainBoardLed::CreateInstance();
 static CLampBoard*    pLamp   = CLampBoard::CreateInstance(); 
 static CPowerBoard*   pPower = CPowerBoard::CreateInstance();
 static CManaKernel*   pWorkParaManager = CManaKernel::CreateInstance();
 static CMacControl*   pMacControl      = CMacControl::CreateInstance();  	 // MOD:0514 9:41
-//static Manual*        pManual      = Manual::CreateInstance();               // ADD:0514 9:42	
+static MainBackup*        pMainBackup      = MainBackup::CreateInstance();               // ADD:0514 9:42	
 static CDetector*      pDetector    = CDetector::CreateInstance() ;  		 //ADD: 20130709 945	
 static CPscMode * pCPscMode = CPscMode::CreateInstance() ;	
 static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
@@ -81,14 +84,18 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 {
 	
 	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-	//pManual->DoManual() ;     // ADD:0514 9:42
-	
+
 	if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 		pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
+		
+	//手控按钮每100ms侦查一次     // ADD:0514 9:42
+		pMainBackup->DoManual();
 	
 	switch ( m_ucTick )
 	{
-	case 0: 		
+	case 0: 
+		//核心板发送心跳给，备份单片机。500ms   。另外 在case 5调用
+		pMainBackup->HeartBeat();
 		ChooseDecTime();		
 		pLamp->SendLamp();//4	////4个灯控板信息发送
 		pMainBoardLed->DoRunLed();  
@@ -97,6 +104,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		//pMacControl->GetEnvSts(); 
 		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28		
 		pMacControl->SndLcdShow() ; //ADD:201309281710
+		
 		break;
 	case 2: 		
 		CPowerBoard::iHeartBeat++;
@@ -124,7 +132,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	case 5://500ms 执行一次
 		pLamp->SendLamp();		//给所有灯控板发送灯色数据
-		pMainBoardLed->DoRunLed();	
+		pMainBoardLed->DoRunLed();
+		//核心板发送心跳给，备份单片机。500ms   。另外 在case 1调用
+		pMainBackup->HeartBeat();
 		break;
 	case 6:
 		//pFlashMac->FlashHeartBeat() ;
