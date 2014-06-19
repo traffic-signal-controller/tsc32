@@ -237,24 +237,7 @@ Return:         нч
 void RecordTscStartTime()
 {
 #ifdef LINUX
-	FILE* file = NULL;
-	char tmp[64] = {0};
-	struct tm *now;
-	time_t ti;
-
-	file = fopen("TscRun.log","a+");
-	if ( NULL == file )
-	{
-		return;
-	}
-	ti = time(NULL);
-	now = localtime(&ti);
-	sprintf(tmp,"%d-%d-%d %d %d:%02d:%02d TscGb restart.\n", now->tm_year + 1900,
-		now->tm_mon + 1, now->tm_mday, now->tm_wday, now->tm_hour,
-		now->tm_min, now->tm_sec);
-	fputs(tmp,file);
-	fclose(file);
-	AdjustFileSize((char*)"TscRun.log",100);
+	ACE_OS::system("echo At $(date) tsc restart !>> TscRun.log");
 #endif
 	//unsigned long mRestart = 0 ;
 	//(CDbInstance::m_cGbtTscDb).GetSystemData("ucDownloadFlag",mRestart);
