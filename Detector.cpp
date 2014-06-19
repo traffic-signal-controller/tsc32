@@ -181,7 +181,15 @@ ACE_INT32 iVal = 0;
 		else if ( 17 == m_iDetCfg[iIndex] )
 		{
 			m_ucActiveBoard2 = iIndex;    // 17 - 32 对应的检测器板  m_ucActiveBoard2=1 16-31
-		}		
+		}
+		else if(33 == m_iDetCfg[iIndex])
+		{
+			m_ucActiveBoard3 = iIndex;
+		}
+		else if(65 == m_iDetCfg[iIndex])
+		{
+			m_ucActiveBoard4 = iIndex;
+		}
 	}	
 	ACE_DEBUG((LM_DEBUG,"%s:%d DetBoard1 index = %d ,DetBoard2 index = %d \n",__FILE__,__LINE__,m_ucActiveBoard1,m_ucActiveBoard2));
 }
@@ -1367,8 +1375,8 @@ Return:         true:存在  false:不存在
 ***************************************************************/
 bool CDetector::HaveDetBoard()
 {	
-	int iIndex = 0;
 	int iDetId = 0;
+	int iMaxDetId = 0 ;
 	int iBoardIndex = 0;
 	STscConfig* pTscConfig = CManaKernel::CreateInstance()->m_pTscConfig;
 
@@ -1376,41 +1384,28 @@ bool CDetector::HaveDetBoard()
 	for (  iBoardIndex=0; iBoardIndex<MAX_DET_BOARD; iBoardIndex++ )
 	{
 		if ( pTscConfig->iDetCfg[iBoardIndex] != 0 )
-		
-			break;		
-	}
-	if ( iBoardIndex >= MAX_DET_BOARD )
-	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d  All DecBoards error!:%d \n",__FILE__,__LINE__));
-		return false;
-	}
-	//往下运行说明至少配置了一块检测器板
-	//ACE_Guard<ACE_Thread_Mutex> guard(m_sMutex);
-	//ACE_DEBUG((LM_DEBUG,"%s:%d  There are at list %d DET\n",__FILE__,__LINE__,iBoardIndex+1));
-#ifdef WINDOWS
-	return true;
-	
-#else	
-	while ( iIndex < MAX_DETECTOR )//32
-	{
-		if ( iIndex / MAX_DETECTOR_PER_BOARD != 0 )  //16 - 31
-		{
-			iDetId = (iIndex % MAX_DETECTOR_PER_BOARD) + m_ucActiveBoard2 * MAX_DETECTOR_PER_BOARD; // 16-31
-		}
-		else  //0 - 15
-		{
-			iDetId = (iIndex % MAX_DETECTOR_PER_BOARD) + m_ucActiveBoard1 * MAX_DETECTOR_PER_BOARD; // 0--15
-		}
-		//ACE_DEBUG((LM_DEBUG,"%s:%d  pTscConfig->sDetector[%d].ucPhaseId =  %d m_iBoardErr[%d]=%d,m_ucDetError[%d] =%d\n",__FILE__,__LINE__,iIndex,pTscConfig->sDetector[iIndex].ucPhaseId,iIndex/16, m_iBoardErr[iIndex/16],iIndex,m_ucDetError[iIndex]));
-		if ( (DEV_IS_CONNECTED == m_iBoardErr[iDetId/MAX_DETECTOR_PER_BOARD] )  && (pTscConfig->sDetector[iIndex].ucPhaseId != 0)   && (DET_NORMAL == m_ucDetError[iDetId]) )
-		{
-			//ACE_DEBUG((LM_DEBUG,"%s:%d  index:%d detId:%d\n",__FILE__,__LINE__,iIndex,iDetId+1));
-			return true; //两块板32个检测器位置任何一个检测器存在 则返回真.
-		}
-		
-		iIndex++;
-	}
-#endif
+		{		
+			if(DEV_IS_CONNECTED == m_iBoardErr[iBoardIndex] )
+			{
+				if(iBoardIndex < 2) //检测器板
+				{
+				 iDetId = iBoardIndex*MAX_DETECTOR_PER_BOARD ;
+				 iMaxDetId = (iDetId + MAX_DETECTOR_PER_BOARD-1) ;
+				}
+				else  //接口板
+				{
+				 iDetId = (iBoardIndex-1)*MAX_INTERFACE_PER_BOARD ;
+				 iMaxDetId = (iDetId + MAX_INTERFACE_PER_BOARD-1) ;
+				}
+				while(iDetId <= iMaxDetId)
+				{
+					if((pTscConfig->sDetector[iDetId].ucPhaseId != 0)&&(DET_NORMAL == m_ucDetError[iDetId]))
+						return true ;
+					iDetId++ ;
+				}
+			}			
+		}					
+	}	
 	
 	return false;
 }
@@ -1663,7 +1658,11 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 				Byte iDetId = 0 ;
 				for ( int j=0; j<8; j++ )
 				{
-					iDetId = ucDetBoardIndex*16+(i-1)*8+j ;
+					//iDetId = ucDetBoardIndex*16+(i-1)*8+j ;
+					if(ucDetBoardIndex <2)
+						iDetId = ucDetBoardIndex*16+(i-1)*8+j ;    //检测器板
+					else 
+						iDetId = (ucDetBoardIndex-1)*32+(i-1)*8+j ; //接口板
 					m_iDetStatus[iDetId] = (ucValueTmp >> j) & 0x01;
 					if((ucValueTmp >> j) & 0x1)
 					{
@@ -1697,6 +1696,8 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 				{
 					if(j%2 == 0)
 					{
+						if(ucDetBoardIndex >2)
+							return ; //接口板暂不处理状态
 						ucDecId = 16*ucDetBoardIndex+(i-1)*4+j/2 ;
 						if (pManakernel->m_pTscConfig->sDetector[ucDecId].ucDetectorId == 0 || 
 							pManakernel->m_pTscConfig->sDetector[ucDecId].ucPhaseId == 0)     
