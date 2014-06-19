@@ -66,7 +66,6 @@ enum
 	DATA_HEAD_OTHER   = 3   //未定义，保留
 };
 
-/* DELETE 20130920
 const int DET_STAT_CYCLE = 60;   //占有率统计的周期 1分钟
 enum
 {
@@ -75,7 +74,7 @@ enum
 	DETECTOR_BOARD1           = 2  ,  //检测器板1
 	DETECTOR_BOARD2           = 3     //检测器板2
 };
-*/
+
 
 
 
@@ -101,6 +100,7 @@ const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //
 const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
 const int MAX_DET_BOARD          = 4;    //最大检测器板数量
 const int MAX_DETECTOR_PER_BOARD = 16;   //每块板包含的检测器数量
+const int MAX_INTERFACE_PER_BOARD =32 ;  //每块接口板包含的通道数量
 const int MAX_DETECTOR           = MAX_DET_BOARD * MAX_DETECTOR_PER_BOARD;   //最大检测器数量
 
 const int MAX_SPESTATUS_CYCLE    = 10;   //时段表里定义的特殊状态周期时长 
@@ -329,8 +329,8 @@ const int MIN_GBT_MSG_LEN        = 3;     //gbt协议消息的最小长度
 const int MAX_CLIENT_NUM         = 4;     //最大的客户端连接数
 const int DEFAULT_GBT_PORT       = 8801;  //默认开辟的端口号
 const int DEFAULT_BROADCAST_PORT = 8808;  //默认开辟的端口号
-const Uint MAX_GBT_PORT          = 10024; //最大端口号    
-const Uint MIN_GBT_PORT          = 1024;  //最小端口号
+const int MAX_GBT_PORT          = 10024; //最大端口号    
+const int MIN_GBT_PORT          = 1024;  //最小端口号
 const int MAX_BUF_LEN            = 8192;  //最大帧的长度
 /*************************GBT协议消息处理常量定义************************/
 
