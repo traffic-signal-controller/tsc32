@@ -24,12 +24,12 @@ Configure* Configure::CreateInstance()
 }
 Configure::Configure():impExp_(NULL)
 {
-   //bool binitfile = InitConfig() ;
- 	//if(!binitfile)
-	//{
-	//	ACE_DEBUG((LM_DEBUG,"%s:%d Init configure file fail !\n",__FILE__,__LINE__));
+    bool binitfile = InitConfig() ;
+ 	if(!binitfile)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d Init configure file fail !\n",__FILE__,__LINE__));
 			 
-	//}
+	}
     if(open("tsc.ini") == -1)
  	{
 		cout<<"open configure file error!\n";	
@@ -99,6 +99,10 @@ bool Configure::InitConfig()
 		ACE_OS::fputs("\ntelephone     = 0592-5212811",fConfig);
 		ACE_OS::fputs("\naddress       = No151,BanMei,HuLi,XiaMen,FuJian,China",fConfig);
 		ACE_OS::fputs("\nWebSite       = http://www.aiton.com.cn	",fConfig);
+		
+		ACE_OS::fputs("\n[FUNCTION]",fConfig);
+		ACE_OS::fputs("\nBACKUP       = 1	",fConfig);
+		
 		ACE_OS::fclose(fConfig);
 		return true ;
 	}
@@ -140,7 +144,9 @@ pMyconfig->GetString("CONTACT","address",vstring);
 	cout<<"Address :" <<vstring.c_str()<<endl ;
 pMyconfig->GetString("CONTACT","WebSite",vstring);
 	cout<<"WebSite :" <<vstring.c_str()<<endl ;
-
+	
+pMyconfig->GetString("FUNCTION","BACKUP",vstring);
+	cout<<"WebSite :" <<vstring.c_str()<<endl ;
 cout<<"#................End Show Tsc Configure..................# "<<endl ;
 }
 
