@@ -54,7 +54,7 @@ public:
 	void SetCycleBit(bool bSetCycle);
 
 	bool IsVehile(); 		 //ADD: 201307241020
-	void ChangePatter();	 //ADD: 201309181530
+	void ChangePatter(Byte iParama);	 //ADD: 201309181530
 	void SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte ucLogVau3,Byte ucLogVau4); //ADD:201309251100
 
 	
@@ -75,9 +75,11 @@ public:
 private:
 	CManaKernel();
 	~CManaKernel();
-
+	void SetPhaseColor(bool bOverPhase,Byte iPhaseId);
 	void MemeryConfigDataRun();
-
+	void SetLampColor(Byte ColorType);
+	void SetDirecChannelColor(Byte iDirecType);
+	bool GaGetDirLane(Byte ucTableId , Byte  ucDir );
 	void SelectDataFromDb();
 	void ResetRunData(Byte ucTime);
 	Byte GetScheduleId(Byte ucMonth,Byte ucDay,Byte ucWeek);
