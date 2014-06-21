@@ -164,7 +164,7 @@ bool Can::Send(SCanFrame& sendFrame)
 	if ( ulBytes == sizeof(struct can_frame) )
 	{
 		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-		pMainBoardLed->DoCanLed();
+		pMainBoardLed->DoCan0Led();
 	}
 #endif	
 		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
@@ -195,7 +195,7 @@ bool Can::Recv(SCanFrame& recvFrame)
 
 	if ( ulBytes == sizeof(recvFrame) )
 	{
-		pMainBoardLed->DoCanLed();
+		pMainBoardLed->DoCan0Led();
 	}
 
 	return true;
