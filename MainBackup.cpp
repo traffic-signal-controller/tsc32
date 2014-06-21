@@ -15,6 +15,11 @@ History:    2014.05.29
 #include "GbtMsgQueue.h"
 #include "ace/Vector_T.h"
 
+
+#define BR115200 	115200
+#define BR57600 	57600
+
+
 CManaKernel * pManaKernel = CManaKernel::CreateInstance();
 SThreadMsg sTscMsg;
 SThreadMsg sTscMsgSts;	
@@ -74,8 +79,9 @@ void MainBackup::OpenDev()
 
 bool MainBackup::SendBackup(Byte *pByte ,int iSize)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d WriteComPort ############################### %d\n",__FILE__,__LINE__));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d WriteComPort ############################### %d\n",__FILE__,__LINE__,iSize));
 	int len_tty = -1;
+//	CSerialCtrl::CreateInstance()->OpenComPort(3, BR57600, 8, "1", 'N');
 	len_tty = CSerialCtrl::CreateInstance()->WriteComPort(pByte, iSize);
 	if (len_tty < 0) {		
 		ACE_DEBUG((LM_DEBUG,"%s:%d Error: WriteComPort Error %d\n",__FILE__,__LINE__));
@@ -226,11 +232,13 @@ Input:          无
 Output:         无
 Return:         无
 ***************************************************************/
-void MainBackup::DoWriteLED()
+void MainBackup::DoWriteLED(Byte ucByte)
 {
-	Byte workmode = pManaKernel->m_pRunData->ucWorkMode;
-	Uint ctrl = pManaKernel->m_pRunData->uiCtrl;
-	bool degrad = pManaKernel->bDegrade;
+	CSerialCtrl::CreateInstance()->OpenComPort(3, BR57600, 8, "1", 'N');
+	Byte workmode = CManaKernel::CreateInstance()->m_pRunData->ucWorkMode;
+	Uint ctrl = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
+	bool degrad = CManaKernel::CreateInstance()->bDegrade;
+	ACE_DEBUG((LM_DEBUG,"%s:%d Send***************** workmode= %x ,ctrl= %x,degrad= %x!**************\n",__FILE__,__LINE__,workmode,ctrl,degrad));
 	Byte data = 0x00;
 	if(MODE_TSC == workmode)
 	{
@@ -246,7 +254,7 @@ void MainBackup::DoWriteLED()
 	{
 		//这里表示其它未知
 	}
-
+	//ACE_DEBUG((LM_DEBUG,"%s:%d Send***************** data= %x !**************\n",__FILE__,__LINE__,data));
 
 	if(CTRL_MANUAL == ctrl)
 	{
@@ -256,8 +264,9 @@ void MainBackup::DoWriteLED()
 	{
 		//data = data & 0x00;
 	}
-	//是否降级，在LED上显示出来
-	if(degrad)
+	//ACE_DEBUG((LM_DEBUG,"%s:%d Send***************** data= %x !**************\n",__FILE__,__LINE__,data));
+	//是否降级，在LED上显示出来. 这协议中有错误红灯。这里暂不处理
+	if(degrad == 1)
 	{
 		data = data | 0x01;
 	}
@@ -265,9 +274,11 @@ void MainBackup::DoWriteLED()
 	{
 		data = data | 0x00;
 	}
+	//ACE_DEBUG((LM_DEBUG,"%s:%d Send***************** data= %x !**************\n",__FILE__,__LINE__,data));
 	Byte writeLED[7] = {0xaa,0x55,0x04,MAINBACKUP_WRITE_LED,0xff,data,0xff};
 	Byte chksum = ~(MAINBACKUP_WRITE_LED+0xff+data);
 	writeLED[6] = chksum;
+	ACE_DEBUG((LM_DEBUG,"%s:%d Send***************** writeLED= %x %x %x %x %x %x %x !**************\n",__FILE__,__LINE__,writeLED[0],writeLED[1],writeLED[2],writeLED[3],writeLED[4],writeLED[5],writeLED[6]));
 	SendBackup(writeLED,7);
 }
 /**************************************************************
@@ -1281,12 +1292,11 @@ Return:         无
 ***************************************************************/
 void MainBackup::DoManual()
 {
-	Byte readManual[7] = {0xaa,0x55,0x04,MAINBACKUP_READ_MANUAL,0xff,0xff,0xff};
-	Byte chksum = ~(MAINBACKUP_READ_MANUAL+0xff+0xff);
-	readManual[6] = chksum;
-
-	Byte reByte[8] = {0};
-	SendBackup(readManual,7);
+	Byte readManual[6] = {0xaa,0x55,0x03,MAINBACKUP_READ_MANUAL,0xff,0xff};
+	Byte chksum = ~(MAINBACKUP_READ_MANUAL+0xff);
+	readManual[5] = chksum;
+	//ACE_DEBUG((LM_DEBUG,"%s:%d MSG: DoManual == readManual[0] %x,readManual[1] %x,readManual[2] %x,readManual[3] %x,readManual[4] %x,readManual[5] %x\n",__FILE__,__LINE__,readManual[0],readManual[1],readManual[2],readManual[3],readManual[4],readManual[5]));
+	SendBackup(readManual,6);
 }
 /**************************************************************
 Function:        MainBackup::HeartBeat
@@ -1304,7 +1314,7 @@ void MainBackup::HeartBeat()
 	heart[6] = chksum;
 	// 500ms 发送心跳数据，无返回数据
 	//SendBackup(heart,sizeof(heart)/sizeof(heart[0]));
-	Byte reByte[8] = {0};
+//	Byte reByte[8] = {0};
 	SendBackup(heart,7);
 	
 }
@@ -1448,10 +1458,10 @@ void* MainBackup::Recevie(void* arg)
 		//ACE_Guard<ACE_Thread_Mutex> guard(m_sMutex);
 		//ACE_DEBUG((LM_DEBUG,"%s:%d sizeof(pbytes)/sizeof(pbytes[0]): %d  \n",__FILE__,__LINE__,sizeof(pbytes)/sizeof(pbytes[0])));
 		//SendBackup(pbytes,pLen);
-		ACE_DEBUG((LM_DEBUG,"%s:%d ####################OperateManual #############! \n",__FILE__,__LINE__));
-		Byte pByte[255] = {0};
+		//ACE_DEBUG((LM_DEBUG,"%s:%d ####################OperateManual #############! \n",__FILE__,__LINE__));
+	Byte pByte[255] = {0};
 	MainBackup *pMainBackup = MainBackup::CreateInstance();
-	CSerialCtrl::CreateInstance()->OpenComPort(3, 57600, 8, "1", 'N');
+	CSerialCtrl::CreateInstance()->OpenComPort(3, BR57600, 8, "1", 'N');
 		//pMainBackup->RecevieBackup(rsBytes, 8);
 		while(1){
 			bzero(pByte, 255);
@@ -1469,7 +1479,7 @@ void* MainBackup::Recevie(void* arg)
 			//CSerialCtrl::CreateInstance()->WriteComPort(" recved:", sizeof(" recved:"));	   //字节类型，所以字符串不能写
 			
 			//>>这里主要是将得到的字节数组255个中的有用的部分取出，放到resultBytes.
-			Uint bLen= pByte[2] + 2;
+			Uint bLen= pByte[2] + 3;   //后面的3表示   aa 55 len  的三个字节
 			Byte *resultBytes = new Byte[bLen];
 			ACE_OS::memcpy(resultBytes,pByte,bLen);
 			
@@ -1500,18 +1510,34 @@ void* MainBackup::Recevie(void* arg)
 			{	
 				//ACE_DEBUG((LM_DEBUG,"%s:%d aa 55 5\n",__FILE__,__LINE__));
 				case MAINBACKUP_RECEVIE_READ_MANUAL:
-					ManualBytes = {resultBytes[5],resultBytes[6]};
+					ManualBytes[0] = resultBytes[6];
+					ManualBytes[1] = resultBytes[5];
 					ManualButtonSts = bytes2T<Ushort>(ManualBytes);
-					ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));
+					//ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));
 					pMainBackup->OperateManual(ManualButtonSts);
 					//delete ManualBytes
 					break;
 				case MAINBACKUP_RECEVIE_ID:
-					readId = {resultBytes[5],resultBytes[6],resultBytes[7],resultBytes[8],resultBytes[9],resultBytes[10],resultBytes[11],resultBytes[12]};
+					readId[0] = resultBytes[5];
+					readId[1] = resultBytes[6];
+					readId[2] = resultBytes[7];
+					readId[3] = resultBytes[8];
+					readId[4] = resultBytes[9];
+					readId[5] = resultBytes[10];
+					readId[6] = resultBytes[11];
+					readId[7] = resultBytes[12];
 					pMainBackup->ReadID(readId);
 					break;
 				case MAINBACKUP_RECEVIE_WRITE_ID_TF:		///送发数据到PIC
-					writeId = {resultBytes[5],resultBytes[6],resultBytes[7],resultBytes[8],resultBytes[9],resultBytes[10],resultBytes[11],resultBytes[12]};
+					//writeId = {resultBytes[5],resultBytes[6],resultBytes[7],resultBytes[8],resultBytes[9],resultBytes[10],resultBytes[11],resultBytes[12]};
+					writeId[0] = resultBytes[5];
+					writeId[1] = resultBytes[6];
+					writeId[2] = resultBytes[7];
+					writeId[3] = resultBytes[8];
+					writeId[4] = resultBytes[9];
+					writeId[5] = resultBytes[10];
+					writeId[6] = resultBytes[11];
+					writeId[7] = resultBytes[12];
 					pMainBackup->WriteIDTF(writeId);
 					break;
 				case MAINBACKUP_RECEVIE_READ_LED:
@@ -1529,7 +1555,7 @@ void* MainBackup::Recevie(void* arg)
 					pMainBackup->CurrentSetp(setp);
 					break;
 				case MAINBACKUP_RECEVIE_SETP_TABLE:
-					setpTable = {};
+					//setpTable = {};
 					pMainBackup->SetpTable(setpTable);
 					break;
 				case MAINBACKUP_RECEVIE_NONE:

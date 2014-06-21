@@ -69,6 +69,22 @@ enum
 	MAINBACKUP_MANUAL_WEST			=34816	//西
 	
 };
+#define MANUAL_TO_AUTO_TIME 10  //手控状态保持10分钟后，将自己切换到自主运行
+
+/*
+手控状态
+*/
+enum
+{
+	MAC_CTRL_NOTHING    = 0x00 , //保持原来控制
+	MAC_CTRL_ALLOFF     = 0x01 , //关灯
+	MAC_CTRL_ALLRED     = 0x02 , //全红
+	MAC_CTRL_FLASH      = 0x03 , //黄闪
+	MAC_CTRL_NEXT_PHASE = 0x04 , //下一相位
+	MAC_CTRL_NEXT_DIR   = 0x05 , //下一方向 
+	MAC_CTRL_NEXT_STEP  = 0x06 , //下一步
+	MAC_CTRL_OTHER      = 0x07 , //其它
+};
 
 enum
 {
@@ -105,7 +121,7 @@ public:
 	void DoReadId();
 	void DoWriteId();
 	void DoReadLED();
-	void DoWriteLED();
+	void DoWriteLED(Byte ucByte);
 	void DoSendStep(SStepInfo stepInfos[],Byte stepNum);
 private:
 	ACE_Thread_Mutex  m_sMutex;
