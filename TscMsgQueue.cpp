@@ -185,7 +185,7 @@ void CTscMsgQueue::DealData()
 		case TSC_MSG_EVENT_READ:
 			break;
 		case TSC_MSG_PATTER_RECOVER:
-			pWorkParaManager->ChangePatter();
+			pWorkParaManager->ChangePatter(sMsg.ucMsgOpt);
 		default:
 			break;
 		}
