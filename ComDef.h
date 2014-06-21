@@ -125,6 +125,8 @@ enum
 	MODE_OTHER =3   //其他待定模式
 };
 
+
+
 /*
 信号机的工作状态
 */
@@ -229,7 +231,7 @@ enum
 enum
 {
 	LED_OP_START   = 0 ,
-
+	
 	LED_RUN_ON     = 1 ,
 	LED_RUN_OFF    = 2 ,
 
@@ -237,8 +239,14 @@ enum
 	LED_GPS_OFF    = 4 ,
 
 	LED_RS485_ON   = 5 , 
-	LED_RS485_OFF  = 6 
-	
+	LED_RS485_OFF  = 6 ,
+	LED_AUTO_SLEF, 
+	LED_AUTO_MANUAL,
+	LED_TSCPSC_TSC,
+	LED_TSCPSC_PSC,
+	LED_MODE_GREEN,
+	LED_MODE_YELLOW,
+	LED_MODE_RED
 };
 
 /*
