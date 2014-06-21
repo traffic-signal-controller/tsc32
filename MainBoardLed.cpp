@@ -18,11 +18,13 @@ History:
 #include "Can.h"
 #include "FlashMac.h"
 #include "Gps.h"
+#include "MainBackup.h"
 
-#define MAIN_BOARD_LED "/dev/leds" 
+#define DEV_PATH "/sys/class/gpio/"
+
+
 CMainBoardLed::CMainBoardLed()
 {
-	m_iLedFd = -1;
 	STscConfig* pSTscConfig = NULL ;
 	pSTscConfig =  CManaKernel::CreateInstance()->m_pTscConfig ;
 	
@@ -39,15 +41,13 @@ CMainBoardLed::CMainBoardLed()
 	if ( 0 != pSTscConfig->sSpecFun[FUN_WLAN].ucValue )
 		LedBoardStaus[7] = 0x2;
 	LedBoardStaus[9] = 0x2;//黄闪器
-	
-	
-	OpenDev();
+	can1Bool = true;
+	can0Bool = true;
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
 
 CMainBoardLed::~CMainBoardLed()
 {
-	CloseDev();
 	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
 
@@ -57,94 +57,105 @@ CMainBoardLed* CMainBoardLed::CreateInstance()
 	return &cMainBoardLed;
 }
 
-/****************Žò¿ªµÆ¿ØÉè±ž**********************************/
-void CMainBoardLed::OpenDev()
-{
-#ifndef WINDOWS
-	m_iLedFd = ::open(MAIN_BOARD_LED, O_RDONLY); 
-	 
-#endif
-
-	if ( m_iLedFd < 0 )
-	{
-		ACE_DEBUG((LM_DEBUG,"open device (%s) failed.\n", MAIN_BOARD_LED));
-	}
-}
 
 
-
-/***************************************************************
-			关闭LED设备文件
-***************************************************************/
-void CMainBoardLed::CloseDev()
-{
-	if( m_iLedFd >= 0 )
-	{
-#ifndef WINDOWS
-		close(m_iLedFd);
-#endif
-		m_iLedFd = -1;
-	}
-}
-
-/*****************设置MODE指示灯显示状态, 使用NLED3  NLED4 IO口 
-		修正:	  绿：正常     0 1
-                  黄：降级黄闪 1 1
+/****************
+*设置MODE指示灯显示状态, 使用MainBackup 类中的方法
+		修正:	  绿：正常     0 0
+                  黄：降级黄闪 0 1
                   红：无法工作 1 0
 ***************************************************************/
 void CMainBoardLed::DoModeLed(bool bLed3Value,bool bLed4Value)
 {
-#ifndef WINDOWS
-	ioctl(m_iLedFd, bLed3Value, 2);
-	ioctl(m_iLedFd, bLed4Value, 3);
-#endif
+	if(bLed3Value == false && bLed4Value == false)
+	{
+		MainBackup::CreateInstance()->DoWriteLED(LED_MODE_GREEN);
+	}
+	else if(bLed3Value == false && bLed4Value == true)
+	{
+		MainBackup::CreateInstance()->DoWriteLED(LED_MODE_YELLOW);
+	}
+ 	else if(bLed3Value == true && bLed4Value == false)
+	{
+		MainBackup::CreateInstance()->DoWriteLED(LED_MODE_RED);
+	}
 }
 
-/************设置TSC/PSC指示灯显示状态, 使用GPK0 IO口***********/
-void CMainBoardLed::DoTscPscLed()
+/***********
+*设置TSC/PSC指示灯显示状态,  
+*使用MainBackup 类中的方法
+***********/
+void CMainBoardLed::DoTscPscLed(bool bValue)
 {
-	
-	static bool bValue = true; 
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 4);
-	#endif
-	bValue = !bValue;
+	if(bValue)
+		MainBackup::CreateInstance()->DoWriteLED(LED_TSCPSC_TSC);
+	else
+		MainBackup::CreateInstance()->DoWriteLED(LED_TSCPSC_PSC);
 }
 
-/************设置Auto指示灯显示状态, 使用GPK2 IO口**************/
+/***********
+*设置Auto指示灯显示状态,  
+*使用MainBackup 类中的方法
+**************/
 void CMainBoardLed::DoAutoLed(bool bValue)
 {
-	//Žý²¹  ÊÖ¶¯ÃðµÆ
-	//static bool bValue = true; 
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 5);
-	#endif
-	//bValue = !bValue;
+	if(bValue)
+		MainBackup::CreateInstance()->DoWriteLED(LED_AUTO_SLEF);
+	else
+		MainBackup::CreateInstance()->DoWriteLED(LED_AUTO_MANUAL);
 }
 
-/*****设置Run指示灯显示状态, 1s内量灭各一次,使用NLED1 IO口******/
+/*****
+*	系统自动运行
+*	linux 系统运行
+******/
 void CMainBoardLed::DoRunLed()
 {
-	static bool bValue = true;
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 0);
-	#endif
-	bValue = !bValue;
+
 }
 
 
 /*****设置Can指示灯显示状态, CAN总线收发时亮,使用NLED2 IO口******/
 
-void CMainBoardLed::DoCanLed()
+void CMainBoardLed::DoCan0Led()
 {
-	static bool bValue = true; 
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 1);
-	#endif
-	bValue = !bValue;
+	system("echo 112 >"DEV_PATH"export");
+	system("echo out >"DEV_PATH"gpio112/direction");
+
+	if(can0Bool)
+	{
+		can0Bool = false;
+		system("echo 1 >> "DEV_PATH"gpio112/value");
+		//ACE_DEBUG((LM_DEBUG,"%s:%d gpio112   :false \n",__FILE__,__LINE__));
+	}
+	else
+	{
+		system("echo 0 >> "DEV_PATH"gpio112/value");
+		can0Bool = true;
+		//ACE_DEBUG((LM_DEBUG,"%s:%d gpio112   :true \n",__FILE__,__LINE__));
+	}
+
+	system("echo 112 >"DEV_PATH"unexport");
 }
 
+void CMainBoardLed::DoCan1Led()
+{
+	system("echo 116 >"DEV_PATH"export");
+	system("echo out >"DEV_PATH"gpio116/direction");
 
+	if(can1Bool)
+		{
+		system("echo 1 >> "DEV_PATH"gpio116/value");
+		can1Bool = false;
+		}
+	else
+		{
+		system("echo 0 >> "DEV_PATH"gpio116/value");
+		can1Bool = true;
+		}
+
+	system("echo 116 >"DEV_PATH"unexport");
+}
 bool CMainBoardLed::IsEthLinkUp()
 {
 	Byte rusult = 0 ;
