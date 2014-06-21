@@ -372,11 +372,9 @@ void CMacControl::SndLcdShow()
 		
 		/****ÐÅºÅ»úIPµØÖ·****/
 		ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
-		Byte pHwEther[6] = {0};
+		char hostname[MAXHOSTNAMELEN];
 		Byte pIp[4]      = {0};
-		Byte pMask[4]    = {0};
-		Byte pGateway[4] = {0};
-		CGbtMsgQueue::CreateInstance()->GetNetPara(pHwEther ,pIp , pMask , pGateway);
+		CGbtMsgQueue::CreateInstance()->GetNetParaByAce(pIp ,hostname);
 		
 		Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  , BOARD_ADDR_HARD_CONTROL , &(sSendFrameTmp.ulCanId));
 		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_CHECK << 6 ) | CTRLBOARD_HEAD_IP;
