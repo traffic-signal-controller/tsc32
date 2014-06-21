@@ -3,12 +3,30 @@
 
 #include "Define.h"
 
+
+
+
 typedef int     INT32;
 typedef short   INT16;
 typedef char    INT8;
 typedef unsigned int UNIT32;
 typedef unsigned short UINT16;
 typedef unsigned char UINT8;
+
+
+#define SERIAL0  "/dev/ttyO0"    //串口0
+#define SERIAL1  "/dev/ttyO1"    //串口1
+#define SERIAL2  "/dev/ttyO2"    //串口2
+#define SERIAL3  "/dev/ttyO3"    //串口3
+#define SERIAL4  "/dev/ttyO4"	//485
+#define SERIAL5  "/dev/ttyO5"    //485
+
+#define SERIALNUM1  1
+#define SERIALNUM2  2
+#define SERIALNUM3  3
+#define SERIALNUM4  4
+#define SERIALNUM5  5
+
 
 class CSerialCtrl
 {

@@ -27,18 +27,7 @@ History:
 #include "Define.h"
 
 
-#define SERIAL0  "/dev/ttyO0"    //串口0
-#define SERIAL1  "/dev/ttyO1"    //串口1
-#define SERIAL2  "/dev/ttyO2"    //串口2
-#define SERIAL3  "/dev/ttyO3"    //串口3
-#define SERIAL4  "/dev/ttyO4"	//485
-#define SERIAL5  "/dev/ttyO5"    //485
 
-#define SERIALNUM1  1
-#define SERIALNUM2  2
-#define SERIALNUM3  3
-#define SERIALNUM4  4
-#define SERIALNUM5  5
 
 /*  
 * Decription for TIMEOUT_SEC(buflen,baud); 
@@ -148,8 +137,8 @@ Return:         无
 ***************************************************************/
 INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,const char *stopbit, char parity)
 {    
-	char           *pComPort;    
-	INT32           retval;    
+	char *pComPort;    
+	INT32 retval;    
 	switch (ComPort) 
 	{    
 		case 0:        
@@ -282,7 +271,8 @@ INT32 ReadComPortA (void *data, INT32 datalength)
 		FD_SET (fd, &fs_read);        
 		retval = select (fd + 1, &fs_read, NULL, NULL, &tv_timeout);        
 		if ( retval >0 ) 
-		{            
+		{   
+			//void * 进行运算产生warning 不影响程序运行
 			readlen = read (fd, (data+bytes_read), datalength);            
 			bytes_read += readlen;        
 		} 
@@ -549,7 +539,7 @@ void CSerialCtrl::OpenALLSerial()
 	}else{
 		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM2));
 	}
-	ret = OpenComPort(SERIALNUM3, 115200, 8, "1", 'N');
+	ret = OpenComPort(SERIALNUM3, 57600, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM3));
 		//return ;	
