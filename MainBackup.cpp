@@ -82,7 +82,7 @@ bool MainBackup::SendBackup(Byte *pByte ,int iSize)
 	//ACE_DEBUG((LM_DEBUG,"%s:%d WriteComPort ############################### %d\n",__FILE__,__LINE__,iSize));
 	int len_tty = -1;
 //	CSerialCtrl::CreateInstance()->OpenComPort(3, BR57600, 8, "1", 'N');
-	len_tty = CSerialCtrl::CreateInstance()->WriteComPort(pByte, iSize);
+	len_tty = CSerialCtrl::CreateInstance()->WriteComPortBySerial3(pByte, iSize);
 	if (len_tty < 0) {		
 		ACE_DEBUG((LM_DEBUG,"%s:%d Error: WriteComPort Error %d\n",__FILE__,__LINE__));
 		

@@ -225,16 +225,198 @@ Return:         无
 ***************************************************************/
 INT32 CSerialCtrl::ReadComPort (Byte *data, INT32 datalength)
 {    
+
+	
 	INT32           retval = 0;        
 	FD_ZERO (&fs_read);    
 	FD_SET (fd, &fs_read);    
 	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
 	tv_timeout.tv_usec = TIMEOUT_USEC;   
 	//ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d   ,  %s , %d\n",fd,data,datalength));
+	
 	retval = select (fd + 1, &fs_read, NULL, NULL, &tv_timeout);    
 	if (retval > 0) 
 	{        
 		retval = read (fd, data, datalength);        
+		return (retval);    
+	}    
+	else 
+	{        
+		if (0 == retval ) 
+		{            
+			return (0);        
+		}
+		else
+		{            
+			return (-1);        
+		}    
+	}
+}
+/**************************************************************
+Function:       CSerialCtrl::OpenALLSerial
+Description:    打开所有串口设备文件
+Input:          无              
+Output:         无
+Return:         无
+***************************************************************/
+INT32 CSerialCtrl::ReadComPortBySerial1(Byte *data, INT32 datalength)
+{    
+
+	
+	INT32           retval = 0;        
+	FD_ZERO (&fs_read);    
+	FD_SET (m_iSerial1fd, &fs_read);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;   
+	//ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d   ,  %s , %d\n",fd,data,datalength));
+	
+	retval = select (m_iSerial1fd + 1, &fs_read, NULL, NULL, &tv_timeout);    
+	if (retval > 0) 
+	{        
+		retval = read (m_iSerial1fd, data, datalength);        
+		return (retval);    
+	}    
+	else 
+	{        
+		if (0 == retval ) 
+		{            
+			return (0);        
+		}
+		else
+		{            
+			return (-1);        
+		}    
+	}
+}
+/**************************************************************
+Function:       CSerialCtrl::OpenALLSerial
+Description:    打开所有串口设备文件
+Input:          无              
+Output:         无
+Return:         无
+***************************************************************/
+INT32 CSerialCtrl::ReadComPortBySerial2 (Byte *data, INT32 datalength)
+{    
+
+	
+	INT32           retval = 0;        
+	FD_ZERO (&fs_read);    
+	FD_SET (m_iSerial2fd, &fs_read);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;   
+	//ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d   ,  %s , %d\n",fd,data,datalength));
+	
+	retval = select (m_iSerial2fd + 1, &fs_read, NULL, NULL, &tv_timeout);    
+	if (retval > 0) 
+	{        
+		retval = read (m_iSerial2fd, data, datalength);        
+		return (retval);    
+	}    
+	else 
+	{        
+		if (0 == retval ) 
+		{            
+			return (0);        
+		}
+		else
+		{            
+			return (-1);        
+		}    
+	}
+}
+/**************************************************************
+Function:       CSerialCtrl::OpenALLSerial
+Description:    打开所有串口设备文件
+Input:          无              
+Output:         无
+Return:         无
+***************************************************************/
+INT32 CSerialCtrl::ReadComPortBySerial3 (Byte *data, INT32 datalength)
+{    
+
+	
+	INT32           retval = 0;        
+	FD_ZERO (&fs_read);    
+	FD_SET (m_iSerial3fd, &fs_read);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;   
+	//ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d   ,  %s , %d\n",fd,data,datalength));
+	
+	retval = select (m_iSerial3fd + 1, &fs_read, NULL, NULL, &tv_timeout);    
+	if (retval > 0) 
+	{        
+		retval = read (m_iSerial3fd, data, datalength);        
+		return (retval);    
+	}    
+	else 
+	{        
+		if (0 == retval ) 
+		{            
+			return (0);        
+		}
+		else
+		{            
+			return (-1);        
+		}    
+	}
+}
+/**************************************************************
+Function:       CSerialCtrl::OpenALLSerial
+Description:    打开所有串口设备文件
+Input:          无              
+Output:         无
+Return:         无
+***************************************************************/
+INT32 CSerialCtrl::ReadComPortBySerial4 (Byte *data, INT32 datalength)
+{    
+
+	
+	INT32           retval = 0;        
+	FD_ZERO (&fs_read);    
+	FD_SET (m_iSerial4fd, &fs_read);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;   
+	//ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d   ,  %s , %d\n",fd,data,datalength));
+	
+	retval = select (m_iSerial4fd + 1, &fs_read, NULL, NULL, &tv_timeout);    
+	if (retval > 0) 
+	{        
+		retval = read (m_iSerial4fd, data, datalength);        
+		return (retval);    
+	}    
+	else 
+	{        
+		if (0 == retval ) 
+		{            
+			return (0);        
+		}
+		else
+		{            
+			return (-1);        
+		}    
+	}
+}/**************************************************************
+Function:       CSerialCtrl::OpenALLSerial
+Description:    打开所有串口设备文件
+Input:          无              
+Output:         无
+Return:         无
+***************************************************************/
+INT32 CSerialCtrl::ReadComPortBySerial5 (Byte *data, INT32 datalength)
+{    
+
+	
+	INT32           retval = 0;        
+	FD_ZERO (&fs_read);    
+	FD_SET (m_iSerial5fd, &fs_read);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;   
+	//ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d   ,  %s , %d\n",fd,data,datalength));
+	
+	retval = select (m_iSerial5fd + 1, &fs_read, NULL, NULL, &tv_timeout);    
+	if (retval > 0) 
+	{        
+		retval = read (m_iSerial5fd, data, datalength);        
 		return (retval);    
 	}    
 	else 
@@ -282,6 +464,184 @@ INT32 ReadComPortA (void *data, INT32 datalength)
 	return -1;
 }
 
+/**************************************************************
+Function:        CSerialCtrl::WriteComPortBySerial3    
+Description:     通过串口3读取写入数据	
+Input:        	data  - 数据内容
+				datalength  - 消息内容长度		      
+Output:         无
+Return:         0 -错误  1-正确
+***************************************************************/
+INT32 CSerialCtrl::WriteComPortBySerial1(Byte * data, INT32 datalength)
+{
+	INT32           retval, len = 0, total_len = 0;    
+	FD_ZERO (&fs_write);    
+	FD_SET (m_iSerial1fd, &fs_write);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;    
+	for (total_len = 0, len = 0; total_len < datalength;)
+	{        
+		retval = select (m_iSerial1fd + 1, NULL, &fs_write, NULL, &tv_timeout);        
+		if (retval) 
+		{            
+			len = write (m_iSerial1fd, &data[total_len], datalength - total_len);   
+			if (len > 0) 
+			{                
+				total_len += len;           
+			}      
+		}        
+		else 
+		{            
+			tcflush (m_iSerial1fd, TCOFLUSH);     
+			/* flush all output data */            
+			break;        
+		}    
+	}    
+	return (total_len);
+}
+
+/**************************************************************
+Function:        CSerialCtrl::WriteComPortBySerial3    
+Description:     通过串口3读取写入数据	
+Input:        	data  - 数据内容
+				datalength  - 消息内容长度		      
+Output:         无
+Return:         0 -错误  1-正确
+***************************************************************/
+INT32 CSerialCtrl::WriteComPortBySerial2(Byte * data, INT32 datalength)
+{
+	INT32           retval, len = 0, total_len = 0;    
+	FD_ZERO (&fs_write);    
+	FD_SET (m_iSerial2fd, &fs_write);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;    
+	for (total_len = 0, len = 0; total_len < datalength;)
+	{        
+		retval = select (m_iSerial2fd + 1, NULL, &fs_write, NULL, &tv_timeout);        
+		if (retval) 
+		{            
+			len = write (m_iSerial2fd, &data[total_len], datalength - total_len);   
+			if (len > 0) 
+			{                
+				total_len += len;           
+			}      
+		}        
+		else 
+		{            
+			tcflush (m_iSerial2fd, TCOFLUSH);     
+			/* flush all output data */            
+			break;        
+		}    
+	}    
+	return (total_len);
+}
+
+/**************************************************************
+Function:        CSerialCtrl::WriteComPortBySerial3    
+Description:     通过串口3读取写入数据	
+Input:        	data  - 数据内容
+				datalength  - 消息内容长度		      
+Output:         无
+Return:         0 -错误  1-正确
+***************************************************************/
+INT32 CSerialCtrl::WriteComPortBySerial3(Byte * data, INT32 datalength)
+{
+	INT32           retval, len = 0, total_len = 0;    
+	FD_ZERO (&fs_write);    
+	FD_SET (m_iSerial3fd, &fs_write);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;    
+	for (total_len = 0, len = 0; total_len < datalength;)
+	{        
+		retval = select (m_iSerial3fd + 1, NULL, &fs_write, NULL, &tv_timeout);        
+		if (retval) 
+		{            
+			len = write (m_iSerial3fd, &data[total_len], datalength - total_len);   
+			if (len > 0) 
+			{                
+				total_len += len;           
+			}      
+		}        
+		else 
+		{            
+			tcflush (m_iSerial3fd, TCOFLUSH);     
+			/* flush all output data */            
+			break;        
+		}    
+	}    
+	return (total_len);
+}
+
+/**************************************************************
+Function:        CSerialCtrl::WriteComPortBySerial3    
+Description:     通过串口3读取写入数据	
+Input:        	data  - 数据内容
+				datalength  - 消息内容长度		      
+Output:         无
+Return:         0 -错误  1-正确
+***************************************************************/
+INT32 CSerialCtrl::WriteComPortBySerial4(Byte * data, INT32 datalength)
+{
+	INT32           retval, len = 0, total_len = 0;    
+	FD_ZERO (&fs_write);    
+	FD_SET (m_iSerial4fd, &fs_write);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;    
+	for (total_len = 0, len = 0; total_len < datalength;)
+	{        
+		retval = select (m_iSerial4fd + 1, NULL, &fs_write, NULL, &tv_timeout);        
+		if (retval) 
+		{            
+			len = write (m_iSerial4fd, &data[total_len], datalength - total_len);   
+			if (len > 0) 
+			{                
+				total_len += len;           
+			}      
+		}        
+		else 
+		{            
+			tcflush (m_iSerial4fd, TCOFLUSH);     
+			/* flush all output data */            
+			break;        
+		}    
+	}    
+	return (total_len);
+}
+/**************************************************************
+Function:        CSerialCtrl::WriteComPortBySerial3    
+Description:     通过串口3读取写入数据	
+Input:        	data  - 数据内容
+				datalength  - 消息内容长度		      
+Output:         无
+Return:         0 -错误  1-正确
+***************************************************************/
+INT32 CSerialCtrl::WriteComPortBySerial5(Byte * data, INT32 datalength)
+{
+	INT32           retval, len = 0, total_len = 0;    
+	FD_ZERO (&fs_write);    
+	FD_SET (m_iSerial5fd, &fs_write);    
+	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
+	tv_timeout.tv_usec = TIMEOUT_USEC;    
+	for (total_len = 0, len = 0; total_len < datalength;)
+	{        
+		retval = select (m_iSerial5fd + 1, NULL, &fs_write, NULL, &tv_timeout);        
+		if (retval) 
+		{            
+			len = write (m_iSerial5fd, &data[total_len], datalength - total_len);   
+			if (len > 0) 
+			{                
+				total_len += len;           
+			}      
+		}        
+		else 
+		{            
+			tcflush (m_iSerial5fd, TCOFLUSH);     
+			/* flush all output data */            
+			break;        
+		}    
+	}    
+	return (total_len);
+}
 /*  
 * Write datalength bytes in buffer given by UINT8 *data, 
 * return value: bytes written 
@@ -289,6 +649,7 @@ INT32 ReadComPortA (void *data, INT32 datalength)
 */
 INT32 CSerialCtrl::WriteComPort (Byte * data, INT32 datalength)
 {    
+
 	INT32           retval, len = 0, total_len = 0;    
 	FD_ZERO (&fs_write);    
 	FD_SET (fd, &fs_write);    

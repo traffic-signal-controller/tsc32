@@ -43,7 +43,17 @@ public:
 	INT32 OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,const char *stopbit, char parity);
 	void CloseComPort (void);
 	INT32 ReadComPort (Byte *data, INT32 datalength);
+	INT32 ReadComPortBySerial1(Byte *data, INT32 datalength);
+	INT32 ReadComPortBySerial2(Byte *data, INT32 datalength);
+	INT32 ReadComPortBySerial3(Byte *data, INT32 datalength);
+	INT32 ReadComPortBySerial4(Byte *data, INT32 datalength);
+	INT32 ReadComPortBySerial5(Byte *data, INT32 datalength);
 	INT32 WriteComPort (Byte * data, INT32 datalength);
+	INT32 WriteComPortBySerial1(Byte * data, INT32 datalength);
+	INT32 WriteComPortBySerial2(Byte * data, INT32 datalength);
+	INT32 WriteComPortBySerial3(Byte * data, INT32 datalength);
+	INT32 WriteComPortBySerial4(Byte * data, INT32 datalength);
+	INT32 WriteComPortBySerial5(Byte * data, INT32 datalength);
 	/** 
 	* export serial fd to other program to perform 
 	* directly read, write to serial. 
@@ -55,12 +65,12 @@ private:
 	~CSerialCtrl();
 
 	//与GPS、GSM板通信
-	int  m_iSerial1fd;
-	int  m_iSerial2fd;
+	INT32  m_iSerial1fd;
+	INT32  m_iSerial2fd;
 	//与备份PIC通信，内容包括备份灯色，手控.
-	int  m_iSerial3fd;
-	int	 m_iSerial4fd;
-	int	 m_iSerial5fd;
+	INT32  m_iSerial3fd;
+	INT32  m_iSerial4fd;
+	INT32  m_iSerial5fd;
 };
 
 #endif //_SERIALCTRL_H_
