@@ -3704,7 +3704,11 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 				
 			}
-			else
+			else if( ucValue == 250)
+			{
+				
+			}
+			else 
 			{
 				return false;
 			}
