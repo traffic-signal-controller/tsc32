@@ -142,6 +142,8 @@ void CManaKernel::InitWorkPara()
 	m_pRunData->uiOldCtrl    = CTRL_SCHEDULE;
 	m_pRunData->uiWorkStatus = FLASH;
 	m_pRunData->bStartFlash  = true;
+
+	//初始化灯泡检测数据，从数据库中取出
 	m_pRunData->bIsChkLght   = false ;
 	m_pRunData->b8cndtown    = false ;
 	ResetRunData(0);
@@ -778,7 +780,7 @@ Return:         无
 void CManaKernel::DecTime()
 {
 	m_bAddTimeCount = true;
-	/*
+	/*   无锡检测要求，要在开机全红的情况下进行灯泡检测 <<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 	if(m_bFinishBoot == false && m_pRunData->uiWorkStatus == ALLRED)
 	{
 		static Byte iChkTime = 0 ;
@@ -791,7 +793,7 @@ void CManaKernel::DecTime()
 		}
 
 	}
-	*/
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	
 	if(m_pRunData->uiWorkStatus == STANDARD && m_pRunData->uiCtrl == CTRL_VEHACTUATED )
 	//ACE_DEBUG((LM_DEBUG,"%s:%d ctrl:%d  ucElapseTime:%02d,ucStepTime:%02d m_iMinStepTime:%02d\n",
@@ -1089,6 +1091,8 @@ void CManaKernel::OverCycle()
 			CDetector::CreateInstance()->SearchAllStatus();
 			Ulong mRestart = 0 ;
 		(CDbInstance::m_cGbtTscDb).GetSystemData("ucDownloadFlag",mRestart);
+
+		//用于灯泡检测，重起系统后进行故障清除。需要重新进行设置
 		if(mRestart >0)
 		{
 			#ifdef LINUX
@@ -1096,7 +1100,7 @@ void CManaKernel::OverCycle()
 			#endif
 			CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_OTHER,2,mRestart,0,0);	
 			(CDbInstance::m_cGbtTscDb).SetSystemData("ucDownloadFlag",0);  // 故障清零
-		}
+		}  			//
 			
 	}
 
@@ -1110,7 +1114,7 @@ void CManaKernel::OverCycle()
 				//pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);
 				CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_SYSTEMCONTROL,255);
 				return ;
-			}	//---------<结束序列号验证
+			}	//---------<结束序列号验证/
 			
 			switch ( m_pRunData->uiCtrl )
 			{
