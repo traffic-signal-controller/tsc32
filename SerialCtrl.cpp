@@ -432,7 +432,7 @@ INT32 CSerialCtrl::ReadComPortBySerial5 (Byte *data, INT32 datalength)
 	}
 }
 
-INT32 ReadComPortA (void *data, INT32 datalength)
+INT32 ReadComPortA (Byte *data, INT32 datalength)
 {    
 	INT32           retval = 0;    
 	int bytes_read;    
