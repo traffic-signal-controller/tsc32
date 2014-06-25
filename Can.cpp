@@ -118,7 +118,7 @@ bool Can::Send(SCanFrame& sendFrame)
 	ACE_Guard<ACE_Thread_Mutex>  guard(m_mutexCan);
 	int ulBytes = 0;
 
-#ifdef LINUX
+
 	m_frameCan.can_id = sendFrame.ulCanId;
 	ACE_OS::memcpy(m_frameCan.data,sendFrame.pCanData,sendFrame.ucCanDataLen);
 	m_frameCan.can_dlc = sendFrame.ucCanDataLen;
@@ -164,9 +164,10 @@ bool Can::Send(SCanFrame& sendFrame)
 	if ( ulBytes == sizeof(struct can_frame) )
 	{
 		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+		//这里影响到的can数据的发送
 		pMainBoardLed->DoCan0Led();
 	}
-#endif	
+
 		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
 	return true;
 }
