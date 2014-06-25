@@ -150,8 +150,8 @@ Return:         无
 ***************************************************************/
 void RunGb()
 {
-	ACE_thread_t  tThreadId[7];
-	ACE_hthread_t hThreadHandle[7];
+	ACE_thread_t  tThreadId[8];
+	ACE_hthread_t hThreadHandle[8];
 
 	(CDbInstance::m_cGbtTscDb).InitDb(DB_NAME);  //数据库类初始化
 	
@@ -262,7 +262,7 @@ void RunGb()
 		}
 	}
 
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)MainBackup::Recevie, //开启gps校时线程
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)MainBackup::Recevie, //备份单片机的实时通信线程
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[7],
@@ -272,7 +272,7 @@ void RunGb()
 								ACE_DEFAULT_THREAD_STACKSIZE,
 								0) == -1 )
 		{
-			TscAceDebug((LM_DEBUG,"Error: CGps thread faild\n"));
+			TscAceDebug((LM_DEBUG,"Error: MainBackup thread faild\n"));
 		}
 	
 	ACE_Thread::join(hThreadHandle[0]);   //回收线程资源
@@ -281,7 +281,7 @@ void RunGb()
 	ACE_Thread::join(hThreadHandle[3]);
 	ACE_Thread::join(hThreadHandle[4]);
 	ACE_Thread::join(hThreadHandle[5]);
-	//ACE_Thread::join(hThreadHandle[6]);
+	ACE_Thread::join(hThreadHandle[6]);
 	ACE_Thread::join(hThreadHandle[7]);
 
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
