@@ -30,6 +30,7 @@ History:
 #include <fcntl.h>
 #include <string.h>
 #include <termios.h>
+
 #endif
 
 /*
@@ -281,7 +282,23 @@ void CLampBoard::SendLamp()
 	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD-3; iBdINdex++ )	
 	{
 		if(m_ucLampBoardError[iBdINdex] == DEV_IS_CONNECTED)
+		{
+			 
 			SendSingleLamp(iBdINdex);
+/******   计算每次发送灯之间的时间
+			struct timeval    tv;  
+		    struct timezone tz;  
+		      
+		    struct tm         *p; 
+		      
+		    gettimeofday(&tv, &tz); 
+		      
+		    p = localtime(&tv.tv_sec);  
+		   ACE_OS::printf("Time:%d%d%d%d%d%d.%03ld\n", 1900+p->tm_year, 1+p->tm_mon, p->tm_mday, p->tm_hour, p->tm_min, p->tm_sec, tv.tv_usec);  
+
+
+		   */
+		}
 	}
 }
 
