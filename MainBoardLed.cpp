@@ -43,11 +43,19 @@ CMainBoardLed::CMainBoardLed()
 	LedBoardStaus[9] = 0x2;//»ÆÉÁÆ÷
 	can1Bool = true;
 	can0Bool = true;
+
+	system("echo 112 >"DEV_PATH"export");
+	system("echo out >"DEV_PATH"gpio112/direction");
+	
+	system("echo 116 >"DEV_PATH"export");
+	system("echo out >"DEV_PATH"gpio116/direction");
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
 
 CMainBoardLed::~CMainBoardLed()
 {
+	system("echo 112 >"DEV_PATH"unexport");
+	system("echo 116 >"DEV_PATH"unexport");
 	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
 
@@ -119,8 +127,7 @@ void CMainBoardLed::DoRunLed()
 
 void CMainBoardLed::DoCan0Led()
 {
-	system("echo 112 >"DEV_PATH"export");
-	system("echo out >"DEV_PATH"gpio112/direction");
+	
 
 	if(can0Bool)
 	{
@@ -135,13 +142,12 @@ void CMainBoardLed::DoCan0Led()
 		//ACE_DEBUG((LM_DEBUG,"%s:%d gpio112   :true \n",__FILE__,__LINE__));
 	}
 
-	system("echo 112 >"DEV_PATH"unexport");
+	
 }
 
 void CMainBoardLed::DoCan1Led()
 {
-	system("echo 116 >"DEV_PATH"export");
-	system("echo out >"DEV_PATH"gpio116/direction");
+	
 
 	if(can1Bool)
 		{
@@ -154,7 +160,7 @@ void CMainBoardLed::DoCan1Led()
 		can1Bool = true;
 		}
 
-	system("echo 116 >"DEV_PATH"unexport");
+	
 }
 bool CMainBoardLed::IsEthLinkUp()
 {
