@@ -357,6 +357,7 @@ void CMacControl::SndLcdShow()
 		sSendFrameTmp.pCanData[2] = tvTime.year()&0xff;
 		sSendFrameTmp.pCanData[3] = tvTime.month();
 		sSendFrameTmp.pCanData[4] = tvTime.day();
+		//m3352 时间与 6410时间有差异
 		sSendFrameTmp.pCanData[5] = tvTime.hour();
 		sSendFrameTmp.pCanData[6] = tvTime.minute();
 		sSendFrameTmp.ucCanDataLen = 7;			
