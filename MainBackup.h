@@ -66,8 +66,8 @@ enum
 	MAINBACKUP_MANUAL_NORTH			=33024,	//北
 	MAINBACKUP_MANUAL_EAST			=33280,	//东
 	MAINBACKUP_MANUAL_SOUTH			=33792,	//南
-	MAINBACKUP_MANUAL_WEST			=34816	//西
-	
+	MAINBACKUP_MANUAL_WEST			=34816,	//西
+	MAINBACKUP_MANUAL_ENTER_SPEICAL     =32768
 };
 #define MANUAL_TO_AUTO_TIME 10  //手控状态保持10分钟后，将自己切换到自主运行
 
@@ -122,7 +122,7 @@ public:
 	void DoWriteId();
 	void DoReadLED();
 	void DoWriteLED(Byte ucByte);
-	void DoSendStep(SStepInfo stepInfos[],Byte stepNum);
+	void DoSendStep(STscRunData *m_pRunData);
 private:
 	ACE_Thread_Mutex  m_sMutex;
 	int m_iSerial3fd;
