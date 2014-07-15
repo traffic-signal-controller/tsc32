@@ -9,28 +9,63 @@ History:
 ***************************************************************/
 #include "Cdkey.h"
 
+
+
+/**************************************************************
+Function:       Cdkey::Cdkey
+Description:    CDKEY的构造函数
+Output:         无              
+Input:          无
+Return:         0
+***************************************************************/
 Cdkey::Cdkey()
 {
 	ACE_DEBUG((LM_DEBUG,"%s:%d construnt Cdkey object ok !\n",__FILE__,__LINE__));
 }
 
+/**************************************************************
+Function:       Cdkey::~Cdkey
+Description:    CDKEY的析构函数
+Output:         无              
+Input:          无
+Return:         0
+***************************************************************/
 Cdkey::~ Cdkey()
 {
 	ACE_DEBUG((LM_DEBUG,"%s:%d destroy Cdkey object ok !\n",__FILE__,__LINE__));
 }
 
+/**************************************************************
+Function:       Cdkey* Cdkey::CreateInstance()
+Description:    单例模式创建一个cdkey对象
+Output:         无              
+Input:          无
+Return:         cdkey 指针
+***************************************************************/
 Cdkey* Cdkey::CreateInstance()
 {
 	static Cdkey Ccdkey;
 	return &Ccdkey;
 }
 
-
+/**************************************************************
+Function:       Cdkey::InitCdkey()
+Description:    对它进行初始化
+Output:         无              
+Input:          无
+Return:         无
+***************************************************************/
 void Cdkey::InitCdkey()
 {
 	ACE_DEBUG((LM_DEBUG,"%s:%d init Cdkey object ok !\n",__FILE__,__LINE__));
 }
-
+/**************************************************************
+Function:        Cdkey::GetCdkey(char (&cdkey)[8])
+Description:    对它进行初始化
+Output:         char (&cdkey)[8]   8个字节的序列号            
+Input:          无
+Return:         1 成功返回，0 返回失败 
+***************************************************************/
 bool Cdkey::GetCdkey(char (&cdkey)[8])
 {
 	int i;	
