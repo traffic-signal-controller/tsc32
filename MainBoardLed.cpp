@@ -22,7 +22,13 @@ History:
 
 #define DEV_PATH "/sys/class/gpio/"
 
-
+/**************************************************************
+Function:       CMainBoardLed
+Description:    CMainBoardLed 构造函数
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 CMainBoardLed::CMainBoardLed()
 {
 	STscConfig* pSTscConfig = NULL ;
@@ -51,14 +57,26 @@ CMainBoardLed::CMainBoardLed()
 	system("echo out >"DEV_PATH"gpio116/direction");
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
-
+/**************************************************************
+Function:       ~CMainBoardLed
+Description:    CMainBoardLed 析构函数
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 CMainBoardLed::~CMainBoardLed()
 {
 	system("echo 112 >"DEV_PATH"unexport");
 	system("echo 116 >"DEV_PATH"unexport");
 	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
-
+/**************************************************************
+Function:       CreateInstance
+Description:    CMainBoardLed 创建单例对象
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 CMainBoardLed* CMainBoardLed::CreateInstance()
 {
 	static CMainBoardLed cMainBoardLed;
@@ -96,9 +114,9 @@ void CMainBoardLed::DoModeLed(bool bLed3Value,bool bLed4Value)
 void CMainBoardLed::DoTscPscLed(bool bValue)
 {
 	if(bValue)
-		MainBackup::CreateInstance()->DoWriteLED(LED_TSCPSC_TSC);
+		MainBackup::CreateInstance()->DoWriteLED(MODE_TSC);
 	else
-		MainBackup::CreateInstance()->DoWriteLED(LED_TSCPSC_PSC);
+		MainBackup::CreateInstance()->DoWriteLED(MODE_PSC1);
 }
 
 /***********
@@ -108,9 +126,9 @@ void CMainBoardLed::DoTscPscLed(bool bValue)
 void CMainBoardLed::DoAutoLed(bool bValue)
 {
 	if(bValue)
-		MainBackup::CreateInstance()->DoWriteLED(LED_AUTO_SLEF);
+		MainBackup::CreateInstance()->DoWriteLED(CTRL_SCHEDULE);
 	else
-		MainBackup::CreateInstance()->DoWriteLED(LED_AUTO_MANUAL);
+		MainBackup::CreateInstance()->DoWriteLED(CTRL_PANEL);
 }
 
 /*****
@@ -123,8 +141,13 @@ void CMainBoardLed::DoRunLed()
 }
 
 
-/*****设置Can指示灯显示状态, CAN总线收发时亮,使用NLED2 IO口******/
-
+/**************************************************************
+Function:       DoCan1Led
+Description:    CMainBoardLed 设置Can指示灯显示状态, CAN总线收发时亮,使用NLED2 IO口
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void CMainBoardLed::DoCan0Led()
 {
 	
@@ -144,7 +167,13 @@ void CMainBoardLed::DoCan0Led()
 
 	
 }
-
+/**************************************************************
+Function:       DoCan1Led
+Description:    CMainBoardLed can1 指示灯
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void CMainBoardLed::DoCan1Led()
 {
 	
@@ -162,6 +191,13 @@ void CMainBoardLed::DoCan1Led()
 
 	
 }
+/**************************************************************
+Function:       IsEthLinkUp
+Description:    CMainBoardLed 网口灯亮
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 bool CMainBoardLed::IsEthLinkUp()
 {
 	Byte rusult = 0 ;
@@ -186,7 +222,13 @@ bool CMainBoardLed::IsEthLinkUp()
 	
 
 }
-
+/**************************************************************
+Function:       DoLedBoardShow
+Description:    CMainBoardLed  LED面板灯亮
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void CMainBoardLed::DoLedBoardShow()
 {
 	if(IsEthLinkUp())
@@ -201,7 +243,13 @@ void CMainBoardLed::DoLedBoardShow()
 }
 
 
-
+/**************************************************************
+Function:       SetLedBoardShow
+Description:    CMainBoardLed 设置led面板灯亮
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void CMainBoardLed::SetLedBoardShow()
 {		
 		SCanFrame sSendFrameTmp;
@@ -220,12 +268,9 @@ void CMainBoardLed::SetLedBoardShow()
 		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[6]&0x3)<<4 ;
 		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[7]&0x3)<<6 ;
 
-		
 		sSendFrameTmp.pCanData[3] = LedBoardStaus[8]&0x3 ;
 		sSendFrameTmp.pCanData[3] |= (LedBoardStaus[9]&0x3)<<2 ;		
-
 		sSendFrameTmp.ucCanDataLen = 4;	
-
 		Can::CreateInstance()->Send(sSendFrameTmp);
 		//ACE_DEBUG((LM_DEBUG,"%s:%d pCanData[1]= %02x , pCanData[2]= %02x ,pCanData[3]= %02x \n ",__FILE__,__LINE__,sSendFrameTmp.pCanData[1],sSendFrameTmp.pCanData[2],sSendFrameTmp.pCanData[3]));
 
