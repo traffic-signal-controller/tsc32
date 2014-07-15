@@ -59,7 +59,7 @@ public:
 	static CDetector* CreateInstance();
 	
 	void SelectDetectorBoardCfg(int *pDetCfg);
-	bool CheckDetector();	//Œì²â£¬Œì²âÆ÷°åµÄŽæÔÚÊÇ·ñ
+	bool CheckDetector();	
 	bool SelectBrekonCardStatus(Byte ucBoardIndex, Byte ucAddress);
 	void SearchAllStatus();
 	void SearchSpeed(Byte ucBoardIndex, Byte ucAddress, Byte ucRecAddress);
@@ -118,31 +118,31 @@ public:
 
 public:
 	
-	Byte m_ucActiveBoard1;   //1  - 16 »î¶¯µÄŒì²âÆ÷°å
-	Byte m_ucActiveBoard2;   //17 - 32 »î¶¯µÄŒì²âÆ÷°å
-	Byte m_ucActiveBoard3;	//33 - 48
-	Byte m_ucActiveBoard4 ; //65-96
-	bool m_bErrFlag[MAX_DETECTOR];      //ŽíÎó±êÖŸ
+	Byte m_ucActiveBoard1; /* 1  - 16 活动的检测器板*/
+	Byte m_ucActiveBoard2;   //17 - 32 活动的检测器板
+	Byte m_ucActiveBoard3;	//33 - 48 活动的检测器板
+	Byte m_ucActiveBoard4 ; //65-96	活动的检测器板
+	bool m_bErrFlag[MAX_DETECTOR];       //错误标志
 
-	bool m_bRecordSts[MAX_DET_BOARD];      //ÉÏÒ»ŽÎŒÇÂŒŒì²â°åµÄÍšÐÅ×ŽÌ¬
+	bool m_bRecordSts[MAX_DET_BOARD];    //上一次记录检测板的通信状态
 
-	Byte m_ucDetError[MAX_DETECTOR];     //¹ÊÕÏ×ŽÌ¬      32 - 47:µÚ1¿éŒì²âÆ÷      48 - 63:µÚ2¿éŒì²âÆ÷
-	Byte m_ucLastDetError[MAX_DETECTOR]; //ÉÏŽÎ¹ÊÕÏ×ŽÌ¬   32 - 47:µÚ1¿éŒì²âÆ÷      48 - 63:µÚ2¿éŒì²âÆ÷
-	Byte m_ucDetErrTime[MAX_DETECTOR];   //¹ÊÕÏŽÎÊý      32 - 47:µÚ1¿éŒì²âÆ÷      48 - 63:µÚ2¿éŒì²âÆ÷
+	Byte m_ucDetError[MAX_DETECTOR];     //故障状态      32 - 47:第1块检测器      48 - 63:第2块检测器
+	Byte m_ucLastDetError[MAX_DETECTOR]; //上次故障状态   32 - 47:第1块检测器      48 - 63:第2块检测器
+	Byte m_ucDetErrTime[MAX_DETECTOR]; //故障次数      32 - 47:第1块检测器      48 - 63:第2块检测器
 
-	int m_iAdapDetTimeLen[MAX_DETECTOR];   //ÓÐ³µÊ±ŒäµÄÍ³ŒÆ  100ms/µ¥Î» ÓÃÓÚ×ÔÊÊÓŠ¿ØÖÆ
-	int m_iAdapTotalStat[MAX_DETECTOR];    //³µÁŸÍ³ŒÆ   /ŽÎ ÓÃÓÚ×ÔÊÊÓŠ¿ØÖÆ
+	int m_iAdapDetTimeLen[MAX_DETECTOR];    //有车时间的统计  100ms/单位 用于自适应控制
+	int m_iAdapTotalStat[MAX_DETECTOR];     //车辆统计   /次 用于自适应控制
 
-	Byte m_ucRoadSpeed[MAX_DET_BOARD][8];     //³µµÀµÄÆœŸùËÙ¶È 
+	Byte m_ucRoadSpeed[MAX_DET_BOARD][8];     //车道的平均速度 
 
-	Byte m_ucSetRoadDis[MAX_DET_BOARD][8];    //ÉèÖÃµÄ³µµÀŸàÀë
-	Byte m_ucGetRoadDis[MAX_DET_BOARD][8];    //»ñÈ¡µœµÄ³µµÀŸàÀë
+	Byte m_ucSetRoadDis[MAX_DET_BOARD][8];    //设置的车道距离
+	Byte m_ucGetRoadDis[MAX_DET_BOARD][8];    //获取到的车道距离
 
-	Byte m_ucSetDetDelicacy[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD];   //ÉèÖÃŒì²âÆ÷°åµÄÁéÃô¶È
-	Byte m_ucGetDetDelicacy[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD];   //»ñÈ¡µœµÄŒì²âÆ÷°åµÄÁéÃô¶È
+	Byte m_ucSetDetDelicacy[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD];  //设置检测器板的灵敏度
+	Byte m_ucGetDetDelicacy[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD];  //获取到的检测器板的灵敏度
 
-	Byte m_sSetLookLink[MAX_DET_BOARD][8];  //ÉèÖÃµÄÏßÈŠ¶ÔÓŠ¹ØÏµ
-	Byte m_sGetLookLink[MAX_DET_BOARD][8];  //»ñÈ¡µœµÄÏßÈŠ¶ÔÓŠ¹ØÏµ
+	Byte m_sSetLookLink[MAX_DET_BOARD][8];  //设置的线圈对应关系
+	Byte m_sGetLookLink[MAX_DET_BOARD][8];  //获取到的线圈对应关系
 	
 	Byte m_ucSetFrency[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD] ;
 	Byte m_ucGetFrency[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD] ;
@@ -153,25 +153,25 @@ private:
 	CDetector();
 	~CDetector();
 
-	Byte m_ucNoCnt[MAX_DET_BOARD];         //Á¬ÐøÃ»ÓÐœÓÊÜÊýŸÝµÄŽÎÊý
-	Byte m_ucErrAddrCnt[MAX_DET_BOARD];    //Á¬ÐøœÓÊÜµœŽíÎóµØÖ·µÄŽÎÊý
-	Byte m_ucErrCheckCnt[MAX_DET_BOARD];   //Á¬ÐøœÓÊÜµœÐ£ÑéŽíÎóµÄŽÎÊý
-	Byte m_ucRightCnt[MAX_DET_BOARD];      //Á¬ÐøœÓÊÜµœÕýÈ·ÊýŸÝµÄŽÎÊý
+	Byte m_ucNoCnt[MAX_DET_BOARD];          //连续没有接受数据的次数
+	Byte m_ucErrAddrCnt[MAX_DET_BOARD];    //连续接受到错误地址的次数
+	Byte m_ucErrCheckCnt[MAX_DET_BOARD];   //连续接受到校验错误的次数
+	Byte m_ucRightCnt[MAX_DET_BOARD];      //连续接受到正确数据的次数
 
 	int m_iDevFd;
-	int m_iTotalDistance;             //Í³ŒÆŒäžô 
+	int m_iTotalDistance;             //统计间隔 
 	
 	
-	int m_iDetCfg[MAX_DET_BOARD];     // 0-²»ÆôÓÃ 1-µÚÒ»žöŒì²âÆ÷ 17-µÚ17žöŒì²âÆ÷
-	int m_iBoardErr[MAX_DET_BOARD];   //true:ºÃ false:»µµô
-	int m_iLastDetSts[MAX_DETECTOR];  //ÉÏŽÎ³µµÄ×ŽÌ¬
-	int m_iDetStatus[MAX_DETECTOR];   //1:ÓÐ³µ 0:ÎÞ³µ  0 - 15:µÚ1¿éŒì²âÆ÷œÓ¿Ú°å 16 - 31:µÚ2¿éŒì²âÆ÷œÓ¿Ú°å
-	int m_iDetTimeLen[MAX_DETECTOR];  //ÓÐ³µÊ±ŒäµÄÍ³ŒÆ  100ms/µ¥Î»
-	int m_iDetOccupy[MAX_DETECTOR];   //ÕŒÓÐÂÊ
-	Byte m_ucTotalStat[MAX_DETECTOR];   //³µÁŸÍ³ŒÆ   /ŽÎ
+	int m_iDetCfg[MAX_DET_BOARD];      // 0-不启用 1-第一个检测器 17-第17个检测器
+	int m_iBoardErr[MAX_DET_BOARD];    //true:好 false:坏掉
+	int m_iLastDetSts[MAX_DETECTOR];  //上次车的状态
+	int m_iDetStatus[MAX_DETECTOR];/* //1:有车 0:无车  0 - 15:第1块检测器接口板 16 - 31:第2块检测器接口板*/
+	int m_iDetTimeLen[MAX_DETECTOR];  //有车时间的统计  100ms/单位
+	int m_iDetOccupy[MAX_DETECTOR];   //占有率
+	Byte m_ucTotalStat[MAX_DETECTOR];    //车辆统计   /次
 	
 	Byte m_ucDetSts[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD]; //有车无车标志 ADD: 2013 0710 1050
-	//int m_iLastDetTimeLen[MAX_DETECTOR];  //ÉÏžöÍ³ŒÆÖÜÆÚµÄÓÐ³µÊ±ŒäµÄÍ³ŒÆ  100ms/µ¥Î»	
+	//int m_iLastDetTimeLen[MAX_DETECTOR];  //上个统计周期的有车时间的统计  100ms/单位
 	
 	STscConfig* m_pTscCfg;
 
