@@ -422,7 +422,13 @@ int GetMainBroadCdKey(char *CdKey)
      ACE_DEBUG((LM_DEBUG,"%s:%d cdkey : %x !\n",__FILE__,__LINE__,&CdKey));
      return 0;
 }
-
+/**************************************************************
+Function:      VaildSN
+Description:    对核心板的序列号与系统的序列号进行对比
+Input:          无 
+Output:         无
+Return:         1 - 合法 0 -非法
+***************************************************************/
 bool VaildSN()
 {
 	char fileSN[8] = {0};
@@ -446,7 +452,13 @@ bool VaildSN()
 		return false;
 	}
 }
-
+/**************************************************************
+Function:      ReadTscSN
+Description:    读取系统的序列号
+Input:          无 
+Output:         将8个字节的序列号保存到cdkey 指针 中
+Return:         无
+***************************************************************/
 void ReadTscSN(char *cdkey)
 {
 	
