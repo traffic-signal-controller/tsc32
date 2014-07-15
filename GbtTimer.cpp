@@ -241,7 +241,7 @@ bool CGbtTimer::CreateReport(Byte ucGbtArrIndex,Byte ucObjectCmd , Ushort usCycl
 
 /**************************************************************
 Function:       CGbtTimer::CreateReport
-Description:    创建主动上报信息，包含取消，以tcp方式传输				
+Description:    创建主动上报信息，包含取消，以UDP方式传输				
 Input:          addrClient 客户端地址
 				ucObjectCmd   上传对象
 				usCycle       上传周期              
@@ -352,9 +352,7 @@ int CGbtTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 				{
 					sMsg.ulType               = GBT_MSG_FIRST_RECV;
 					sMsg.ucMsgOpt             = ucDealDataIndex;
-					sMsg.uiMsgDataLen 
-					
-					        = 3;
+					sMsg.uiMsgDataLen 		  = 3;
 					sMsg.pDataBuf             = ACE_OS::malloc(3);
 					((Byte*)sMsg.pDataBuf)[0] = 0x80;
 					((Byte*)sMsg.pDataBuf)[1] = m_sReportInfo[ucIndex].ucCmd;
