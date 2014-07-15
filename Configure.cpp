@@ -16,12 +16,25 @@
 #include <iostream>
 using namespace std;
 
-
+/**************************************************************
+Function:       CreateInstance
+Description:    单例模式创建对象
+Input:          无           
+Output:         无
+Return:         Configure对象
+***************************************************************/
 Configure* Configure::CreateInstance()
 {
 	static Configure con;
 	return &con;
 }
+/**************************************************************
+Function:       Configure
+Description:    构造函数，创建配置文件对象及配置文件
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 Configure::Configure():impExp_(NULL)
 {
     bool binitfile = InitConfig() ;
@@ -35,14 +48,26 @@ Configure::Configure():impExp_(NULL)
 		cout<<"open configure file error!\n";	
  	}  
 }
- 
+ /**************************************************************
+Function:       ~Configure
+Description:    析构函数，删除配置文件对象。
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 Configure::~Configure()
 {
        if (impExp_)
               delete impExp_;
        impExp_ = NULL;
 }
- 
+/**************************************************************
+Function:       open
+Description:    打开配置文件
+Input:           filename 配置文件名称          
+Output:         无
+Return:         IO
+***************************************************************/
 int Configure::open(const ACE_TCHAR * filename)
 {
        if (this->config.open() == -1)
@@ -52,14 +77,28 @@ int Configure::open(const ACE_TCHAR * filename)
  
        return this->impExp_->import_config(filename);
 }
- 
+/**************************************************************
+Function:       GetString
+Description:    从配置文件读取字符串类型的值
+Input:          szSection 	区域 [xxxx]
+				szKey		key字符串
+Output:         strValue	相对key 值的    内容 
+Return:         1 成功	0 失败
+***************************************************************/
 int Configure::GetString(const char *szSection, const char *szKey, ACE_TString &strValue)
 {
        if (config.open_section(config.root_section(),ACE_TEXT(szSection),0,this->root_key_)==-1)
               return -1;
        return config.get_string_value(this->root_key_,szKey,strValue);
 }
- 
+/**************************************************************
+Function:       GetInteger
+Description:    从配置文件读取数字类型的值
+Input:          szSection 	区域 [xxxx]
+				szKey		key字符串
+Output:         nValue		相对key 值的    内容 
+Return:         1 成功	0 失败
+***************************************************************/
 int Configure::GetInteger(const char* szSection,const char* szKey,int& nValue)
 {
        ACE_TString strValue;
@@ -73,7 +112,13 @@ int Configure::GetInteger(const char* szSection,const char* szKey,int& nValue)
               return -1;
        return nValue;
 }
-
+/**************************************************************
+Function:       InitConfig
+Description:    对配置文件进行初始化
+Input:          无
+Output:         无
+Return:         1 成功	0 失败
+***************************************************************/
 bool Configure::InitConfig()
 {
 	FILE* fConfig = NULL ;
@@ -108,6 +153,13 @@ bool Configure::InitConfig()
 	}
 	return true ;
 }
+ /**************************************************************
+Function:       ShowConfig
+Description:    显示配置文件中的内容
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void Configure::ShowConfig()
 {
 	Configure *pMyconfig =  Configure::CreateInstance() ;
@@ -150,7 +202,13 @@ pMyconfig->GetString("FUNCTION","BACKUP",vstring);
 cout<<"#................End Show Tsc Configure..................# "<<endl ;
 }
 
- 
+ /**************************************************************
+Function:       close
+Description:    关闭文件
+Input:          无
+Output:         无
+Return:         1 成功	0 失败
+***************************************************************/
 int Configure::close()
 {
        if (impExp_)
