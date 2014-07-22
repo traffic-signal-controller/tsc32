@@ -3,7 +3,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   GbtMsgQueue.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úGBTĞ­ÒéÏûÏ¢´¦ÀíÀà
+Description:ä¿¡å·æœºGBTåè®®æ¶ˆæ¯å¤„ç†ç±»
 Version:    V1.0
 History:
 ***************************************************************/
@@ -24,18 +24,21 @@ History:
 #include "LampBoard.h"
 #include "GbtTimer.h"
 #include "Gps.h"
+#include "Gsm.h"
 #include "Can.h"
 #include "PscMode.h"
 #include "MainBoardLed.h"
 #include "ComFunc.h"
 #include "GaCountDown.h"
 #include "Configure.h"
+#include "SerialCtrl.h"
+#include "MacControl.h"
 /**************************************************************
 Function:        CGbtMsgQueue::CGbtMsgQueue
-Description:     GBT CGbtMsgQueueÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     GBT CGbtMsgQueueç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGbtMsgQueue::CGbtMsgQueue()
 {
@@ -64,12 +67,12 @@ CGbtMsgQueue::CGbtMsgQueue()
 	
 	if ( iPort > MAX_GBT_PORT || iPort < MIN_GBT_PORT )
 	{
-		iPort = DEFAULT_GBT_PORT; //UDPÊı¾İÍ¨ĞÅ¶Ë¿Ú
+		iPort = DEFAULT_GBT_PORT; //UDPæ•°æ®é€šä¿¡ç«¯å£
 	}
 	m_addrLocal.set_port_number(iPort);
 
 #ifdef GBT_TCP
-	if ( -1 == m_acceptor.open(m_addrLocal,1) )   //°ó¶¨¶Ë¿Ú
+	if ( -1 == m_acceptor.open(m_addrLocal,1) )   //ç»‘å®šç«¯å£
 	{
 		ACE_DEBUG((LM_DEBUG,"%s:%d bind port fail",__FILE__,__LINE__));
 	}
@@ -85,10 +88,10 @@ CGbtMsgQueue::CGbtMsgQueue()
 
 /**************************************************************
 Function:       CGbtMsgQueue::~CGbtMsgQueue
-Description:    CGbtMsgQueueÀàÎö¹¹º¯Êı		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGbtMsgQueueç±»ææ„å‡½æ•°		
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGbtMsgQueue::~CGbtMsgQueue()
 {
@@ -102,10 +105,10 @@ CGbtMsgQueue::~CGbtMsgQueue()
 
 /**************************************************************
 Function:       CGbtMsgQueue::CreateInstance
-Description:    ´´½¨CGbtMsgQueueÀà¾²Ì¬¶ÔÏó		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         CGbtMsgQueue¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»ºCGbtMsgQueueç±»é™æ€å¯¹è±¡		
+Input:          æ—               
+Output:         æ— 
+Return:         CGbtMsgQueueé™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CGbtMsgQueue* CGbtMsgQueue::CreateInstance()
 {
@@ -116,11 +119,11 @@ CGbtMsgQueue* CGbtMsgQueue::CreateInstance()
 
 /**************************************************************
 Function:       CGbtMsgQueue::SendGbtMsg
-Description:    ÏògbtÏûÏ¢¶ÓÁĞ·¢ËÍgbtÏûÏ¢		
-Input:          pMsg  ÏûÏ¢ÄÚÈİ½á¹¹ÌåÖ¸Õë   
-				iLength  ÏûÏ¢³¤¶È         
-Output:         ÎŞ
-Return:         0-·¢ËÍÊ§°Ü  1-·¢ËÍ³É¹¦
+Description:    å‘gbtæ¶ˆæ¯é˜Ÿåˆ—å‘é€gbtæ¶ˆæ¯		
+Input:          pMsg  æ¶ˆæ¯å†…å®¹ç»“æ„ä½“æŒ‡é’ˆ   
+				iLength  æ¶ˆæ¯é•¿åº¦         
+Output:         æ— 
+Return:         0-å‘é€å¤±è´¥  1-å‘é€æˆåŠŸ
 ***************************************************************/
 int CGbtMsgQueue::SendGbtMsg(SThreadMsg* pMsg,int iLength)
 {
@@ -132,11 +135,11 @@ int CGbtMsgQueue::SendGbtMsg(SThreadMsg* pMsg,int iLength)
 		return 0;
 	}
 	
-	ACE_Message_Block *mb = new ACE_Message_Block(iLength);  //¹¹ÔìÏûÏ¢¿é
-	mb->copy((char*)pMsg, iLength); // ½«Êı¾İ¿½±´½øÏûÏ¢¿é
+	ACE_Message_Block *mb = new ACE_Message_Block(iLength);  //æ„é€ æ¶ˆæ¯å—
+	mb->copy((char*)pMsg, iLength); // å°†æ•°æ®æ‹·è´è¿›æ¶ˆæ¯å—
 
 	ACE_Time_Value nowait(GetCurTime()+ACE_Time_Value(1));
-	m_pMsgQue->enqueue_tail(mb, &nowait);  //Ïò ACE_Message_QueueÖĞÌí¼ÓĞÂÊı¾İ¿é
+	m_pMsgQue->enqueue_tail(mb, &nowait);  //å‘ ACE_Message_Queueä¸­æ·»åŠ æ–°æ•°æ®å—
 	//ACE_DEBUG((LM_DEBUG,"%s:%d pMsg Send ok !\n",__FILE__,__LINE__));
 	return 1;
 }
@@ -144,10 +147,10 @@ int CGbtMsgQueue::SendGbtMsg(SThreadMsg* pMsg,int iLength)
 
 /**************************************************************
 Function:       CGbtMsgQueue::DealData
-Description:    ´¦ÀígbtÏûÏ¢¶ÓÁĞÊı¾İ		
-Input:          ÎŞ   
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å¤„ç†gbtæ¶ˆæ¯é˜Ÿåˆ—æ•°æ®		
+Input:          æ—    
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::DealData()
 {
@@ -162,45 +165,45 @@ void CGbtMsgQueue::DealData()
 
 	while ( m_pMsgQue != NULL )
 	{
-		if(m_pMsgQue->dequeue_head(mb, &nowait) != -1) //´Ó ACE_Message_Queue ÖĞµ¯³öÏûÏ¢¿é
+		if(m_pMsgQue->dequeue_head(mb, &nowait) != -1) //ä» ACE_Message_Queue ä¸­å¼¹å‡ºæ¶ˆæ¯å—
 		{   
 			iLen = (int)mb->length();
-			memcpy((char*)&sMsg, mb->base(), iLen);   //´ÓÏûÏ¢¿éÖĞ¶ÁÊı¾İ
+			memcpy((char*)&sMsg, mb->base(), iLen);   //ä»æ¶ˆæ¯å—ä¸­è¯»æ•°æ®
 			mb->release();
 		}
 		else
 		{
-			ACE_OS::sleep(ACE_Time_Value(tTmp));   //ÔİÍ£10ºÁÃë
+			ACE_OS::sleep(ACE_Time_Value(tTmp));   //æš‚åœ10æ¯«ç§’
 			continue;
 		}		
 		//ACE_DEBUG((LM_DEBUG,"\n%s:%d  type:%d opt:%d dataLen:%d\n",__FILE__,__LINE__,sMsg.ulType,sMsg.ucMsgOpt,sMsg.uiMsgDataLen));//MOD:0515 17:05
 
-		switch ( sMsg.ulType )   //ÏûÏ¢´¦Àí
+		switch ( sMsg.ulType )   //æ¶ˆæ¯å¤„ç†
 		{
-		case GBT_MSG_FIRST_RECV:   //½âÎö½ÓÊÕµ½µÄÊı¾İ£¬µÚÒ»´Î´ÓÉÏÎ»»ú½ÓÊÕµ½µÄUDPĞ­ÒéÊı¾İ »òÕßÊÇgbttimerÖ÷¶¯¶¨Ê±Æ÷·¢ËÍ¹ıÀ´µÄÊı¾İ
-			if ( 1 == CheckMsg(sMsg.ucMsgOpt,sMsg.uiMsgDataLen,(Byte*)sMsg.pDataBuf) ) //¼ì²é½ÓÊÕµ½GBTĞ­ÒéÊı¾İºÏ·¨ĞÔ,´íÎóÔò·¢ËÍ´íÎóÓ¦´ğ!
+		case GBT_MSG_FIRST_RECV:   //è§£ææ¥æ”¶åˆ°çš„æ•°æ®ï¼Œç¬¬ä¸€æ¬¡ä»ä¸Šä½æœºæ¥æ”¶åˆ°çš„UDPåè®®æ•°æ® æˆ–è€…æ˜¯gbttimerä¸»åŠ¨å®šæ—¶å™¨å‘é€è¿‡æ¥çš„æ•°æ®
+			if ( 1 == CheckMsg(sMsg.ucMsgOpt,sMsg.uiMsgDataLen,(Byte*)sMsg.pDataBuf) ) //æ£€æŸ¥æ¥æ”¶åˆ°GBTåè®®æ•°æ®åˆæ³•æ€§,é”™è¯¯åˆ™å‘é€é”™è¯¯åº”ç­”!
 			{
-				FirstRecv(sMsg.ucMsgOpt,sMsg.uiMsgDataLen,(Byte*)sMsg.pDataBuf);//sMsg.ucMsgOpt ²ÎÊı±íÊ¾ÏûÏ¢ÊôÓÚÄÄ¸ö½ÓÊÕ»º³å¿é
+				FirstRecv(sMsg.ucMsgOpt,sMsg.uiMsgDataLen,(Byte*)sMsg.pDataBuf);//sMsg.ucMsgOpt å‚æ•°è¡¨ç¤ºæ¶ˆæ¯å±äºå“ªä¸ªæ¥æ”¶ç¼“å†²å—
 			}
 			break;
 
-		case GBT_MSG_DEAL_RECVBUF:  //½âÎö½ÓÊÕµ½µÄBUF
+		case GBT_MSG_DEAL_RECVBUF:  //è§£ææ¥æ”¶åˆ°çš„BUF
 			DealRecvBuf(sMsg.ucMsgOpt);
 			break;
 			
-		case GBT_MSG_SEND_HOST:   //»ØËÍ¸øÉÏÎ»»ú
+		case GBT_MSG_SEND_HOST:   //å›é€ç»™ä¸Šä½æœº
 			SendToHost(sMsg.ucMsgOpt);
 			break;
 			
-		case GBT_MSG_TSC_STATUS:  //»ñÈ¡ĞÅºÅ»ú×´Ì¬  //Õâ¸öÊÇĞÅºÅ»úTSCÏß³Ì·¢ËÍ¹ıÀ´µÄGBTÏûÏ¢£¬²»ÊÇÀ´×ÔÉÏÎ»»ú¡£
+		case GBT_MSG_TSC_STATUS:  //è·å–ä¿¡å·æœºçŠ¶æ€  //è¿™ä¸ªæ˜¯ä¿¡å·æœºTSCçº¿ç¨‹å‘é€è¿‡æ¥çš„GBTæ¶ˆæ¯ï¼Œä¸æ˜¯æ¥è‡ªä¸Šä½æœºã€‚
 			PackTscStatus(sMsg.ucMsgOpt,sMsg.pDataBuf);
 			break;
 
-		case GBT_MSG_TSC_EXSTATUS: //»ñÈ¡ĞÅºÅ»úÀ©Õ¹¶ÔÏó F8
+		case GBT_MSG_TSC_EXSTATUS: //è·å–ä¿¡å·æœºæ‰©å±•å¯¹è±¡ F8
 			PackTscExStatus(sMsg.ucMsgOpt,sMsg.pDataBuf);
 			break;
 
-		case GBT_MSG_OTHER_OBJECT: //gbtÆäËûÀà¶ÔÏó
+		case GBT_MSG_OTHER_OBJECT: //gbtå…¶ä»–ç±»å¯¹è±¡
 			PackOtherObject(sMsg.ucMsgOpt);
 			break;
 
@@ -208,7 +211,7 @@ void CGbtMsgQueue::DealData()
 			PackExtendObject(sMsg.ucMsgOpt);
 			break;
 			
-		case GBT_MSG_SELF_REPORT:  //Ö÷¶¯ÉÏ±¨
+		case GBT_MSG_SELF_REPORT:  //ä¸»åŠ¨ä¸ŠæŠ¥
 			SelfReport(sMsg.uiMsgDataLen,(Byte*)sMsg.pDataBuf);
 			break;
 			
@@ -218,7 +221,7 @@ void CGbtMsgQueue::DealData()
 
 		if ( sMsg.pDataBuf != NULL )
 		{
-			ACE_OS::free(sMsg.pDataBuf);  //É¾³ıÉêÇëµÄÄÚ´æ
+			ACE_OS::free(sMsg.pDataBuf);  //åˆ é™¤ç”³è¯·çš„å†…å­˜
 			sMsg.pDataBuf = NULL;
 		}
 	}
@@ -227,25 +230,25 @@ void CGbtMsgQueue::DealData()
 
 /**************************************************************
 Function:       CGbtMsgQueue::PackOtherObject
-Description:    ´ò°üÆäËûÌØÊâÀàĞÍµÄ¶ÔÏó		
-Input:          ucDealDataIndex   ÏûÏ¢´¦ÀíË÷ÒıÏÂ±ê   
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“åŒ…å…¶ä»–ç‰¹æ®Šç±»å‹çš„å¯¹è±¡		
+Input:          ucDealDataIndex   æ¶ˆæ¯å¤„ç†ç´¢å¼•ä¸‹æ ‡   
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 {
-	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????¡Á¡Â??¨¤????
+	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????Ã—Ã·??Ã ????
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	//int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;  //Ë÷Òı¸öÊı
-	Byte ucErrorSts    = 0;  //´íÎó×´Ì¬
-	Byte ucErrorIdx    = 0;  //´íÎóË÷Òı
-	Byte ucObjId       = 0;  //¶ÔÏóÃû(±íÃû)
-	Byte ucIdxFst      = 0;  //µÚÒ»¸öË÷Òı(id1)
-	Byte ucIdxSnd      = 0;  //µÚ¶ş¸öË÷Òı(id2)
-	Byte ucSubId       = 0;  //×Ó¶ÔÏó(×Ö¶ÎÏÂ±ê)
+	Byte ucIndexCnt    = 0;  //ç´¢å¼•ä¸ªæ•°
+	Byte ucErrorSts    = 0;  //é”™è¯¯çŠ¶æ€
+	Byte ucErrorIdx    = 0;  //é”™è¯¯ç´¢å¼•
+	Byte ucObjId       = 0;  //å¯¹è±¡å(è¡¨å)
+	Byte ucIdxFst      = 0;  //ç¬¬ä¸€ä¸ªç´¢å¼•(id1)
+	Byte ucIdxSnd      = 0;  //ç¬¬äºŒä¸ªç´¢å¼•(id2)
+	Byte ucSubId       = 0;  //å­å¯¹è±¡(å­—æ®µä¸‹æ ‡)
 	Byte ucIndex       = 0;
 
 	if ( iRecvIndex >= iRecvBufLen )
@@ -258,13 +261,13 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 		return;
 	}
 
-	/************¶ÔÏó±êÊ¶*************/
+	/************å¯¹è±¡æ ‡è¯†*************/
 	ucObjId = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex];
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;  
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********Ë÷Òı¸öÊıÓë×Ó¶ÔÏó*******/
+	/***********ç´¢å¼•ä¸ªæ•°ä¸å­å¯¹è±¡*******/
 	if ( iRecvIndex >= iRecvBufLen )
 	{
 #ifdef TSC_DEBUG
@@ -275,13 +278,13 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 		return;
 	}
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] =
-					m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; 			//Ë÷Òı¸öÊıÓë×Ó¶ÔÏó
-	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;   //Ë÷Òı¸öÊı
-	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;       //×Ó¶ÔÏó£¬×Ö¶ÎÏÂ±ê
+					m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; 			//ç´¢å¼•ä¸ªæ•°ä¸å­å¯¹è±¡
+	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;   //ç´¢å¼•ä¸ªæ•°
+	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;       //å­å¯¹è±¡ï¼Œå­—æ®µä¸‹æ ‡
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********Ë÷Òı*************/
+	/***********ç´¢å¼•*************/
 	if ( ucIndexCnt > 0 )  
 	{
 		if ( iRecvIndex >= iRecvBufLen )
@@ -332,19 +335,19 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 		ucIndexCnt--;
 	}
 
-	/************ÖµÓò**************/
+	/************å€¼åŸŸ**************/
 	//m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 	switch ( ucObjId )
 	{
 	case OBJECT_UTC_TIME:
-		if ( GBT_SEEK_REQ == ucRecvOptType )  /*??¨¦????*/
+		if ( GBT_SEEK_REQ == ucRecvOptType )  /*??Ã©????*/
 		{
 			ACE_Time_Value tvCurTime = GetCurTime();
 			unsigned int iTotalSec   = (unsigned int)tvCurTime.sec();    //utc time
 			iTotalSec = iTotalSec +8*3600 ;
 
 			//ACE_DEBUG((LM_DEBUG,"******************iTotalSec = %d return:\n",iTotalSec+8 * 60 * 60,iTotalSec));
-			/*²ÉÈ¡ÍøÂç×Ö½ÚĞò£¬¸ß×Ö½ÚÔÚµÍÎ»*/
+			/*é‡‡å–ç½‘ç»œå­—èŠ‚åºï¼Œé«˜å­—èŠ‚åœ¨ä½ä½*/
 			while ( ucIndex < 4 )
 			{
 				m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = ( iTotalSec>>(8*(3-ucIndex)) & 0xFF );
@@ -400,7 +403,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 			ACE_Time_Value tvCurTime = GetCurTime();
 			unsigned int iTotalSec = (unsigned int)tvCurTime.sec() + 8 * 60 * 60; 
 			
-			/*²ÉÈ¡ÍøÂç×Ö½ÚĞò£¬¸ß×Ö½ÚÔÚµÍÎ»*/
+			/*é‡‡å–ç½‘ç»œå­—èŠ‚åºï¼Œé«˜å­—èŠ‚åœ¨ä½ä½*/
 			while ( ucIndex < 4 )
 			{
 				m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = ( iTotalSec>>(8*(3-ucIndex)) & 0xFF );
@@ -458,9 +461,9 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 	m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex = iRecvIndex;
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex = iSendIndex;
 	m_sGbtDealData[ucDealDataIndex].iObjNum--;
-	if ( iRecvIndex == iRecvBufLen ) 		//¸Ã¶ÔÏó´¦ÀíÍê±Ï
+	if ( iRecvIndex == iRecvBufLen ) 		//è¯¥å¯¹è±¡å¤„ç†å®Œæ¯•
 	{
-		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )   //ËùÓĞ¶ÔÏó¶¼´¦ÀíÍê±Ï
+		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )   //æ‰€æœ‰å¯¹è±¡éƒ½å¤„ç†å®Œæ¯•
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Send datetime to host,ucDealDataIndex=%d ,sendlen = %d!\n",__FILE__,__LINE__,ucDealDataIndex,iSendIndex));
@@ -485,12 +488,12 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GotoMsgError
-Description:    ÏòÉÏÎ»»ú·¢ËÍ´¦Àí´íÎóĞÅÏ¢		
-Input:          ucDealDataIndex   ÏûÏ¢´¦ÀíË÷ÒıÏÂ±ê
-				ucErrorSts  ´íÎó×´Ì¬Öµ   
-				ucErrorIdx  ´íÎóË÷Òı
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å‘ä¸Šä½æœºå‘é€å¤„ç†é”™è¯¯ä¿¡æ¯		
+Input:          ucDealDataIndex   æ¶ˆæ¯å¤„ç†ç´¢å¼•ä¸‹æ ‡
+				ucErrorSts  é”™è¯¯çŠ¶æ€å€¼   
+				ucErrorIdx  é”™è¯¯ç´¢å¼•
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GotoMsgError(Byte ucDealDataIndex,Byte ucErrorSts,Byte ucErrorIdx)
 {
@@ -505,10 +508,10 @@ void CGbtMsgQueue::GotoMsgError(Byte ucDealDataIndex,Byte ucErrorSts,Byte ucErro
 
 /**************************************************************
 Function:       CGbtMsgQueue::GotoSendToHost
-Description:    Ö¡´¦ÀíÍê±Ï»òÕß³öÏÖ´íÎó Ö´ĞĞ·µ»Ø¸øÉÏÎ»»úĞÅÏ¢		
-Input:          ucDealDataIndex   ÏûÏ¢´¦ÀíË÷ÒıÏÂ±ê
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å¸§å¤„ç†å®Œæ¯•æˆ–è€…å‡ºç°é”™è¯¯ æ‰§è¡Œè¿”å›ç»™ä¸Šä½æœºä¿¡æ¯		
+Input:          ucDealDataIndex   æ¶ˆæ¯å¤„ç†ç´¢å¼•ä¸‹æ ‡
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GotoSendToHost(Byte ucDealDataIndex)
 {
@@ -523,10 +526,10 @@ void CGbtMsgQueue::GotoSendToHost(Byte ucDealDataIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GotoDealRecvbuf
-Description:    Ö¡¶à¸ö¶ÔÏóÎ´È«²¿Íê³É ¼ÌĞø´¦ÀíÖ¡		
-Input:          ucDealDataIndex   ÏûÏ¢´¦ÀíË÷ÒıÏÂ±ê
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å¸§å¤šä¸ªå¯¹è±¡æœªå…¨éƒ¨å®Œæˆ ç»§ç»­å¤„ç†å¸§		
+Input:          ucDealDataIndex   æ¶ˆæ¯å¤„ç†ç´¢å¼•ä¸‹æ ‡
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GotoDealRecvbuf(Byte ucDealDataIndex)
 {
@@ -541,25 +544,25 @@ void CGbtMsgQueue::GotoDealRecvbuf(Byte ucDealDataIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::PackExtendObject
-Description:    ´ò°üÀ©Õ¹Ğ­ÒéµÄ¶ÔÏó		
-Input:          ucDealDataIndex   ÏûÏ¢´¦ÀíË÷ÒıÏÂ±ê
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“åŒ…æ‰©å±•åè®®çš„å¯¹è±¡		
+Input:          ucDealDataIndex   æ¶ˆæ¯å¤„ç†ç´¢å¼•ä¸‹æ ‡
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 {
-	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????¡Á¡Â??¨¤????
+	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????Ã—Ã·??Ã ????
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	//int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;  //Ë÷Òı¸öÊı
-	Byte ucErrorSts    = 0;  //´íÎó×´Ì¬
-	Byte ucErrorIdx    = 0;  //´íÎóË÷Òı
-	Byte ucObjId       = 0;  //¶ÔÏóÃû(±íÃû)
-	Byte ucIdxFst      = 0;  //µÚÒ»¸öË÷Òı(id1)
-	Byte ucIdxSnd      = 0;  //µÚ¶ş¸öË÷Òı(id2)
-	Byte ucSubId       = 0;  //×Ó¶ÔÏó(×Ö¶ÎÏÂ±ê)
+	Byte ucIndexCnt    = 0;  //ç´¢å¼•ä¸ªæ•°
+	Byte ucErrorSts    = 0;  //é”™è¯¯çŠ¶æ€
+	Byte ucErrorIdx    = 0;  //é”™è¯¯ç´¢å¼•
+	Byte ucObjId       = 0;  //å¯¹è±¡å(è¡¨å)
+	Byte ucIdxFst      = 0;  //ç¬¬ä¸€ä¸ªç´¢å¼•(id1)
+	Byte ucIdxSnd      = 0;  //ç¬¬äºŒä¸ªç´¢å¼•(id2)
+	Byte ucSubId       = 0;  //å­å¯¹è±¡(å­—æ®µä¸‹æ ‡)
 
 	if ( iRecvIndex >= iRecvBufLen )
 	{
@@ -631,7 +634,7 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 	//m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 	switch ( ucObjId )
 	{
-	case OBJECT_EXT_TSC_STATUS:   //ĞÅºÅ»úÀ©Õ¹×´Ì¬
+	case OBJECT_EXT_TSC_STATUS:   //ä¿¡å·æœºæ‰©å±•çŠ¶æ€
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
 			SThreadMsg sTscMsg;
@@ -684,7 +687,7 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 		}
 		break;
-	case OBJECT_WATCH_PARA:    //¼à¿ØÀàĞÍ²ÎÊı ÎÂ¶È µçÑ¹ ÃÅ
+	case OBJECT_WATCH_PARA:    //ç›‘æ§ç±»å‹å‚æ•° æ¸©åº¦ ç”µå‹ é—¨
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
 			GetWatchPara(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,&iSendIndex);     
@@ -708,36 +711,36 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			return;
 		}
 		break;
-		case OBJECT_YWFLASH_CFG:    //»ÆÉÁÆ÷À©Õ¹¶ÔÏó
-		if ( GBT_SEEK_REQ == ucRecvOptType )  //²éÑ¯
+		case OBJECT_YWFLASH_CFG:    //é»„é—ªå™¨æ‰©å±•å¯¹è±¡
+		if ( GBT_SEEK_REQ == ucRecvOptType )  //æŸ¥è¯¢
 		{
 
 			GetFlashCfg(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,&iSendIndex);  
 
 		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //ÉèÖÃ
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
 		{
 			SetFlashCtrl(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex);
 
 		}
 		break ;
-	case OBJECT_POWERBOARD_CFG : //µçÔ´°åÅäÖÃÀ©Õ¹¶ÔÏóADD:20140402
-		if ( GBT_SEEK_REQ == ucRecvOptType )  //²éÑ¯
+	case OBJECT_POWERBOARD_CFG : //ç”µæºæ¿é…ç½®æ‰©å±•å¯¹è±¡ADD:20140402
+		if ( GBT_SEEK_REQ == ucRecvOptType )  //æŸ¥è¯¢
 		{
 			
 			Byte ucQueryType =( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
 			GetPowerCfg(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,&iSendIndex,ucQueryType);  
 
 		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //ÉèÖÃ
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
 		{
 			SetPowerCfg(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex);
 
 		}
 		break ;
 
-	case OBJECT_DET_EXTCFG :    //¼ì²âÆ÷À©Õ¹ÅäÖÃ¶ÔÏó
-		if ( GBT_SEEK_REQ == ucRecvOptType )  //²éÑ¯
+	case OBJECT_DET_EXTCFG :    //æ£€æµ‹å™¨æ‰©å±•é…ç½®å¯¹è±¡
+		if ( GBT_SEEK_REQ == ucRecvOptType )  //æŸ¥è¯¢
 		{
 			Byte ucQueryType =( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
 			Byte ucBdIndx= (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
@@ -745,63 +748,69 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			GetDetCfg(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,ucBdIndx,ucQueryType,&iSendIndex);  
 
 		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //ÉèÖÃ
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
 		{
 			
 			SetDetCfg(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex) ;
 		}
 		break ;
 
-	case OBJECT_LAMPBOARD_CFG :    //µÆ¿Ø°åµÆÅİ¼ì²âºÍºìÂÌ³åÍ»¼ì²âÅäÖÃ
+	case OBJECT_LAMPBOARD_CFG :    //ç¯æ§æ¿ç¯æ³¡æ£€æµ‹å’Œçº¢ç»¿å†²çªæ£€æµ‹é…ç½®
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
-			;//ÒÔºóÔÙ¸ù¾İÊµ¼Ê²¹³ä
+			;//ä»¥åå†æ ¹æ®å®é™…è¡¥å……
 
 		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //ÉèÖÃ
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
 		{		 
 			
 			SetLampBdtCfg(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}
 		break ;
-	case OBJECT_PSCBTN_NUM :    //Ä£ÄâÊäÈëĞĞÈË°´Å¥Öµ
+	case OBJECT_PSCBTN_NUM :    //æ¨¡æ‹Ÿè¾“å…¥è¡ŒäººæŒ‰é’®å€¼
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
-			;//ÒÔºóÔÙ¸ù¾İÊµ¼Ê²¹³ä
+			;//ä»¥åå†æ ¹æ®å®é™…è¡¥å……
 
 		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //ÉèÖÃ
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
 		{		 
 			SetPscNum(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}
 		break ;
-	case OBJECT_TMPPATTERN_CFG :    //ÁÙÊ±12·½ÏòËæ»ú×éºÏ£¬·ÅĞĞ60ÃëÄ¬ÈÏ
+	case OBJECT_TMPPATTERN_CFG :    //ä¸´æ—¶12æ–¹å‘éšæœºç»„åˆï¼Œæ”¾è¡Œ60ç§’é»˜è®¤
 		//ACE_DEBUG((LM_DEBUG,"%s:%d,ObjectId == OBJECT_TMPPATTERN_CFG\n",__FILE__,__LINE__));
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
-			;//ÒÔºóÔÙ¸ù¾İĞèÒª²¹³ä
+			;//ä»¥åå†æ ¹æ®éœ€è¦è¡¥å……
 
 		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //ÉèÖÃ
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
 		{		 
 			if(CManaKernel::CreateInstance()->bTmpPattern==true)
 				return ;
 			SetTmpPattern(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}
 		break ;
-	case OBJECT_SYSFUNC_CFG :    //ÏµÍ³ÆäËû¹¦ÄÜÅäÖÃ
+	case OBJECT_SYSFUNC_CFG :    //ç³»ç»Ÿå…¶ä»–åŠŸèƒ½é…ç½®
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
-			;//ÒÔºóÔÙ¸ù¾İĞèÒª²¹³ä
+			;//ä»¥åå†æ ¹æ®éœ€è¦è¡¥å……
 
 		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //ÉèÖÃ
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
 		{		 
 			
 			SetSysFunc(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}
 		break ;	
-		
+	case OBJECT_GSM_CFG:
+	   if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //è®¾ç½®
+		{	 
+			
+			SetSmsFunc(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex,iRecvBufLen); 
+		}
+		break;
 	default:
 		ACE_DEBUG((LM_DEBUG,"%s:%d,ObjectId error objectId:%d\n",__FILE__,__LINE__,ucObjId));
 		GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
@@ -838,10 +847,10 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetCmuAndCtrl
-Description:    Í¨ĞÅ¼°¿ØÖÆ·½Ê½²ÎÊıÀ©Õ¹¶ÔÏó(0xf6)È«²¿×Ó¶ÔÏó²éÑ¯		
-Input:          iSendIndex   ·¢ËÍÕíµØÖ·Ë÷Òı
-Output:         pBuf  ²éÑ¯½á¹û»º´æÖ¸Õë
-Return:         ÎŞ
+Description:    é€šä¿¡åŠæ§åˆ¶æ–¹å¼å‚æ•°æ‰©å±•å¯¹è±¡(0xf6)å…¨éƒ¨å­å¯¹è±¡æŸ¥è¯¢		
+Input:          iSendIndex   å‘é€æ•åœ°å€ç´¢å¼•
+Output:         pBuf  æŸ¥è¯¢ç»“æœç¼“å­˜æŒ‡é’ˆ
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 {
@@ -854,7 +863,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 
 	GetNetPara(pHwEther , pIp , pMask , pGateway);
 
-	//Éè±¸¶¯×÷È¡Öµ
+	//è®¾å¤‡åŠ¨ä½œå–å€¼
 	pBuf[iSendIndex++] = 0;
 	pBuf[iSendIndex++] = 0;
 
@@ -899,7 +908,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 	}
 	pBuf[iSendIndex++] = ucTmp;
 
-	//??¢ã¡Á¡Â¡¤??????
+	//??â‚¬Ã—Ã·Â·??????
 	ucTmp = pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue;
 	pBuf[iSendIndex++] = ucTmp;
 	ucTmp = pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue;
@@ -940,16 +949,17 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 	pBuf[iSendIndex+11] = pGateway[3];
 	iSendIndex += 12;
 	
+	
 }
 
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetCmuAndCtrl
-Description:    Í¨ĞÅ¼°¿ØÖÆ·½Ê½²ÎÊıÀ©Õ¹¶ÔÏó(0xf6)£¬×Ó¶ÔÏó²éÑ¯		
-Input:          iSendIndex   ·¢ËÍÕíµØÖ·Ë÷Òı
-				ucSubId      ×Ó¶ÔÏóid
-Output:         pBuf  ²éÑ¯½á¹û»º´æÖ¸Õë
-Return:         ÎŞ
+Description:    é€šä¿¡åŠæ§åˆ¶æ–¹å¼å‚æ•°æ‰©å±•å¯¹è±¡(0xf6)ï¼Œå­å¯¹è±¡æŸ¥è¯¢		
+Input:          iSendIndex   å‘é€æ•åœ°å€ç´¢å¼•
+				ucSubId      å­å¯¹è±¡id
+Output:         pBuf  æŸ¥è¯¢ç»“æœç¼“å­˜æŒ‡é’ˆ
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 {
@@ -962,11 +972,11 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 
 	switch ( ucSubId )
 	{
-		case 1:   //??¨¨¡À??????¡Á¡Â????????
+		case 1:   //??Ã¨Â±??????Ã—Ã·????????
 			pBuf[iSendIndex++] = 0;
 			pBuf[iSendIndex++] = 0;
 			break;
-		case 2: //???¨¨¡À??????????¡Á??
+		case 2: //???Ã¨Â±??????????Ã—??
 			ucTmp = 0;
 			if ( pTscCfg->sSpecFun[FUN_DOOR].ucValue > 0 )
 			{
@@ -1008,7 +1018,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			}
 			pBuf[iSendIndex++] = ucTmp;
 			break;
-		case 3:  //??¢ã¡Á¡Â¡¤??????
+		case 3:  //??â‚¬Ã—Ã·Â·??????
 			ucTmp = pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			ucTmp = pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue;
@@ -1052,7 +1062,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			pBuf[iSendIndex+3] = pGateway[3];
 			iSendIndex += 4;
 			break;
-		case 9:  //µ¹¼ÆÊ±ÀàĞÍ
+		case 9:  //å€’è®¡æ—¶ç±»å‹
 			ucTmp = pTscCfg->sSpecFun[FUN_COUNT_DOWN].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			ucTmp = pTscCfg->sSpecFun[FUN_CNTTYPE].ucValue;
@@ -1067,11 +1077,11 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetCmuAndCtrl
-Description:    Í¨ĞÅ¼°¿ØÖÆ·½Ê½²ÎÊıÀ©Õ¹¶ÔÏó(0xf6)£¬È«²¿×Ó¶ÔÏóÖµÉèÖÃ		
-Input:          pBuf   ÉèÖÃÖµ»º´æµØÖ·Ö¸Õë
-				iRecvIndex     µ±Ç°ÉèÖÃÖµµØÖ·
+Description:    é€šä¿¡åŠæ§åˆ¶æ–¹å¼å‚æ•°æ‰©å±•å¯¹è±¡(0xf6)ï¼Œå…¨éƒ¨å­å¯¹è±¡å€¼è®¾ç½®		
+Input:          pBuf   è®¾ç½®å€¼ç¼“å­˜åœ°å€æŒ‡é’ˆ
+				iRecvIndex     å½“å‰è®¾ç½®å€¼åœ°å€
 Output:        
-Return:         ÎŞ
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 {
@@ -1082,26 +1092,26 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	
 	STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
 
-	/*************??¨¨¡À??????¡Á¡Â????????*********/
+	/*************??Ã¨Â±??????Ã—Ã·????????*********/
 	ucTmp       = pBuf[iRecvIndex++];
 	ucTmp       = pBuf[iRecvIndex++];
 	//bit0  ????????????????
-	//bit1  ????????¡Á????¨¬
+	//bit1  ????????Ã—????Ã¬
 	//bit2  ????????????????
-	//bit3  ??????????????¨°
+	//bit3  ??????????????Ã²
 	//bit4  ????????????????????????
 	//bit5  ????????????????
 	//bit6  ????????????????????????
 	//bit7  ????????????????
-	//bit8  ??¨¨????????????????????
-	//bit15 ??????????¨¦????????
+	//bit8  ??Ã¨????????????????????
+	//bit15 ??????????Ã©????????
 
-	/***********??¨¨¡À??????????¡Á??************/
+	/***********??Ã¨Â±??????????Ã—??************/
 	/*        bit0   bit1     bit2     bit3    bit4    bit5    bit6    bit7
 	* Byte0                                    ????????????   ????????     ????????????
-	* Byte1                                    ????????     gps     ??????????¡À
-	* Byte2  ??¨¬??????¡Â  ¡¤??????????¡ã??   ????????????¡ã??  ¡¤??????????¡ã?? ????????????¡ã?? ¡¤????????????¡Â ??????????????¡Â ????¡¤??????????
-	* Byte3  ??????????¡À  StartTime costTime                                 ??????????¨ª??¨®???????? 
+	* Byte1                                    ????????     gps     ??????????Â±
+	* Byte2  ??Ã¬??????Ã·  Â·??????????Â°??   ????????????Â°??  Â·??????????Â°?? ????????????Â°?? Â·????????????Ã· ??????????????Ã· ????Â·??????????
+	* Byte3  ??????????Â±  StartTime costTime                                 ??????????Ã­??Ã³???????? 
 	*/
 	ucTmp = pBuf[iRecvIndex++];
 	pTscCfg->sSpecFun[FUN_DOOR].ucValue        = (ucTmp>>5) & 1;
@@ -1129,7 +1139,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PRINT_FLAGII+1  , ucTmp & 0x7F );
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_SERIOUS_FLASH+1 , (ucTmp>>7) & 1 );
 	
-	/***********??¢ã¡Á¡Â¡¤??????************/
+	/***********??â‚¬Ã—Ã·Â·??????************/
 	ucTmp = pBuf[iRecvIndex++];
 	//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1    , ucTmp);
@@ -1147,11 +1157,11 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	ucTmp       = pBuf[iRecvIndex++];
 	pTscCfg->sSpecFun[FUN_COMMU_PARA].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , ucTmp);
-	//bit0 ????????????????null??¨¨¡À??
+	//bit0 ????????????????null??Ã¨Â±??
 	//bit1 1-TCP  0-UDP
 	//bit2 1-IPV6 0-IPV4
 
-	//???????????? ????¡Á?????? ????????2048-16768
+	//???????????? ????Ã—?????? ????????2048-16768
 	ucTmp       = pBuf[iRecvIndex++];
 	pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PORT_HIGH+1 , ucTmp);
@@ -1161,7 +1171,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 
 	CManaKernel::CreateInstance()->SetUpdateBit();
 
-		//ip
+	//ip
 	cIp[0] = *(pBuf+iRecvIndex);
 	cIp[1] = *(pBuf+iRecvIndex + 1);
 	cIp[2] = *(pBuf+iRecvIndex + 2);
@@ -1175,12 +1185,14 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	cMask[3] = *(pBuf+iRecvIndex + 7);
 	//iRecvIndex += 16;
 
-	//????????IP??????¡¤
+	//????????IP??????Â·
 	cGateWay[0] = *(pBuf+iRecvIndex+8);
 	cGateWay[1] = *(pBuf+iRecvIndex + 9);
 	cGateWay[2] = *(pBuf+iRecvIndex + 10);
 	cGateWay[3] = *(pBuf+iRecvIndex + 11);
 	iRecvIndex += 12;
+
+
 	ReworkNetPara(cIp,cMask,cGateWay);
 
 }
@@ -1188,12 +1200,12 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetCmuAndCtrl
-Description:    Í¨ĞÅ¼°¿ØÖÆ·½Ê½²ÎÊıÀ©Õ¹¶ÔÏó(0xf6)£¬×Ó¶ÔÏóÖµÉèÖÃ		
-Input:          pBuf   ÉèÖÃÖµ»º´æµØÖ·Ö¸Õë
-				iRecvIndex     µ±Ç°ÉèÖÃÖµµØÖ·
-				ucSubId        ×Ó¶ÔÏóID
+Description:    é€šä¿¡åŠæ§åˆ¶æ–¹å¼å‚æ•°æ‰©å±•å¯¹è±¡(0xf6)ï¼Œå­å¯¹è±¡å€¼è®¾ç½®		
+Input:          pBuf   è®¾ç½®å€¼ç¼“å­˜åœ°å€æŒ‡é’ˆ
+				iRecvIndex     å½“å‰è®¾ç½®å€¼åœ°å€
+				ucSubId        å­å¯¹è±¡ID
 Output:        
-Return:         ÎŞ
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 {
@@ -1206,14 +1218,14 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 
 	switch ( ucSubId )
 	{
-		case 1:  //Éè±¸¶¯×÷È¡Öµ			
+		case 1:  //è®¾å¤‡åŠ¨ä½œå–å€¼			
 			ucTmp0 = (pBuf[iRecvIndex++]<<8);
 			ucTmp0 |=  pBuf[iRecvIndex++];
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Action = %d !\n",__FILE__,__LINE__,ucTmp0));
 			for(Byte ucActionIndex = 0 ;ucActionIndex<sizeof(Ushort);ucActionIndex++)
 			{				
-				//bit0ÖØÆôÏµÍ³	bit1½øÈë×Ô¼ì	 bit2 ½øÈëÉı¼¶ bit3ÖØÆô³ÌĞò bit4Çå³ıÑÏÖØÊÂ¼ş
-				//bit5Çå³ıÊÂ¼ş  bit6É¾³ıÍ³¼ÆÊı¾İ bit7É¾³ıÈÕÖ¾ bit8ÉèÖÃÍ¨ĞÅ²ÎÊı bit15¶ÔĞ­ÒéÀ©Õ¹
+				//bit0é‡å¯ç³»ç»Ÿ	bit1è¿›å…¥è‡ªæ£€	 bit2 è¿›å…¥å‡çº§ bit3é‡å¯ç¨‹åº bit4æ¸…é™¤ä¸¥é‡äº‹ä»¶
+				//bit5æ¸…é™¤äº‹ä»¶  bit6åˆ é™¤ç»Ÿè®¡æ•°æ® bit7åˆ é™¤æ—¥å¿— bit8è®¾ç½®é€šä¿¡å‚æ•° bit15å¯¹åè®®æ‰©å±•
 				if((ucTmp0>>ucActionIndex) &0x1)								
 			
 				{
@@ -1231,34 +1243,21 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 
 			}		
 			break;
-		case 2:  //Éè±¸ÆôÓÃ×Ö
-			ucTmp = pBuf[iRecvIndex++];
-			pTscCfg->sSpecFun[FUN_DOOR].ucValue         = (ucTmp>>5) & 1;
-			pTscCfg->sSpecFun[FUN_VOLTAGE].ucValue      = (ucTmp>>6) & 1;
-			pTscCfg->sSpecFun[FUN_TEMPERATURE].ucValue  = (ucTmp>>7) & 1;
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_DOOR+1       , (ucTmp>>5) & 1 );
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_VOLTAGE+1    , (ucTmp>>6) & 1 );
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_TEMPERATURE+1, (ucTmp>>7) & 1 );
-
-			ucTmp = pBuf[iRecvIndex++];
-			pTscCfg->sSpecFun[FUN_MSG_ALARM].ucValue  = (ucTmp>>5) & 1;
-			pTscCfg->sSpecFun[FUN_GPS].ucValue        = (ucTmp>>6) & 1;
-			pTscCfg->sSpecFun[FUN_COUNT_DOWN].ucValue = (ucTmp>>7) & 1;
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_MSG_ALARM+1  , (ucTmp>>5) & 1 );
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_GPS+1        , (ucTmp>>6) & 1 );
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COUNT_DOWN+1 , (ucTmp>>7) & 1 );
-
-			ucTmp = pBuf[iRecvIndex++];
-			pTscCfg->sSpecFun[FUN_PRINT_FLAG].ucValue = ucTmp;
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PRINT_FLAG+1 , ucTmp);
-
-			ucTmp = pBuf[iRecvIndex++];
-			pTscCfg->sSpecFun[FUN_PRINT_FLAGII].ucValue = ucTmp & 0x7F;
-			pTscCfg->sSpecFun[FUN_SERIOUS_FLASH].ucValue = (ucTmp>>7)&1;
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PRINT_FLAGII+1  , ucTmp & 0x7F );
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_SERIOUS_FLASH+1 , (ucTmp>>7)&1 );
+		case 2:  //è®¾å¤‡å¯ç”¨å­—,å¯ä»¥å¯ç”¨ç‰¹æ®ŠåŠŸèƒ½FUNè¡¨ä¸­çš„è®¾å¤‡ 81 f6 02 aa bb cc bb cc ï¼Œaa è¡¨ç¤ºå¯ç”¨è®¾å¤‡ç±»å‹æ•°, bbè¡¨ç¤ºè®¾å¤‡ç´¢å¼•ï¼Œccè¡¨ç¤ºå¯ç”¨å€¼.
+			{
+		    ucTmp = pBuf[iRecvIndex];
+			int modifyFunType = 0 ;			
+			for(int iTypeNum =0 ;iTypeNum < ucTmp ; iTypeNum++)
+			{
+				modifyFunType = pBuf[++iRecvIndex] ;
+				pTscCfg->sSpecFun[modifyFunType].ucValue = pBuf[++iRecvIndex];
+				(CDbInstance::m_cGbtTscDb).ModSpecFun(modifyFunType+1,pBuf[iRecvIndex]);
+				//printf("%s:%d modify-fun tyep=%d value =%d\n",__FILE__,__LINE__,modifyFunType,pBuf[iRecvIndex]);	
+			}
+			iRecvIndex++ ;
+			}
 			break;
-		case 3: //¹¤×÷·½Ê½
+		case 3: //å·¥ä½œæ–¹å¼
 			ucTmp = pBuf[iRecvIndex++];
 			//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue = ucTmp ;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1     , ucTmp);
@@ -1273,11 +1272,11 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
 			CManaKernel::CreateInstance()->SetUpdateBit();
 			break;
-		case 4:  //Í¨ĞÅ½Ó¿Ú
+		case 4:  //é€šä¿¡æ¥å£
 			ucTmp       = pBuf[iRecvIndex++];
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , ucTmp);
 			break;
-		case 5:  //¶Ë¿ÚºÅ
+		case 5:  //ç«¯å£å·
 			ucTmp       = pBuf[iRecvIndex++];
 			pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PORT_HIGH+1 , ucTmp);
@@ -1293,7 +1292,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			iRecvIndex += 4;
 			ReworkNetPara(cIp,NULL,NULL);
 			break;
-		case 7: //ÑÚÂë
+		case 7: //æ©ç 
 			cMask[0] = *(pBuf+iRecvIndex);
 			cMask[1] = *(pBuf+iRecvIndex + 1);
 			cMask[2] = *(pBuf+iRecvIndex + 2);
@@ -1301,7 +1300,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			iRecvIndex += 4;
 			ReworkNetPara(NULL,cMask,NULL);
 			break;
-		case 8:  //Íø¹Ø
+		case 8:  //ç½‘å…³
 			cGateWay[0] = *(pBuf+iRecvIndex);
 			cGateWay[1] = *(pBuf+iRecvIndex + 1);
 			cGateWay[2] = *(pBuf+iRecvIndex + 2);
@@ -1309,7 +1308,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			iRecvIndex += 4;
 			ReworkNetPara(NULL,NULL,cGateWay);
 			break;
-		case 9: //µ¹¼ÆÊ±ÀàĞÍ
+		case 9: //å€’è®¡æ—¶ç±»å‹
 			ucTmp = pBuf[iRecvIndex++];
 			pTscCfg->sSpecFun[FUN_COUNT_DOWN].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COUNT_DOWN+1 , ucTmp);
@@ -1325,85 +1324,71 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetWatchPara
-Description:    »ñÈ¡¼à¿Ø²ÎÊıÀ©Õ¹¶ÔÏóÖµ		
-Input:          iSendIndex  µ±Ç°·¢ËÍÖ¡×Ö½ÚµØÖ·
-Output:         pBuf  ·¢ËÍÖ¡µØÖ·
-Return:         ÎŞ
+Description:    è·å–ç›‘æ§å‚æ•°æ‰©å±•å¯¹è±¡å€¼		
+Input:          iSendIndex  å½“å‰å‘é€å¸§å­—èŠ‚åœ°å€
+Output:         pBuf  å‘é€å¸§åœ°å€
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 {
-	CFlashMac* pFlashMac = CFlashMac::CreateInstance();
+	CMacControl * pMacControl = CMacControl::CreateInstance() ;
+	CPowerBoard * pPowerBoard = CPowerBoard::CreateInstance();
+	pMacControl->GetEnvSts();
+	pPowerBoard->CheckVoltage();
+	ACE_OS::sleep(ACE_Time_Value(0, 30000));
 
-	bool bForDoor        = pFlashMac->m_bGetForDoor;   //??¡ã??????¨°????
-	bool bPowerType      = pFlashMac->m_bPowerType;    //??????????¨¤???? true:??????¡Â???? false:????????????
-	bool bAlarmStatus    = false;//CPowerBoard::CreateInstance()->m_bGetAlarmStatus;  //¡À????????¡Â¡Á??????
-	Byte ucDoorValue     = 0;
-	int  iTemperature    = pFlashMac->m_iTemperature;  //????????
-	int  iVoltage        = pFlashMac->m_iVoltage;      //????????
-
-	//????????????
-	if ( iTemperature > -65 && iTemperature < 120 )
-	{
-		iTemperature += 65;
-	}
-	else if ( iTemperature < -65 )
-	{
-		iTemperature = 0;
-	}
-	else if ( iTemperature > 120 )
-	{
-		iTemperature = 185;
-	}
-
-	pBuf[*iSendIndex] = (iTemperature >> 8) & 0xff;  //????¡Á??????????????????
+	pBuf[*iSendIndex] = pMacControl->m_ucDoorFront ;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucDoorBack;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucLightDev<<6;
 	*iSendIndex += 1;
 
-	pBuf[*iSendIndex] = iTemperature & 0xff;
+	pBuf[*iSendIndex] = (pMacControl->m_ucWarnDev<<7);
 	*iSendIndex += 1;
 
-	//????????????????  ??????¡À??¨¨¡À??.....
-	if ( bForDoor && bAlarmStatus )  //??????¨°??????????¡À??¡ã????????¡À??????¡Á??????
-	{
-		ucDoorValue = 0;
-	}
-	else if ( bForDoor && !bAlarmStatus ) 
-	{
-		ucDoorValue = 0x03;
-	}
-	else
-	{
-		ucDoorValue = 0x02;
-	}
-	pBuf[*iSendIndex] = ucDoorValue;
+	pBuf[*iSendIndex] = pMacControl->m_ucTemp ;
 	*iSendIndex += 1;
 
-	//????????????
-	pBuf[*iSendIndex] = (iVoltage >> 8) & 0xff;  //????¡Á??????????????????
+	//????????????????  ??????Â±??Ã¨Â±??.....
+	pBuf[*iSendIndex] = pMacControl->m_ucHum;
+	*iSendIndex += 1;	
+	pBuf[*iSendIndex] = pMacControl->m_ucFarOut1;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucFarOut2;
 	*iSendIndex += 1;
 
-	pBuf[*iSendIndex] = iVoltage & 0xff;
+	pBuf[*iSendIndex] = pMacControl->m_ucFarIn1 ;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucFarIn2;
 	*iSendIndex += 1;
 
-	//??????????¨¤????
-	if ( bPowerType )
-	{
-		pBuf[*iSendIndex] = 0;
+	pBuf[*iSendIndex] = pMacControl->m_ucAddHot;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucReduHot;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucCabinet;
+	//??????????Ã ????
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = CPscMode::CreateInstance()->m_ucBtnNum ;
 		*iSendIndex += 1;
-	}
-	else
-	{
-		pBuf[*iSendIndex] = 2;
+
+	pBuf[*iSendIndex] = pPowerBoard->m_iStongVoltage ;  //Ã‡Â¿ÂµÃ§ÂµÃ§Ã‘Â¹
+	*iSendIndex += 1 ;		
+	pBuf[*iSendIndex] = pPowerBoard->m_iWeakVoltage  ;  //ÃˆÃµÂµÃ§ÂµÃ§
+	*iSendIndex += 1 ;		
+	pBuf[*iSendIndex] = pPowerBoard->m_iBusVoltage ;  //Ã—ÃœÃÃŸÂµÃ§Ã‘Â¹
 		*iSendIndex += 1;
-	}
+	
 }
 
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetModuleStatus
-Description:    »ñÈ¡Ä£¿é×´Ì¬¶ÔÏóÖµ		
-Input:          iSendIndex  µ±Ç°·¢ËÍÖ¡×Ö½ÚµØÖ·
-Output:         pBuf  ·¢ËÍÖ¡µØÖ·
-Return:         ÎŞ
+Description:    è·å–æ¨¡å—çŠ¶æ€å¯¹è±¡å€¼		
+Input:          iSendIndex  å½“å‰å‘é€å¸§å­—èŠ‚åœ°å€
+Output:         pBuf  å‘é€å¸§åœ°å€
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
 {
@@ -1429,7 +1414,7 @@ void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
 		ucTmp |= 1<<3;
 	}
 
-	//??¨¬??????¡Â¡ã??
+	//??Ã¬??????Ã·Â°??
 	if ( pDet->m_bRecordSts[0] != true )
 	{
 		ucTmp |= 1<<4;
@@ -1450,13 +1435,13 @@ void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
 	*iSendIndex      += 1;
 	ucTmp             = 0;
 
-	//????????¡ã??
+	//????????Â°??
 	if ( false )//if ( pPowerBoard->m_bRecordSts != true )
 	{
 		ucTmp |= 1;
 	}
 	
-	//??¨¤????¡ã?? ??????????¡Â¡ã??
+	//??Ã ????Â°?? ??????????Ã·Â°??
 	if ( pFlashMac->m_bRecordSts != true )
 	{
 		ucTmp |= 1<<1;
@@ -1473,10 +1458,10 @@ void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetPscNum
-Description:    ÉèÖÃĞĞÈË°´Å¥Öµ		
-Input:          pBuf  ½ÓÊÕÖ¡»º´æµØÖ·
-Output:         iRecvIndex  ½ÓÊÕ»º´æµ±Ç°¶ÁÈ¡µØÖ·
-Return:         ÎŞ
+Description:    è®¾ç½®è¡ŒäººæŒ‰é’®å€¼		
+Input:          pBuf  æ¥æ”¶å¸§ç¼“å­˜åœ°å€
+Output:         iRecvIndex  æ¥æ”¶ç¼“å­˜å½“å‰è¯»å–åœ°å€
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SetPscNum(Byte* pBuf,int& iRecvIndex)
 {
@@ -1485,10 +1470,10 @@ void CGbtMsgQueue::SetPscNum(Byte* pBuf,int& iRecvIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetTmpPattern
-Description:    ÉèÖÃÁÙÊ±·½ÏòÏàÎ»·ÅĞĞ£¬Ä¬ÈÏ60Ãë
-Input:          pBuf  ½ÓÊÕÖ¡»º´æµØÖ·
-Output:         iRecvIndex  ½ÓÊÕ»º´æµ±Ç°¶ÁÈ¡µØÖ·
-Return:         ÎŞ
+Description:    è®¾ç½®ä¸´æ—¶æ–¹å‘ç›¸ä½æ”¾è¡Œï¼Œé»˜è®¤60ç§’
+Input:          pBuf  æ¥æ”¶å¸§ç¼“å­˜åœ°å€
+Output:         iRecvIndex  æ¥æ”¶ç¼“å­˜å½“å‰è¯»å–åœ°å€
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SetTmpPattern(Byte* pBuf,int& iRecvIndex)
 {	
@@ -1511,7 +1496,7 @@ void CGbtMsgQueue::SetTmpPattern(Byte* pBuf,int& iRecvIndex)
 		
 		SThreadMsg sTscMsg ;
 		pManaKernel->m_iTimePatternId = 251;
-		sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //´ÓÌØÊâ·½°¸·µ»ØÔ­À´×´Ì¬
+		sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //ä»ç‰¹æ®Šæ–¹æ¡ˆè¿”å›åŸæ¥çŠ¶æ€
 		sTscMsg.ucMsgOpt     = 0;
 		sTscMsg.uiMsgDataLen = 1;
 		sTscMsg.pDataBuf     = NULL;
@@ -1525,11 +1510,11 @@ void CGbtMsgQueue::SetTmpPattern(Byte* pBuf,int& iRecvIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetLampBdtCfg
-Description:    ÉèÖÃµÆ¿Ø°åµÆÅİ¼ì²âºÍºìÂÌ³åÍ»¼ì²âÅäÖÃ		
-Input:          pBuf   ½ÓÊÕÉèÖÃ»º´æÖ¸Õë
-				iRecvIndex     µ±Ç°ÉèÖÃÈ¡ÖµµØÖ·
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®ç¯æ§æ¿ç¯æ³¡æ£€æµ‹å’Œçº¢ç»¿å†²çªæ£€æµ‹é…ç½®		
+Input:          pBuf   æ¥æ”¶è®¾ç½®ç¼“å­˜æŒ‡é’ˆ
+				iRecvIndex     å½“å‰è®¾ç½®å–å€¼åœ°å€
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SetLampBdtCfg(Byte* pBuf,int& iRecvIndex)
 {
@@ -1550,11 +1535,11 @@ void CGbtMsgQueue::SetLampBdtCfg(Byte* pBuf,int& iRecvIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetSysFunc
-Description:    ÉèÖÃÆäËûÏµÍ³¹¦ÄÜÅäÖÃ	
-Input:          pBuf   ½ÓÊÕÉèÖÃ»º´æÖ¸Õë
-				iRecvIndex     µ±Ç°ÉèÖÃÈ¡ÖµµØÖ·
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®å…¶ä»–ç³»ç»ŸåŠŸèƒ½é…ç½®	
+Input:          pBuf   æ¥æ”¶è®¾ç½®ç¼“å­˜æŒ‡é’ˆ
+				iRecvIndex     å½“å‰è®¾ç½®å–å€¼åœ°å€
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 {
@@ -1564,7 +1549,7 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 	switch(Tmp)
 	{
 		case 0x01 :			
-			pManakernel->m_pRunData->uiUtcsHeartBeat = 0; //½ÓÊÕµ½ĞÄÌø£¬ÀÛ»ıÖÃ0
+			pManakernel->m_pRunData->uiUtcsHeartBeat = 0; //æ¥æ”¶åˆ°å¿ƒè·³ï¼Œç´¯ç§¯ç½®0
 			if(pManakernel->bUTS == false)
 			{
 				pManakernel->bUTS = true ;
@@ -1577,9 +1562,9 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 					pManakernel->bDegrade = false ;
 				//SendTscCommand(OBJECT_SWITCH_CONTROL,12);
 				pManakernel->SwitchCtrl(CTRL_UTCS);
-				if(pManakernel->m_pRunData->uiWorkStatus != STANDARD) //´Ó½µ¼¶»ÆÉÁ Ï¨µÆ È«ºì·µ»Ø
+				if(pManakernel->m_pRunData->uiWorkStatus != STANDARD) //ä»é™çº§é»„é—ª ç†„ç¯ å…¨çº¢è¿”å›
 					pManakernel->SwitchStatus(STANDARD);
-				CMainBoardLed::CreateInstance()->DoModeLed(false,true);  //MODÖ¸Ê¾µÆÕı³£
+				CMainBoardLed::CreateInstance()->DoModeLed(false,true);  //MODæŒ‡ç¤ºç¯æ­£å¸¸
 			}
 		
 			break ;
@@ -1659,14 +1644,88 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 
 }
 
+/**************************************************************
+Function:       CGbtMsgQueue::SetSmsFunc
+Description:    è®¾ç½®GSMæ¥æ”¶ATå‘½ä»¤
+Input:          pBuf   æ¥æ”¶ATè®¾ç½®å‘½ä»¤ç¼“å­˜æŒ‡é’ˆ
+		       iRecvIndex     å½“å‰è®¾ç½®å–å€¼åœ°å€
+Output:         æ— 
+Return:         æ— 
+***************************************************************/
+
+void CGbtMsgQueue::SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen)
+{
+	char tmpstr[400] = {0};	
+	
+	CSerialCtrl* pGsmSerial = CSerialCtrl::CreateInstance() ;	
+	int fd = pGsmSerial->GetSerialFd(1);
+	if(pBuf[iRecvIndex] == 0x1)
+	{		
+		char sendNum[20]={0};
+		//char sendsms[300]={0};
+		ACE_OS::memcpy(sendNum,pBuf+4,11);
+		ACE_OS::memcpy(tmpstr,pBuf+15,ACE_OS::strlen((char*)pBuf+15));
+		//ACE_OS::printf("%s:%d sendnum=%s sendtext= %s \n",__FILE__,__LINE__,sendNum,sendsms);
+		CGsm::CreateInstance()->SendSms(sendNum,tmpstr);
+	}
+	else if(pBuf[iRecvIndex] == 0x2)
+	{
+		char smca[20]={0};
+		ACE_OS::memcpy(smca,pBuf+4,11);
+		ACE_OS::sprintf(tmpstr,"AT+CSCA=\"+86%s\", 145\r\n",smca);
+		ACE_OS::printf("%s:%d set smca:%s \n",__FILE__,__LINE__,tmpstr);
+		pGsmSerial->serialWrite(tmpstr,fd);
+	}
+	
+	else if(pBuf[iRecvIndex] == 0x3)
+	{
+		switch(pBuf[iRecvIndex+1])
+		{
+			case 0:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=4800\r\n");
+			break;
+			case 1:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=9600\r\n");
+			break ;
+			case 2:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=19200\r\n");
+			break;
+			case 3:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=38400\r\n");
+			break ;
+			case 4:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=115200\r\n");
+			break ;
+			default:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=38400\r\n");
+			break ;
+		}
+		
+		ACE_OS::printf("%s:%d set IPR:%s \n",__FILE__,__LINE__,tmpstr);
+		pGsmSerial->serialWrite(tmpstr,fd);
+	}
+	else if(pBuf[iRecvIndex] == 0x4)
+	{
+		
+		//CGsm::CreateInstance()->OpenTcpConnec();
+	}
+	else 
+	{		
+		ACE_OS::memcpy(tmpstr,(char *)pBuf+3,iRecvBufLen-3);
+		ACE_OS::strcat(tmpstr,"\r\n");
+		ACE_OS::printf("%s:%d ModifyBotrate:%s \n",__FILE__,__LINE__,tmpstr);
+		pGsmSerial->serialWrite(tmpstr,fd);
+	}
+	iRecvIndex += iRecvBufLen-3 ;
+}
 
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetFlashCfg
-Description:    »ñÈ¡»ÆÉÁÆ÷ÅäÖÃĞÅÏ¢		
-Input:         	iSendIndex     ·¢ËÍÖ¡µ±Ç°Ğ´µØÖ·
-Output:         pBuf   ·¢ËÍÖ¡µØÖ·Ö¸Õë
-Return:         ÎŞ
+Description:    è·å–é»„é—ªå™¨é…ç½®ä¿¡æ¯		
+Input:         	iSendIndex     å‘é€å¸§å½“å‰å†™åœ°å€
+Output:         pBuf   å‘é€å¸§åœ°å€æŒ‡é’ˆ
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GetFlashCfg(Byte* pBuf,int *iSendIndex)
 {
@@ -1677,7 +1736,6 @@ void CGbtMsgQueue::GetFlashCfg(Byte* pBuf,int *iSendIndex)
 	pBuf[*iSendIndex] = pFlashMac->m_ucGetFlashRate & 0x0f;
 	pBuf[*iSendIndex]|=  (pFlashMac->m_ucGetDutyCycle<<4) &0xf0 ;
 	*iSendIndex += 1;
-
 	pBuf[*iSendIndex] = (pFlashMac->m_ucGetSyType)&0xff ;
 	*iSendIndex += 1;
 	pBuf[*iSendIndex] = (pFlashMac->m_ucFlashStatus)&0xff;
@@ -1688,11 +1746,11 @@ void CGbtMsgQueue::GetFlashCfg(Byte* pBuf,int *iSendIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetFlashCtrl
-Description:    »ÆÉÁÆ÷¿ØÖÆÓëÅäÖÃĞÅÏ¢ÉèÖÃ	
-Input:         	pBuf     ½ÓÊÕÖ¡µØÖ·Ö¸Õë
-				iRecvIndex ½ÓÊÕÖ¡µ±Ç°¶ÁÈ¡µØÖ·
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    é»„é—ªå™¨æ§åˆ¶ä¸é…ç½®ä¿¡æ¯è®¾ç½®	
+Input:         	pBuf     æ¥æ”¶å¸§åœ°å€æŒ‡é’ˆ
+				iRecvIndex æ¥æ”¶å¸§å½“å‰è¯»å–åœ°å€
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void  CGbtMsgQueue::SetFlashCtrl(Byte* pBuf,int& iRecvIndex)
 {
@@ -1724,28 +1782,30 @@ void  CGbtMsgQueue::SetFlashCtrl(Byte* pBuf,int& iRecvIndex)
 
 /**************************************************************
 	Function:		CGbtMsgQueue::GetPowerCfg
-	Description:  µçÔ´°åÅäÖÃĞÅÏ¢ÉèÖÃ	
-	Input:		pBuf	 ½ÓÊÕÖ¡µØÖ·Ö¸Õë
-				iSendIndex     ·¢ËÍÖ¡µ±Ç°Ğ´µØÖ·
-Output:         pBuf   ·¢ËÍÖ¡µØÖ·Ö¸Õë
-	Return: 		ÎŞ
+	Description:  ç”µæºæ¿é…ç½®ä¿¡æ¯è®¾ç½®	
+	Input:		pBuf	 æ¥æ”¶å¸§åœ°å€æŒ‡é’ˆ
+				iSendIndex     å‘é€å¸§å½“å‰å†™åœ°å€
+Output:         pBuf   å‘é€å¸§åœ°å€æŒ‡é’ˆ
+	Return: 		æ— 
 ***************************************************************/
 void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
 {
 	CPowerBoard *pPowerBoard = CPowerBoard::CreateInstance();	
 	switch(ucQueryType)
 		{
-		case 0x02 :    //ÇëÇóµçÔ´°å·¢ËÍµçÑ¹Êı¾İ
+		case 0x02 :    //è¯·æ±‚ç”µæºæ¿å‘é€ç”µå‹æ•°æ®
+		{
 			pPowerBoard->CheckVoltage();
 			ACE_OS::sleep(ACE_Time_Value(0, 30000));
-			pBuf[*iSendIndex] = pPowerBoard->m_iStongVoltage ;  //Ç¿µçµçÑ¹
+			pBuf[*iSendIndex] = pPowerBoard->m_iStongVoltage ;  //å¼ºç”µç”µå‹
 			*iSendIndex += 1 ;		
-			pBuf[*iSendIndex] = pPowerBoard->m_iWeakVoltage  ;  //Èõµçµç?	
+			pBuf[*iSendIndex] = pPowerBoard->m_iWeakVoltage  ;  //å¼±ç”µç”µ?	
 			*iSendIndex += 1 ;		
-			pBuf[*iSendIndex] = pPowerBoard->m_iBusVoltage ;  //×ÜÏßµçÑ¹
+			pBuf[*iSendIndex] = pPowerBoard->m_iBusVoltage ;  //æ€»çº¿ç”µå‹
 			*iSendIndex += 1 ;
 			break ;
-		case 0x03 :	   //ÇëÇóµçÔ´Ä£¿é·¢ËÍÅäÖÃÊı¾İ	
+		}
+		case 0x03 :	   //è¯·æ±‚ç”µæºæ¨¡å—å‘é€é…ç½®æ•°æ®	
 		{
 			Byte VolPlan = 0 ;
 			pPowerBoard->GetPowerBoardCfg();
@@ -1764,10 +1824,9 @@ void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
 			*iSendIndex += 1 ;
 			pBuf[*iSendIndex] = pPowerBoard->m_ucSetWatchCfg ;	
 			*iSendIndex += 1 ;
-			
+			break ;
 		//	printf("get powerd 0x3 -2\n");
 		}
-			break ;
 		 default:
 		 	break ;
 		}
@@ -1776,11 +1835,11 @@ void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
 
 /**************************************************************
 	Function:		CGbtMsgQueue::SetPowerCfg
-	Description:  µçÔ´°åÅäÖÃĞÅÏ¢ÉèÖÃ	
-	Input:		pBuf	 ½ÓÊÕÖ¡µØÖ·Ö¸Õë
-				iRecvIndex ½ÓÊÕÖ¡µ±Ç°¶ÁÈ¡µØÖ·
-	Output: 		ÎŞ
-	Return: 		ÎŞ
+	Description:  ç”µæºæ¿é…ç½®ä¿¡æ¯è®¾ç½®	
+	Input:		pBuf	 æ¥æ”¶å¸§åœ°å€æŒ‡é’ˆ
+				iRecvIndex æ¥æ”¶å¸§å½“å‰è¯»å–åœ°å€
+	Output: 		æ— 
+	Return: 		æ— 
 ***************************************************************/
 void  CGbtMsgQueue::SetPowerCfg(Byte* pBuf,int& iRecvIndex)	
 {
@@ -1789,7 +1848,7 @@ void  CGbtMsgQueue::SetPowerCfg(Byte* pBuf,int& iRecvIndex)
 	switch(Tmp)
 	{
 		
-		case 0x04 :	   //ÏÂ·¢µçÔ´Ä£¿éÅäÖÃÊı¾İ
+		case 0x04 :	   //ä¸‹å‘ç”µæºæ¨¡å—é…ç½®æ•°æ®
 		{
 			Byte tmp1 = pBuf[iRecvIndex++];
 			Byte tmp2 = pBuf[iRecvIndex++];
@@ -1799,7 +1858,7 @@ void  CGbtMsgQueue::SetPowerCfg(Byte* pBuf,int& iRecvIndex)
 			pPowerBoard->SetPowerBoardCfg();
 		}
 			break ;
-		case 0x05 :	   //ĞÄÌøÃüÁî
+		case 0x05 :	   //å¿ƒè·³å‘½ä»¤
 			pPowerBoard->HeartBeat();			
 			break ;
 		default:
@@ -1810,13 +1869,13 @@ void  CGbtMsgQueue::SetPowerCfg(Byte* pBuf,int& iRecvIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetDetCfg
-Description:    »ñÈ¡¼ì²âÆ÷ĞÅÏ¢	
-Input:         	pBuf     ´ı·¢ËÍÖ¡µØÖ·Ö¸Õë
-				iSendIndex ·¢ËÍÖ¡µ±Ç°Ğ´ÈëµØÖ·
-				ucBdIndex   ¼ì²âÆ÷°åË÷Òı
-				ucQueryType Ğè²éÑ¯µÄ¼ì²âÆ÷ÏîÄ¿
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    è·å–æ£€æµ‹å™¨ä¿¡æ¯	
+Input:         	pBuf     å¾…å‘é€å¸§åœ°å€æŒ‡é’ˆ
+				iSendIndex å‘é€å¸§å½“å‰å†™å…¥åœ°å€
+				ucBdIndex   æ£€æµ‹å™¨æ¿ç´¢å¼•
+				ucQueryType éœ€æŸ¥è¯¢çš„æ£€æµ‹å™¨é¡¹ç›®
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GetDetCfg(Byte* pBuf,Byte ucBdIndex,Byte ucQueryType,int *iSendIndex)
 {
@@ -1949,11 +2008,11 @@ void CGbtMsgQueue::GetDetCfg(Byte* pBuf,Byte ucBdIndex,Byte ucQueryType,int *iSe
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetDetCfg
-Description:    ÉèÖÃ¼ì²âÆ÷ÅäÖÃĞÅÏ¢	
-Input:         	pBuf     ½ÓÊÕÖ¡µØÖ·Ö¸Õë
-				iRecvIndex  ½ÓÊÕÖ¡µ±Ç°¶ÁÈ¡µØÖ·
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®æ£€æµ‹å™¨é…ç½®ä¿¡æ¯	
+Input:         	pBuf     æ¥æ”¶å¸§åœ°å€æŒ‡é’ˆ
+				iRecvIndex  æ¥æ”¶å¸§å½“å‰è¯»å–åœ°å€
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SetDetCfg(Byte* pBuf,int& iRecvIndex)
 {
@@ -2066,25 +2125,25 @@ void CGbtMsgQueue::SetDetCfg(Byte* pBuf,int& iRecvIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::PackTscStatus
-Description:    ĞÅºÅ»ú×´Ì¬ĞÅÏ¢´ò°ü	
-Input:         	pValue  ĞÅÏ¢»ú×´Ì¬½á¹¹ÌåÖ¸Õë
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºçŠ¶æ€ä¿¡æ¯æ‰“åŒ…	
+Input:         	pValue  ä¿¡æ¯æœºçŠ¶æ€ç»“æ„ä½“æŒ‡é’ˆ
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 {
-	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????¡Á¡Â??¨¤????
+	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????Ã—Ã·??Ã ????
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	//int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;  //??¡Â????????????
-	Byte ucErrorSts    = 0;  //??¨ª??¨®¡Á??????
-	Byte ucErrorIdx    = 0;  //??¨ª??¨®??¡Â????
-	Byte ucObjId       = 0;  //??????¨®????(¡À¨ª????)
-	Byte ucIdxFst      = 0;  //??????????????¡Â????(id1)
-	Byte ucIdxSnd      = 0;  //??????????????¡Â????(id2)
-	Byte ucSubId       = 0;  //¡Á????????¨®(¡Á??????????¡À¨º)
+	Byte ucIndexCnt    = 0;  //??Ã·????????????
+	Byte ucErrorSts    = 0;  //??Ã­??Ã³Ã—??????
+	Byte ucErrorIdx    = 0;  //??Ã­??Ã³??Ã·????
+	Byte ucObjId       = 0;  //??????Ã³????(Â±Ã­????)
+	Byte ucIdxFst      = 0;  //??????????????Ã·????(id1)
+	Byte ucIdxSnd      = 0;  //??????????????Ã·????(id2)
+	Byte ucSubId       = 0;  //Ã—????????Ã³(Ã—??????????Â±Ãª)
 	Byte ucIndex       = 0;
 	Byte ucRecordCnt   = 0;
 	STscStatus* pTscStatus = (STscStatus*)pValue;
@@ -2096,13 +2155,13 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 
-	/************??????¨®¡À¨º????*************/
+	/************??????Ã³Â±Ãª????*************/
 	ucObjId = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex];
-	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //??????¨®¡À¨º????
+	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //??????Ã³Â±Ãª????
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********??¡Â????????????????¡Á????????¨®*******/
+	/***********??Ã·????????????????Ã—????????Ã³*******/
 	if ( iRecvIndex >= iRecvBufLen )
 	{
 		ucErrorSts = GBT_ERROR_OTHER;
@@ -2110,14 +2169,14 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] =
-		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //??¡Â????????????????¡Á????????¨®
-	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //??¡Â????????????
-	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //¡Á????????¨®????¡Á??????????¡À¨º
+		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //??Ã·????????????????Ã—????????Ã³
+	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //??Ã·????????????
+	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //Ã—????????Ã³????Ã—??????????Â±Ãª
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********??¡Â????*************/
-	if ( ucIndexCnt > 0 )  /*??¡Â????1*/
+	/***********??Ã·????*************/
+	if ( ucIndexCnt > 0 )  /*??Ã·????1*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2131,7 +2190,7 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 ) /*??¡Â????2*/
+	if ( ucIndexCnt > 0 ) /*??Ã·????2*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2145,7 +2204,7 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 )  /*??¡Â????3????????*/
+	if ( ucIndexCnt > 0 )  /*??Ã·????3????????*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2158,10 +2217,10 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		ucIndexCnt--;
 	}
 
-	/************??????¨°**************/
+	/************??????Ã²**************/
 	switch ( ucObjId )
 	{
-	case OBJECT_CURTSC_CTRL:          /*??¡À??¡ã??????????¨²????????????¡Á??????*/
+	case OBJECT_CURTSC_CTRL:          /*??Â±??Â°??????????Ãº????????????Ã—??????*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = ToObjectCurTscCtrl(pTscStatus->uiCtrl);
 		break;
 	/*
@@ -2170,49 +2229,49 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			ToObjectControlSwitch(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
 	
-	case OBJECT_SWITCH_STAGE:        //??¡Á????¡Á??????
+	case OBJECT_SWITCH_STAGE:        //??Ã—????Ã—??????
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucStageNo;
 		break;
 	*/
-	case OBJECT_ACTIVESCHEDULE_NO:  /*??¡À??¡ã??????????¡À????¡À¨¤????*/
+	case OBJECT_ACTIVESCHEDULE_NO:  /*??Â±??Â°??????????Â±????Â±Ã ????*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucActiveSchNo;
 		break;
-	case OBJECT_TSC_WARN2:  /*??????????¨²¡À??????2*/
+	case OBJECT_TSC_WARN2:  /*??????????ÃºÂ±??????2*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucTscAlarm2;
 		break;
-	case OBJECT_TSC_WARN1: /*??????????¨²¡À??????1*/
+	case OBJECT_TSC_WARN1: /*??????????ÃºÂ±??????1*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucTscAlarm1;
 		break;
-	case OBJECT_TSC_WARN_SUMMARY:  /*??????????¨²¡À??????????????*/
+	case OBJECT_TSC_WARN_SUMMARY:  /*??????????ÃºÂ±??????????????*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucTscAlarmSummary;
 		break;
-	case OBJECT_ACTIVEDETECTOR_NUM: /*??????????¨¬??????¡Â¡Á??????*/
+	case OBJECT_ACTIVEDETECTOR_NUM: /*??????????Ã¬??????Ã·Ã—??????*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucActiveDetCnt;
 		break;
-	case OBJECT_SWITCH_MANUALCONTROL: /*????????????????¡¤??¡ã??*/
+	case OBJECT_SWITCH_MANUALCONTROL: /*????????????????Â·??Â°??*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] 
 			= GetManualCtrlStatus(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
-	case OBJECT_SWITCH_SYSTEMCONTROL: /*????????????????¡¤??¡ã??*/
+	case OBJECT_SWITCH_SYSTEMCONTROL: /*????????????????Â·??Â°??*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] 
 			= GetSysCtrlStatus(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
-	case OBJECT_SWITCH_CONTROL: /*????????¡¤??????*/
+	case OBJECT_SWITCH_CONTROL: /*????????Â·??????*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] 
 			= GetCtrlStatus(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
-	case OBJECT_SWITCH_STAGE:  /*??¡Á????¡Á??????*/
+	case OBJECT_SWITCH_STAGE:  /*??Ã—????Ã—??????*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucStageNo;
 		break;
 	case OBJECT_GOSTEP: /*????????????????*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucStepNo;
 		break;
-	case OBJECT_CURPATTERN_SCHTIMES:   /*??¡À??¡ã¡¤??¡ã????¡Â??¡Á??????¡À??¢ã*/
+	case OBJECT_CURPATTERN_SCHTIMES:   /*??Â±??Â°Â·??Â°????Ã·??Ã—??????Â±??â‚¬*/
 		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,
 			                  pTscStatus->ucCurStageLen,16);
 	    iSendIndex += 16;
 		break;
-	case OBJECT_CURPATTERN_GREENTIMES: /*??¡À??¡ã¡¤??¡ã????¡Â??????¨¹??¨¤??????????????¡À??¢ã*/
+	case OBJECT_CURPATTERN_GREENTIMES: /*??Â±??Â°Â·??Â°????Ã·??????Ã¼??Ã ??????????????Â±??â‚¬*/
 		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,
 			pTscStatus->ucCurKeyGreen,16);
 		iSendIndex += 16;
@@ -2284,8 +2343,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_DETECTORDATA_TABLE: /*??????????¨¬????????????¡À¨ª*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????¡À¨ª
+	case OBJECT_DETECTORDATA_TABLE: /*??????????Ã¬????????????Â±Ã­*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????Â±Ã­
 		{
 			ucIndex = 0;
 			ucRecordCnt = 48;
@@ -2382,8 +2441,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_DETECTORWARN_TABLE: /*??????????¨¬??????¡Â????????*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????¡À¨ª
+	case OBJECT_DETECTORWARN_TABLE: /*??????????Ã¬??????Ã·????????*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????Â±Ã­
 		{
 			ucIndex = 0;
 			ucRecordCnt = 48;
@@ -2449,8 +2508,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		}
 		break;
 		break;
-	case OBJECT_PHASESTATUS_TABLE:   /*??¨¤????¡Á??????*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????¡À¨ª
+	case OBJECT_PHASESTATUS_TABLE:   /*??Ã ????Ã—??????*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????Â±Ã­
 		{
 			ucIndex = 0;
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 2;
@@ -2521,8 +2580,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_OVERLAPPHASE_STATUS: /*??¨²??????¨¤????¡Á??????*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????¡À¨ª
+	case OBJECT_OVERLAPPHASE_STATUS: /*??Ãº??????Ã ????Ã—??????*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????Â±Ã­
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 1;
 			
@@ -2589,8 +2648,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		}
 
 		break;
-	case OBJECT_CHANNELSTATUS_TABLE:      /*????????¡Á??????*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????¡À¨ª
+	case OBJECT_CHANNELSTATUS_TABLE:      /*????????Ã—??????*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //????????Â±Ã­
 		{
 			ucIndex = 0;
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 2;
@@ -2660,8 +2719,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_CURTSC_FLASHCTRL:  /*??¡À??¡ã??????????????????????????????????¨°*/
-		if ( pTscStatus->uiWorkStatus != FLASH )   //¡¤??????????
+	case OBJECT_CURTSC_FLASHCTRL:  /*??Â±??Â°??????????????????????????????????Ã²*/
+		if ( pTscStatus->uiWorkStatus != FLASH )   //Â·??????????
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 2;
 		}
@@ -2669,7 +2728,7 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 4;
 		}
-		else if ( true == pTscStatus->bStartFlash ) //??????????¡À????????
+		else if ( true == pTscStatus->bStartFlash ) //??????????Â±????????
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 7;
 		}
@@ -2689,9 +2748,9 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 	m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex = iRecvIndex;
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex = iSendIndex;
 	m_sGbtDealData[ucDealDataIndex].iObjNum--;
-	if ( iRecvIndex == iRecvBufLen )  //??????¨ª??¨º¡À??
+	if ( iRecvIndex == iRecvBufLen )  //??????Ã­??ÃªÂ±??
 	{
-		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //??????¨®??????????????????????¨ª??¨º¡À??
+		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //??????Ã³??????????????????????Ã­??ÃªÂ±??
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 			GotoSendToHost(ucDealDataIndex);
@@ -2719,26 +2778,26 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 
 /**************************************************************
 Function:       CGbtMsgQueue::PackTscExStatus
-Description:    ĞÅºÅ»úÀ©Õ¹×´Ì¬ĞÅÏ¢´ò°ü	
-Input:         	ucDealDataIndex  ´ı´¦ÀíĞÅÏ¢ÏÂ±ê
-				pValue  ĞÅÏ¢»úÀ©Õ¹×´Ì¬½á¹¹ÌåÖ¸Õë
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºæ‰©å±•çŠ¶æ€ä¿¡æ¯æ‰“åŒ…	
+Input:         	ucDealDataIndex  å¾…å¤„ç†ä¿¡æ¯ä¸‹æ ‡
+				pValue  ä¿¡æ¯æœºæ‰©å±•çŠ¶æ€ç»“æ„ä½“æŒ‡é’ˆ
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 {
-	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????¡Á¡Â??¨¤????
+	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????Ã—Ã·??Ã ????
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	//int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;  //??¡Â????????????
-	Byte ucErrorSts    = 0;  //??¨ª??¨®¡Á??????
-	Byte ucErrorIdx    = 0;  //??¨ª??¨®??¡Â????
-	Byte ucObjId       = 0;  //??????¨®????(¡À¨ª????)
-	Byte ucIdxFst      = 0;  //??????????????¡Â????(id1)
-	Byte ucIdxSnd      = 0;  //??????????????¡Â????(id2)
-	Byte ucSubId       = 0;  //¡Á????????¨®(¡Á??????????¡À¨º)
+	Byte ucIndexCnt    = 0;  //??Ã·????????????
+	Byte ucErrorSts    = 0;  //??Ã­??Ã³Ã—??????
+	Byte ucErrorIdx    = 0;  //??Ã­??Ã³??Ã·????
+	Byte ucObjId       = 0;  //??????Ã³????(Â±Ã­????)
+	Byte ucIdxFst      = 0;  //??????????????Ã·????(id1)
+	Byte ucIdxSnd      = 0;  //??????????????Ã·????(id2)
+	Byte ucSubId       = 0;  //Ã—????????Ã³(Ã—??????????Â±Ãª)
 
 	if ( iRecvIndex >= iRecvBufLen )
 	{
@@ -2747,13 +2806,13 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 
-	/************??????¨®¡À¨º????*************/
+	/************??????Ã³Â±Ãª????*************/
 	ucObjId = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex];
-	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //??????¨®¡À¨º????
+	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //??????Ã³Â±Ãª????
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********??¡Â????????????????¡Á????????¨®*******/
+	/***********??Ã·????????????????Ã—????????Ã³*******/
 	if ( iRecvIndex >= iRecvBufLen )
 	{
 		ucErrorSts = GBT_ERROR_OTHER;
@@ -2761,14 +2820,14 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] =
-		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //??¡Â????????????????¡Á????????¨®
-	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //??¡Â????????????
-	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //¡Á????????¨®????¡Á??????????¡À¨º
+		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //??Ã·????????????????Ã—????????Ã³
+	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //??Ã·????????????
+	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //Ã—????????Ã³????Ã—??????????Â±Ãª
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********??¡Â????*************/
-	if ( ucIndexCnt > 0 )  /*??¡Â????1*/
+	/***********??Ã·????*************/
+	if ( ucIndexCnt > 0 )  /*??Ã·????1*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2782,7 +2841,7 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 ) /*??¡Â????2*/
+	if ( ucIndexCnt > 0 ) /*??Ã·????2*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2796,7 +2855,7 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 )  /*??¡Â????3????????*/
+	if ( ucIndexCnt > 0 )  /*??Ã·????3????????*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2809,10 +2868,10 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		ucIndexCnt--;
 	}
 
-	/************??????¨°**************/
+	/************??????Ã²**************/
 	switch ( ucObjId )
 	{
-	case OBJECT_EXT_TSC_STATUS:  /*??¡À??¡ã??????????¨²????????????¡Á??????*/
+	case OBJECT_EXT_TSC_STATUS:  /*??Â±??Â°??????????Ãº????????????Ã—??????*/
 		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,(Byte*)pValue,25);
 		iSendIndex += 25;
 		break;
@@ -2824,9 +2883,9 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 	m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex = iRecvIndex;
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex = iSendIndex;
 	m_sGbtDealData[ucDealDataIndex].iObjNum--;
-	if ( iRecvIndex == iRecvBufLen )  //??????¨ª??¨º¡À??
+	if ( iRecvIndex == iRecvBufLen )  //??????Ã­??ÃªÂ±??
 	{
-		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //??????¨®??????????????????????¨ª??¨º¡À??
+		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //??????Ã³??????????????????????Ã­??ÃªÂ±??
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 			GotoSendToHost(ucDealDataIndex);
@@ -2850,11 +2909,11 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetCtrlStatus
-Description:    »ñÈ¡ĞÅºÅ»úµ±Ç°¿ØÖÆ×´Ì¬
-Input:         	uiWorkStatus  ¹¤×÷×´Ì¬
-				uiCtrl  	  ¿ØÖÆ·½Ê½
-Output:        	ÎŞ
-Return:         ¿ØÖÆ·½Ê½Êı×ÖÖµ
+Description:    è·å–ä¿¡å·æœºå½“å‰æ§åˆ¶çŠ¶æ€
+Input:         	uiWorkStatus  å·¥ä½œçŠ¶æ€
+				uiCtrl  	  æ§åˆ¶æ–¹å¼
+Output:        	æ— 
+Return:         æ§åˆ¶æ–¹å¼æ•°å­—å€¼
 ***************************************************************/
 int CGbtMsgQueue::GetCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl)
 {
@@ -2896,11 +2955,11 @@ int CGbtMsgQueue::GetCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetSysCtrlStatus
-Description:    »ñÈ¡ĞÅºÅ»úÏµÍ³¿ØÖÆ×´Ì¬
-Input:         	uiWorkStatus  ¹¤×÷×´Ì¬
-				uiCtrl  	  ¿ØÖÆ·½Ê½
-Output:        	ÎŞ
-Return:         ÏµÍ³¿ØÖÆ×´Ì¬Êı×ÖÖµ
+Description:    è·å–ä¿¡å·æœºç³»ç»Ÿæ§åˆ¶çŠ¶æ€
+Input:         	uiWorkStatus  å·¥ä½œçŠ¶æ€
+				uiCtrl  	  æ§åˆ¶æ–¹å¼
+Output:        	æ— 
+Return:         ç³»ç»Ÿæ§åˆ¶çŠ¶æ€æ•°å­—å€¼
 ***************************************************************/
 int CGbtMsgQueue::GetSysCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl)
 {
@@ -2927,11 +2986,11 @@ int CGbtMsgQueue::GetSysCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetManualCtrlStatus
-Description:    »ñÈ¡ĞÅºÅ»úÊÖ¶¯¿ØÖÆ×´Ì¬
-Input:         	uiWorkStatus  ¹¤×÷×´Ì¬
-				uiCtrl  	  ¿ØÖÆ·½Ê½
-Output:        	ÎŞ
-Return:         ÊÖ¶¯¿ØÖÆ×´Ì¬Êı×ÖÖµ
+Description:    è·å–ä¿¡å·æœºæ‰‹åŠ¨æ§åˆ¶çŠ¶æ€
+Input:         	uiWorkStatus  å·¥ä½œçŠ¶æ€
+				uiCtrl  	  æ§åˆ¶æ–¹å¼
+Output:        	æ— 
+Return:         æ‰‹åŠ¨æ§åˆ¶çŠ¶æ€æ•°å­—å€¼
 ***************************************************************/
 int CGbtMsgQueue::GetManualCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl)
 {
@@ -2958,36 +3017,36 @@ int CGbtMsgQueue::GetManualCtrlStatus(unsigned int uiWorkStatus,unsigned int uiC
 
 /**************************************************************
 Function:       CGbtMsgQueue::DealRecvBuf
-Description:    ¶Ô½ÓÊÕµ½udpÊı¾İ½øĞĞ´¦Àí
-Input:         	ucDealDataIndex  ½ÓÊÕĞÅÏ¢´¦Àí¶ÓÁĞÏÂ±ê
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    å¯¹æ¥æ”¶åˆ°udpæ•°æ®è¿›è¡Œå¤„ç†
+Input:         	ucDealDataIndex  æ¥æ”¶ä¿¡æ¯å¤„ç†é˜Ÿåˆ—ä¸‹æ ‡
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex) 
 {
-	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] ) & 0xf;  //????????????????????¡Á¡Â??¨¤????
-	Byte ucSendOptType = 0;                                                              //¡¤??????????????????¡Á¡Â??¨¤????
+	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] ) & 0xf;  //????????????????????Ã—Ã·??Ã ????
+	Byte ucSendOptType = 0;                                                              //Â·??????????????????Ã—Ã·??Ã ????
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;    //??¡Â????????????
-	Byte ucErrorSts    = 0;    //??¨ª??¨®¡Á??????
-	Byte ucErrorIdx    = 0;    //??¨ª??¨®??¡Â????
-	Byte ucObjId       = 0;    //??????¨®????(¡À¨ª????)
-	Byte ucIdxFst      = 255;  //??????????????¡Â????(id1)
-	Byte ucIdxSnd      = 255;  //??????????????¡Â????(id2)
-	Byte ucSubId       = 0;    //¡Á????????¨®(¡Á??????????¡À¨º)
-	int  iFunRet       = -1;   //????????¡¤??????????
+	Byte ucIndexCnt    = 0;    //??Ã·????????????
+	Byte ucErrorSts    = 0;    //??Ã­??Ã³Ã—??????
+	Byte ucErrorIdx    = 0;    //??Ã­??Ã³??Ã·????
+	Byte ucObjId       = 0;    //??????Ã³????(Â±Ã­????)
+	Byte ucIdxFst      = 255;  //??????????????Ã·????(id1)
+	Byte ucIdxSnd      = 255;  //??????????????Ã·????(id2)
+	Byte ucSubId       = 0;    //Ã—????????Ã³(Ã—??????????Â±Ãª)
+	int  iFunRet       = -1;   //????????Â·??????????
 
-	/**********??¡Á??????????¨ª????????************/
+	/**********??Ã—??????????Ã­????????************/
 	if ( 0 == iRecvIndex ) 
 	{
 		ucSendOptType = GetSendOperateType(ucRecvOptType);   
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[0] = 
-			(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0) | ucSendOptType;  //??¡¤¡Á??????
+			(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0) | ucSendOptType;  //??Â·Ã—??????
 		m_sGbtDealData[ucDealDataIndex].iObjNum = 
-			 ( (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]>>4) & 7 ) + 1;  //??????¨®????????
+			 ( (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]>>4) & 7 ) + 1;  //??????Ã³????????
 
 		iRecvIndex = 1;
 		iSendIndex = 1;
@@ -3005,12 +3064,12 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			return;
 		}
 		
-		/************??????¨®¡À¨º????*************/
+		/************??????Ã³Â±Ãª????*************/
 		ucObjId = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex];
-		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //??????¨®¡À¨º????
+		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //??????Ã³Â±Ãª????
 
 		if ( ( IsSendTscCommand(ucObjId) && (GBT_SEEK_REQ == ucRecvOptType) ) 
-			|| IsGetTscStatusObject(ucObjId) )  //??????????????????¨²¡Á????????????¨®
+			|| IsGetTscStatusObject(ucObjId) )  //??????????????????ÃºÃ—????????????Ã³
 		{
 			if ( GBT_SEEK_REQ != ucRecvOptType )
 			{
@@ -3034,7 +3093,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(SThreadMsg));
 			return;
 		}
-		else if ( ucObjId == OBJECT_SET_REPORTSELF )  //??¡Â????????¡À??
+		else if ( ucObjId == OBJECT_SET_REPORTSELF )  //??Ã·????????Â±??
 		{
 #ifdef GBT_TCP
 			CGbtTimer::CreateInstance()->TailorReport(ucDealDataIndex 
@@ -3070,7 +3129,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			SendGbtMsg(&sTscMsg,sizeof(SThreadMsg));
 			return;
 		}
-		else if ( IsExtendObject(ucObjId) )  //??????????¨¤??????????¨®
+		else if ( IsExtendObject(ucObjId) )  //??????????Ã ??????????Ã³
 		{
 			m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex  = iRecvIndex; 
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex  = iSendIndex;          
@@ -3089,7 +3148,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 		iRecvIndex++;
 		iSendIndex++;
 
-		/***********??¡Â????????????????¡Á????????¨®*******/
+		/***********??Ã·????????????????Ã—????????Ã³*******/
 		if ( iRecvIndex >= iRecvBufLen )
 		{
 			ucErrorSts = GBT_ERROR_OTHER;
@@ -3100,14 +3159,14 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			return;
 		}
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] =
-			               m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //??¡Â????????????????¡Á????????¨®
-		ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //??¡Â????????????
-		ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //¡Á????????¨®????¡Á??????????¡À¨º
+			               m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //??Ã·????????????????Ã—????????Ã³
+		ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //??Ã·????????????
+		ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //Ã—????????Ã³????Ã—??????????Â±Ãª
 		iRecvIndex++;
 		iSendIndex++;
 
-		/***********??¡Â????**************/
-		if ( ucIndexCnt > 0 )  /*??¡Â????1*/
+		/***********??Ã·????**************/
+		if ( ucIndexCnt > 0 )  /*??Ã·????1*/
 		{
 			if ( iRecvIndex >= iRecvBufLen )
 			{
@@ -3124,7 +3183,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			iSendIndex++;
 			ucIndexCnt--;
 		}
-		if ( ucIndexCnt > 0 ) /*??¡Â????2*/
+		if ( ucIndexCnt > 0 ) /*??Ã·????2*/
 		{
 			if ( iRecvIndex >= iRecvBufLen )
 			{
@@ -3141,7 +3200,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			iSendIndex++;
 			ucIndexCnt--;
 		}
-		if ( ucIndexCnt > 0 )  /*??¡Â????3????????*/
+		if ( ucIndexCnt > 0 )  /*??Ã·????3????????*/
 		{
 			if ( iRecvIndex >= iRecvBufLen )
 			{
@@ -3157,8 +3216,8 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			ucIndexCnt--;
 		}
 		
-		/************??????¨°**************/
-		if ( IsSendTscCommand(ucObjId) )  //¡¤????????????????¨²??????????????¨®
+		/************??????Ã²**************/
+		if ( IsSendTscCommand(ucObjId) )  //Â·????????????????Ãº??????????????Ã³
 		{
 			 if ( ! ( GBT_SEEK_REQ != ucRecvOptType ) )
 			 {
@@ -3169,8 +3228,8 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 				 GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
 				 return;
 			 }
-			//??¨°??????????¨²????????¡¤????????????????¨¹????
-			if ( !SendTscCommand(ucObjId,m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]) )   //¡¤????????¡ì¡ã??
+			//??Ã²??????????Ãº????????Â·????????????????Ã¼????
+			if ( !SendTscCommand(ucObjId,m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]) )   //Â·????????Â§Â°??
 			{
 				ucErrorSts = GBT_ERROR_OTHER;
 #ifdef TSC_DEBUG
@@ -3181,19 +3240,19 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			}
 			iRecvIndex++;
 		}
-		else  //????????????????¡Á¡Â??????¨®
+		else  //????????????????Ã—Ã·??????Ã³
 		{
-			if ( GBT_SEEK_REQ == ucRecvOptType )  //??¨¦????
+			if ( GBT_SEEK_REQ == ucRecvOptType )  //??Ã©????
 			{
 				iFunRet = GBT_DB::ExchangeData(1,
-									    ucObjId,      //¡À¨ª????
-										ucIdxFst,     //??????????????¡Â????(id1)
-										ucIdxSnd,     //??????????????¡Â????(id2)
-										ucSubId,      //¡Á????????¨®
+									    ucObjId,      //Â±Ã­????
+										ucIdxFst,     //??????????????Ã·????(id1)
+										ucIdxSnd,     //??????????????Ã·????(id2)
+										ucSubId,      //Ã—????????Ã³
 					                    m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,      //????
-					                    MAX_BUF_LEN-iSendIndex,    //¡¤????????????????????¨¤??????????¢ã????
-										ucErrorSts,  //??¨ª??¨®¡Á??????
-										ucErrorIdx); //??¨ª??¨®??¡Â????
+					                    MAX_BUF_LEN-iSendIndex,    //Â·????????????????????Ã ??????????â‚¬????
+										ucErrorSts,  //??Ã­??Ã³Ã—??????
+										ucErrorIdx); //??Ã­??Ã³??Ã·????
 				ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
 				if ( iFunRet < 0 )
 				{
@@ -3208,17 +3267,17 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 					iSendIndex += iFunRet;
 				}
 			}
-			else if ( (GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType) )  //??¨¨????
+			else if ( (GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType) )  //??Ã¨????
 			{
 				iFunRet = GBT_DB::ExchangeData(0,
-									ucObjId,      //¡À¨ª????
-									ucIdxFst,     //??????????????¡Â????(id1)
-									ucIdxSnd,     //??????????????¡Â????(id2)
-									ucSubId,      //¡Á????????¨®
+									ucObjId,      //Â±Ã­????
+									ucIdxFst,     //??????????????Ã·????(id1)
+									ucIdxSnd,     //??????????????Ã·????(id2)
+									ucSubId,      //Ã—????????Ã³
 									m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf+iRecvIndex,      //????
-									m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen-iRecvIndex,    //??????????¢ã????
-									ucErrorSts,  //??¨ª??¨®¡Á??????
-									ucErrorIdx); //??¨ª??¨®??¡Â????
+									m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen-iRecvIndex,    //??????????â‚¬????
+									ucErrorSts,  //??Ã­??Ã³Ã—??????
+									ucErrorIdx); //??Ã­??Ã³??Ã·????
 				if ( iFunRet < 0 )
 				{
 #ifdef TSC_DEBUG
@@ -3242,9 +3301,9 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 		}
 		
 		m_sGbtDealData[ucDealDataIndex].iObjNum--;
-		if ( iRecvIndex == iRecvBufLen )  //????????????¡Á????????????????????¨ª??¨º¡À??
+		if ( iRecvIndex == iRecvBufLen )  //????????????Ã—????????????????????Ã­??ÃªÂ±??
 		{
-			if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //??????¨®??????????????????????¨ª??¨º¡À??
+			if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //??????Ã³??????????????????????Ã­??ÃªÂ±??
 			{
 				m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 				GotoSendToHost(ucDealDataIndex);
@@ -3270,10 +3329,10 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetSendOperateType
-Description:    »ñÈ¡¶ÔudpÊı¾İ·µ»ØµÄ²Ù×÷ÀàĞÍ
-Input:         	ucRecvOptType  ½ÓÊÕµÄudp²Ù×÷ÀàĞÍ
-Output:        	ÎŞ
-Return:         Òª·µ»ØudpÊı¾İÀàĞÍ
+Description:    è·å–å¯¹udpæ•°æ®è¿”å›çš„æ“ä½œç±»å‹
+Input:         	ucRecvOptType  æ¥æ”¶çš„udpæ“ä½œç±»å‹
+Output:        	æ— 
+Return:         è¦è¿”å›udpæ•°æ®ç±»å‹
 ***************************************************************/
 Byte CGbtMsgQueue::GetSendOperateType(Byte ucRecvOptType)
 {
@@ -3294,21 +3353,21 @@ Byte CGbtMsgQueue::GetSendOperateType(Byte ucRecvOptType)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SelfReport
-Description:    ×Ô¶¯ÉÏ±¨¹¦ÄÜ
-Input:         	uiDataLen  Êı¾İ³¤¶È
-				pDataBuf   Êı¾İ»º´æÖ¸Õë
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    è‡ªåŠ¨ä¸ŠæŠ¥åŠŸèƒ½
+Input:         	uiDataLen  æ•°æ®é•¿åº¦
+				pDataBuf   æ•°æ®ç¼“å­˜æŒ‡é’ˆ
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SelfReport(unsigned int uiDataLen,Byte* pDataBuf)
 {
 	Byte ucIndex = 0;
 	Byte sendData[MAX_GBT_MSG_LEN];
-	//ÊÂ¼şÀàĞÍ pDataBuf[0]
-	//¸ù¾İÊÂ¼şÀàĞÍ±àºÅ£¬»ñÈ¡ĞÅÏ¢.......
-	//ÊÂ¼şÈÕÖ¾±í pDataBuf[1]
-	//¸ù¾İÊÂ¼şÈÕÖ¾±àºÅ£¬»ñÈ¡ĞÅÏ¢.......
-	//¹¹ÔìÖ÷¶¯ÉÏ±¨µÄĞÅÏ¢£¬Ä£Äâ........
+	//äº‹ä»¶ç±»å‹ pDataBuf[0]
+	//æ ¹æ®äº‹ä»¶ç±»å‹ç¼–å·ï¼Œè·å–ä¿¡æ¯.......
+	//äº‹ä»¶æ—¥å¿—è¡¨ pDataBuf[1]
+	//æ ¹æ®äº‹ä»¶æ—¥å¿—ç¼–å·ï¼Œè·å–ä¿¡æ¯.......
+	//æ„é€ ä¸»åŠ¨ä¸ŠæŠ¥çš„ä¿¡æ¯ï¼Œæ¨¡æ‹Ÿ........
 	sendData[ucIndex++] = 0xA3;
 	
 	sendData[ucIndex++] = OBJECT_EVENTTYPE_TABLE;
@@ -3332,11 +3391,11 @@ void CGbtMsgQueue::SelfReport(unsigned int uiDataLen,Byte* pDataBuf)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SendTscCommand
-Description:    ·¢ËÍTscµÄ¿ØÖÆÃüÁî,ÒÔ¼°¹¹Ôì»ØËÍÉÏÎ»»úµÄĞÅÏ¢
-Input:         	ucObjType:¶ÔÏó±êÊ¾  
-				ucValue£º ·¢ËÍÖµ
-Output:        	ÎŞ
-Return:         true£º·¢ËÍ³É¹¦    false£º·¢ËÍÊ§°Ü
+Description:    å‘é€Tscçš„æ§åˆ¶å‘½ä»¤,ä»¥åŠæ„é€ å›é€ä¸Šä½æœºçš„ä¿¡æ¯
+Input:         	ucObjType:å¯¹è±¡æ ‡ç¤º  
+				ucValueï¼š å‘é€å€¼
+Output:        	æ— 
+Return:         trueï¼šå‘é€æˆåŠŸ    falseï¼šå‘é€å¤±è´¥
 ***************************************************************/
 bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 {
@@ -3346,7 +3405,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 
 	switch ( ucObjType )
 	{
-		case OBJECT_CURTSC_CTRL:  /*??????????¨²????????¡Á??????*/
+		case OBJECT_CURTSC_CTRL:  /*??????????Ãº????????Ã—??????*/
 			if ( (ucValue < 1) || (ucValue > 6) )
 			{
 				return false;
@@ -3515,7 +3574,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.ucMsgOpt     = 0;
 				sTscMsgSts.uiMsgDataLen = 1;
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
-				*((Byte*)sTscMsgSts.pDataBuf) = ALLRED;  //??????¨¬
+				*((Byte*)sTscMsgSts.pDataBuf) = ALLRED;  //??????Ã¬
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
 			else if ( 254 == ucValue )
@@ -3560,8 +3619,8 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			}
 			break;
 
-		case OBJECT_SWITCH_CONTROL:  /***????????¡¤??????***/
-			if ( uiTscCtrl == CTRL_PANEL || ucValue == 0 )   //????¡ã??????????
+		case OBJECT_SWITCH_CONTROL:  /***????????Â·??????***/
+			if ( uiTscCtrl == CTRL_PANEL || ucValue == 0 )   //????Â°??????????
 			{
 				return false;
 			}
@@ -3610,7 +3669,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			}
 			return true ;
 		}
-		 if ( 5 ==  ucValue )//ADD 20131021 2100 Ìí¼Ó¶àÊ±¶Î
+		 if ( 5 ==  ucValue )//ADD 20131021 2100 æ·»åŠ å¤šæ—¶æ®µ
 			{
 				SThreadMsg sTscMsgSts;
 				sTscMsgSts.ulType       = TSC_MSG_SWITCH_CTRL;  
@@ -3686,7 +3745,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			}
 			break;
 
-		case OBJECT_SWITCH_STAGE: /*??????¡Á????*/
+		case OBJECT_SWITCH_STAGE: /*??????Ã—????*/
 			if ( (uiTscCtrl != CTRL_MANUAL)
 				|| (uiWorkStatus != STANDARD ) )
 			{
@@ -3724,7 +3783,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				*((Byte*)sTscMsgSts.pDataBuf) = ucValue;
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
-			else if ( (ucValue > 0) && (ucValue < MAX_PHASE) )  //??????????¨¤????
+			else if ( (ucValue > 0) && (ucValue < MAX_PHASE) )  //??????????Ã ????
 			{
 				SThreadMsg sTscMsgSts;
 				sTscMsgSts.ulType       = TSC_MSG_LOCK_PHASE;  
@@ -3750,11 +3809,11 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 
 /**************************************************************
 Function:       CGbtMsgQueue::ToObjectControlSwitch
-Description:    ½«µ±Ç°µÄ¿ØÖÆÄ£Ê½£¬×ª»¯ÎªĞ­ÒéµÄ¿ØÖÆÄ£Ê½´úÂë(OBJECT_CONTROL_SWITCH)
-Input:         	uiWorkSts:¹¤×÷×´Ì¬  
-				uiCtrl£º ¿ØÖÆ·½Ê½
-Output:        	ÎŞ
-Return:         Ğ­Òé¿ØÖÆÊı×Ö
+Description:    å°†å½“å‰çš„æ§åˆ¶æ¨¡å¼ï¼Œè½¬åŒ–ä¸ºåè®®çš„æ§åˆ¶æ¨¡å¼ä»£ç (OBJECT_CONTROL_SWITCH)
+Input:         	uiWorkSts:å·¥ä½œçŠ¶æ€  
+				uiCtrlï¼š æ§åˆ¶æ–¹å¼
+Output:        	æ— 
+Return:         åè®®æ§åˆ¶æ•°å­—
 ***************************************************************/
 Byte CGbtMsgQueue::ToObjectControlSwitch(unsigned int uiWorkSts,unsigned int uiCtrl)
 {
@@ -3796,10 +3855,10 @@ Byte CGbtMsgQueue::ToObjectControlSwitch(unsigned int uiWorkSts,unsigned int uiC
 
 /**************************************************************
 Function:       CGbtMsgQueue::ToObjectControlSwitch
-Description:    ½«µ±Ç°µÄ¿ØÖÆÄ£Ê½£¬×ª»¯ÎªĞ­ÒéµÄ¿ØÖÆÄ£Ê½´úÂë(OBJECT_CUTTSC_CTRL)
-Input:         	uiCtrl£º ¿ØÖÆ·½Ê½
-Output:        	ÎŞ
-Return:         Ğ­Òé¿ØÖÆÊı×Ö
+Description:    å°†å½“å‰çš„æ§åˆ¶æ¨¡å¼ï¼Œè½¬åŒ–ä¸ºåè®®çš„æ§åˆ¶æ¨¡å¼ä»£ç (OBJECT_CUTTSC_CTRL)
+Input:         	uiCtrlï¼š æ§åˆ¶æ–¹å¼
+Output:        	æ— 
+Return:         åè®®æ§åˆ¶æ•°å­—
 ***************************************************************/
 Byte CGbtMsgQueue::ToObjectCurTscCtrl(unsigned int uiCtrl)
 {
@@ -3823,26 +3882,26 @@ Byte CGbtMsgQueue::ToObjectCurTscCtrl(unsigned int uiCtrl)
 
 /**************************************************************
 Function:       CGbtMsgQueue::SendToHost
-Description:    Ïò¿Í»§¶Ë·¢ËÍÏûÏ¢
-Input:         	ucDealDataIndex£º ´ı´¦ÀíĞÅÏ¢ÏÂ±ê
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    å‘å®¢æˆ·ç«¯å‘é€æ¶ˆæ¯
+Input:         	ucDealDataIndexï¼š å¾…å¤„ç†ä¿¡æ¯ä¸‹æ ‡
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::SendToHost(Byte ucDealDataIndex)
 {
 	int iSendToClient = 0;
-	Byte ucOperateType = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;  //????¡Á¡Â??¨¤????
+	Byte ucOperateType = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;  //????Ã—Ã·??Ã ????
 
-	if ( GBT_SET_REQ_NOACK == ucOperateType )  //ÉèÖÃÎŞÓ¦´ğ
+	if ( GBT_SET_REQ_NOACK == ucOperateType )  //è®¾ç½®æ— åº”ç­”
 	{
 		//ACE_DEBUG((LM_DEBUG,"%s:%d ringht frame GBT_SET_REQ_NOACK\n",__FILE__,__LINE__));
 	}
 	else
 	{
-		if ( m_sGbtDealData[ucDealDataIndex].bReportSelf ) //Ö÷¶¯ÉÏ±¨
+		if ( m_sGbtDealData[ucDealDataIndex].bReportSelf ) //ä¸»åŠ¨ä¸ŠæŠ¥
 		{
 			/*
-			if ( OBJECT_DETECTORSTS_TABLE == m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[1] )  //??¨¬??????¡Â¡Á??????
+			if ( OBJECT_DETECTORSTS_TABLE == m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[1] )  //??Ã¬??????Ã·Ã—??????
 			{
 				
 				static Byte ucDetStatus[28] = {0};
@@ -3855,7 +3914,7 @@ void CGbtMsgQueue::SendToHost(Byte ucDealDataIndex)
 					}
 				}
 				
-				if ( !bSend )  //??¨¬??????¡Â????????????????¡Á?????????????? ????¡À??¡¤????????¡À????¡Á??????????¡À??
+				if ( !bSend )  //??Ã¬??????Ã·????????????????Ã—?????????????? ????Â±??Â·????????Â±????Ã—??????????Â±??
 				{
 					CleanDealData(ucDealDataIndex);
 					return;
@@ -3900,10 +3959,10 @@ void CGbtMsgQueue::SendToHost(Byte ucDealDataIndex)
 
 /**************************************************************
 Function:       CGbtMsgQueue::CleanDealData
-Description:    ÇåÀí´ı´¦ÀíÊı¾İ
-Input:         	ucDealDataIndex£º ´ı´¦ÀíĞÅÏ¢ÏÂ±ê
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    æ¸…ç†å¾…å¤„ç†æ•°æ®
+Input:         	ucDealDataIndexï¼š å¾…å¤„ç†ä¿¡æ¯ä¸‹æ ‡
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::CleanDealData(Byte ucDealDataIndex)
 {
@@ -3915,22 +3974,22 @@ void CGbtMsgQueue::CleanDealData(Byte ucDealDataIndex)
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = 0;
  
 #ifdef GBT_TCP
- 	//tcp ·¢ËÍÍêÊı¾İºóÁ¬½Ó»¹´æÔÚ
+ 	//tcp å‘é€å®Œæ•°æ®åè¿æ¥è¿˜å­˜åœ¨
 #else
-	m_sGbtDealData[ucDealDataIndex].bIsDeal = false;   //udp ²»±Ø±£´æÁ¬½Ó ÏÂ´Î»áÔÙÓĞipĞÅÏ¢¹ıÀ´
+	m_sGbtDealData[ucDealDataIndex].bIsDeal = false;   //udp ä¸å¿…ä¿å­˜è¿æ¥ ä¸‹æ¬¡ä¼šå†æœ‰ipä¿¡æ¯è¿‡æ¥
 #endif
 }
 
 
 /**************************************************************
 Function:       CGbtMsgQueue::FirstRecv
-Description:    ¸ù¾İÏûÏ¢¶ÓÁĞÊÕµ½µÄÊı¾İ¿é½âÎö¹¹ÔìSGbtDealDataµÄsRecvFrame
-				½âÎöÍêpBufµÄÄÚ´æ½«±»ÊÍ·Å
-Input:         	ucDealDataIndex£º ´ı´¦ÀíĞÅÏ¢ÏÂ±ê
-				iBufLen           ½ÓÊÕµ½µÄudpÊı¾İ³¤¶È
-				pBuf              ½ÓÊÕÊı¾İ»º´æÖ¸Õë
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    æ ¹æ®æ¶ˆæ¯é˜Ÿåˆ—æ”¶åˆ°çš„æ•°æ®å—è§£ææ„é€ SGbtDealDataçš„sRecvFrame
+				è§£æå®ŒpBufçš„å†…å­˜å°†è¢«é‡Šæ”¾
+Input:         	ucDealDataIndexï¼š å¾…å¤„ç†ä¿¡æ¯ä¸‹æ ‡
+				iBufLen           æ¥æ”¶åˆ°çš„udpæ•°æ®é•¿åº¦
+				pBuf              æ¥æ”¶æ•°æ®ç¼“å­˜æŒ‡é’ˆ
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::FirstRecv(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 {
@@ -3941,7 +4000,7 @@ void CGbtMsgQueue::FirstRecv(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 
 	sGbtMsg.ulType       = GBT_MSG_DEAL_RECVBUF;  
 	sGbtMsg.ucMsgOpt     = ucDealDataIndex;
-	sGbtMsg.uiMsgDataLen = iBufLen;  //??????????????????????????????¨®????
+	sGbtMsg.uiMsgDataLen = iBufLen;  //??????????????????????????????Ã³????
 	sGbtMsg.pDataBuf     = NULL;	
 	SendGbtMsg(&sGbtMsg,sizeof(sGbtMsg));
 }
@@ -3949,12 +4008,12 @@ void CGbtMsgQueue::FirstRecv(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 
 /**************************************************************
 Function:       CGbtMsgQueue::CheckMsg
-Description:    ¼ì²â½ÓÊÕµ½µÄÊı¾İºÏ·¨ĞÔ
-Input:         	ucDealDataIndex£º ´ı´¦ÀíĞÅÏ¢ÏÂ±ê
-				iBufLen           ½ÓÊÕµ½µÄudpÊı¾İ³¤¶È
-				pBuf              ½ÓÊÕÊı¾İ»º´æÖ¸Õë
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    æ£€æµ‹æ¥æ”¶åˆ°çš„æ•°æ®åˆæ³•æ€§
+Input:         	ucDealDataIndexï¼š å¾…å¤„ç†ä¿¡æ¯ä¸‹æ ‡
+				iBufLen           æ¥æ”¶åˆ°çš„udpæ•°æ®é•¿åº¦
+				pBuf              æ¥æ”¶æ•°æ®ç¼“å­˜æŒ‡é’ˆ
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 int CGbtMsgQueue::CheckMsg(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 {
@@ -3963,14 +4022,14 @@ int CGbtMsgQueue::CheckMsg(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 		return -1;
 	}
 
-	if ( (int)iBufLen < MIN_GBT_MSG_LEN ) //??????????¢ã????????????
+	if ( (int)iBufLen < MIN_GBT_MSG_LEN ) //??????????â‚¬????????????
 	{
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[0] = 0x86;
 							//(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0 ) | GBT_ERR_ACK; 
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[1] = GBT_ERROR_SHORT;
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[2] = 0;
 	}
-	else if ( (pBuf[0]&0xf)<GBT_SEEK_REQ || (pBuf[0]&0xf)>GBT_SET_REQ_NOACK || ((pBuf[0]>>7)&1)!=1 ) //????¡Á¡Â??¨¤??????¨ª??¨®
+	else if ( (pBuf[0]&0xf)<GBT_SEEK_REQ || (pBuf[0]&0xf)>GBT_SET_REQ_NOACK || ((pBuf[0]>>7)&1)!=1 ) //????Ã—Ã·??Ã ??????Ã­??Ã³
 	{
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[0] = 0x86;
 							//(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0 ) | GBT_ERR_ACK;
@@ -3979,7 +4038,7 @@ int CGbtMsgQueue::CheckMsg(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 	}
 	else
 	{
-		return 1; //??????¡¤????????????
+		return 1; //??????Â·????????????
 	}
 
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = 3;
@@ -3997,11 +4056,11 @@ int CGbtMsgQueue::CheckMsg(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetDealDataIndex
-Description:    »ñÈ¡´ı´¦ÀíÊı¾İµÄÏÂ±ê TCP
-Input:         	bReportSelf - ÊÇ·ñÎªÖ÷¶¯ÉÏ±¨
-     		    sockStreamRemote  - ¿Í»§¶ËµØÖ·
-Output:        	ÎŞ
-Return:         0-7 200£ºÃ»ÓĞ¿ÉÓÃµÄ»º´æÊı×é
+Description:    è·å–å¾…å¤„ç†æ•°æ®çš„ä¸‹æ ‡ TCP
+Input:         	bReportSelf - æ˜¯å¦ä¸ºä¸»åŠ¨ä¸ŠæŠ¥
+     		    sockStreamRemote  - å®¢æˆ·ç«¯åœ°å€
+Output:        	æ— 
+Return:         0-7 200ï¼šæ²¡æœ‰å¯ç”¨çš„ç¼“å­˜æ•°ç»„
 ***************************************************************/
 Byte CGbtMsgQueue::GetDealDataIndex(bool bReportSelf , ACE_SOCK_Stream& sockStreamRemote)
 {
@@ -4053,11 +4112,11 @@ SGbtDealData* CGbtMsgQueue::GetGbtDealDataPoint()
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetDealDataIndex
-Description:    »ñÈ¡´ı´¦ÀíÊı¾İµÄÏÂ±ê UDP
-Input:         	bReportSelf - ÊÇ·ñÎªÖ÷¶¯ÉÏ±¨
-     		    addrRemote  - ¿Í»§¶ËµØÖ·
-Output:        	ÎŞ
-Return:         0-7 200£ºÃ»ÓĞ¿ÉÓÃµÄ»º´æÊı×é
+Description:    è·å–å¾…å¤„ç†æ•°æ®çš„ä¸‹æ ‡ UDP
+Input:         	bReportSelf - æ˜¯å¦ä¸ºä¸»åŠ¨ä¸ŠæŠ¥
+     		    addrRemote  - å®¢æˆ·ç«¯åœ°å€
+Output:        	æ— 
+Return:         0-7 200ï¼šæ²¡æœ‰å¯ç”¨çš„ç¼“å­˜æ•°ç»„
 ***************************************************************/
 Byte CGbtMsgQueue::GetDealDataIndex(bool bReportSelf , ACE_INET_Addr& addrRemote)
 {
@@ -4083,9 +4142,9 @@ Byte CGbtMsgQueue::GetDealDataIndex(bool bReportSelf , ACE_INET_Addr& addrRemote
 
 /**************************************************************
 Function:       CGbtMsgQueue::RunGbtRecv
-Description:    udpÊı¾İ½ÓÊÕÏß³Ìº¯Êı,´ı½ÓÊÕÉÏÎ»»úµÄUDP Êı¾İ£¬È»ºó×ªËÍ´¦Àí
-Input:         	arg  Ä¬ÈÏNULL£¬Ïß³Ìº¯Êı²ÎÊı
-Output:        	ÎŞ
+Description:    udpæ•°æ®æ¥æ”¶çº¿ç¨‹å‡½æ•°,å¾…æ¥æ”¶ä¸Šä½æœºçš„UDP æ•°æ®ï¼Œç„¶åè½¬é€å¤„ç†
+Input:         	arg  é»˜è®¤NULLï¼Œçº¿ç¨‹å‡½æ•°å‚æ•°
+Output:        	æ— 
 Return:         0
 ***************************************************************/
 void* CGbtMsgQueue::RunGbtRecv(void* arg)
@@ -4107,7 +4166,7 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 	while ( true )
 	{
 		#ifdef GBT_TCP
-		if ( pGbtMsgQueue->m_acceptor.accept(sockStreamRemote,NULL,&timeout) != -1 ) //??????????????¡ì????????????
+		if ( pGbtMsgQueue->m_acceptor.accept(sockStreamRemote,NULL,&timeout) != -1 ) //??????????????Â§????????????
 		{
 			ucDealDataIndex = pGbtMsgQueue->GetDealDataIndex(false , sockStreamRemote);
 
@@ -4147,14 +4206,14 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 		if ( ( iRecvCount = (pGbtMsgQueue->m_sockLocal).recv(pBuf, MAX_BUF_LEN,addrRemote))  != -1 )		
 		{
 
-			//#if 1
-			//ACE_DEBUG((LM_DEBUG,"%s:%d Get %d Byte udp data:  ",__FILE__,__LINE__,iRecvCount));
-			//for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
-			//{
-				//ACE_DEBUG((LM_DEBUG,"%x ",pBuf[iIndex]));
-			//}
-			//ACE_DEBUG((LM_DEBUG,"\n"));
-			//#endif
+			#if 1
+			ACE_DEBUG((LM_DEBUG,"%s:%d Get %d Byte udp data:  ",__FILE__,__LINE__,iRecvCount));
+			for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
+			{
+				ACE_DEBUG((LM_DEBUG,"%x ",pBuf[iIndex]));
+			}
+			ACE_DEBUG((LM_DEBUG,"\n"));
+			#endif
 
 			ucDealDataIndex = pGbtMsgQueue->GetDealDataIndex(false , addrRemote);
 			
@@ -4167,14 +4226,14 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 				ACE_OS::memcpy(sMsg.pDataBuf,pBuf,iRecvCount);
 
 				pGbtMsgQueue->SendGbtMsg(&sMsg,sizeof(sMsg));
-				//ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
+				ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
 			}
 			else
-			{	///³¬¹ı4¸ö¿Í»§´óĞ¡£¬ÎŞ·¨ÔÙ½ÓÊÕĞÂÊı¾İ
+			{	///è¶…è¿‡4ä¸ªå®¢æˆ·å¤§å°ï¼Œæ— æ³•å†æ¥æ”¶æ–°æ•°æ®
 				ACE_OS::memset(pBuf,0,MAX_GBT_MSG_LEN);
-				pBuf[0] = 0x86;                 //´íÎóÓ¦´ğGBTĞ­Òé´íÎóÓ¦´ğ
-				pBuf[1] = GBT_ERROR_OTHER + 1; //²»ÊôÓÚÉÏÊöÀàĞÍµÄÆäËû´íÎó
-				pBuf[2] = 0;                    //²»ÊÇÒòÎªÊı¾İ×Ö¶ÎµÄÖµÒıÆğµÄ
+				pBuf[0] = 0x86;                 //é”™è¯¯åº”ç­”GBTåè®®é”™è¯¯åº”ç­”
+				pBuf[1] = GBT_ERROR_OTHER + 1; //ä¸å±äºä¸Šè¿°ç±»å‹çš„å…¶ä»–é”™è¯¯
+				pBuf[2] = 0;                    //ä¸æ˜¯å› ä¸ºæ•°æ®å­—æ®µçš„å€¼å¼•èµ·çš„
 				(pGbtMsgQueue->m_sockLocal).send(pBuf , 3 , addrRemote);
 				//CGbtMsgQueue::CreateInstance()->PrintIpList();
 			}
@@ -4190,9 +4249,9 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 
 /**************************************************************
 Function:       CGbtMsgQueue::PrintIpList
-Description:    ´òÓ¡¿Í»§¶ËipÁĞ±í
-Input:         	arg  Ä¬ÈÏNULL£¬Ïß³Ìº¯Êı²ÎÊı
-Output:        	ÎŞ
+Description:    æ‰“å°å®¢æˆ·ç«¯ipåˆ—è¡¨
+Input:         	arg  é»˜è®¤NULLï¼Œçº¿ç¨‹å‡½æ•°å‚æ•°
+Output:        	æ— 
 Return:         0
 ***************************************************************/
 void CGbtMsgQueue::PrintIpList()
@@ -4212,30 +4271,30 @@ void CGbtMsgQueue::PrintIpList()
 
 /**************************************************************
 Function:       CGbtMsgQueue::IsGetTscStatusObject
-Description:    ÅĞ¶ÏÊÇ·ñÎª»ñÈ¡ĞÅºÅ»ú×´Ì¬¶ÔÏó
-Input:         	ucObjectFlag  ¶ÔÏó±êÖ¾
-Output:        	ÎŞ
-Return:         true:ÊÇ  false:·ñ
+Description:    åˆ¤æ–­æ˜¯å¦ä¸ºè·å–ä¿¡å·æœºçŠ¶æ€å¯¹è±¡
+Input:         	ucObjectFlag  å¯¹è±¡æ ‡å¿—
+Output:        	æ— 
+Return:         true:æ˜¯  false:å¦
 ***************************************************************/
 bool CGbtMsgQueue::IsGetTscStatusObject(Byte ucObjectFlag)
 {
 	switch ( ucObjectFlag )
 	{
-		case OBJECT_CHANNELSTATUS_TABLE:     //Í¨µÀÊä³ö×´Ì¬±í   µÆ¿Ø¶Ë¿Ú²ÎÊı
-		case OBJECT_OVERLAPPHASE_STATUS:     //¸úË­ÏàÎ»×´Ì¬±í   ¸úËæÏàÎ»²ÎÊı
-		case OBJECT_PHASESTATUS_TABLE:		 //ÏàÎ»Êä³ö×´Ì¬±í   ÏàÎ»²ÎÊı
-		case OBJECT_CURTSC_FLASHCTRL:        //µ±Ç°ÉÁ¹â¿ØÖÆÄ£Ê½ µ¥Ôª²ÎÊı
-		case OBJECT_ACTIVESCHEDULE_NO:       //»î¶¯Ê±¶Î±í±àºÅ   ¹«¹²ÊÂ¼ş²ÎÊı
+		case OBJECT_CHANNELSTATUS_TABLE:     //é€šé“è¾“å‡ºçŠ¶æ€è¡¨   ç¯æ§ç«¯å£å‚æ•°
+		case OBJECT_OVERLAPPHASE_STATUS:     //è·Ÿè°ç›¸ä½çŠ¶æ€è¡¨   è·Ÿéšç›¸ä½å‚æ•°
+		case OBJECT_PHASESTATUS_TABLE:		 //ç›¸ä½è¾“å‡ºçŠ¶æ€è¡¨   ç›¸ä½å‚æ•°
+		case OBJECT_CURTSC_FLASHCTRL:        //å½“å‰é—ªå…‰æ§åˆ¶æ¨¡å¼ å•å…ƒå‚æ•°
+		case OBJECT_ACTIVESCHEDULE_NO:       //æ´»åŠ¨æ—¶æ®µè¡¨ç¼–å·   å…¬å…±äº‹ä»¶å‚æ•°
 		//case OBJECT_SWITCH_STAGE:
-		case OBJECT_TSC_WARN2:				//ĞÅºÅ»ú±¨¾¯2       µ¥Ôª²ÎÊı
-		case OBJECT_TSC_WARN1:				//ĞÅºÅ»ú±¨¾¯1       µ¥Ôª²ÎÊı
-		case OBJECT_TSC_WARN_SUMMARY:       //ĞÅºÅ»ú±¨¾¯ÕªÒª    µ¥Ôª²ÎÊı
-		case OBJECT_ACTIVEDETECTOR_NUM:     //»î¶¯¼ì²âÆ÷×ÜÊı    ¼ì²âÆ÷²ÎÊı
-		case OBJECT_DETECTORSTS_TABLE:      //¼ì²âÆ÷×´Ì¬±í      ¼ì²âÆ÷²ÎÊı
-		case OBJECT_DETECTORDATA_TABLE:     //½»Í¨¼ì²âÊı¾İ±í    ¼ì²âÆ÷²ÎÊı
-		case OBJECT_DETECTORWARN_TABLE:     //³µÁ¾¼ì²âÆ÷¾¯¸æ²ÎÊı±í ¼ì²âÆ÷²ÎÊı
-		case OBJECT_CURPATTERN_SCHTIMES:    //µ±Ç°·½°¸¸ö½×¶ÎÊĞ³¡  ¿ØÖÆ²ÎÊı
-		case OBJECT_CURPATTERN_GREENTIMES:  //µ±Ç°·½°¸¸÷¹Ø¼üÏàÎ»ÂÌµÆÊĞ³¡ ¿ØÖÆ²ÎÊı
+		case OBJECT_TSC_WARN2:				//ä¿¡å·æœºæŠ¥è­¦2       å•å…ƒå‚æ•°
+		case OBJECT_TSC_WARN1:				//ä¿¡å·æœºæŠ¥è­¦1       å•å…ƒå‚æ•°
+		case OBJECT_TSC_WARN_SUMMARY:       //ä¿¡å·æœºæŠ¥è­¦æ‘˜è¦    å•å…ƒå‚æ•°
+		case OBJECT_ACTIVEDETECTOR_NUM:     //æ´»åŠ¨æ£€æµ‹å™¨æ€»æ•°    æ£€æµ‹å™¨å‚æ•°
+		case OBJECT_DETECTORSTS_TABLE:      //æ£€æµ‹å™¨çŠ¶æ€è¡¨      æ£€æµ‹å™¨å‚æ•°
+		case OBJECT_DETECTORDATA_TABLE:     //äº¤é€šæ£€æµ‹æ•°æ®è¡¨    æ£€æµ‹å™¨å‚æ•°
+		case OBJECT_DETECTORWARN_TABLE:     //è½¦è¾†æ£€æµ‹å™¨è­¦å‘Šå‚æ•°è¡¨ æ£€æµ‹å™¨å‚æ•°
+		case OBJECT_CURPATTERN_SCHTIMES:    //å½“å‰æ–¹æ¡ˆä¸ªé˜¶æ®µå¸‚åœº  æ§åˆ¶å‚æ•°
+		case OBJECT_CURPATTERN_GREENTIMES:  //å½“å‰æ–¹æ¡ˆå„å…³é”®ç›¸ä½ç»¿ç¯å¸‚åœº æ§åˆ¶å‚æ•°
 #ifdef TSC_DEBUG
 		ACE_DEBUG((LM_DEBUG,"\n IsGetTscStatusObject\n"));
 #endif
@@ -4249,21 +4308,21 @@ bool CGbtMsgQueue::IsGetTscStatusObject(Byte ucObjectFlag)
 
 /**************************************************************
 Function:       CGbtMsgQueue::IsSendTscCommand
-Description:    ÅĞ¶ÏÊÇ·ñÎª·¢ËÍĞÅºÅ»ú¿ØÖÆÃüÁî
-Input:         	ucObjectFlag  ¶ÔÏó±êÖ¾
-Output:        	ÎŞ
-Return:         true:ÊÇ  false:·ñ
+Description:    åˆ¤æ–­æ˜¯å¦ä¸ºå‘é€ä¿¡å·æœºæ§åˆ¶å‘½ä»¤
+Input:         	ucObjectFlag  å¯¹è±¡æ ‡å¿—
+Output:        	æ— 
+Return:         true:æ˜¯  false:å¦
 ***************************************************************/
 bool CGbtMsgQueue::IsSendTscCommand(Byte ucObjectFlag)
 {
 	switch ( ucObjectFlag )
 	{
-		case OBJECT_CURTSC_CTRL:     //µ±Ç°ĞÅºÅ»ú¿ØÖÆ×´Ì¬   µ¥Ôª²ÎÊı
-		case OBJECT_SWITCH_MANUALCONTROL: //ÊÖ¶¯¿ØÖÆ·½°¸   ¿ØÖÆ²ÎÊı
-		case OBJECT_SWITCH_SYSTEMCONTROL: //ÏµÍ³¿ØÖÆ·½°¸  ¿ØÖÆ²ÎÊı
-		case OBJECT_SWITCH_CONTROL:       //¿ØÖÆ·½Ê½     ¿ØÖÆ²ÎÊı
-		case OBJECT_SWITCH_STAGE:         //½×¶Î×´Ì¬     ¿ØÖÆ²ÎÊı
-		case OBJECT_GOSTEP:               //²½½øÖ¸Áî     ¿ØÖÆ²ÎÊı 
+		case OBJECT_CURTSC_CTRL:     //å½“å‰ä¿¡å·æœºæ§åˆ¶çŠ¶æ€   å•å…ƒå‚æ•°
+		case OBJECT_SWITCH_MANUALCONTROL: //æ‰‹åŠ¨æ§åˆ¶æ–¹æ¡ˆ   æ§åˆ¶å‚æ•°
+		case OBJECT_SWITCH_SYSTEMCONTROL: //ç³»ç»Ÿæ§åˆ¶æ–¹æ¡ˆ  æ§åˆ¶å‚æ•°
+		case OBJECT_SWITCH_CONTROL:       //æ§åˆ¶æ–¹å¼     æ§åˆ¶å‚æ•°
+		case OBJECT_SWITCH_STAGE:         //é˜¶æ®µçŠ¶æ€     æ§åˆ¶å‚æ•°
+		case OBJECT_GOSTEP:               //æ­¥è¿›æŒ‡ä»¤     æ§åˆ¶å‚æ•° 
 #ifdef TSC_DEBUG
 		ACE_DEBUG((LM_DEBUG,"\n IsSendTscCommand\n"));
 #endif
@@ -4278,11 +4337,11 @@ bool CGbtMsgQueue::IsSendTscCommand(Byte ucObjectFlag)
 
 /**************************************************************
 Function:       CGbtMsgQueue::IsOtherObject
-Description:    ÅĞ¶ÏÊÇ·ñÆäËû²Ù×÷¶ÔÏó£¬·Ç»ñÈ¡×´Ì¬£¬·Ç¿ØÖÆÃüÁî£¬
-				·ÇÊı¾İ¿â²Ù×÷º¯Êı
-Input:         	ucObjectFlag  ¶ÔÏó±êÖ¾
-Output:        	ÎŞ
-Return:         true:ÊÇ  false:·ñ
+Description:    åˆ¤æ–­æ˜¯å¦å…¶ä»–æ“ä½œå¯¹è±¡ï¼Œéè·å–çŠ¶æ€ï¼Œéæ§åˆ¶å‘½ä»¤ï¼Œ
+				éæ•°æ®åº“æ“ä½œå‡½æ•°
+Input:         	ucObjectFlag  å¯¹è±¡æ ‡å¿—
+Output:        	æ— 
+Return:         true:æ˜¯  false:å¦
 ***************************************************************/
 bool CGbtMsgQueue::IsOtherObject(Byte ucObjectFlag)
 {
@@ -4304,27 +4363,28 @@ bool CGbtMsgQueue::IsOtherObject(Byte ucObjectFlag)
 
 /**************************************************************
 Function:       CGbtMsgQueue::IsOtherObject
-Description:    ÅĞ¶ÏÊÇ·ñÎªÀ©Õ¹¶ÔÏó
-Input:         	ucObjectFlag  ¶ÔÏó±êÖ¾
-Output:        	ÎŞ
-Return:         true:ÊÇ  false:·ñ
+Description:    åˆ¤æ–­æ˜¯å¦ä¸ºæ‰©å±•å¯¹è±¡
+Input:         	ucObjectFlag  å¯¹è±¡æ ‡å¿—
+Output:        	æ— 
+Return:         true:æ˜¯  false:å¦
 ***************************************************************/
 bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 {
 	switch ( ucObjectFlag )
 	{
-		case OBJECT_IP:                 //ĞÅºÅ»úIP À©Õ¹¶ÔÏó
+		case OBJECT_IP:                 //ä¿¡å·æœºIP æ‰©å±•å¯¹è±¡
 		//case OBJECT_MULTICAST_INFO:	//
-		case OBJECT_WATCH_PARA:         //¼à¿ØÀàĞÍ²ÎÊı À©Õ¹¶ÔÏó
-		case OBJECT_MODULE_STATUS:      //Ä£¿é×´Ì¬    À©Õ¹¶ÔÏó
-		case OBJECT_EXT_TSC_STATUS:     //×´Ì¬ÀàĞÍ±í²ÎÊı À©Õ¹¶ÔÏó
-		case OBJECT_YWFLASH_CFG:        //»ÆÉÁÆ÷À©Õ¹¶ÔÏó
-		case OBJECT_DET_EXTCFG :  		//¼ì²âÆ÷À©Õ¹ÅäÖÃ
-		case OBJECT_LAMPBOARD_CFG :     //µÆÅİ¼ì²âÅäÖÃ
-		case OBJECT_PSCBTN_NUM :         //Ä£Äâ8Î»ĞĞÈË°´Å¥ÊäÈë
-		case OBJECT_TMPPATTERN_CFG :     //ÁÙÊ±12·½ÏòËæ»ú×éºÏ£¬·ÅĞĞ60ÃëÄ¬ÈÏ
-		case OBJECT_SYSFUNC_CFG :        //ÏµÍ³ÆäËû¹¦ÄÜÉèÖÃ
-		case OBJECT_POWERBOARD_CFG :       //µçÔ´°åÅäÖÃ
+		case OBJECT_WATCH_PARA:         //ç›‘æ§ç±»å‹å‚æ•° æ‰©å±•å¯¹è±¡
+		case OBJECT_MODULE_STATUS:      //æ¨¡å—çŠ¶æ€    æ‰©å±•å¯¹è±¡
+		case OBJECT_EXT_TSC_STATUS:     //çŠ¶æ€ç±»å‹è¡¨å‚æ•° æ‰©å±•å¯¹è±¡
+		case OBJECT_YWFLASH_CFG:        //é»„é—ªå™¨æ‰©å±•å¯¹è±¡
+		case OBJECT_DET_EXTCFG :  		//æ£€æµ‹å™¨æ‰©å±•é…ç½®
+		case OBJECT_LAMPBOARD_CFG :     //ç¯æ³¡æ£€æµ‹é…ç½®
+		case OBJECT_PSCBTN_NUM :         //æ¨¡æ‹Ÿ8ä½è¡ŒäººæŒ‰é’®è¾“å…¥
+		case OBJECT_TMPPATTERN_CFG :     //ä¸´æ—¶12æ–¹å‘éšæœºç»„åˆï¼Œæ”¾è¡Œ60ç§’é»˜è®¤
+		case OBJECT_SYSFUNC_CFG :        //ç³»ç»Ÿå…¶ä»–åŠŸèƒ½è®¾ç½®
+		case OBJECT_POWERBOARD_CFG :       //ç”µæºæ¿é…ç½®
+		case OBJECT_GSM_CFG :            //é…ç½®GSMåŠŸèƒ½
 			return true;
 		default:
 			return false;
@@ -4335,10 +4395,10 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 
 /**************************************************************
 Function:       CGbtMsgQueue::GbtCtrl
-Description:    Ğ­Òé¿ØÖÆ×´Ì¬×ªÎªĞÅºÅ»úµÄ¿ØÖÆ×´Ì¬
-Input:         	ucctrl  Ğ­Òé¿ØÖÆÖµ
-Output:        	ÎŞ
-Return:         ¿ØÖÆ×´Ì¬Öµ
+Description:    åè®®æ§åˆ¶çŠ¶æ€è½¬ä¸ºä¿¡å·æœºçš„æ§åˆ¶çŠ¶æ€
+Input:         	ucctrl  åè®®æ§åˆ¶å€¼
+Output:        	æ— 
+Return:         æ§åˆ¶çŠ¶æ€å€¼
 ***************************************************************/
 int CGbtMsgQueue::GbtCtrl2TscCtrl(Byte ucctrl)
 {
@@ -4363,12 +4423,12 @@ int CGbtMsgQueue::GbtCtrl2TscCtrl(Byte ucctrl)
 
 /**************************************************************
 Function:       CGbtMsgQueue::ReworkNetPara
-Description:    ĞŞ¸ÄÍøÂçÅäÖÃĞÅÏ¢
-Input:         	cIp      - ipµØÖ·
-				cMask           - ÑÚÂë
-				cGateWay        - Íø¹Ø
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    ä¿®æ”¹ç½‘ç»œé…ç½®ä¿¡æ¯
+Input:         	cIp      - ipåœ°å€
+				cMask           - æ©ç 
+				cGateWay        - ç½‘å…³
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::ReworkNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay)
 {
@@ -4410,11 +4470,11 @@ void CGbtMsgQueue::ReworkNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay)
 
 /**************************************************************
 Function:       CGbtMsgQueue::RecordNetPara
-Description:    ÓÀ¾ÃĞŞ¸ÄÍøÂçÅäÖÃ²ÎÊıInput:        
-				pIpAndMaskCmd - ipµØÖ·ºÍÍø¹ØÃüÁî
-				pGatewayCmd   - Íø¹ØÃüÁî
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    æ°¸ä¹…ä¿®æ”¹ç½‘ç»œé…ç½®å‚æ•°Input:        
+				pIpAndMaskCmd - ipåœ°å€å’Œç½‘å…³å‘½ä»¤
+				pGatewayCmd   - ç½‘å…³å‘½ä»¤
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::RecordNetPara( Byte* pIp , Byte* pMask , Byte* pGateway )
 {
@@ -4461,7 +4521,7 @@ void CGbtMsgQueue::RecordNetPara( Byte* pIp , Byte* pMask , Byte* pGateway )
 	 ACE_OS::fclose(fpRcs);
 	 if(!(fpRcs = ACE_OS::fopen("/etc/eth0-setting", "w+" )))
 		return;
-	 //ACE_OS::printf("%s",sTmp);
+	// ACE_OS::printf("\n%s\n",sTmp);
 	 ACE_OS::fprintf(fpRcs, "%s", sTmp );	
 	 ACE_OS::fclose(fpRcs);	
 }
@@ -4469,13 +4529,13 @@ void CGbtMsgQueue::RecordNetPara( Byte* pIp , Byte* pMask , Byte* pGateway )
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetNetPara
-Description:    »ñÈ¡ÎïÀíµØÖ· ipµØÖ· ÑÚÂë Íø¹Ø
-Input:        	pIp      - IPµØÖ·
-				pHwEther - ÎïÀíµØÖ·
-				pMask   - ×ÓÍøÑÚÂë
-				pGateway - Íø¹Ø
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    è·å–ç‰©ç†åœ°å€ ipåœ°å€ æ©ç  ç½‘å…³
+Input:        	pIp      - IPåœ°å€
+				pHwEther - ç‰©ç†åœ°å€
+				pMask   - å­ç½‘æ©ç 
+				pGateway - ç½‘å…³
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* pGateway)
 {
@@ -4520,11 +4580,11 @@ void CGbtMsgQueue::GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* p
 
 /**************************************************************
 Function:       CGbtMsgQueue::InterceptStr
-Description:   ½ØÈ¡ËùÒªµÄÖµ
-Input:        	pBuf  - ½ØÈ¡µÄ×Ö·û´® pstr  - ½ØÈ¡±êÊ¾
-				pData - ×ª»¯ºóµÄÖµ   ucCnt - ¸öÊı
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:   æˆªå–æ‰€è¦çš„å€¼
+Input:        	pBuf  - æˆªå–çš„å­—ç¬¦ä¸² pstr  - æˆªå–æ ‡ç¤º
+				pData - è½¬åŒ–åçš„å€¼   ucCnt - ä¸ªæ•°
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCnt)
 {
@@ -4568,14 +4628,48 @@ void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCn
 }
 
 
+void CGbtMsgQueue::ReworkIp(Byte ucIp1,Byte ucIp2,Byte ucIp3,Byte ucIp4)
+{
+	FILE* fpRcs    = NULL;
+	FILE* fpRcsTmp = NULL;
+	char  sTmp[1024] = {0};
+	if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/init.d/rcS", "r") ) )
+	{
+		return;
+	}
+	if ( (fpRcsTmp = ACE_OS::fopen("/etc/init.d/rcS_tmp", "w")) != NULL ) 
+	{
+		while ( fgets(sTmp , 1024 , fpRcs) != NULL ) 
+		{
+			if ( strstr(sTmp , "eth0") != NULL && strstr(sTmp , "netmask") != NULL )
+			{
+				ACE_OS::memset(sTmp , 0 , 1024);
+				ACE_OS::sprintf(sTmp, "/sbin/ifconfig eth0 %d.%d.%d.%d\n"
+					        , ucIp1 , ucIp2 , ucIp3 , ucIp4);
+			}
+			fputs(sTmp, fpRcsTmp);
+			ACE_OS::memset(sTmp , 0 , 1024);
+		}
+		fclose(fpRcs);
+		fclose(fpRcsTmp);
+#ifdef LINUX
+		TscCopyFile((char*)"/etc/init.d/rcS_tmp" , (char*)"/etc/init.d/rcS");
+		remove("/etc/init.d/rcS_tmp");
+#endif
+	} 
+	else 
+	{
+		fclose(fpRcs);
+	}
+}
 
 /**************************************************************
 Function:       CGbtMsgQueue::TscCopyFile
-Description:    ÎÄ¼ş¿½±´
-Input:        	fpSrc - Ô´ÎÄ¼şÃû×Ö
-				fpDest- Ä¿µÄÎÄ¼şÃû×Ö
-Output:        	ÎŞ
-Return:         ÎŞ
+Description:    æ–‡ä»¶æ‹·è´
+Input:        	fpSrc - æºæ–‡ä»¶åå­—
+				fpDest- ç›®çš„æ–‡ä»¶åå­—
+Output:        	æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtMsgQueue::TscCopyFile(char* fpSrc, char* fpDest)
 {

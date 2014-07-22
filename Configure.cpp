@@ -63,7 +63,7 @@ int Configure::GetString(const char *szSection, const char *szKey, ACE_TString &
        return config.get_string_value(this->root_key_,szKey,strValue);
 }
  
-int Configure::GetInteger(const char* szSection,const char* szKey,int& nValue)
+int Configure::GetInteger(const char* szSection,const char* szKey,Uint& nValue)
 {
        ACE_TString strValue;
        if (config.open_section(config.root_section(),ACE_TEXT(szSection),0,this->root_key_)==-1)

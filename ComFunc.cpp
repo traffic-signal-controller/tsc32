@@ -238,7 +238,7 @@ Return:         нч
 void RecordTscStartTime()
 {
 #ifdef LINUX
-	ACE_OS::system("echo At $(date) tsc restart !>> TscRun.log");
+	ACE_OS::system("echo :$(date) tsc restart !>> TscRun.log");
 #endif
 	CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_REBOOT,0,0,0,0);	
 	

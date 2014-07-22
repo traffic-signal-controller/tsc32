@@ -295,6 +295,7 @@ struct STscConfig
 	SPhaseToDirec         sPhaseToDirec[MAX_DREC] ;     //方向与相位参数   
 	Byte DegradeMode ; 									//降级模式 201310191100
 	Byte DegradePattern ; 						  	    //降级基准方案 201310191400
+	GBT_DB::CntDownDev sCntDownDev[MAX_DREC];     //倒计时表配置
  }
 /*
 #ifndef WINDOWS

@@ -1,12 +1,13 @@
 #ifndef _SERIALCTRL_H_
 #define _SERIALCTRL_H_
-
 class CSerialCtrl
 {
 public:
 	static CSerialCtrl* CreateInstance();
 	void OpenSerial(short iSerNum);
-	int  GetSerialFd(short iSerNum);
+	int  GetSerialFd(short iSerNum);	
+	int serialWrite(char *buffer,int fd) ;
+	void set_speed(int fd, int speed);
 
 private:
 	CSerialCtrl();

@@ -9,23 +9,24 @@ Version:    V1.0
 History:
 ***************************************************************/
 #include "Gps.h"
-//#include "Serial2.h"
 #include "SerialCtrl.h"
 #include "TscMsgQueue.h"
 #include "GbtMsgQueue.h"
 #include "ManaKernel.h"
 #include "Rs485.h"
-
+#include <termios.h>
 #ifndef WINDOWS
 #include <strings.h>
 #endif 
 
+#define GpsInternel 600
 bool   CGps::m_bNeedGps     = false;
 time_t CGps::m_tLastTi      = 0;
-//int    CGps::m_iGpsFd       = Serial2::CreateInstance()->GetSerial2Fd();//打开GPS连接串口
+
 int    CGps::m_iGpsFd  	    = CSerialCtrl::CreateInstance()->GetSerialFd(1);
 char   CGps::m_cBuf[128]    = {0};
 bool   CGps::m_bGpsTime = false ;
+Ushort CGps:: ierrorcount  = 0 ;;
 
 /**************************************************************
 Function:        CGps::CGps
@@ -76,28 +77,49 @@ Input:          arg  默认NULL
 Output:         无
 Return:         0
 ***************************************************************/
-void* CGps::RunGpsData(void* arg)
+void CGps::RunGpsData()
 {
-	char *pBuf   = m_cBuf;
-	int iFlagGps = 0;
-	
 	if ( m_iGpsFd < 0 )
 	{
-		ACE_DEBUG((LM_DEBUG,"\n%s:%d Open Serial1 erroe!\n",__FILE__,__LINE__));
-		return NULL;
+		ACE_DEBUG((LM_DEBUG,"\n%s:%d Open Gps/Gsm Serial1 error!\n",__FILE__,__LINE__));
+		return ;
 	}	
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d Begin to adjust GPS time!\n",__FILE__,__LINE__));
-	m_bNeedGps = true;
-	CRs485::CreateInstance()->CtrolGPPIo(0,10) ; //Open Gps io gpp10	
-#ifndef WINDOWS
-	while ( m_bNeedGps ) 
-	{		
-		if ( read(m_iGpsFd, pBuf,128) <= 0 )
-		{
-			ACE_OS::sleep(ACE_Time_Value(0,100*1000));			
-			continue;
-		}
 	
+	//Byte iGps = CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
+	if( (time(NULL)-m_tLastTi)<GpsInternel && GetLastTi() != 0)
+	{	
+		if(m_bGpsTime)
+			m_bGpsTime = false ;
+		return ;
+	}
+
+	//ACE_OS::memset(m_cBuf,0x0,128);
+	char *pBuf   = m_cBuf;
+	int iFlagGps = 0;	
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d It's time to adjust GPS time!\n",__FILE__,__LINE__));
+	m_tLastTi =  time(NULL) ;
+	//*iTime = m_tLastTi ;
+	m_bGpsTime = true ;
+	CRs485::CreateInstance()->CtrolGPPIo(1,10) ; //Open Gps io gpp10
+	//CSerialCtrl::CreateInstance()->set_speed(m_iGpsFd, 38400);
+	tcflush(m_iGpsFd, TCIFLUSH);
+
+#ifndef WINDOWS
+	while ( true ) 
+	{
+		
+		if ( read(m_iGpsFd, pBuf,1) <= 0 )
+		{
+			ACE_OS::sleep(ACE_Time_Value(0,100*1000));
+			ierrorcount ++ ;
+			if(ierrorcount > 1000)
+			{
+			 ACE_DEBUG((LM_DEBUG,"\n%s:%d Cant read gps info than 1000 times!\n",__FILE__,__LINE__));
+			 ierrorcount = 0 ;
+			 return ;
+			}
+			continue;
+		}		
 		if ( '$' == *pBuf )
 		{
 			pBuf++;
@@ -116,7 +138,10 @@ void* CGps::RunGpsData(void* arg)
 					//ACE_DEBUG((LM_DEBUG,"\n%s,%d gps_read %s \n", __FILE__, __LINE__, m_cBuf));					
 					if ( CheckSum(m_cBuf) )
 					{
-						Extract();
+						Extract();						
+						//if(CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue == 0x3)
+							//return ;
+						return ;
 					}
 					else
 					{
@@ -136,11 +161,10 @@ void* CGps::RunGpsData(void* arg)
 		{
 			pBuf = m_cBuf;
 		}
-
 	}
 	#endif
 
-	return NULL;
+	return ;
 }
 
 /**************************************************************
@@ -161,8 +185,7 @@ int CGps::Extract()
 	int   iMin   = -1;
 	int   iSec   = -1;
 	int   iMsec  = -1;
-	int   iIndex = 0;
-	//static int iGpsLed = LED_GPS_OFF;	
+	int   iIndex = 0;	
 	
 #ifndef WINDOWS
 	sscanf(pBuf, GPRMC "," "%02d%02d%02d.%03d,%c,"  "%*s\r\n", &iHour, &iMin, &iSec, &iMsec, &cValid);
@@ -196,10 +219,10 @@ int CGps::Extract()
 		return 0;
 	}
 
-	if ( CManaKernel::CreateInstance()->m_bFinishBoot )  //过度步后才需要校时
-	{
+	//if ( CManaKernel::CreateInstance()->m_bFinishBoot )  //过度步后才需要校时
+	//{
 		SetTime(2000 + iYear , iMon , iDay , iHour , iMin , iSec );
-	}
+	//}
 	
 #endif	
 	return 1;
@@ -269,8 +292,7 @@ void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSe
 {
 #ifndef WINDOWS
 	time_t Ttime;
-	struct tm *pTheTime, *pLocalTime;
-	//FILE *fpGps = NULL;
+	struct tm *pTheTime, *pLocalTime;	
 	SThreadMsg sTscMsg;
 
 	Ttime = time(NULL);
@@ -284,15 +306,8 @@ void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSe
 	Ttime = mktime(pTheTime);
 
 	Ttime += 8 * 60 * 60;
-	if ( (Ttime > m_tLastTi) && (Ttime - m_tLastTi < 300 ) )  
-	{	
-		m_bGpsTime = false ;
-		return;
-	}
-	m_bGpsTime = true ;
-	m_tLastTi = Ttime ;
 	pLocalTime = localtime(&Ttime);	
-	
+
 	char sgpstime[100]={0} ;
 	ACE_OS::sprintf(sgpstime,"echo SysTime:$(date) GpsTime: %d-%d-%d %d:%02d:%02d >>GpsTime.info", pLocalTime->tm_year+1900, pLocalTime->tm_mon	 +1,pLocalTime->tm_mday,pLocalTime->tm_hour, pLocalTime->tm_min, pLocalTime->tm_sec);	
 	ACE_OS::system(sgpstime);
@@ -322,4 +337,16 @@ void CGps::ForceAdjust()
 	m_tLastTi = 0;
 }
 
+
+ /**************************************************************
+ Function:		 CGps::GetLastTi
+ Description:	 返回GPS校时比较时间
+ Input: 		 无
+ Output:		 无
+ Return:		 无
+ ***************************************************************/
+ time_t CGps::GetLastTi()
+ {
+	return m_tLastTi ;
+ }
 

@@ -11,8 +11,8 @@ class CGps
 {
 public:
 	static CGps* CreateInstance();
-	static void* RunGpsData(void* arg);
-
+	void RunGpsData();
+	static time_t GetLastTi();
 	static int Extract();
 	void InitGps();
 	void ForceAdjust();
@@ -23,11 +23,12 @@ public:
 private:
 	CGps();
 	~CGps();
-
+	
 	static bool   m_bNeedGps;
 	static int    m_iGpsFd;
 	static char   m_cBuf[128];
 	static time_t m_tLastTi;
+	static Ushort  ierrorcount ;
 };
 
 #endif //_GPS_H_

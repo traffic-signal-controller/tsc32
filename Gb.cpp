@@ -8,7 +8,6 @@ Version:    V1.0
 History:
 ***************************************************************/
 
-
 #include "ace/Process_Mutex.h"
 #include "ace/SOCK_Dgram_Bcast.h"
 
@@ -26,7 +25,7 @@ History:
 #include "Gb.h"
 #include "Can.h"
 #include "ComFunc.h"
-
+#include "Gsm.h"
 
 /**************************************************************
 Function:        main
@@ -46,11 +45,8 @@ int main(int argc, char *argv[])
 		ationMutex.release();
 		return -1;
 	}
-	//ACE_OS::sleep(5); //等待初始化系统静态对象 201405041045
-	//CheckSystemTime(); //检查修正系统时间	
-
-	RunGb();	       //系统核心入口函数
-	 
+	
+	RunGb();	      
 	ationMutex.release();
 	return 0; 
 }
@@ -71,7 +67,6 @@ static void* SignalMsgQueue(void *arg)
 }
 
 
-
 /**************************************************************
 Function:        GbtMsgQueue
 Description:    gbt消息处理队列线程函数。				
@@ -86,8 +81,40 @@ static void* GbtMsgQueue(void* arg)
 	return 0;
 }
 
+/**************************************************************
+Function:        RunGpsGSM
+Description:    GPS和GSM功能调用线程函数		
+Input:          arg - 线程函数参数        
+Output:         无
+Return:         0
+***************************************************************/
+
+static void *RunGpsGSM(void *arg)
+{
+	Byte iGps,iGsm = 0 ;
+	CManaKernel * pManaKernel = CManaKernel::CreateInstance() ;
+	ACE_OS::sleep(5);	
+	while(true)
+	{		
+		iGps = pManaKernel->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
+		iGsm = pManaKernel->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue ;
+		if(iGps == 0x0 && iGsm == 0x0)
+		{
+			ACE_OS::sleep(300);	
+		}
+		else 
+		{
+			//static time_t iTimeNow = time(NULL);
+			if(iGsm != 0)
+				CGsm::CreateInstance()->RunGsmData();
+			if(iGps != 0)
+				CGps::CreateInstance()->RunGpsData();
+		}
+		
+	}	
 
 
+}
 /**************************************************************
 Function:        BroadCast
 Description:    广播线程函数，回送广播消息，包括IP地址，系统端口，
@@ -250,9 +277,8 @@ void RunGb()
 	CTimerManager::CreateInstance()->CreateAllTimer();   //开启所有的定时器
 	
 	/********************************************************************************/
-	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
-	{
-		if ( ACE_Thread::spawn((ACE_THR_FUNC)CGps::RunGpsData, //开启gps校时线程
+	
+		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGpsGSM, //开启gps校时线程
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[6],
@@ -264,8 +290,7 @@ void RunGb()
 		{
 			TscAceDebug((LM_DEBUG,"Error: CGps thread faild\n"));
 		}
-	}
-	
+
 	
 	ACE_Thread::join(hThreadHandle[0]);   //回收线程资源
 	ACE_Thread::join(hThreadHandle[1]);

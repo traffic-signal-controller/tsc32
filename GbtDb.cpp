@@ -352,7 +352,7 @@ ulEventTime varchar(20))",
 /*******************************************************/
 (char*)"create table Tbl_CntDownDev(\n\
 						  ucDevId tinyint not null,\n\
-						  usPhase int not null default(0),\n\
+						  usPhase smallint not null default(0),\n\
 						  ucOverlapPhase tinyint not null default(0),\n\
 						  ucMode tinyint not null default(0))",
 
@@ -5437,7 +5437,7 @@ bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong
 			Table_Desc[TBL_EVENTLOG].sFieldName[0],
 			uiCurEventId);
 
-			uiCurEventId++;
+		uiCurEventId++;
 
 		*pMinId = uiCurEventId > 255 ? 1 : uiCurEventId; 
 	}

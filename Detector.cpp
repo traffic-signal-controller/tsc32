@@ -640,12 +640,12 @@ Return:         无
  void CDetector::SearchAllStatus()
  {
 	Byte ucIndex = 0;
-	//static int iTick = 0;
-	//Uint uiTclCtl = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
+	static int iTick = 0;
+	unsigned int uiTclCtl = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
 
 	while ( ucIndex < MAX_DET_BOARD )
 	{
-		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&&  m_iDetCfg[ucIndex] != 0 )
+		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&& ( m_iDetCfg[ucIndex] != 0 ) && iTick%5 == 0)
 		{
 			
 			//SelectBrekonCardStatus(ucIndex, ucIndex);  //第iIndex片检测器板车辆状态及故障状态 MOD:20130723 1620
@@ -659,11 +659,16 @@ Return:         无
 		ucIndex++;
 	}
 		
-		//iTick++;
-	//	if ( iTick >= MAX_REGET_TIME )  // 1S一次检查车检板状态和有无车情况
-		//{
-		//	iTick = 0;
-		//}
+		iTick++;
+		if ( iTick >= MAX_REGET_TIME )  // 1S一次检查车检板状态和有无车情况
+		{
+			iTick = 0;
+		}
+	
+	if ( (CTRL_VEHACTUATED == uiTclCtl) || (CTRL_MAIN_PRIORITY == uiTclCtl) || (CTRL_SECOND_PRIORITY == uiTclCtl) ) 
+	{
+		IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
+	}
 
 }
 

@@ -174,7 +174,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		sPhase.ucPedestrianGreen = 0; 
 		sPhase.ucGreenFlash      = 2; 
 
-		for ( int i=1; i<(MAX_PHASE+1); i++ )
+		for ( Byte i=1; i<(MAX_PHASE+1); i++ )
 		{
 			sPhase.ucPhaseId = i; 
 
@@ -419,7 +419,7 @@ void SignalDefaultData::InsertGbDefaultData()
 
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_PRINT_FLAG    + 1) , 0);
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_PRINT_FLAGII  + 1) , 0);
-		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CAM           + 1) , 0);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CAM          + 1) , 0);
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_3G            + 1) , 0);
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WLAN          + 1) , 0);
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);

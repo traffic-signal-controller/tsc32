@@ -407,7 +407,7 @@ void Manual::DoManual()
 			//ACE_DEBUG((LM_DEBUG,"%s:%d MAC_CTRL_NOTHING == m_ucManualSts \n",__FILE__,__LINE__));
 			if( pManaKernel->m_iTimePatternId == 250)
 			{
-				//pManaKernel->bNextDirec = false ;
+				pManaKernel->bNextDirec = false ;
 				pManaKernel->m_iTimePatternId = 0;
 				pManaKernel->bTmpPattern = false ;
 							

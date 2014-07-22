@@ -32,6 +32,7 @@ static Manual*        pManual      = Manual::CreateInstance();               // 
 static CDetector*      pDetector    = CDetector::CreateInstance() ;  		 //ADD: 20130709 945	
 static CPscMode * pCPscMode = CPscMode::CreateInstance() ;	
 static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
+static CGaCountDown *pGaCountDown = CGaCountDown::CreateInstance();
 /************************ADD:201309231530***************************/	
 
 	
@@ -80,8 +81,12 @@ Return:         0
 int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /* = 0 */)
 {
 	
-	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931	
-	pManual->DoManual() ;     // ADD:0514 9:42	
+	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
+	//static Uint iCanRestartNum = 0 ;
+	
+	pManual->DoManual() ;     // ADD:0514 9:42
+	
+
 	
 	switch ( m_ucTick )
 	{
@@ -92,12 +97,13 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	case 1:
 		//pMacControl->GetEnvSts(); 
-		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28	
-		if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-		pDetector->SearchAllStatus();  //ADD: 2013 0723 1620	
+		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28		
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || 				pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
 		pMacControl->SndLcdShow() ; //ADD:201309281710
 		break;
-	case 2: 	
+	case 2: 		
+
 		pPower->CheckVoltage();
 		break;
 
@@ -114,9 +120,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 4:
 		//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 		//	pDetector->GetOccupy();  //
-		if (pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 		{
-			pDetector->IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
+			pDetector->IsVehileHaveCar(); //濡傛灉鏈夎溅鍒欏鍔犻暱姝ユ斁琛岀浉浣嶇殑缁跨伅鏃堕棿 鏈�澶т负鏈�澶х豢鏃堕棿
 		}
 		break;
 
@@ -129,6 +135,40 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 6:
 		//pFlashMac->FlashHeartBeat() ;
 		pMainBoardLed->DoLedBoardShow();   //ADD :2013 0809 1600
+		if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
+			|| (FLASH   == pRunData->uiWorkStatus)|| (CTRL_MANUAL == pRunData->uiCtrl) 
+			|| (CTRL_PANEL == pRunData->uiCtrl ))
+		{
+			break ;
+		}
+		else if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 )
+		{		
+			Byte ucLampOn[MAX_LAMP]={0};
+			Byte ucLampFLASH[MAX_LAMP]={0};
+			ACE_OS::memcpy(ucLampOn,pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampOn,MAX_LAMP);
+			ACE_OS::memcpy(ucLampFLASH,pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampFlash,MAX_LAMP);
+			for(Byte nIndex = 0 ; nIndex< MAX_DREC ;nIndex++)
+			{	
+				if(pGaCountDown->sFlashBreak[nIndex].bflashbreak == true )
+				{	
+					Byte ucSignalGrpNum = 0;					
+					Byte ucSignalGrp[MAX_CHANNEL] = {0};
+					Byte nChannelIndex = 0 ;
+					pWorkParaManager->GetSignalGroupId(pGaCountDown->sFlashBreak[nIndex].bAllowPhase,pGaCountDown->sFlashBreak[nIndex].ucPhaseId,&ucSignalGrpNum,ucSignalGrp);
+					while(nChannelIndex<ucSignalGrpNum)
+					{
+						ACE_OS::memset(ucLampOn+(ucSignalGrp[nChannelIndex]-1)*3 ,0, 3);
+						ACE_OS::memset(ucLampFLASH+(ucSignalGrp[nChannelIndex]-1)*3 ,0,3);
+						nChannelIndex++ ;
+					}
+					pGaCountDown->sFlashBreak[nIndex].bflashbreak = false ;
+				}
+			}
+			pLamp->SetLamp(ucLampOn, ucLampFLASH);	
+			pLamp->SendLamp();
+	     	pLamp->SetLamp(pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampOn
+			   ,pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampFlash);		
+		}
 		
 		break;
 	case 7://700??????????ì????????????????????can×??????

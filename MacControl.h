@@ -72,7 +72,8 @@ private:
 	Byte m_ucGetMainLight;    
 	Byte m_ucGetFarIo1;       
 	Byte m_ucGetFarIo2;      
-	
+	bool bSendCtrlOk ; //判断是否控制发送LCD显示成功
+public:
 	//out
 	//Byte m_ucManualSts;  //手控状态
 	//Byte m_ucManual;     //0自动运行 1手动控制
@@ -92,7 +93,7 @@ private:
 	Byte m_ucAddHot;   //加热器
 	Byte m_ucReduHot;  //散热器
 	Byte m_ucCabinet;  //机柜  0静止 1震动
-	bool bSendCtrlOk ; //判断是否控制发送LCD显示成功
+	
 	
 };
 

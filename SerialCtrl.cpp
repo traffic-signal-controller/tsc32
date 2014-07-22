@@ -33,6 +33,7 @@ History:
 #define SERIALNUM1  1
 #define SERIALNUM2  2
 #define SERIALNUM3  3
+#define setbitrate(x)  Bx
 /**************************************************************
 Function:       CSerialCtrl::CSerialCtrl
 Description:    CSerialCtrl类构造函数，用于类初始化串口				
@@ -186,5 +187,45 @@ int CSerialCtrl::GetSerialFd(short iSerNum)
 	return iTmpSerFd;
 }
 
+
+int CSerialCtrl::serialWrite(char *buffer,int fd)
+{
+	//isBusy=1;
+	if(strlen(buffer)==0)
+		return 0;
+	int writeCount = write(fd ,buffer ,strlen(buffer));
+	//isBusy=0;
+	return writeCount ;
+}
+
+
+void CSerialCtrl::set_speed(int fd, int speed)
+{ 
+	 
+	
+	int speed_arr[7] = { B38400, B19200, B9600, B4800, B2400, B1200, B300}; 
+	int name_arr[7] = {38400, 19200, 9600, 4800, 2400, 1200, 300}; 
+
+	struct termios Opt; 
+	tcgetattr(fd, &Opt); 
+	for (int i= 0; i < 7; i++) 
+	{ 
+		if (speed == name_arr[i]) 
+		{ 
+			tcflush(fd, TCIOFLUSH); 
+			cfsetispeed(&Opt,speed_arr[i]); 
+			cfsetospeed(&Opt, speed_arr[i]); 
+			if(tcsetattr(fd, TCSANOW, &Opt) !=0)
+			{
+				ACE_DEBUG((LM_DEBUG,"Set serialCom bitrate error!\n"));
+				return; 
+			}			
+			
+			return; 
+		} 
+	 
+	}
+	tcflush(fd,TCIOFLUSH); 
+} 
 
 

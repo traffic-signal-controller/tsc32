@@ -68,7 +68,7 @@ CWirelessCoord::CWirelessCoord()
 	m_iOffset     = 0;         
 	m_iAdjustCnt  = 0;     
 
-	ACE_DEBUG((LM_DEBUG,"create CWirelessCoord\n"));
+	ACE_DEBUG((LM_DEBUG,"%s:%d Init CWirelessCoord object !\n",__FILE__,__LINE__));
 
 }
 
@@ -81,7 +81,7 @@ Return:         нч
 ***************************************************************/
 CWirelessCoord::~CWirelessCoord()
 {
-	ACE_DEBUG((LM_DEBUG,"delete CWirelessCoord\n"));
+	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct CWirelessCoord object!\n",__FILE__,__LINE__));
 }
 
 

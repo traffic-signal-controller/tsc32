@@ -48,6 +48,15 @@ enum
 	GA_COLOR_BLACK  = 3  , //黑色
 	GA_COLOR_OTHER    = 4  //其他颜色
 };
+struct SPhaseColorFlashBreak
+{
+	Byte ucPhaseId;     //相位
+	bool bAllowPhase ;  //跟随相位
+ 	Byte ucColor;    //颜色
+	Byte ucTime ;     //时间
+	bool bflashbreak;  //倒计时闪断
+}
+;
 
 /*
 *国标主动倒计时类(根据GAT508-2004协议)
@@ -75,6 +84,7 @@ public:
 	bool PackSendBuf( Byte ucDirIndex , Byte ucColor , Byte ucCountTime );
 	void sendblack();    //发送黑屏信息
 	void send8cntdown(); //发送8秒倒计时
+	void GaGetDirecColorTime();
 	void SetClinetCntDown(ACE_INET_Addr& addrClient, Uint uBufCnt , Byte* pBuf) ; //ADD:201401121705
 	bool m_bGaNeedCntDown[GA_MAX_DIRECT][GA_MAX_LANE]; //需要倒计时的方向
 	Byte m_ucGaRuntime[GA_MAX_DIRECT][GA_MAX_LANE];    //该灯色还需维持的时间
@@ -83,6 +93,7 @@ public:
 	SendCntDownNum sSendCDN[MAX_CLIENT_NUM] ;  //ADD:201401121705
 
 	Byte m_sGaSendBuf[GA_MAX_DIRECT][GA_MAX_SEND_BUF];   //发送缓存
+	SPhaseColorFlashBreak sFlashBreak[MAX_DREC] ;
 private:
 };
 

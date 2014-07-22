@@ -16,7 +16,7 @@ CGaCountDown::CGaCountDown()
 	ACE_OS::memset(m_sGaSendBuf , 0 , GA_MAX_SEND_BUF );
 	//ACE_OS::memset(m_sGaPhaseToDirec,0,(GA_MAX_DIRECT*GA_MAX_LANE)*sizeof(GBT_DB::PhaseToDirec)) ;
 	//ACE_OS::memset(&sSendCDN,0,MAX_CLIENT_NUM*sizeof(SendCntDownNum)) ;
-	
+	ACE_OS::memset(sFlashBreak , 0 , MAX_DREC);
 	for(Byte index = 0 ;index<MAX_CLIENT_NUM ; index++)
 	{
 		sSendCDN[index].bSend = false ;
@@ -63,7 +63,8 @@ Return:          无
 void CGaCountDown::GaGetCntDownInfo()
 {
 	CManaKernel* pCWorkParaManager = CManaKernel::CreateInstance();
-	STscRunData* pRunData               = CManaKernel::CreateInstance()->m_pRunData;
+		STscRunData* pRunData	= pCWorkParaManager->m_pRunData;
+		STscConfig * pConfig	= pCWorkParaManager->m_pTscConfig;
 	Byte ucCurStep                      = pRunData->ucStepNo;
 	SStepInfo*   pStepInfo              = pRunData->sStageStepInfo + ucCurStep;
 	
@@ -75,24 +76,49 @@ void CGaCountDown::GaGetCntDownInfo()
 	Byte ucLaneIndex    = 0;
 	Byte ucSignalGrp[MAX_CHANNEL] = {0};
 
+		bool bPhaseCntdown	;	
 	for ( ucDirIndex=0; ucDirIndex<GA_MAX_DIRECT; ucDirIndex++ )
 	{
 		for ( ucLaneIndex=0; ucLaneIndex<GA_MAX_LANE; ucLaneIndex++ )
 		{
+			bPhaseCntdown = false ;
+			if(m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucOverlapPhase == 0 &&
+			   m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucPhase == 0)
+			 {
 			m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = false;
-			if(m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucPhase ==0 && m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucOverlapPhase == 0)
 				continue ;
-			//方向+属性-->相位类型+相位id  
-			if ( m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucOverlapPhase != 0 )
+			 }
+			else if ( m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucOverlapPhase != 0 )
 			{
 				ucPhaseId     = m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucOverlapPhase;
 				bIsAllowPhase = false;
 			}
-			else
+			else if ( m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucPhase != 0 )
 			{
 				ucPhaseId     = m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucPhase;
 				bIsAllowPhase = true;
 			}
+			if( pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 )
+			{
+				for(Byte ucIndex = 0;ucIndex < MAX_DREC;ucIndex++ )
+				{
+					if((pConfig->sCntDownDev[ucIndex].usPhase == ucPhaseId )||(pConfig->sCntDownDev[ucIndex].ucOverlapPhase == ucPhaseId ))
+					{
+						bPhaseCntdown = true ;
+						break ;
+					}		
+				}
+			}
+			else
+			{
+				bPhaseCntdown = true ;
+			}
+			if(bPhaseCntdown == false)
+			{
+				m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = false;//该相位不在倒计时配置表
+			}
+			else
+			{			
 			//ACE_DEBUG((LM_DEBUG,"%s:%d ucDirIndex=%d ucLanIndex=%d ,phase=%d ,bIsAllowPhase =%d \n",__FILE__,__LINE__,ucDirIndex,ucLaneIndex,ucPhaseId,bIsAllowPhase));
 
 			//相位类型+相位id-->通道信息(ryg)
@@ -118,13 +144,30 @@ void CGaCountDown::GaGetCntDownInfo()
 				}
 				m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = true; //相位方向上有放行相位和通道 或者有跟随相位有跟随通道
 				m_ucGaRuntime[ucDirIndex][ucLaneIndex]    = GaGetCntTime(ucLightLamp); //获取剩余时间
+				if(pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2)
+				{
 				
-				//ACE_DEBUG((LM_DEBUG,"%s:%d m_bGaNeedCntDown[%d][%d] == ture \n",__FILE__,__LINE__,ucDirIndex,ucLaneIndex));
+					for(Byte ucIndex = 0;ucIndex < MAX_DREC;ucIndex++ )
+					{
+						if((pConfig->sCntDownDev[ucIndex].usPhase == ucPhaseId )||(pConfig->sCntDownDev[ucIndex].ucOverlapPhase == ucPhaseId ))  
+						{
+							if(((pConfig->sCntDownDev[ucIndex].ucMode>>3)&0xf) == m_ucGaRuntime[ucDirIndex][ucLaneIndex])
+							{	
+								sFlashBreak[ucLaneIndex+ucDirIndex*GA_MAX_LANE].ucPhaseId = ucPhaseId ;
+								sFlashBreak[ucLaneIndex+ucDirIndex*GA_MAX_LANE].bAllowPhase = bIsAllowPhase ;
+								sFlashBreak[ucLaneIndex+ucDirIndex*GA_MAX_LANE].bflashbreak = true ;
+								sFlashBreak[ucLaneIndex+ucDirIndex*GA_MAX_LANE].ucColor = m_ucGaColor[ucDirIndex][ucLaneIndex] ;
+								sFlashBreak[ucLaneIndex+ucDirIndex*GA_MAX_LANE].ucTime = m_ucGaRuntime[ucDirIndex][ucLaneIndex] ;
+								break ;
+							}
+						}	
+					}					
+				}
 			}
 			else
 			{
 				m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = false;//该方向上无相位无通道则无倒计时，跟随相位无跟随通道则无倒计时
-				
+			}
 				//ACE_DEBUG((LM_DEBUG,"%s:%d m_bGaNeedCntDown[%d][%d] == false \n",__FILE__,__LINE__,ucDirIndex,ucLaneIndex));
 			}
 		}
@@ -661,6 +704,17 @@ void CGaCountDown::SetClinetCntDown(ACE_INET_Addr& addremote, Uint uBufCnt , Byt
 	}
 
 }
-	
+/***************************************************************
+
+Function:       CGaCountDown::GaSendStepPer
+Description:    闪断式倒计时每秒判断倒计时时间
+Input:          	无              
+Output:         无
+Return:          无
+***************************************************************/
+void CGaCountDown::GaGetDirecColorTime()
+{
+	GaGetCntDownInfo();	
+}
 	
 

@@ -71,11 +71,12 @@ public:
 	/*************按照特定配时方案号执行*************/
 	int m_iTimePatternId;    //指定的配时方案号  合法值1-32 0没有指定
 	
-	//bool bNextDirec ;
+	bool bNextDirec ;
 	bool bTmpPattern ;     //是否处于特殊方案号中
 	bool bUTS ;            //是否存在中心
 	bool bDegrade ;        //是否处于降级状态
 	bool bChkManul ;       //用于判断系统启动初始手控状态
+	bool bSecondPriority ; //用于次线半感应控制逻辑判断  ADD：20140618
 private:
 	CManaKernel();
 	~CManaKernel();
