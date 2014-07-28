@@ -82,12 +82,8 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 {
 	
 	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-	//static Uint iCanRestartNum = 0 ;
 	
-	pManual->DoManual() ;     // ADD:0514 9:42
-	
-
-	
+	pManual->DoManual() ;     // ADD:0514 9:42	
 	switch ( m_ucTick )
 	{
 	case 0: 		
@@ -98,7 +94,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 1:
 		//pMacControl->GetEnvSts(); 
 		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28		
-		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || 				pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 			pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
 		pMacControl->SndLcdShow() ; //ADD:201309281710
 		break;
@@ -126,49 +122,65 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		}
 		break;
 
-	case 5://500ms Ö´ÐÐÒ»´Î
-		
-		
-		pLamp->SendLamp();   //4????????????¡ã??????????¡¤??????	
-		pMainBoardLed->DoRunLed();	
-		break;
-	case 6:
-		//pFlashMac->FlashHeartBeat() ;
-		pMainBoardLed->DoLedBoardShow();   //ADD :2013 0809 1600
-		if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
+	case 5://500ms Ö´ÐÐÒ»´		
+	    if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 )
+		{	
+			if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
 			|| (FLASH   == pRunData->uiWorkStatus)|| (CTRL_MANUAL == pRunData->uiCtrl) 
 			|| (CTRL_PANEL == pRunData->uiCtrl ))
-		{
-			break ;
-		}
-		else if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 )
-		{		
-			Byte ucLampOn[MAX_LAMP]={0};
-			Byte ucLampFLASH[MAX_LAMP]={0};
-			ACE_OS::memcpy(ucLampOn,pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampOn,MAX_LAMP);
-			ACE_OS::memcpy(ucLampFLASH,pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampFlash,MAX_LAMP);
-			for(Byte nIndex = 0 ; nIndex< MAX_DREC ;nIndex++)
+			{
+				pLamp->SendLamp();
+			}
+			else
+			{
+			Byte ucMode = 0 ;
+			Byte ucPhaseId = 0 ;
+			Byte ucOverPhaseId = 0 ;
+			for(Byte nIndex = 0 ; nIndex< MAX_CNTDOWNDEV;nIndex++)
 			{	
-				if(pGaCountDown->sFlashBreak[nIndex].bflashbreak == true )
-				{	
+			    ucMode = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode ;
+				ucPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].usPhase ;
+				ucOverPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucOverlapPhase ;
+				if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0 || ucOverPhaseId !=0 ) )
+				{					
 					Byte ucSignalGrpNum = 0;					
 					Byte ucSignalGrp[MAX_CHANNEL] = {0};
 					Byte nChannelIndex = 0 ;
-					pWorkParaManager->GetSignalGroupId(pGaCountDown->sFlashBreak[nIndex].bAllowPhase,pGaCountDown->sFlashBreak[nIndex].ucPhaseId,&ucSignalGrpNum,ucSignalGrp);
+			
+					pWorkParaManager->GetSignalGroupId(ucPhaseId?true:false,ucPhaseId?ucPhaseId:ucOverPhaseId,&ucSignalGrpNum,ucSignalGrp);
 					while(nChannelIndex<ucSignalGrpNum)
 					{
-						ACE_OS::memset(ucLampOn+(ucSignalGrp[nChannelIndex]-1)*3 ,0, 3);
-						ACE_OS::memset(ucLampFLASH+(ucSignalGrp[nChannelIndex]-1)*3 ,0,3);
-						nChannelIndex++ ;
+						Byte ucChannelId = ucSignalGrp[nChannelIndex] ;
+						if(ucChannelId >0)
+							pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|0x60);
+						nChannelIndex++ ;						
 					}
-					pGaCountDown->sFlashBreak[nIndex].bflashbreak = false ;
+					pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode &=0x7f ;
+					
 				}
+			}	
+			
+			for(Byte index = 0 ;index < MAX_LAMP_BOARD-3 ;index++)
+			{				
+				pLamp->SendSingleLamp(index,pGaCountDown->m_ucLampBoardFlashBreak[index]);
+				if(pGaCountDown->m_ucLampBoardFlashBreak[index] != 0x0)
+				{
+					pGaCountDown->m_ucLampBoardFlashBreak[index] = 0x0 ;
+				}					
+				
 			}
-			pLamp->SetLamp(ucLampOn, ucLampFLASH);	
-			pLamp->SendLamp();
-	     	pLamp->SetLamp(pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampOn
-			   ,pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampFlash);		
 		}
+			
+		}
+		else
+		{
+			pLamp->SendLamp(); 
+		}
+			
+		pMainBoardLed->DoRunLed();	
+		break;
+	case 6:
+		pMainBoardLed->DoLedBoardShow();   //ADD :2013 0809 1600
 		
 		break;
 	case 7://700??????????¨¬????????????????????can¡Á??????
@@ -220,7 +232,6 @@ Return:         ÎÞ
 ***************************************************************/
 void CTscTimer::ChooseDecTime()
 {
-	//static CManaKernel* pWorkParaManager = CManaKernel::CreateInstance(); DEL:201309231530
 	static bool bPsc = true;
 	if ( CTRL_MANUAL == pWorkParaManager->m_pRunData->uiCtrl 
 	  || CTRL_PANEL  == pWorkParaManager->m_pRunData->uiCtrl 

@@ -475,8 +475,8 @@ void CManaKernel::SelectDataFromDb()
 	while(iIndex<ucCount)
 	{
 		ACE_OS::memcpy(m_pTscConfig->sCntDownDev+iIndex,pCntDownDev,sizeof(GBT_DB::CntDownDev));
-		ACE_DEBUG((LM_DEBUG,"%s:%d InitDb ucDevId =%d ucPhase =%d ucOverPhase=%d\n",__FILE__,__LINE__,m_pTscConfig->sCntDownDev[iIndex].ucDevId,
-			m_pTscConfig->sCntDownDev[iIndex].usPhase ,m_pTscConfig->sCntDownDev[iIndex].ucOverlapPhase));
+		ACE_DEBUG((LM_DEBUG,"%s:%d InitDb ucDevId =%d ucPhase =%d ucOverPhase=%d ,cnttime=%d \n",__FILE__,__LINE__,m_pTscConfig->sCntDownDev[iIndex].ucDevId,
+			m_pTscConfig->sCntDownDev[iIndex].usPhase ,m_pTscConfig->sCntDownDev[iIndex].ucOverlapPhase,(m_pTscConfig->sCntDownDev[iIndex].ucMode>>3)&0xf));
 		pCntDownDev++;
 		iIndex++;
 	} 
@@ -2023,8 +2023,7 @@ bool CManaKernel::GetSonScheduleTime(Byte ucScheduleTimeId)
 	for ( int i=0; i<MAX_SCHEDULETIME_TYPE; i++ )
 	{
 		for ( int j=0; j<MAX_SON_SCHEDULE; j++ )
-		{
-		
+		{		
 			if ( m_pTscConfig->sScheduleTime[i][j].ucId == ucScheduleTimeId )
 			{
 				ACE_OS::memcpy(&m_pRunData->sScheduleTime[ucIndex++], &m_pTscConfig->sScheduleTime[i][j] , sizeof(SScheduleTime));

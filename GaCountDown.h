@@ -48,15 +48,7 @@ enum
 	GA_COLOR_BLACK  = 3  , //黑色
 	GA_COLOR_OTHER    = 4  //其他颜色
 };
-struct SPhaseColorFlashBreak
-{
-	Byte ucPhaseId;     //相位
-	bool bAllowPhase ;  //跟随相位
- 	Byte ucColor;    //颜色
-	Byte ucTime ;     //时间
-	bool bflashbreak;  //倒计时闪断
-}
-;
+
 
 /*
 *国标主动倒计时类(根据GAT508-2004协议)
@@ -93,7 +85,7 @@ public:
 	SendCntDownNum sSendCDN[MAX_CLIENT_NUM] ;  //ADD:201401121705
 
 	Byte m_sGaSendBuf[GA_MAX_DIRECT][GA_MAX_SEND_BUF];   //发送缓存
-	SPhaseColorFlashBreak sFlashBreak[MAX_DREC] ;
+    Byte m_ucLampBoardFlashBreak[MAX_LAMP_BOARD]; //201407231400
 private:
 };
 

@@ -97,6 +97,7 @@ const int MAX_STATUSOUT_PER      = 8;    //每组状态输出包含的个数
 const int MAX_STEP               = 64;   //最大的步伐数
 const int MAX_LAMP_BOARD         = 8;    //最大灯驱板数
 const int MAX_LAMP_NUM_PER_BOARD = 12;   //每块板的灯具数量
+const int MAX_LAMPGROUP_PER_BOARD =4 ;
 const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //最大通道（信号组）表数 1板4通道
 const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
 const int MAX_DET_BOARD          = 4;    //最大检测器和接口板数量，2块检测其板两块接口板

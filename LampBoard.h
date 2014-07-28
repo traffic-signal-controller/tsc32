@@ -19,7 +19,7 @@ public:
 	bool IsFlash() ;	
 	//µÆÉ«ÊýŸÝ 
 	void SendLamp();
-	void SendSingleLamp(Byte ucLampBoardId);
+	void SendSingleLamp(Byte ucLampBoardId ,Byte ucFlashBreak);
 	//µÆ¿Ø°åÏÂ·¢ÅäÖÃÊýŸÝ£¬ÈçµÆÅÝŒì²â¿ª¹Ø£¬ºìÂÌ³åÍ»Œì²â¿ª¹Ø
 	void SendCfg();
 	void SendSingleCfg(Byte ucLampBoardId);
