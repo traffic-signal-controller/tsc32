@@ -423,6 +423,7 @@ void SignalDefaultData::InsertGbDefaultData()
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_3G            + 1) , 0);
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WLAN          + 1) , 0);
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_LIGHTCHECK          + 1) , 0);
 	}
 
 	/*******************添加默认检测器参数*******************/
