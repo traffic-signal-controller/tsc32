@@ -220,7 +220,7 @@ Input:          ucLampBoardId  灯控板下标索引 0 1 2 3
 Output:         无
 Return:         无
 ***************************************************************/
-void CLampBoard::SendSingleLamp(Byte ucLampBoardId)
+void CLampBoard::SendSingleLamp(Byte ucLampBoardId,Byte ucFlashBreak)
 {
 	Byte ucDataTemp  = 0;
 	Byte ucLampIndex = 0;
@@ -259,12 +259,13 @@ void CLampBoard::SendSingleLamp(Byte ucLampBoardId)
 	sSendFrameTmp.pCanData[4] = ~sSendFrameTmp.pCanData[1];
 	sSendFrameTmp.pCanData[5] = ~sSendFrameTmp.pCanData[2];
 	sSendFrameTmp.pCanData[6] = ~sSendFrameTmp.pCanData[3];
-	sSendFrameTmp.ucCanDataLen = 7;
+	sSendFrameTmp.pCanData[7] = ucFlashBreak ;
+	sSendFrameTmp.ucCanDataLen = 8;
 
 	m_ucLampOnCfg[ucLampBoardId][0] = sSendFrameTmp.pCanData[1]; //ADD:2013 0712 11 45
 	m_ucLampOnCfg[ucLampBoardId][1] = sSendFrameTmp.pCanData[2];
 	m_ucLampOnCfg[ucLampBoardId][2] = sSendFrameTmp.pCanData[3];	
-	//Can::PrintCurTime((char*)__FILE__,__LINE__,(char*)" begin send time ");
+	
 	Can::CreateInstance()->Send(sSendFrameTmp);
 }
 
@@ -284,7 +285,7 @@ void CLampBoard::SendLamp()
 		if(m_ucLampBoardError[iBdINdex] == DEV_IS_CONNECTED)
 		{
 			 
-			SendSingleLamp(iBdINdex);
+			SendSingleLamp(iBdINdex,0);
 /******   计算每次发送灯之间的时间
 			struct timeval    tv;  
 		    struct timezone tz;  
@@ -342,17 +343,7 @@ void CLampBoard::SendSingleCfg(Byte ucLampBoardId)
 	sSendFrameTmp.ucCanDataLen = 2;
 	Can::CreateInstance()->Send(sSendFrameTmp);
 	
-	/*
-	if ( ( (m_pTscCfg->sSpecFun[FUN_PRINT_FLAG].ucValue>>3) & 1 )  != 0 )	
-	ACE_DEBUG((LM_DEBUG,"%s:%d SendSingleCfg%d:\n",__FILE__,__LINE__,ucLampBoardId+1));
-	ACE_DEBUG((LM_DEBUG,"CanId:%08x CanDataLen:%d\nData:",sSendFrameTmp.ulCanId,sSendFrameTmp.ucCanDataLen));
-	for ( int iPrtIndex=0; iPrtIndex<sSendFrameTmp.ucCanDataLen; iPrtIndex++)
-	{
-		ACE_DEBUG((LM_DEBUG,"%02x ",sSendFrameTmp.pCanData[iPrtIndex]));
-	}	
-	Can::PrintInfo((char*)__FILE__,__LINE__,ucLampBoardId+1,sSendFrameTmp);
-	************************************* TEST 2013 07 12 14 45
-	*/
+	
 }
 
 

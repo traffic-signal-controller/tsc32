@@ -19,7 +19,7 @@ public:
 	bool IsFlash() ;	
 	//灯色数据 
 	void SendLamp();
-	void SendSingleLamp(Byte ucLampBoardId);
+	void SendSingleLamp(Byte ucLampBoardId ,Byte ucFlashBreak);
 	//灯控板下发配置数据，如灯泡检测开关，红绿冲突检测开关
 	void SendCfg();
 	void SendSingleCfg(Byte ucLampBoardId);
