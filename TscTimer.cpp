@@ -34,6 +34,7 @@ static CMacControl*   pMacControl      = CMacControl::CreateInstance();  	 // MO
 static MainBackup*        pMainBackup      = MainBackup::CreateInstance();               // ADD:0514 9:42	
 static CDetector*      pDetector    = CDetector::CreateInstance() ;  		 //ADD: 20130709 945	
 static CPscMode * pCPscMode = CPscMode::CreateInstance() ;	
+static CGaCountDown *pGaCountDown = CGaCountDown::CreateInstance();
 static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
 /************************ADD:201309231530***************************/	
 
@@ -89,7 +90,8 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
 		
 	//手控按钮每100ms侦查一次  // ADD:0514 9:42
-		pMainBackup->DoManual();
+	//pMainBackup->DoManual();
+	//pMainBackup->Recevie();
 	
 	switch ( m_ucTick )
 	{
@@ -102,7 +104,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	case 1:
 		//pMacControl->GetEnvSts(); 
-		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28		
+		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
 		pMacControl->SndLcdShow() ; //ADD:201309281710
 		
 		break;
@@ -116,6 +120,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 			//pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);			
 		}
 		pPower->CheckVoltage();
+
+		//手控按钮每100ms侦查一次  // ADD:0514 9:42
+		pMainBackup->DoManual();
 		break;
 
 	case 3:
@@ -126,12 +133,68 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 
 	case 4:
-		//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+		//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE ) &&  pRunData->uiWorkStatus == STANDARD)
 		//	pDetector->GetOccupy();  //
-		
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+		{
+			pDetector->IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
+		}
 		break;
 	case 5://500ms 执行一次
-		pLamp->SendLamp();		//给所有灯控板发送灯色数据
+		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 ) //这里2表示闪断式倒计时
+		{	
+			if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
+			|| (FLASH   == pRunData->uiWorkStatus)|| (CTRL_MANUAL == pRunData->uiCtrl) 
+			|| (CTRL_PANEL == pRunData->uiCtrl ))
+			{
+				pLamp->SendLamp();
+			}
+			else
+			{
+				Byte ucMode = 0 ;
+				Byte ucPhaseId = 0 ;
+				Byte ucOverPhaseId = 0 ;
+				for(Byte nIndex = 0 ; nIndex< MAX_CNTDOWNDEV;nIndex++)
+				{	
+				    ucMode = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode ;
+					ucPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].usPhase ;
+					ucOverPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucOverlapPhase ;
+					if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0 || ucOverPhaseId !=0 ) )
+					{					
+						Byte ucSignalGrpNum = 0;					
+						Byte ucSignalGrp[MAX_CHANNEL] = {0};
+						Byte nChannelIndex = 0 ;
+				
+						pWorkParaManager->GetSignalGroupId(ucPhaseId?true:false,ucPhaseId?ucPhaseId:ucOverPhaseId,&ucSignalGrpNum,ucSignalGrp);
+						while(nChannelIndex<ucSignalGrpNum)
+						{
+							Byte ucChannelId = ucSignalGrp[nChannelIndex] ;
+							if(ucChannelId >0)
+								pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|0x60);
+							nChannelIndex++ ;						
+						}
+						pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode &=0x7f ;
+						
+					}
+				}	
+				
+				for(Byte index = 0 ;index < MAX_LAMP_BOARD-3 ;index++)
+				{				
+					pLamp->SendSingleLamp(index,pGaCountDown->m_ucLampBoardFlashBreak[index]);
+					if(pGaCountDown->m_ucLampBoardFlashBreak[index] != 0x0)
+					{
+						pGaCountDown->m_ucLampBoardFlashBreak[index] = 0x0 ;
+					}					
+					
+				}
+			}
+		}
+		else
+		{
+			pLamp->SendLamp(); 
+		}
+			
+		//pLamp->SendLamp();		//给所有灯控板发送灯色数据
 		//pMainBoardLed->DoRunLed();
 		//核心板发送心跳给，备份单片机。500ms   。另外 在case 1调用
 		pMainBackup->HeartBeat();
@@ -139,9 +202,12 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 6:
 		//pFlashMac->FlashHeartBeat() ;
 		pMainBoardLed->DoLedBoardShow();   //ADD :2013 0809 1600
+		
 		break;
 	case 7://700ms 发送心跳数据给电源板
 		pPower->HeartBeat();
+		//手控按钮每100ms侦查一次  // ADD:0514 9:42
+		pMainBackup->DoManual();
 		break;
 
 	case 8:	
@@ -151,7 +217,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 9:
 		if(pWorkParaManager->m_pRunData->bIsChkLght == true )
 			pLamp->CheckLight();// check Lampboard status and red&green conflict
-		
+		ACE_DEBUG((LM_DEBUG,"\n%s:%d pMainBackup->bSendStep = %d!\n",__FILE__,__LINE__,pMainBackup->bSendStep));
+		if(pMainBackup->bSendStep)
+			pMainBackup->SendStep();
 		break;
 	default:
 	

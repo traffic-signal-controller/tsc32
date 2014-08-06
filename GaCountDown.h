@@ -75,6 +75,7 @@ public:
 	bool PackSendBuf( Byte ucDirIndex , Byte ucColor , Byte ucCountTime );
 	void sendblack();    //发送黑屏信息
 	void send8cntdown(); //发送8秒倒计时
+	void GaGetDirecColorTime();
 	void SetClinetCntDown(ACE_INET_Addr& addrClient, Uint uBufCnt , Byte* pBuf) ; //ADD:201401121705
 	bool m_bGaNeedCntDown[GA_MAX_DIRECT][GA_MAX_LANE]; //需要倒计时的方向
 	Byte m_ucGaRuntime[GA_MAX_DIRECT][GA_MAX_LANE];    //该灯色还需维持的时间
@@ -83,6 +84,7 @@ public:
 	SendCntDownNum sSendCDN[MAX_CLIENT_NUM] ;  //ADD:201401121705
 
 	Byte m_sGaSendBuf[GA_MAX_DIRECT][GA_MAX_SEND_BUF];   //发送缓存
+	Byte m_ucLampBoardFlashBreak[MAX_LAMP_BOARD]; //201407231400
 private:
 };
 

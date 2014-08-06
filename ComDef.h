@@ -96,6 +96,7 @@ const int MAX_STATUSOUT_PER      = 8;    //每组状态输出包含的个数
 const int MAX_STEP               = 64;   //最大的步伐数
 const int MAX_LAMP_BOARD         = 8;    //最大灯驱板数
 const int MAX_LAMP_NUM_PER_BOARD = 12;   //每块板的灯具数量
+const int MAX_LAMPGROUP_PER_BOARD =4 ;
 const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //最大通道（信号组）表数 1板4通道
 const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
 const int MAX_DET_BOARD          = 4;    //最大检测器板数量
@@ -111,7 +112,7 @@ const int USLEEP_TIME            = 2000;
 const int MAX_WORK_TIME          = 3;    //3次一样的才起作用
 const int BOARD_REPEART_TIME     = 5;    //板状态判断的重复次数
 const int MAX_DREC               = 80;  //最大方向数量   201310181705->201401031017 8个方向，每个方向10个支流
-
+const Byte MAX_CNTDOWNDEV        = MAX_PHASE ;  //支持最大的倒计时设备数32,相位倒计时
 /************************************************************************************************/
 
 /*
@@ -304,6 +305,7 @@ enum
 	FUN_3G             = 17 , //3G通信
 	FUN_WLAN		   = 18 , //WLAN无线网络
 	FUN_CNTTYPE	       = 19,  //倒计时类型
+	FUN_LIGHTCHECK	= 20,		//灯泡检测开关
 	FUN_COUNT                 // 总到特定功能数量值
 };
 

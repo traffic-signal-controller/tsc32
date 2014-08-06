@@ -123,10 +123,16 @@ public:
 	void DoReadLED();
 	void DoWriteLED(Byte ucByte);
 	void DoSendStep(STscRunData *m_pRunData);
+	void SendOneStep(Uint i);
+	void SendStep();
+	bool bSendStep;
 private:
+	
 	ACE_Thread_Mutex  m_sMutex;
 	int m_iSerial3fd;
 	Byte m_ucLastManualSts;  //之前的手动状态
+	STscRunData* pRunData;
+	
 };
 
 
