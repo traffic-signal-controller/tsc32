@@ -308,6 +308,8 @@ Byte CMacControl::GetCtrlStaus()
 				uiLcdCtrl = CTRLBOARD_LCD_SCHEDULE ;
 				break ;
 			case CTRL_VEHACTUATED :
+			case CTRL_MAIN_PRIORITY:
+			case CTRL_SECOND_PRIORITY:
 				uiLcdCtrl = CTRLBOARD_LCD_VECHE ;
 				break ;
 			case CTRL_PANEL :
