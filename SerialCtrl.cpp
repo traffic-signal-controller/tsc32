@@ -71,7 +71,7 @@ CSerialCtrl::CSerialCtrl()
 	m_iSerial1fd = -1;
 	m_iSerial2fd = -1;
 	m_iSerial3fd = -1;
-	m_iSerial4fd = -1;
+	//m_iSerial4fd = -1;
 	m_iSerial5fd = -1;
 	OpenALLSerial();
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init SerialCom object ok !\n",__FILE__,__LINE__));
@@ -98,10 +98,10 @@ CSerialCtrl::~CSerialCtrl()
 	{
 		close(m_iSerial3fd);
 	}
-	else if( m_iSerial4fd > 0 )
-	{
-		close(m_iSerial4fd);
-	}
+	//else if( m_iSerial4fd > 0 )
+	//{
+	//	close(m_iSerial4fd);
+	//}
 	else if( m_iSerial5fd > 0 )
 	{
 		close(m_iSerial5fd);
@@ -153,9 +153,9 @@ INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,con
 		case 3:        
 			pComPort = "/dev/ttyO3";        
 			break;    
-		case 4:        
-			pComPort = "/dev/ttyO4";        
-			break;    
+		//case 4:        
+		//	pComPort = "/dev/ttyO4";        
+		//	break;    
 		case 5:        
 			pComPort = "/dev/ttyO5";        
 			break;    
@@ -167,7 +167,6 @@ INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,con
 	if (-1 == fd) 
 	{        
 		fprintf (stderr, "cannot open port %s\n", pComPort);        
-
 		return (-1);    
 	}    
 	printf("comport fd = %d\n", fd);    
@@ -192,9 +191,9 @@ INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,con
 		case 3:        
 			m_iSerial3fd = fd;
 			break;    
-		case 4:        
-			m_iSerial4fd = fd;
-			break;    
+		//case 4:        
+		//	m_iSerial4fd = fd;
+		//	break;    
 		case 5:        
 			m_iSerial5fd = fd;
 			break;    
@@ -907,13 +906,13 @@ void CSerialCtrl::OpenALLSerial()
 	}else{
 		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM3));
 	}
-	ret = OpenComPort(SERIALNUM4, 115200, 8, "1", 'N');
+	/*ret = OpenComPort(SERIALNUM4, 9600, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM4));
 		//return ;	
 	}else{
 		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM4));
-	}
+	}*/
 	ret = OpenComPort(SERIALNUM5, 115200, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM5));
