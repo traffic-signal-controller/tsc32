@@ -129,7 +129,8 @@ enum
 	OBJECT_TMPPATTERN_CFG  = 0xe6,    //12方向临时组合方案，默认60秒
 	OBJECT_SYSFUNC_CFG     = 0xe4,      //系统其他功能设置
 	OBJECT_SENDCLIENT_CNTDOWN = 0xe6 ,
-	OBJECT_POWERBOARD_CFG     = 0xe7   //电源板配置
+	OBJECT_POWERBOARD_CFG     = 0xe7,   //电源板配置
+	OBJECT_GSM_CFG            = 0xe8   //GSM配置
 };
 /*****************GBT协议对象标志类型和扩充协议标志类型那个枚举********************/
 
@@ -218,7 +219,7 @@ private:
 	void GotoMsgError(Byte ucDealDataIndex,Byte ucErrorSts,Byte ucErrorIdx);
 	void GotoSendToHost(Byte ucDealDataIndex);
 	void GotoDealRecvbuf(Byte ucDealDataIndex);
-
+void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
 	//Byte m_ucAddrNum;
 	ACE_Message_Queue<ACE_MT_SYNCH>* m_pMsgQue;
       

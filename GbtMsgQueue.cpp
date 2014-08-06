@@ -12,7 +12,7 @@ History:
 #include "ace/OS.h"
 #include "ace/Guard_T.h" 
 #include "ace/Date_Time.h"
-
+#include "Gsm.h"
 #include "DbInstance.h"
 #include "GbtMsgQueue.h"
 #include "TscMsgQueue.h"
@@ -30,6 +30,8 @@ History:
 #include "ComFunc.h"
 #include "GaCountDown.h"
 #include "Configure.h"
+#include "SerialCtrl.h"
+#include "MacControl.h"
 
 /**************************************************************
 Function:        CGbtMsgQueue::CGbtMsgQueue
@@ -340,7 +342,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 	switch ( ucObjId )
 	{
 	case OBJECT_UTC_TIME:
-		if ( GBT_SEEK_REQ == ucRecvOptType )  /*²éÑ¯*/
+		if ( GBT_SEEK_REQ == ucRecvOptType ) 
 		{
 			ACE_Time_Value tvCurTime = GetCurTime();
 			unsigned int iTotalSec   = (unsigned int)tvCurTime.sec();    //utc time
@@ -551,7 +553,7 @@ Return:         无
 ***************************************************************/
 void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 {
-	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //ÊÕµœÖ¡µÄ²Ù×÷ÀàÐÍ
+	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //收到帧的操作类型
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
@@ -805,7 +807,13 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			SetSysFunc(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}
 		break ;	
-		
+	case OBJECT_GSM_CFG:
+	   if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
+		{	 
+			
+			SetSmsFunc(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex,iRecvBufLen); 
+		}
+		break;
 	default:
 		ACE_DEBUG((LM_DEBUG,"%s:%d,ObjectId error objectId:%d\n",__FILE__,__LINE__,ucObjId));
 		GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
@@ -903,7 +911,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 	}
 	pBuf[iSendIndex++] = ucTmp;
 
-	//¹€×÷·œÊœ
+		//工作方式
 	ucTmp = pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue;
 	pBuf[iSendIndex++] = ucTmp;
 	ucTmp = pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue;
@@ -913,11 +921,11 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 	ucTmp = pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue;
 	pBuf[iSendIndex++] = ucTmp;
 
-	//ÍšÐÅœÓ¿Ú
+	//通信接口
 	ucTmp = pTscCfg->sSpecFun[FUN_COMMU_PARA].ucValue;
 	pBuf[iSendIndex++] = ucTmp;
 
-	//¶Ë¿ÚºÅ
+	//端口号
 	ucTmp = pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue;
 	pBuf[iSendIndex++] = ucTmp;
 	ucTmp = pTscCfg->sSpecFun[FUN_PORT_LOW].ucValue;
@@ -974,11 +982,11 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 
 	switch ( ucSubId )
 	{
-		case 1:   //Éè±ž¶¯×÷È¡Öµ
+		case 1:   //设备动作取值
 			pBuf[iSendIndex++] = 0;
 			pBuf[iSendIndex++] = 0;
 			break;
-		case 2: //?Éè±žÆôÓÃ×Ö
+		case 2: //?设备启用字
 			ucTmp = 0;
 			if ( pTscCfg->sSpecFun[FUN_DOOR].ucValue > 0 )
 			{
@@ -1020,7 +1028,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			}
 			pBuf[iSendIndex++] = ucTmp;
 			break;
-		case 3:  //¹€×÷·œÊœ
+		case 3: //工作方式
 			ucTmp = pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			ucTmp = pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue;
@@ -1030,11 +1038,11 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			ucTmp = pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			break;
-		case 4:  //ÍšÐÅœÓ¿Ú
+		case 4: //通信接口
 			ucTmp = pTscCfg->sSpecFun[FUN_COMMU_PARA].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			break;
-		case 5:  //¶Ë¿ÚºÅ
+		case 5:   //端口号
 			ucTmp = pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			ucTmp = pTscCfg->sSpecFun[FUN_PORT_LOW].ucValue;
@@ -1070,6 +1078,10 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			ucTmp = pTscCfg->sSpecFun[FUN_CNTTYPE].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			break;
+		/*case 10:  //灯泡检测
+			ucTmp = pTscCfg->sSpecFun[FUN_LIGHTCHECK].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+			break;*/
 		default:
 			break;
 
@@ -1094,26 +1106,26 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	
 	STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
 
-	/*************Éè±ž¶¯×÷È¡Öµ*********/
+	/*************设备动作取值*********/
 	ucTmp       = pBuf[iRecvIndex++];
 	ucTmp       = pBuf[iRecvIndex++];
-	//bit0  ÖØÆôÏµÍ³
-	//bit1  œøÈë×ÔŒì
-	//bit2  œøÈëÉýŒ¶
-	//bit3  ÖØÆô³ÌÐò
-	//bit4  Çå³ýÑÏÖØÊÂŒþ
-	//bit5  Çå³ýÊÂŒþ
-	//bit6  ÉŸ³ýÍ³ŒÆÊýŸÝ
-	//bit7  ÉŸ³ýÈÕÖŸ
-	//bit8  ÉèÖÃÍšÐÅ²ÎÊý
-	//bit15 ¶ÔÐ­ÒéÀ©Õ¹
+	//bit0  重启系统
+	//bit1  进入自检
+	//bit2  进入升级
+	//bit3  重启程序
+	//bit4  清除严重事件
+	//bit5  清除事件
+	//bit6  删除统计数据
+	//bit7  删除日志
+	//bit8  设置通信参数
+	//bit15 对协议扩展
 
-	/***********Éè±žÆôÓÃ×Ö************/
+	/***********设备启用字************/
 	/*        bit0   bit1     bit2     bit3    bit4    bit5    bit6    bit7
-	* Byte0                                    ÃÅ¿ª¹Ø   µçÑ¹     ÎÂ¶ÈŒÆ
-	* Byte1                                    ¶ÌÐÅ     gps     µ¹ŒÆÊ±
-	* Byte2  Œì²âÆ÷  ·¢µçÔŽ°å   ÊÕµçÔŽ°å  ·¢µÆ¿Ø°å ÊÕµÆ¿Ø°å ·¢»ÆÉÁÆ÷ ÊÕ»ÆÉÁÆ÷ ²œ·¥ÐÅÏ¢
-	* Byte3  µ¹ŒÆÊ±  StartTime costTime                                 ÑÏÖØŽíÎó»ÆÉÁ 
+	* Byte0                                    门开关   电压     温度计
+	* Byte1                                    短信     gps     倒计时
+	* Byte2  检测器  发电源板   收电源板  发灯控板 收灯控板 发黄闪器 收黄闪器 步伐信息
+	* Byte3  倒计时  StartTime costTime                                 严重错误黄闪 
 	*/
 	ucTmp = pBuf[iRecvIndex++];
 	pTscCfg->sSpecFun[FUN_DOOR].ucValue        = (ucTmp>>5) & 1;
@@ -1141,7 +1153,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PRINT_FLAGII+1  , ucTmp & 0x7F );
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_SERIOUS_FLASH+1 , (ucTmp>>7) & 1 );
 	
-	/***********¹€×÷·œÊœ************/
+	/***********工作方式***********/
 	ucTmp = pBuf[iRecvIndex++];
 	//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1    , ucTmp);
@@ -1155,15 +1167,15 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	//pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
 
-	/***********ÍšÐÅœÓ¿Ú***********/
+	/**********通信接口***********/
 	ucTmp       = pBuf[iRecvIndex++];
 	pTscCfg->sSpecFun[FUN_COMMU_PARA].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_COMMU_PARA+1 , ucTmp);
-	//bit0 ÍšÐÅÊ¹ÓÃnullÉè±ž
+	//bit0 通信使用null设备
 	//bit1 1-TCP  0-UDP
 	//bit2 1-IPV6 0-IPV4
 
-	//¶Ë¿ÚºÅ Áœ×ÖœÚ È¡Öµ2048-16768
+	//端口号 两字节 取值2048-16768
 	ucTmp       = pBuf[iRecvIndex++];
 	pTscCfg->sSpecFun[FUN_PORT_HIGH].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PORT_HIGH+1 , ucTmp);
@@ -1180,21 +1192,21 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	cIp[3] = *(pBuf+iRecvIndex + 3);
 	iRecvIndex += 16;
 
-	//ÍøÂçÑÚÂë
+	//网络掩码
 	cMask[0] = *(pBuf+iRecvIndex);
 	cMask[1] = *(pBuf+iRecvIndex + 1);
 	cMask[2] = *(pBuf+iRecvIndex + 2);
 	cMask[3] = *(pBuf+iRecvIndex + 3);
 	iRecvIndex += 16;
 
-	//Íø¹ØIPµØÖ·
+	//网关IP地址
 	cGateWay[0] = *(pBuf+iRecvIndex);
 	cGateWay[1] = *(pBuf+iRecvIndex + 1);
 	cGateWay[2] = *(pBuf+iRecvIndex + 2);
 	cGateWay[3] = *(pBuf+iRecvIndex + 3);
 	iRecvIndex += 16;
 
-	//ÎïÀíµØÖ· ²»ÈÃÐÞžÄ
+	//物理地址 不让修改
 	/*
 	cHwEther[0] = *(pBuf+iRecvIndex);
 	cHwEther[1] = *(pBuf+iRecvIndex + 1);
@@ -1227,7 +1239,16 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 	Byte cMask[4]    = {0};
 	Byte cGateWay[4] = {0};
 	STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
-
+			//bit0  重启系统
+			//bit1  进入自检
+			//bit2  进入升级
+			//bit3  重启程序
+			//bit4  清除严重事件
+			//bit5  清除事件
+			//bit6  删除统计数据
+			//bit7  删除日志
+			//bit8  设置通信参数
+			//bit15 对协议扩展
 	switch ( ucSubId )
 	{
 		case 1:  //设备动作取值			
@@ -1255,7 +1276,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 
 			}		
 			break;
-		case 2:  //设备启用字
+		case 2:  //设备启用字//设备启用字,可以启用特殊功能FUN表中的设备 81 f6 02 aa bb cc bb cc ，aa 表示启用设备类型数, bb表示设备索引，cc表示启用值.
 			ucTmp = pBuf[iRecvIndex++];
 			pTscCfg->sSpecFun[FUN_DOOR].ucValue         = (ucTmp>>5) & 1;
 			pTscCfg->sSpecFun[FUN_VOLTAGE].ucValue      = (ucTmp>>6) & 1;
@@ -1341,6 +1362,11 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			pTscCfg->sSpecFun[FUN_CNTTYPE].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CNTTYPE+1 , ucTmp);	
 			break;
+		/*case 10:
+			ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_LIGHTCHECK].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_LIGHTCHECK+1 , ucTmp);
+			break;*/
 		default:
 			break;
 	}
@@ -1358,14 +1384,14 @@ void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 {
 	CFlashMac* pFlashMac = CFlashMac::CreateInstance();
 
-	bool bForDoor        = pFlashMac->m_bGetForDoor;   //Ç°ÃÅŽò¿ª
-	bool bPowerType      = pFlashMac->m_bPowerType;    //¹©µçÀàÐÍ true:œ»Á÷µç false:Ì«ÑôÄÜ
-	bool bAlarmStatus    = false;//CPowerBoard::CreateInstance()->m_bGetAlarmStatus;  //±šŸ¯Æ÷×ŽÌ¬
+	bool bForDoor        = pFlashMac->m_bGetForDoor;   //前门打开
+	bool bPowerType      = pFlashMac->m_bPowerType;    //供电类型 true:交流电 false:太阳能
+	bool bAlarmStatus    = false;//CPowerBoard::CreateInstance()->m_bGetAlarmStatus;   //报警器状态
 	Byte ucDoorValue     = 0;
-	int  iTemperature    = pFlashMac->m_iTemperature;  //ÎÂ¶È
-	int  iVoltage        = pFlashMac->m_iVoltage;      //µçÑ¹
+	int  iTemperature    = pFlashMac->m_iTemperature;  //温度
+	int  iVoltage        = pFlashMac->m_iVoltage;       //电压
 
-	//ÎÂ¶ÈÖµ
+	//温度值
 	if ( iTemperature > -65 && iTemperature < 120 )
 	{
 		iTemperature += 65;
@@ -1379,14 +1405,14 @@ void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 		iTemperature = 185;
 	}
 
-	pBuf[*iSendIndex] = (iTemperature >> 8) & 0xff;  //žß×ÖœÚÔÚµÍÎ»
+	pBuf[*iSendIndex] = (iTemperature >> 8) & 0xff; //高字节在低位
 	*iSendIndex += 1;
 
 	pBuf[*iSendIndex] = iTemperature & 0xff;
 	*iSendIndex += 1;
 
-	//ÃÅ¿ª¹ØÖµ  Ð£Ê±Éè±ž.....
-	if ( bForDoor && bAlarmStatus )  //ÃÅŽò¿ªÇÒµ±Ç°ŽŠÓÚ±šŸ¯×ŽÌ¬
+	//门开关值  校时设备.....
+	if ( bForDoor && bAlarmStatus )   //门打开且当前处于报警状态
 	{
 		ucDoorValue = 0;
 	}
@@ -1400,15 +1426,15 @@ void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 	}
 	pBuf[*iSendIndex] = ucDoorValue;
 	*iSendIndex += 1;
-
-	//µçÑ¹Öµ
-	pBuf[*iSendIndex] = (iVoltage >> 8) & 0xff;  //žß×ÖœÚÔÚµÍÎ»
+	//电压值
+	pBuf[*iSendIndex] = (iVoltage >> 8) & 0xff; //高字节在低位
 	*iSendIndex += 1;
 
 	pBuf[*iSendIndex] = iVoltage & 0xff;
 	*iSendIndex += 1;
 
-	//¹©µçÀàÐÍ
+
+	//供电类型
 	if ( bPowerType )
 	{
 		pBuf[*iSendIndex] = 0;
@@ -1419,6 +1445,82 @@ void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 		pBuf[*iSendIndex] = 2;
 		*iSendIndex += 1;
 	}
+}
+
+
+/**************************************************************
+Function:       CGbtMsgQueue::SetSmsFunc
+Description:    设置GSM接收AT命令
+Input:          pBuf   接收AT设置命令缓存指针
+		       iRecvIndex     当前设置取值地址
+Output:         无
+Return:         无
+***************************************************************/
+
+void CGbtMsgQueue::SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen)
+{
+	char tmpstr[400] = {0};	
+	/*
+	CSerialCtrl* pGsmSerial = CSerialCtrl::CreateInstance() ;	
+	int fd = pGsmSerial->GetSerialFd(1);
+	if(pBuf[iRecvIndex] == 0x1)
+	{		
+		char sendNum[20]={0};
+		//char sendsms[300]={0};
+		ACE_OS::memcpy(sendNum,pBuf+4,11);
+		ACE_OS::memcpy(tmpstr,pBuf+15,ACE_OS::strlen((char*)pBuf+15));
+		//ACE_OS::printf("%s:%d sendnum=%s sendtext= %s \n",__FILE__,__LINE__,sendNum,sendsms);
+		CGsm::CreateInstance()->SendSms(sendNum,tmpstr);
+	}
+	else if(pBuf[iRecvIndex] == 0x2)
+	{
+		char smca[20]={0};
+		ACE_OS::memcpy(smca,pBuf+4,11);
+		ACE_OS::sprintf(tmpstr,"AT+CSCA=\"+86%s\", 145\r\n",smca);
+		ACE_OS::printf("%s:%d set smca:%s \n",__FILE__,__LINE__,tmpstr);
+		pGsmSerial->serialWrite(tmpstr,fd);
+	}
+	
+	else if(pBuf[iRecvIndex] == 0x3)
+	{
+		switch(pBuf[iRecvIndex+1])
+		{
+			case 0:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=4800\r\n");
+			break;
+			case 1:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=9600\r\n");
+			break ;
+			case 2:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=19200\r\n");
+			break;
+			case 3:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=38400\r\n");
+			break ;
+			case 4:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=115200\r\n");
+			break ;
+			default:
+				ACE_OS::strcpy(tmpstr,"AT+IPR=38400\r\n");
+			break ;
+		}
+		
+		ACE_OS::printf("%s:%d set IPR:%s \n",__FILE__,__LINE__,tmpstr);
+		pGsmSerial->serialWrite(tmpstr,fd);
+	}
+	else if(pBuf[iRecvIndex] == 0x4)
+	{
+		
+		//CGsm::CreateInstance()->OpenTcpConnec();
+	}
+	else 
+	{		
+		ACE_OS::memcpy(tmpstr,(char *)pBuf+3,iRecvBufLen-3);
+		ACE_OS::strcat(tmpstr,"\r\n");
+		ACE_OS::printf("%s:%d ModifyBotrate:%s \n",__FILE__,__LINE__,tmpstr);
+		pGsmSerial->serialWrite(tmpstr,fd);
+	}
+	iRecvIndex += iRecvBufLen-3 ;*/
 }
 
 
@@ -1435,7 +1537,7 @@ void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
 	CDetector* pDet          = CDetector::CreateInstance();
 	CLampBoard* pLamp        = CLampBoard::CreateInstance();
 	CFlashMac* pFlashMac     = CFlashMac::CreateInstance();
-	
+		//灯控板
 	if ( pLamp->m_bRecordSts[0] != true )
 	{
 		ucTmp |= 1;
@@ -1453,7 +1555,7 @@ void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
 		ucTmp |= 1<<3;
 	}
 
-	//Œì²âÆ÷°å
+	//检测器板
 	if ( pDet->m_bRecordSts[0] != true )
 	{
 		ucTmp |= 1<<4;
@@ -1474,13 +1576,13 @@ void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
 	*iSendIndex      += 1;
 	ucTmp             = 0;
 
-	//µçÔŽ°å
+	//电源板
 	if ( false )//if ( pPowerBoard->m_bRecordSts != true )
 	{
 		ucTmp |= 1;
 	}
 	
-	//Œà¿Ø°å »ÆÉÁÆ÷°å
+	//监控板 黄闪器板
 	if ( pFlashMac->m_bRecordSts != true )
 	{
 		ucTmp |= 1<<1;
@@ -1559,6 +1661,7 @@ void CGbtMsgQueue::SetLampBdtCfg(Byte* pBuf,int& iRecvIndex)
 {
 	
 	Byte ucSetType = pBuf[iRecvIndex++];
+	//0x03 表示类型
 	if(ucSetType != 0x03)
 		return ;
 	CLampBoard *pLampBd = CLampBoard::CreateInstance();
@@ -1751,10 +1854,10 @@ void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
 			*iSendIndex += 1 ;
 			pBuf[*iSendIndex] = pPowerBoard->m_ucSetWatchCfg ;	
 			*iSendIndex += 1 ;
-			
+			break ;
 		//	printf("get powerd 0x3 -2\n");
 		}
-			break ;
+			
 		 default:
 		 	break ;
 		}
@@ -2060,18 +2163,18 @@ Return:         无
 ***************************************************************/
 void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 {
-	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //ÊÕµœÖ¡µÄ²Ù×÷ÀàÐÍ
+	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;    //收到帧的操作类型
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	//int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;  //Ë÷ÒýžöÊý
-	Byte ucErrorSts    = 0;  //ŽíÎó×ŽÌ¬
-	Byte ucErrorIdx    = 0;  //ŽíÎóË÷Òý
-	Byte ucObjId       = 0;  //¶ÔÏóÃû(±íÃû)
-	Byte ucIdxFst      = 0;  //µÚÒ»žöË÷Òý(id1)
-	Byte ucIdxSnd      = 0;  //µÚ¶þžöË÷Òý(id2)
-	Byte ucSubId       = 0;  //×Ó¶ÔÏó(×Ö¶ÎÏÂ±ê)
+	Byte ucIndexCnt    = 0;  //索引个数
+	Byte ucErrorSts    = 0;  //错误状态
+	Byte ucErrorIdx    = 0;  //错误索引
+	Byte ucObjId       = 0;  //对象名(表名)
+	Byte ucIdxFst      = 0;  //第一个索引(id1)
+	Byte ucIdxSnd      = 0;  //第二个索引(id2)
+	Byte ucSubId       = 0;  //子对象(字段下标)
 	Byte ucIndex       = 0;
 	Byte ucRecordCnt   = 0;
 	STscStatus* pTscStatus = (STscStatus*)pValue;
@@ -2083,13 +2186,13 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 
-	/************¶ÔÏó±êÊ¶*************/
+	/************对象标识**************/
 	ucObjId = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex];
-	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //¶ÔÏó±êÊ¶
+	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //对象标识
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********Ë÷ÒýžöÊýÓë×Ó¶ÔÏó*******/
+	/***********索引个数与子对象******/
 	if ( iRecvIndex >= iRecvBufLen )
 	{
 		ucErrorSts = GBT_ERROR_OTHER;
@@ -2097,14 +2200,14 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] =
-		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //Ë÷ÒýžöÊýÓë×Ó¶ÔÏó
-	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //Ë÷ÒýžöÊý
-	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //×Ó¶ÔÏó£¬×Ö¶ÎÏÂ±ê
+		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //索引个数与子对象
+	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //索引个数
+	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //子对象，字段下标
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********Ë÷Òý*************/
-	if ( ucIndexCnt > 0 )  /*Ë÷Òý1*/
+	/***********索引*************/
+	if ( ucIndexCnt > 0 )  /*索引1*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2118,7 +2221,7 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 ) /*Ë÷Òý2*/
+	if ( ucIndexCnt > 0 ) /*索引2*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2132,7 +2235,7 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 )  /*Ë÷Òý3ºöÂÔ*/
+	if ( ucIndexCnt > 0 )  /*索引3忽略*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2145,10 +2248,10 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		ucIndexCnt--;
 	}
 
-	/************ÖµÓò**************/
+	/*************值域************/
 	switch ( ucObjId )
 	{
-	case OBJECT_CURTSC_CTRL:          /*µ±Ç°ÐÅºÅ»úµÄ¿ØÖÆ×ŽÌ¬*/
+	case OBJECT_CURTSC_CTRL:          /*当前信号机的控制状态*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = ToObjectCurTscCtrl(pTscStatus->uiCtrl);
 		break;
 	/*
@@ -2157,55 +2260,55 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			ToObjectControlSwitch(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
 	
-	case OBJECT_SWITCH_STAGE:        //œ×¶Î×ŽÌ¬
+	case OBJECT_SWITCH_STAGE:        //阶段状态
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucStageNo;
 		break;
 	*/
-	case OBJECT_ACTIVESCHEDULE_NO:  /*µ±Ç°»î¶¯Ê±¶Î±àºÅ*/
+	case OBJECT_ACTIVESCHEDULE_NO: /*当前活动时段编号*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucActiveSchNo;
 		break;
-	case OBJECT_TSC_WARN2:  /*ÐÅºÅ»ú±šŸ¯2*/
+	case OBJECT_TSC_WARN2:  /*信号机报警2*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucTscAlarm2;
 		break;
-	case OBJECT_TSC_WARN1: /*ÐÅºÅ»ú±šŸ¯1*/
+	case OBJECT_TSC_WARN1:  /*信号机报警1*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucTscAlarm1;
 		break;
-	case OBJECT_TSC_WARN_SUMMARY:  /*ÐÅºÅ»ú±šŸ¯ÕªÒª*/
+	case OBJECT_TSC_WARN_SUMMARY:   /*信号机报警摘要*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucTscAlarmSummary;
 		break;
-	case OBJECT_ACTIVEDETECTOR_NUM: /*»î¶¯Œì²âÆ÷×ÜÊý*/
+	case OBJECT_ACTIVEDETECTOR_NUM:   /*活动检测器总数*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucActiveDetCnt;
 		break;
-	case OBJECT_SWITCH_MANUALCONTROL: /*ÊÖ¶¯¿ØÖÆ·œ°ž*/
+	case OBJECT_SWITCH_MANUALCONTROL:  /*手动控制方案*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] 
 			= GetManualCtrlStatus(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
-	case OBJECT_SWITCH_SYSTEMCONTROL: /*ÏµÍ³¿ØÖÆ·œ°ž*/
+	case OBJECT_SWITCH_SYSTEMCONTROL:	/*系统控制方案*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] 
 			= GetSysCtrlStatus(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
-	case OBJECT_SWITCH_CONTROL: /*¿ØÖÆ·œÊœ*/
+	case OBJECT_SWITCH_CONTROL: 	 /*控制方式*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] 
 			= GetCtrlStatus(pTscStatus->uiWorkStatus,pTscStatus->uiCtrl);
 		break;
-	case OBJECT_SWITCH_STAGE:  /*œ×¶Î×ŽÌ¬*/
+	case OBJECT_SWITCH_STAGE: 	 /*阶段状态*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucStageNo;
 		break;
-	case OBJECT_GOSTEP: /*²œœøÖžÁî*/
+	case OBJECT_GOSTEP: 	 /*步进指令*/
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = pTscStatus->ucStepNo;
 		break;
-	case OBJECT_CURPATTERN_SCHTIMES:   /*µ±Ç°·œ°žž÷œ×¶ÎÊ±³€*/
+	case OBJECT_CURPATTERN_SCHTIMES:   /*当前方案各阶段时长*/
 		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,
 			                  pTscStatus->ucCurStageLen,16);
 	    iSendIndex += 16;
 		break;
-	case OBJECT_CURPATTERN_GREENTIMES: /*µ±Ç°·œ°žž÷¹ØŒüÏàÎ»ÂÌµÆÊ±³€*/
+	case OBJECT_CURPATTERN_GREENTIMES: /*当前方案各关键相位绿灯时长*/
 		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,
 			pTscStatus->ucCurKeyGreen,16);
 		iSendIndex += 16;
 		break;
-	case OBJECT_DETECTORSTS_TABLE: 
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) ) 
+	case OBJECT_DETECTORSTS_TABLE: 	 /*检测器状态*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //整张表
 		{
 			ucIndex     = 0;
 			ucRecordCnt = 8;
@@ -2271,8 +2374,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_DETECTORDATA_TABLE: /*œ»ÍšŒì²âÊýŸÝ±í*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //ÕûÕÅ±í
+	case OBJECT_DETECTORDATA_TABLE: 	/*交通检测数据表*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  	//整张表
 		{
 			ucIndex = 0;
 			ucRecordCnt = 48;
@@ -2369,8 +2472,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_DETECTORWARN_TABLE: /*³µÁŸŒì²âÆ÷žæŸ¯*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //ÕûÕÅ±í
+	case OBJECT_DETECTORWARN_TABLE: /*车辆检测器告警*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )   //整张表
 		{
 			ucIndex = 0;
 			ucRecordCnt = 48;
@@ -2436,8 +2539,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		}
 		break;
 		break;
-	case OBJECT_PHASESTATUS_TABLE:   /*ÏàÎ»×ŽÌ¬*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //ÕûÕÅ±í
+	case OBJECT_PHASESTATUS_TABLE:    /*相位状态*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //整张表
 		{
 			ucIndex = 0;
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 2;
@@ -2508,8 +2611,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_OVERLAPPHASE_STATUS: /*žúËæÏàÎ»×ŽÌ¬*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //ÕûÕÅ±í
+	case OBJECT_OVERLAPPHASE_STATUS: /*跟随相位状态*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //整张表
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 1;
 			
@@ -2576,8 +2679,8 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 		}
 
 		break;
-	case OBJECT_CHANNELSTATUS_TABLE:      /*ÍšµÀ×ŽÌ¬*/
-		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //ÕûÕÅ±í
+	case OBJECT_CHANNELSTATUS_TABLE:       /*通道状态*/
+		if ( (0==ucIdxFst) && (0==ucIdxSnd) && (0==ucSubId) )  //整张表
 		{
 			ucIndex = 0;
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 2;
@@ -2647,16 +2750,16 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 			return;
 		}
 		break;
-	case OBJECT_CURTSC_FLASHCTRL:  /*µ±Ç°ÉÁ¹â¿ØÖÆÒýÆðµÄÔ­Òò*/
-		if ( pTscStatus->uiWorkStatus != FLASH )   //·Ç»ÆÉÁ
+	case OBJECT_CURTSC_FLASHCTRL:  /*当前闪光控制引起的原因*/
+		if ( pTscStatus->uiWorkStatus != FLASH )   //非黄闪
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 2;
 		}
-		else if ( CTRL_MANUAL == pTscStatus->uiCtrl ) //ÊÖ¶¯»ÆÉÁ
+		else if ( CTRL_MANUAL == pTscStatus->uiCtrl )  //手动黄闪
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 4;
 		}
-		else if ( true == pTscStatus->bStartFlash ) //Æô¶¯Ê±»ÆÉÁ
+		else if ( true == pTscStatus->bStartFlash ) //启动时黄闪
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex++] = 7;
 		}
@@ -2676,9 +2779,9 @@ void CGbtMsgQueue::PackTscStatus(Byte ucDealDataIndex,void* pValue)
 	m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex = iRecvIndex;
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex = iSendIndex;
 	m_sGbtDealData[ucDealDataIndex].iObjNum--;
-	if ( iRecvIndex == iRecvBufLen )  //ŽŠÀíÍê±Ï
+	if ( iRecvIndex == iRecvBufLen )   //处理完毕
 	{
-		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //¶ÔÏóÊýÒ²žÕºÃŽŠÀíÍê±Ï
+		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum ) //对象数也刚好处理完毕
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 			GotoSendToHost(ucDealDataIndex);
@@ -2714,18 +2817,18 @@ Return:         无
 ***************************************************************/
 void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 {
-	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //ÊÕµœÖ¡µÄ²Ù×÷ÀàÐÍ
+	//Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //收到帧的操作类型
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	//int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;  //Ë÷ÒýžöÊý
-	Byte ucErrorSts    = 0;  //ŽíÎó×ŽÌ¬
-	Byte ucErrorIdx    = 0;  //ŽíÎóË÷Òý
-	Byte ucObjId       = 0;  //¶ÔÏóÃû(±íÃû)
-	Byte ucIdxFst      = 0;  //µÚÒ»žöË÷Òý(id1)
-	Byte ucIdxSnd      = 0;  //µÚ¶þžöË÷Òý(id2)
-	Byte ucSubId       = 0;  //×Ó¶ÔÏó(×Ö¶ÎÏÂ±ê)
+	Byte ucIndexCnt    = 0;  //索引个数
+	Byte ucErrorSts    = 0;  //错误状态
+	Byte ucErrorIdx    = 0;  //错误索引
+	Byte ucObjId       = 0;  //对象名(表名)
+	Byte ucIdxFst      = 0;  //第一个索引(id1)
+	Byte ucIdxSnd      = 0;  //第二个索引(id2)
+	Byte ucSubId       = 0; //子对象(字段下标)
 
 	if ( iRecvIndex >= iRecvBufLen )
 	{
@@ -2734,13 +2837,13 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 
-	/************¶ÔÏó±êÊ¶*************/
+	/*************对象标识*********/
 	ucObjId = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex];
-	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //¶ÔÏó±êÊ¶
+	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //对象标识
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********Ë÷ÒýžöÊýÓë×Ó¶ÔÏó*******/
+	/***********索引个数与子对象********/
 	if ( iRecvIndex >= iRecvBufLen )
 	{
 		ucErrorSts = GBT_ERROR_OTHER;
@@ -2748,14 +2851,14 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		return;
 	}
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] =
-		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //Ë÷ÒýžöÊýÓë×Ó¶ÔÏó
-	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //Ë÷ÒýžöÊý
-	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //×Ó¶ÔÏó£¬×Ö¶ÎÏÂ±ê
+		m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //索引个数与子对象
+	ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //索引个数
+	ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //子对象，字段下标
 	iRecvIndex++;
 	iSendIndex++;
 
-	/***********Ë÷Òý*************/
-	if ( ucIndexCnt > 0 )  /*Ë÷Òý1*/
+	/***********索引*************/
+	if ( ucIndexCnt > 0 )  /*索引1*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2769,7 +2872,7 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 ) /*Ë÷Òý2*/
+	if ( ucIndexCnt > 0 ) /*索引2*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2783,7 +2886,7 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		iSendIndex++;
 		ucIndexCnt--;
 	}
-	if ( ucIndexCnt > 0 )  /*Ë÷Òý3ºöÂÔ*/
+	if ( ucIndexCnt > 0 )  /*索引3忽略*/
 	{
 		if ( iRecvIndex >= iRecvBufLen )
 		{
@@ -2796,10 +2899,10 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 		ucIndexCnt--;
 	}
 
-	/************ÖµÓò**************/
+	/**********值域************/
 	switch ( ucObjId )
 	{
-	case OBJECT_EXT_TSC_STATUS:  /*µ±Ç°ÐÅºÅ»úµÄ¿ØÖÆ×ŽÌ¬*/
+	case OBJECT_EXT_TSC_STATUS:  /*当前信号机的控制状态*/
 		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,(Byte*)pValue,25);
 		iSendIndex += 25;
 		break;
@@ -2811,9 +2914,9 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 	m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex = iRecvIndex;
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex = iSendIndex;
 	m_sGbtDealData[ucDealDataIndex].iObjNum--;
-	if ( iRecvIndex == iRecvBufLen )  //ŽŠÀíÍê±Ï
+	if ( iRecvIndex == iRecvBufLen )  //处理完毕
 	{
-		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //¶ÔÏóÊýÒ²žÕºÃŽŠÀíÍê±Ï
+		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //对象数也刚好处理完毕
 		{
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 			GotoSendToHost(ucDealDataIndex);
@@ -2952,29 +3055,29 @@ Return:         无
 ***************************************************************/
 void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex) 
 {
-	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] ) & 0xf;  //ÊÕµœÖ¡µÄ²Ù×÷ÀàÐÍ
-	Byte ucSendOptType = 0;                                                              //·¢ËÍÖ¡µÄ²Ù×÷ÀàÐÍ
+	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] ) & 0xf;  //收到帧的操作类型
+	Byte ucSendOptType = 0;                                                              //发送帧的操作类型
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
 	int iSendBufLen    = m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen;
-	Byte ucIndexCnt    = 0;    //Ë÷ÒýžöÊý
-	Byte ucErrorSts    = 0;    //ŽíÎó×ŽÌ¬
-	Byte ucErrorIdx    = 0;    //ŽíÎóË÷Òý
-	Byte ucObjId       = 0;    //¶ÔÏóÃû(±íÃû)
-	Byte ucIdxFst      = 255;  //µÚÒ»žöË÷Òý(id1)
-	Byte ucIdxSnd      = 255;  //µÚ¶þžöË÷Òý(id2)
-	Byte ucSubId       = 0;    //×Ó¶ÔÏó(×Ö¶ÎÏÂ±ê)
-	int  iFunRet       = -1;   //º¯Êý·µ»ØÖµ
+	Byte ucIndexCnt    = 0;    //索引个数
+	Byte ucErrorSts    = 0;    //错误状态
+	Byte ucErrorIdx    = 0;    //错误索引
+	Byte ucObjId       = 0;    //对象名(表名)
+	Byte ucIdxFst      = 255;  //第一个索引(id1)
+	Byte ucIdxSnd      = 255;  //第二个索引(id2)
+	Byte ucSubId       = 0;    //子对象(字段下标)
+	int  iFunRet       = -1;   //函数返回值
 
-	/**********Ê×ŽÎŽŠÀížÃÖ¡************/
+	/**********首次处理该帧************/
 	if ( 0 == iRecvIndex ) 
 	{
 		ucSendOptType = GetSendOperateType(ucRecvOptType);   
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[0] = 
-			(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0) | ucSendOptType;  //Í·×ÖœÚ
+			(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0] & 0xf0) | ucSendOptType; //头字节
 		m_sGbtDealData[ucDealDataIndex].iObjNum = 
-			 ( (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]>>4) & 7 ) + 1;  //¶ÔÏóžöÊý
+			 ( (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]>>4) & 7 ) + 1;  //对象个数
 
 		iRecvIndex = 1;
 		iSendIndex = 1;
@@ -2992,12 +3095,12 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			return;
 		}
 		
-		/************¶ÔÏó±êÊ¶*************/
+		/************对象标识*************/
 		ucObjId = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex];
-		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //¶ÔÏó±êÊ¶
+		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] = ucObjId;   //对象标识
 
 		if ( ( IsSendTscCommand(ucObjId) && (GBT_SEEK_REQ == ucRecvOptType) ) 
-			|| IsGetTscStatusObject(ucObjId) )  //»ñÈ¡ÐÅºÅ»ú×ŽÌ¬¶ÔÏó
+			|| IsGetTscStatusObject(ucObjId) ) //获取信号机状态对象
 		{
 			if ( GBT_SEEK_REQ != ucRecvOptType )
 			{
@@ -3021,7 +3124,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(SThreadMsg));
 			return;
 		}
-		else if ( ucObjId == OBJECT_SET_REPORTSELF )  //Ö÷¶¯ÉÏ±š
+		else if ( ucObjId == OBJECT_SET_REPORTSELF ) //主动上报
 		{
 #ifdef GBT_TCP
 			CGbtTimer::CreateInstance()->TailorReport(ucDealDataIndex 
@@ -3042,7 +3145,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			CleanDealData(ucDealDataIndex);
 			return ;
 		}
-		else if ( IsOtherObject(ucObjId) )  
+		else if ( IsOtherObject(ucObjId) )  	 //其他类型的对象
 		{
 			m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex  = iRecvIndex; 
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex  = iSendIndex;          
@@ -3057,7 +3160,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			SendGbtMsg(&sTscMsg,sizeof(SThreadMsg));
 			return;
 		}
-		else if ( IsExtendObject(ucObjId) )  //À©Õ¹ÀàÐÍ¶ÔÏó
+		else if ( IsExtendObject(ucObjId) )  //扩展类型对象
 		{
 			m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex  = iRecvIndex; 
 			m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex  = iSendIndex;          
@@ -3076,7 +3179,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 		iRecvIndex++;
 		iSendIndex++;
 
-		/***********Ë÷ÒýžöÊýÓë×Ó¶ÔÏó*******/
+		/***********索引个数与子对象*******/
 		if ( iRecvIndex >= iRecvBufLen )
 		{
 			ucErrorSts = GBT_ERROR_OTHER;
@@ -3087,14 +3190,14 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			return;
 		}
 		m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[iSendIndex] =
-			               m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //Ë÷ÒýžöÊýÓë×Ó¶ÔÏó
-		ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //Ë÷ÒýžöÊý
-		ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;      //×Ó¶ÔÏó£¬×Ö¶ÎÏÂ±ê
+			               m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]; //索引个数与子对象
+		ucIndexCnt = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]>>6) & 0x3;  //索引个数
+		ucSubId    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex] & 0x3F;       //子对象，字段下标
 		iRecvIndex++;
 		iSendIndex++;
 
-		/***********Ë÷Òý**************/
-		if ( ucIndexCnt > 0 )  /*Ë÷Òý1*/
+		/***********索引**************/
+		if ( ucIndexCnt > 0 )  /*索引1*/
 		{
 			if ( iRecvIndex >= iRecvBufLen )
 			{
@@ -3111,7 +3214,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			iSendIndex++;
 			ucIndexCnt--;
 		}
-		if ( ucIndexCnt > 0 ) /*Ë÷Òý2*/
+		if ( ucIndexCnt > 0 ) /*索引2*/
 		{
 			if ( iRecvIndex >= iRecvBufLen )
 			{
@@ -3128,7 +3231,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			iSendIndex++;
 			ucIndexCnt--;
 		}
-		if ( ucIndexCnt > 0 )  /*Ë÷Òý3ºöÂÔ*/
+		if ( ucIndexCnt > 0 )  /*索引3忽略*/
 		{
 			if ( iRecvIndex >= iRecvBufLen )
 			{
@@ -3144,8 +3247,8 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			ucIndexCnt--;
 		}
 		
-		/************ÖµÓò**************/
-		if ( IsSendTscCommand(ucObjId) )  //·¢ËÍÐÅºÅ»ú¿ØÖÆ¶ÔÏó
+		/************值域**************/
+		if ( IsSendTscCommand(ucObjId) )  //发送信号机控制对象
 		{
 			 if ( ! ( GBT_SEEK_REQ != ucRecvOptType ) )
 			 {
@@ -3156,8 +3259,8 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 				 GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
 				 return;
 			 }
-			//ÏòÐÅºÅ»úœø³Ì·¢ËÍ¿ØÖÆÃüÁî
-			if ( !SendTscCommand(ucObjId,m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]) )   //·¢ËÍÊ§°Ü
+			//向信号机进程发送控制命令
+			if ( !SendTscCommand(ucObjId,m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]) )   //发送失败
 			{
 				ucErrorSts = GBT_ERROR_OTHER;
 #ifdef TSC_DEBUG
@@ -3168,19 +3271,19 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			}
 			iRecvIndex++;
 		}
-		else  //ÊýŸÝ¿â²Ù×÷¶ÔÏó
+		else //数据库操作对象
 		{
-			if ( GBT_SEEK_REQ == ucRecvOptType )  //²éÑ¯
+			if ( GBT_SEEK_REQ == ucRecvOptType ) //查询
 			{
 				iFunRet = GBT_DB::ExchangeData(1,
-									    ucObjId,      //±íÃû
-										ucIdxFst,     //µÚÒ»žöË÷Òý(id1)
-										ucIdxSnd,     //µÚ¶þžöË÷Òý(id2)
-										ucSubId,      //×Ó¶ÔÏó
-					                    m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,      //Öµ
-					                    MAX_BUF_LEN-iSendIndex,    //·¢ËÍÖ¡µÄÊ£Óà»ºŽæ³€¶È
-										ucErrorSts,  //ŽíÎó×ŽÌ¬
-										ucErrorIdx); //ŽíÎóË÷Òý
+									    ucObjId,      //表名
+										ucIdxFst,     //第一个索引(id1)
+										ucIdxSnd,     //第二个索引(id2)
+										ucSubId,      //子对象
+					                    m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,      //值
+					                    MAX_BUF_LEN-iSendIndex,    //发送帧的剩余缓存长度
+										ucErrorSts,  //错误状态
+										ucErrorIdx); //错误索引
 				ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
 				if ( iFunRet < 0 )
 				{
@@ -3195,17 +3298,17 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 					iSendIndex += iFunRet;
 				}
 			}
-			else if ( (GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType) )  //ÉèÖÃ
+			else if ( (GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType) ) //设置
 			{
 				iFunRet = GBT_DB::ExchangeData(0,
-									ucObjId,      //±íÃû
-									ucIdxFst,     //µÚÒ»žöË÷Òý(id1)
-									ucIdxSnd,     //µÚ¶þžöË÷Òý(id2)
-									ucSubId,      //×Ó¶ÔÏó
-									m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf+iRecvIndex,      //Öµ
-									m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen-iRecvIndex,    //ÊýŸÝ³€¶È
-									ucErrorSts,  //ŽíÎó×ŽÌ¬
-									ucErrorIdx); //ŽíÎóË÷Òý
+									ucObjId,      //表名
+									ucIdxFst,     //第一个索引(id1)
+									ucIdxSnd,     //第二个索引(id2)
+									ucSubId,      //子对象
+									m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf+iRecvIndex,      //值
+									m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen-iRecvIndex,     //数据长度
+									ucErrorSts,  //错误状态
+									ucErrorIdx); //错误索引
 				if ( iFunRet < 0 )
 				{
 #ifdef TSC_DEBUG
@@ -3229,9 +3332,9 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 		}
 		
 		m_sGbtDealData[ucDealDataIndex].iObjNum--;
-		if ( iRecvIndex == iRecvBufLen )  //ÊÕµœµÄ×ÖœÚÊýÒÑŽŠÀíÍê±Ï
+		if ( iRecvIndex == iRecvBufLen )  //收到的字节数已处理完毕
 		{
-			if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //¶ÔÏóÊýÒ²žÕºÃŽŠÀíÍê±Ï
+			if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum )  //对象数也刚好处理完毕
 			{
 				m_sGbtDealData[ucDealDataIndex].sSendFrame.iBufLen = iSendIndex;
 				GotoSendToHost(ucDealDataIndex);
@@ -3250,7 +3353,15 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			}
 			
 		}		
-	
+		/*
+		ucIndexCnt    = 0;   //索引个数
+		ucErrorSts    = 0;   //错误状态
+		ucErrorIdx    = 0;   //错误索引
+		ucObjId       = 0;   //对象名(表名)
+		ucIdxFst      = 255;  //第一个索引(id1)
+		ucIdxSnd      = 255;  //第二个索引(id2)
+		ucSubId       = 0;    //子对象(字段下标)
+		*/
 	}
 }
 
@@ -3503,7 +3614,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.ucMsgOpt     = 0;
 				sTscMsgSts.uiMsgDataLen = 1;
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
-				*((Byte*)sTscMsgSts.pDataBuf) = ALLRED;  //È«ºì
+				*((Byte*)sTscMsgSts.pDataBuf) = ALLRED;  //全红
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
 			else if ( 254 == ucValue )
@@ -3521,7 +3632,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.ucMsgOpt     = 0;
 				sTscMsgSts.uiMsgDataLen = 1;
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
-				*((Byte*)sTscMsgSts.pDataBuf) = FLASH;  //ÉÁ¹â
+				*((Byte*)sTscMsgSts.pDataBuf) = FLASH;  //黄闪
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
 			else if ( 255 == ucValue )
@@ -3840,7 +3951,7 @@ Return:         无
 void CGbtMsgQueue::SendToHost(Byte ucDealDataIndex)
 {
 	int iSendToClient = 0;
-	Byte ucOperateType = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;  //²Ù×÷ÀàÐÍ
+	Byte ucOperateType = (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;  //操作类型
 
 	if ( GBT_SET_REQ_NOACK == ucOperateType )  //设置无应答
 	{
@@ -3851,7 +3962,7 @@ void CGbtMsgQueue::SendToHost(Byte ucDealDataIndex)
 		if ( m_sGbtDealData[ucDealDataIndex].bReportSelf ) //主动上报
 		{
 			/*
-			if ( OBJECT_DETECTORSTS_TABLE == m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[1] )  //Œì²âÆ÷×ŽÌ¬
+			if ( OBJECT_DETECTORSTS_TABLE == m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf[1] )  //检测器状态
 			{
 				
 				static Byte ucDetStatus[28] = {0};
@@ -3864,7 +3975,7 @@ void CGbtMsgQueue::SendToHost(Byte ucDealDataIndex)
 					}
 				}
 				
-				if ( !bSend )  //Œì²âÆ÷ÓëÉÏŽÎµÄ×ŽÌ¬Ò»ÖÂ ²»±Ø·¢ËÍÖ±µœ×ŽÌ¬žÄ±ä
+				if ( !bSend )  //检测器与上次的状态一致 不必发送直到状态改变
 				{
 					CleanDealData(ucDealDataIndex);
 					return;
@@ -3950,7 +4061,7 @@ void CGbtMsgQueue::FirstRecv(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 
 	sGbtMsg.ulType       = GBT_MSG_DEAL_RECVBUF;  
 	sGbtMsg.ucMsgOpt     = ucDealDataIndex;
-	sGbtMsg.uiMsgDataLen = iBufLen;  //Ô­ÊŒÊÕµœÊýŸÝµÄŽóÐ¡
+	sGbtMsg.uiMsgDataLen = iBufLen;  //原始收到数据的大小
 	sGbtMsg.pDataBuf     = NULL;	
 	SendGbtMsg(&sGbtMsg,sizeof(sGbtMsg));
 }
@@ -3963,7 +4074,7 @@ Input:         	ucDealDataIndex： 待处理信息下标
 				iBufLen           接收到的udp数据长度
 				pBuf              接收数据缓存指针
 Output:        	无
-Return:         无
+Return:         无			0:非法消息 1：合法消息
 ***************************************************************/
 int CGbtMsgQueue::CheckMsg(Byte ucDealDataIndex,Uint iBufLen,Byte* pBuf)
 {
@@ -4116,7 +4227,7 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 	while ( true )
 	{
 		#ifdef GBT_TCP
-		if ( pGbtMsgQueue->m_acceptor.accept(sockStreamRemote,NULL,&timeout) != -1 ) //ÐÂµÄ¿Í»§¶ËÁ¬œÓ
+		if ( pGbtMsgQueue->m_acceptor.accept(sockStreamRemote,NULL,&timeout) != -1 ) //新的客户端连接
 		{
 			ucDealDataIndex = pGbtMsgQueue->GetDealDataIndex(false , sockStreamRemote);
 
@@ -4334,6 +4445,7 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_TMPPATTERN_CFG :     //临时12方向随机组合，放行60秒默认
 		case OBJECT_SYSFUNC_CFG :        //系统其他功能设置
 		case OBJECT_POWERBOARD_CFG :       //电源板配置
+		case OBJECT_GSM_CFG :            //配置GSM功能
 			return true;
 		default:
 			return false;
