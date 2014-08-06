@@ -69,6 +69,8 @@ public:
 	bool bTmpPattern ;     //临时方案
 	bool bUTS ;            //中心平台联网控制
 	bool bDegrade ;        //是否降级
+	bool bChkManul ;       //用于判断系统启动初始手控状态
+	bool bSecondPriority ; //用于次线半感应控制逻辑判断  ADD：20140618
 
 private:
 	CManaKernel();
@@ -171,7 +173,8 @@ public:
 	Byte m_ucUtscOffset;      //中心协调相位差
 	
 	//ACE_Thread_Mutex m_mutexSetCycle;
-
+	//lastUcTimePatternId 上一个周期的配置 方案与当前是否一致。
+	Byte lastUcTimePatternId;
 	ACE_Thread_Mutex  m_mutexRunData;
 
 	//CWirelessCoord m_cableless;     //无电线缆控制
