@@ -642,7 +642,7 @@ Return:         无
 	Byte ucIndex = 0;
 	static int iTick = 0;
 	unsigned int uiTclCtl = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
-
+//	ACE_DEBUG((LM_DEBUG,"%s:%d, SearchAllStatus----------------: \n", __FILE__, __LINE__));
 	while ( ucIndex < MAX_DET_BOARD )
 	{
 		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&& ( m_iDetCfg[ucIndex] != 0 ) && iTick%5 == 0)
@@ -1053,11 +1053,11 @@ void CDetector::GetOccupy()
 	CManaKernel *pManaKernel = CManaKernel::CreateInstance();
 	while ( iIndex-- > 0 )
 	{
-		//ACE_DEBUG((LM_DEBUG,"******%d\n",m_iDetTimeLen[iIndex]));
+		ACE_DEBUG((LM_DEBUG,"******%d\n",m_iDetTimeLen[iIndex]));
 		if(pManaKernel->m_pTscConfig->sDetector[iIndex].ucPhaseId>0)
 		{
 			m_iDetOccupy[iIndex] = m_iDetTimeLen[iIndex] *100 / (m_iTotalDistance*10) ;  
-	//1s 10ŽÎÍ³ŒÆ m_iDetTimeLen 1min=60s 60*10*5
+	///1s 10 m_iDetTimeLen 1min=60s 60*10*5
 			(CDbInstance::m_cGbtTscDb).AddVehicleStat(iIndex+1 , m_ucTotalStat[iIndex] ,  m_iDetOccupy[iIndex]);
 		}
 	}
@@ -1832,7 +1832,7 @@ Return:         无
 ***************************************************************/
 void CDetector::GetAllVehSts(Byte QueryType,Byte ucBdindex)
 {	
-	//ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD:%d\n",__FILE__,__LINE__,iNdex));
+//	ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD:%d\n",__FILE__,__LINE__,ucBdindex));
 	switch(ucBdindex)
 	{
 		case 2 :
@@ -1876,14 +1876,14 @@ void CDetector::GetVehSts(Byte ucBoardAddr,Byte QueryType)
 			Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  ,ucBoardAddr  , &(sSendFrameTmp.ulCanId));
 			sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND << 6 ) | DET_HEAD_VEHSTS; //DATA_HEAD_CHECK ->>> DATA_HEAD_RESEND MOD?2013 0710 1645			
 			sSendFrameTmp.ucCanDataLen = 1; //检测是否有车
-			//ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD_ADDR:%x,QueryType=%d\n",__FILE__,__LINE__,ucBoardAddr,QueryType));
+	//		ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD_ADDR:%x,QueryType=%d\n",__FILE__,__LINE__,ucBoardAddr,QueryType));
 			break ;
 		case DET_HEAD_STS :
 			Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  ,ucBoardAddr  , &(sSendFrameTmp.ulCanId));
 
 			sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND << 6 ) | DET_HEAD_STS; ////DATA_HEAD_CHECK ->>> DATA_HEAD_RESEND 需要回复检测器内部数据
 			sSendFrameTmp.ucCanDataLen = 1; //检测每块板检测器工作状态
-			//ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD_ADDR:%x,QueryType=%d\n",__FILE__,__LINE__,ucBoardAddr,QueryType));
+	//		ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD_ADDR:%x,QueryType=%d\n",__FILE__,__LINE__,ucBoardAddr,QueryType));
 			break ;
 		default :
 			return ;
