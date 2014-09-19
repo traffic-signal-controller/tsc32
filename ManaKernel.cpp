@@ -1391,11 +1391,11 @@ void CManaKernel::OverCycle()
 	//lastUcTimePatternId 上一个配时号是否与当前的配时号一样  
 	//这里主要对同样的方案不进行步伐表备份到单片机。
 		//ACE_DEBUG((LM_DEBUG,"%s:%d ***************** lastUcTimePatternId =%d,m_pRunData->ucTimePatternId=%d\n",__FILE__,__LINE__,lastUcTimePatternId,m_pRunData->ucTimePatternId));
-		//if(lastUcTimePatternId != m_pRunData->ucTimePatternId)
-		//{
+		if(lastUcTimePatternId != m_pRunData->ucTimePatternId)
+		{
 			MainBackup::CreateInstance()->DoSendStep(m_pRunData);
-		//	lastUcTimePatternId = m_pRunData->ucTimePatternId;
-		//}
+			lastUcTimePatternId = m_pRunData->ucTimePatternId;
+		}
 		
 		
 	}
