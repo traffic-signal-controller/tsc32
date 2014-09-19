@@ -160,6 +160,21 @@ enum
 };
 
 /*
+新增控制器LCD 黄闪原因20140822
+*/
+enum
+{
+	CTRLBOARD_FLASH_NORMAL 		 = 0x0  , //正常情况下黄闪	
+	CTRLBOARD_FLASH_MANUALCTRL	 = 0x01 , //手控黄闪	
+	CTRLBOARD_FLASH_NOPATTERN	 = 0x03 , //无方案黄闪
+	CTRLBOARD_FLASH_LAMPCHECK    = 0x02 , //灯泡检测黄闪
+	CTRLBOARD_FLASH_DOWNGRADE 	 = 0x04 , //降级黄闪
+	CTRLBOARD_FLASH_FORCEFLASH	 = 0x05 , //黄闪器强制黄闪
+	CTRLBOARD_FLASH_PHASECONFLIC = 0x06 , //相位冲突
+	
+};
+
+/*
 信号机控制队列消息枚举类型
 */
 enum
@@ -313,6 +328,7 @@ enum
 	FUN_3G             = 17 , //3G通信
 	FUN_WLAN		   = 18 , //WLAN无线网络
 	FUN_CNTTYPE	       = 19,  //倒计时类型
+	FUN_PSC_INTERVAL   = 20,  //行人过街按钮下次有效间隔期间
 	FUN_COUNT                 // 总到特定功能数量值
 };
 

@@ -245,6 +245,8 @@ void CTscTimer::ChooseDecTime()
 			bPsc = false;
 		}
 		pWorkParaManager->DecTime();
+		if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)
+			pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 		
 	}
 	else if ( pWorkParaManager->m_bFinishBoot 	&& pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue != MODE_TSC	)
@@ -254,6 +256,8 @@ void CTscTimer::ChooseDecTime()
 		{
 			//ACE_DEBUG((LM_DEBUG,"\n%s:%d SpecFun[FUN_CROSS_TYPE]=%d ,m_pRunData->ucStageCount = %d \n",__FILE__,__LINE__,pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue, pWorkParaManager->m_pRunData->ucStageCount));
 			pWorkParaManager->DecTime();
+			if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)				
+				pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 		}
 		else if ( pWorkParaManager->m_bCycleBit || bPsc )
 		{
@@ -273,15 +277,21 @@ void CTscTimer::ChooseDecTime()
 				bPsc = true;
 			}
 			CPscMode::CreateInstance()->DecTime();
+			if(pWorkParaManager->m_pRunData->ucWorkMode == MODE_TSC)
+				pWorkParaManager->m_pRunData->ucWorkMode = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ;
 		}
 		else
 		{
 			pWorkParaManager->DecTime();
+			if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)
+				pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 		}
 	} 
 	else
 	{
 		pWorkParaManager->DecTime();
+		if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)
+			pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 	}
 }
 

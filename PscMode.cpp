@@ -95,6 +95,7 @@ void CPscMode::InitPara()
 	m_bStartCntCown     = false;
 	m_ucBtnNum = 0 ;
 	m_ucNextTime = 0 ;
+	m_psc_intervaltime = 5 ;
 }
 
 
@@ -115,6 +116,7 @@ void CPscMode::DealButton()
 	Byte ucButton           = 0;
 	time_t ucNow            = time(NULL);
 	static GBT_DB::SpecFun* pSpecFun = m_pWorkParaManager->m_pTscConfig->sSpecFun;
+	m_psc_intervaltime = pSpecFun[FUN_PSC_INTERVAL].ucValue ;
 	while ( ucIndex < MAX_PUSHS )
 	{
 		if ( (m_ucBtnNum >> ucIndex) & 1 )
@@ -134,7 +136,7 @@ void CPscMode::DealButton()
 		ucIndex++;
 	}
 	
-	if ( !bPressBtn || PSC_STAND_STATUS != m_ucPscStatus || (ucNow -m_ucNextTime < PUSH_INTERNAL))
+	if ( !bPressBtn || PSC_STAND_STATUS != m_ucPscStatus || (ucNow -m_ucNextTime < m_psc_intervaltime ))
 	{		
 		m_ucBtnNum = 0 ;
 		return;

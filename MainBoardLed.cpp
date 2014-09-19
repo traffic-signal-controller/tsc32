@@ -178,6 +178,8 @@ void CMainBoardLed::DoLedBoardShow()
 		LedBoardStaus[3] = 0x1 ;
 	if(CFlashMac::CreateInstance()->GetHardwareFlash())
 		LedBoardStaus[9] = 0x3 ;
+	else		
+		LedBoardStaus[9] = 0x2 ;
 	if(CGps::CreateInstance()->m_bGpsTime)
 		LedBoardStaus[8] = 0x3 ;
 	SetLedBoardShow();

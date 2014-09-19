@@ -1141,16 +1141,16 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	
 	/***********??‚Ç¨√ó√∑¬∑??????************/
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue  = ucTmp;
+	pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1    , ucTmp);
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue  = ucTmp;
+	pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_STAND_STAGEID+1  , ucTmp);
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_CORSS1_STAGEID].ucValue  = ucTmp;
+	pTscCfg->sSpecFun[FUN_CORSS1_STAGEID].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CORSS1_STAGEID+1 , ucTmp);
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue  = ucTmp;
+	pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
 
 	/***********????????????????***********/
@@ -1236,11 +1236,8 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 							system("reboot");
 							return ;
 							break ;	
-
 					}
-
 				}
-
 			}		
 			break;
 		case 2:  //ËÆæÂ§áÂêØÁî®Â≠ó,ÂèØ‰ª•ÂêØÁî®ÁâπÊÆäÂäüËÉΩFUNË°®‰∏≠ÁöÑËÆæÂ§á 81 f6 02 aa bb cc bb cc Ôºåaa Ë°®Á§∫ÂêØÁî®ËÆæÂ§áÁ±ªÂûãÊï∞, bbË°®Á§∫ËÆæÂ§áÁ¥¢ÂºïÔºåccË°®Á§∫ÂêØÁî®ÂÄº.
@@ -1259,16 +1256,12 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			break;
 		case 3: //Â∑•‰ΩúÊñπÂºè
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue = ucTmp ;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1     , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_STAND_STAGEID+1  , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CORSS1_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CORSS1_STAGEID+1 , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
 			CManaKernel::CreateInstance()->SetUpdateBit();
 			break;
@@ -1636,6 +1629,32 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 			
 			break ;
 			}
+		
+			case 0x06:
+			{
+				Byte Direc =pBuf[iRecvIndex++] ;
+				if(Direc<0 || Direc >3)   //∑ΩœÚ0-±±∑Ω 1-∂´∑Ω 2-ƒœ∑Ω 3-Œ˜∑Ω
+					return ;
+				if(pManakernel->m_iTimePatternId == 0)
+				{	
+					pManakernel->bTmpPattern = true ;
+					pManakernel->m_iTimePatternId = 250;//‘À––Àƒ∑ΩœÚ«–ªª				
+				}	
+				SThreadMsg sTscMsg;
+				sTscMsg.ulType		 = TSC_MSG_PATTER_RECOVER;	
+				sTscMsg.ucMsgOpt	 = Direc;
+				sTscMsg.uiMsgDataLen = 0;			
+				sTscMsg.pDataBuf	 = NULL;			
+				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));	
+				break;
+			}
+		case 0x7:   //ADD:20140828 »À––π˝Ω÷¡¨–¯¡Ω¥Œ∞¥≈•…˙–ßº‰∏Ù ±º‰
+			{
+				Byte psc_interval_time = pBuf[iRecvIndex++] ;
+				pManakernel->m_pTscConfig->sSpecFun[FUN_PSC_INTERVAL].ucValue  = psc_interval_time;
+				(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_PSC_INTERVAL+1 , psc_interval_time);
+				break ;
+			}
 			
 		default:
 			break ;
@@ -1765,6 +1784,7 @@ void  CGbtMsgQueue::SetFlashCtrl(Byte* pBuf,int& iRecvIndex)
 			break ;
 		case 0x04 :			
 			pFlashMac->FlashForceStart(pBuf[iRecvIndex++]);
+			CManaKernel::CreateInstance()->m_pRunData->flashType = CTRLBOARD_FLASH_FORCEFLASH;
 			break ;
 		case 0x03 :			
 			pFlashMac->m_ucSetFlashRate = pBuf[iRecvIndex] & 0x0f;
@@ -3238,6 +3258,11 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 				GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
 				return;
 			}
+			
+			else if(ucObjId == OBJECT_SWITCH_SYSTEMCONTROL && m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]==0xFE)
+			{
+			CManaKernel::CreateInstance()->m_pRunData->flashType = CTRLBOARD_FLASH_MANUALCTRL;
+			}
 			iRecvIndex++;
 		}
 		else  //????????????????√ó√∑??????√≥
@@ -3253,7 +3278,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 					                    MAX_BUF_LEN-iSendIndex,    //¬∑????????????????????√†??????????‚Ç¨????
 										ucErrorSts,  //??√≠??√≥√ó??????
 										ucErrorIdx); //??√≠??√≥??√∑????
-				ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
+				//ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
 				if ( iFunRet < 0 )
 				{
 #ifdef TSC_DEBUG
@@ -3761,6 +3786,24 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				*((Byte*)sTscMsgSts.pDataBuf) = ucValue; 
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 			}
+			
+			else if(ucValue == 0)
+			{
+				CManaKernel *pManaKernel = CManaKernel::CreateInstance();
+				if(pManaKernel->m_bNextPhase == true)
+					return false;
+				else
+				{
+					pManaKernel->m_bNextPhase = true ;
+				}
+				SThreadMsg sTscMsgSts;
+				sTscMsgSts.ulType		= TSC_MSG_NEXT_STAGE;  //∞¥Ω◊∂Œ«∞Ω¯
+				sTscMsgSts.ucMsgOpt 	= 0;
+				sTscMsgSts.uiMsgDataLen = 1;
+				sTscMsgSts.pDataBuf 	= NULL;
+				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
+			
+			}
 			else
 			{
 				return false;
@@ -4180,12 +4223,12 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 				if ( ( iRecvCount = pGbtDealData[i].SockStreamClient.recv(pBuf,MAX_BUF_LEN))  != -1 )		
 				{
 					//#if 1
-					ACE_DEBUG((LM_DEBUG,"\n%s:%d ",__FILE__,__LINE__));
-					for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
-					{
-						ACE_DEBUG((LM_DEBUG," %x ",pBuf[iIndex]));
-					}
-					ACE_DEBUG((LM_DEBUG,"\n"));
+				//	ACE_DEBUG((LM_DEBUG,"\n%s:%d ",__FILE__,__LINE__));
+					//for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
+					//{
+						//ACE_DEBUG((LM_DEBUG," %x ",pBuf[iIndex]));
+					//}
+					//ACE_DEBUG((LM_DEBUG,"\n"));
 					//#endif
 
 					sMsg.ulType       = GBT_MSG_FIRST_RECV;
@@ -4206,14 +4249,14 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 		if ( ( iRecvCount = (pGbtMsgQueue->m_sockLocal).recv(pBuf, MAX_BUF_LEN,addrRemote))  != -1 )		
 		{
 
-			#if 1
-			ACE_DEBUG((LM_DEBUG,"%s:%d Get %d Byte udp data:  ",__FILE__,__LINE__,iRecvCount));
-			for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
-			{
-				ACE_DEBUG((LM_DEBUG,"%x ",pBuf[iIndex]));
-			}
-			ACE_DEBUG((LM_DEBUG,"\n"));
-			#endif
+			//#if 1
+			//ACE_DEBUG((LM_DEBUG,"%s:%d Get %d Byte udp data:  ",__FILE__,__LINE__,iRecvCount));
+			//for (int iIndex=0; iIndex<iRecvCount; iIndex++ )
+			//{
+			//	ACE_DEBUG((LM_DEBUG,"%x ",pBuf[iIndex]));
+			//}
+			//ACE_DEBUG((LM_DEBUG,"\n"));
+			//#endif
 
 			ucDealDataIndex = pGbtMsgQueue->GetDealDataIndex(false , addrRemote);
 			
@@ -4226,7 +4269,7 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 				ACE_OS::memcpy(sMsg.pDataBuf,pBuf,iRecvCount);
 
 				pGbtMsgQueue->SendGbtMsg(&sMsg,sizeof(sMsg));
-				ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
+				//ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
 			}
 			else
 			{	///Ë∂ÖËøá4‰∏™ÂÆ¢Êà∑Â§ßÂ∞èÔºåÊó†Ê≥ïÂÜçÊé•Êî∂Êñ∞Êï∞ÊçÆ
@@ -4462,8 +4505,6 @@ void CGbtMsgQueue::ReworkNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay)
 	ACE_OS::system("/sbin/ifconfig eth0 down\n");	
 	ACE_OS::system(cIpAndMaskCmd);
 	ACE_OS::system(cGatewayCmd);	
-	//ACE_OS::printf("ip:mask: %s",cIpAndMaskCmd);	
-	//ACE_OS::printf("gateway: %s",cGatewayCmd);	
 	RecordNetPara(pIp , pMask , pGateWay);	
 }
 
