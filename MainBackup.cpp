@@ -158,6 +158,27 @@ void MainBackup::OperateManual(Ushort mbs)
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
 	ACE_OS::memset( &sTscMsg    , 0 , sizeof(SThreadMsg));
 	ACE_OS::memset( &sTscMsgSts , 0 , sizeof(SThreadMsg));
+	
+	ACE_DEBUG((LM_DEBUG,"%s:%d    !!!!!!!!!!!!!!    %d      %d     !\n",__FILE__,__LINE__,m_ucLastManualSts,MAINBACKUP_MANUAL_SELF));
+	if (m_ucLastManualSts != MAINBACKUP_MANUAL_SELF )
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d PANEL Control Mode don't changed!\n",__FILE__,__LINE__));
+
+		deadmanual++ ;
+		if(deadmanual >MANUAL_TO_AUTO_TIME*600) //10鍒嗛挓
+		{
+				
+			deadmanual = 0;
+			CMainBoardLed::CreateInstance()->DoAutoLed(true);  //ADD: 201309231500
+			if (m_ucLastManualSts == MAINBACKUP_MANUAL_SELF)
+				return;
+			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0);
+			ACE_DEBUG((LM_DEBUG,"%s:%d ************** MAINBACKUP_MANUAL_SELF TscMsg! \n",__FILE__,__LINE__));
+			m_ucLastManualSts = MAINBACKUP_MANUAL_SELF;
+		}
+	
+	}
+	
 	switch(mbs)
 	{
 		case MAINBACKUP_MANUAL_SELF:
@@ -323,24 +344,8 @@ void MainBackup::OperateManual(Ushort mbs)
 			
 				break;
 	}
-	if (m_ucLastManualSts != MAINBACKUP_MANUAL_SELF )
-	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d PANEL Control Mode don't changed!\n",__FILE__,__LINE__));
 
-		deadmanual++ ;
-		if(deadmanual >MANUAL_TO_AUTO_TIME*600) //10鍒嗛挓
-		{
-				
-			deadmanual = 0;
-			CMainBoardLed::CreateInstance()->DoAutoLed(true);  //ADD: 201309231500
-			if (m_ucLastManualSts == MAINBACKUP_MANUAL_SELF)
-				return;
-			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0);
-			ACE_DEBUG((LM_DEBUG,"%s:%d ************** MAINBACKUP_MANUAL_SELF TscMsg! \n",__FILE__,__LINE__));
-			m_ucLastManualSts = MAINBACKUP_MANUAL_SELF;
-		}
 	
-	}
 }
 
 /**************************************************************
@@ -517,11 +522,11 @@ void MainBackup::SendStep()
 							sendBit[11] |= 0x01;	//第一块第三个灯组 的第一个字节
 							break;
 						case 7:
-							sendBit[12] |= 0x01;
+							sendBit[12] |= 0x40;
 							sendBit[11] |= 0x01;
 							break;
 						case 8:
-							sendBit[12] |= 0x02;
+							sendBit[12] |= 0x80;
 							sendBit[11] |= 0x01;
 							break;
 						case 9:
@@ -1510,7 +1515,7 @@ void MainBackup::DoManual()
 	Byte readManual[6] = {0xaa,0x55,0x03,MAINBACKUP_READ_MANUAL,0xff,0xff};
 	Byte chksum = ~(MAINBACKUP_READ_MANUAL+0xff);
 	readManual[5] = chksum;
-	//ACE_DEBUG((LM_DEBUG,"%s:%d MSG: DoManual == readManual[0] %x,readManual[1] %x,readManual[2] %x,readManual[3] %x,readManual[4] %x,readManual[5] %x\n",__FILE__,__LINE__,readManual[0],readManual[1],readManual[2],readManual[3],readManual[4],readManual[5]));
+	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: DoManual == readManual[0] %x,readManual[1] %x,readManual[2] %x,readManual[3] %x,readManual[4] %x,readManual[5] %x\n",__FILE__,__LINE__,readManual[0],readManual[1],readManual[2],readManual[3],readManual[4],readManual[5]));
 	SendBackup(readManual,6);
 }
 /**************************************************************
@@ -1528,7 +1533,7 @@ void MainBackup::HeartBeat()
 	Byte chksum = ~(MAINBACKUP_HEART+0xff+stepNo);
 	heart[6] = chksum;
 	// 500ms 发送心跳数据，无返回数据
-	//SendBackup(heart,sizeof(heart)/sizeof(heart[0]));
+	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: HeartBeat == heart[0] %x,heart[1] %x,heart[2] %x,heart[3] %x,heart[4] %x,heart[5] %x\n",__FILE__,__LINE__,heart[0],heart[1],heart[2],heart[3],heart[4],heart[5]));
 //	Byte reByte[8] = {0};
 	SendBackup(heart,7);
 	
@@ -1749,7 +1754,7 @@ void* MainBackup::Recevie(void* arg)
 					ManualBytes[0] = resultBytes[6];
 					ManualBytes[1] = resultBytes[5];
 					ManualButtonSts = bytes2T<Ushort>(ManualBytes);
-					//ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));
+					ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));
 					pMainBackup->OperateManual(ManualButtonSts);
 					//delete ManualBytes
 					break;
