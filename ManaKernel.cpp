@@ -3015,7 +3015,6 @@ void CManaKernel::ChangePatter(Byte iParama)
 	if(m_iTimePatternId == 250) //特殊方案-四方向放行
 	{
 		 SetDirecChannelColor(iParama) ; //设置这个方向绿灯放行，不包括行人通道
-		 ACE_DEBUG((LM_DEBUG,"%s:%d Special Pattern:250,Allow Direc =%d \n" , __FILE__,__LINE__,iParama));
 	}
 		
 }

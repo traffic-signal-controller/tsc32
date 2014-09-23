@@ -305,7 +305,7 @@ enum
 	FUN_3G             = 17 , //3G通信
 	FUN_WLAN		   = 18 , //WLAN无线网络
 	FUN_CNTTYPE	       = 19,  //倒计时类型
-	FUN_LIGHTCHECK	= 20,		//灯泡检测开关
+	FUN_LIGHTCHECK	= 20,	//灯泡检测开关
 	FUN_COUNT                 // 总到特定功能数量值
 };
 

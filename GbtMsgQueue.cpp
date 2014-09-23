@@ -795,6 +795,18 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			SetTmpPattern(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}
 		break ;
+
+	case OBJECT_COMMAND_SIGNAL:
+ 		if ( GBT_SEEK_REQ == ucRecvOptType )  
+		{
+			;
+		}
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
+		{		 
+			
+			SetCommandSignal(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
+		}		
+		break ;
 	case OBJECT_SYSFUNC_CFG :    //系统其他功能配置
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
@@ -1674,6 +1686,90 @@ void CGbtMsgQueue::SetLampBdtCfg(Byte* pBuf,int& iRecvIndex)
 	pLampBd->SendSingleCfg(ucBdIndex);
 }
 
+/**************************************************************
+Function:       CGbtMsgQueue::SetCommandSignal
+Description:   接收上位机控制信号机信号指令包括下一相位方向等.
+Input:          pBuf   接收设置缓存指针
+		     iRecvIndex     当前设置取值地址
+Output:         无
+Return:         无
+***************************************************************/
+void CGbtMsgQueue::SetCommandSignal(Byte* pBuf,int& iRecvIndex)
+{
+	CManaKernel *pManakernel = CManaKernel::CreateInstance();
+	Byte Tmp = pBuf[iRecvIndex++];
+	switch(Tmp)
+	{
+		case 0x01 :
+		if(pBuf[iRecvIndex++] ==0x0)
+		{
+			if ( (pManakernel->m_pRunData->uiCtrl!= CTRL_PANEL && pManakernel->m_pRunData->uiCtrl != CTRL_MANUAL)|| (pManakernel->m_pRunData->uiWorkStatus!= STANDARD) )
+			{
+				return ;
+			}							
+			if(pManakernel->m_bNextPhase == true)
+				return ;
+			else
+			{
+				pManakernel->m_bNextPhase = true ;
+			}
+			SThreadMsg sTscMsgSts;
+			sTscMsgSts.ulType       = TSC_MSG_NEXT_STAGE;  //按阶段前进
+			sTscMsgSts.ucMsgOpt     = 0;
+			sTscMsgSts.uiMsgDataLen = 1;
+			sTscMsgSts.pDataBuf     = NULL ;				
+			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
+							
+		}			
+		break ;
+		case 0x02 :
+		if ( (pManakernel->m_pRunData->uiCtrl!= CTRL_PANEL && pManakernel->m_pRunData->uiCtrl != CTRL_MANUAL)|| (pManakernel->m_pRunData->uiWorkStatus!= STANDARD) )
+		{
+				return ;
+		}
+		if(pBuf[iRecvIndex++] ==0x0)
+		{						
+			static int directype = 0 ;
+			if(pManakernel->m_iTimePatternId == 0)
+			{	
+				pManakernel->bTmpPattern = true ;
+				pManakernel->m_iTimePatternId = 250;//运行四方向切换				
+			}
+			SThreadMsg sTscMsg ;
+			sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  
+			sTscMsg.ucMsgOpt     = (directype++)%4;
+			sTscMsg.uiMsgDataLen = 0;			
+			sTscMsg.pDataBuf     = NULL; 			
+			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));	
+		}
+		break ;
+		case 0x03 :
+		{
+			Byte Direc =pBuf[iRecvIndex++] ;
+			if ( (pManakernel->m_pRunData->uiCtrl!= CTRL_PANEL && pManakernel->m_pRunData->uiCtrl != CTRL_MANUAL)|| (pManakernel->m_pRunData->uiWorkStatus!= STANDARD) )
+			{
+				return ;
+			}			
+			if(Direc<1 || Direc >4)   //方向0-北方 1-东方 2-南方 3-西方
+				return ;
+			if(pManakernel->m_iTimePatternId == 0)
+			{	
+				pManakernel->bTmpPattern = true ;
+				pManakernel->m_iTimePatternId = 250;//运行四方向切换				
+			}	
+			SThreadMsg sTscMsg;
+			sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  
+			sTscMsg.ucMsgOpt     = (Direc-1);
+			sTscMsg.uiMsgDataLen = 0;			
+			sTscMsg.pDataBuf     = NULL; 			
+			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
+		}
+		break ;
+		default:
+			return ;
+	}
+}
+
 
 /**************************************************************
 Function:       CGbtMsgQueue::SetSysFunc
@@ -1730,18 +1826,73 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 				{
 					uEndTime |= (pBuf[iRecvIndex++])<<(8*uNum);
 				}
-				ACE_DEBUG((LM_DEBUG,"%s:%d StartTime = %0X \n",__FILE__,__LINE__,uStartTime));
-				ACE_DEBUG((LM_DEBUG,"%s:%d EndTime = %0X \n",__FILE__,__LINE__,uEndTime));
+				//ACE_DEBUG((LM_DEBUG,"%s:%d StartTime = %0X \n",__FILE__,__LINE__,uStartTime));
+				//ACE_DEBUG((LM_DEBUG,"%s:%d EndTime = %0X \n",__FILE__,__LINE__,uEndTime));
 				 (CDbInstance::m_cGbtTscDb).DelEventLog(uEvtTypeId , uStartTime , uEndTime) ;
 				
 			break ;
-			}
+			}		
 		case 0x04 :
-			;
+			{
+			Byte updatetype = pBuf[iRecvIndex++] ;
+			if(updatetype == 0x01)
+			{
+				ACE_OS::system("mv -f Gb.aiton Gb.aiton.bak");
+			}
+			else if(updatetype == 0x2)
+			{
+				ACE_OS::system("chmod 777 Gb*") ;
+				ACE_OS::system("reboot") ;
+			}
+			else if(updatetype == 0x03)
+			{
+				ACE_OS::system("rm -f Gb.aiton") ;
+				ACE_OS::system("mv -f Gb.aiton.bak Gb.aiton");
+				ACE_OS::system("reboot") ;
+			}
+			
 			break ;
+			}
 		case 0x05:
-			;
+			{
+			Byte updatetype = pBuf[iRecvIndex++] ;
+			if(updatetype == 0x01)
+			{
+				ACE_OS::system("mv -f GbAitonTsc.db GbAitonTsc.db.bak");
+			}
+			else if(updatetype == 0x2)
+			{
+				ACE_OS::system("chmod 777 GbAitonTsc*") ;
+				ACE_OS::system("reboot") ;
+			}
+			else if(updatetype == 0x03)
+			{
+				ACE_OS::system("rm -f GbAitonTsc.db") ;
+				ACE_OS::system("mv -f GbAitonTsc.db.bak GbAitonTsc.db");
+				ACE_OS::system("reboot") ;
+			}
+			
 			break ;
+			}
+		case 0x06:
+			{
+				Byte Direc =pBuf[iRecvIndex++] ;
+				if(Direc<0 || Direc >3)   //方向0-北方 1-东方 2-南方 3-西方
+					return ;
+				if(pManakernel->m_iTimePatternId == 0)
+				{	
+					pManakernel->bTmpPattern = true ;
+					pManakernel->m_iTimePatternId = 250;//运行四方向切换				
+				}	
+				SThreadMsg sTscMsg;
+				sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  
+				sTscMsg.ucMsgOpt     = Direc;
+				sTscMsg.uiMsgDataLen = 0;			
+				sTscMsg.pDataBuf     = NULL; 			
+				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));	
+				break;
+			}
+		
 		default:
 			break ;
 	}
@@ -3578,6 +3729,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
 				*((Byte*)sTscMsgSts.pDataBuf) = STANDARD;  
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
+				CMainBoardLed::CreateInstance()->DoAutoLed(true);
 			}
 			else if ( (ucValue>0) && (ucValue<33) )
 			{
@@ -3778,6 +3930,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
 				*((Byte*)sTscMsgSts.pDataBuf) = CTRL_MANUAL;  
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
+				CMainBoardLed::CreateInstance()->DoAutoLed(false);
 			}
 			else
 			{
@@ -3786,10 +3939,28 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			break;
 		
 		case OBJECT_SWITCH_STAGE: /*相位阶段切换*/
-			if ( (uiTscCtrl != CTRL_PANEL)
-				|| (uiWorkStatus != STANDARD ) )
+			if ( (uiTscCtrl != CTRL_PANEL && uiTscCtrl != CTRL_MANUAL)|| (uiWorkStatus != STANDARD) )
+
 			{
 				return false;
+			}
+			else if(ucValue == 0)
+			{
+				CManaKernel *pManaKernel = CManaKernel::CreateInstance();
+				if(pManaKernel->m_bNextPhase == true)
+					return false;
+				else
+				{
+					pManaKernel->m_bNextPhase = true ;
+				}
+				SThreadMsg sTscMsgSts;
+				sTscMsgSts.ulType       = TSC_MSG_NEXT_STAGE;  //按阶段前进
+				sTscMsgSts.ucMsgOpt     = 0;
+				sTscMsgSts.uiMsgDataLen = 1;
+				sTscMsgSts.pDataBuf     = NULL ;
+				
+				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
+				
 			}
 			else if ( (ucValue>0) && (ucValue<17) )
 			{
@@ -3801,20 +3972,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				*((Byte*)sTscMsgSts.pDataBuf) = ucValue; 
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 				
-			}
-			else if ( ucValue==0 )
-			{
-				if(pManaKernel->m_bNextPhase == true)
-					return false;
-				else
-					pManaKernel->m_bNextPhase = true ;
-				sTscMsg.ulType       = TSC_MSG_NEXT_STAGE;  //下一阶段
-				sTscMsg.ucMsgOpt     = 0;
-				sTscMsg.uiMsgDataLen = 1;
-				sTscMsg.pDataBuf     = NULL;
-				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
-				
-			}
+			}			
 			else if( ucValue == 250)
 			{
 				
@@ -3827,8 +3985,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 
 		case OBJECT_GOSTEP: /***步进和跳步操作***/ 
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Send Next Step TscMsg ! uiTscCtrl%d uiWorkStatus%d\n",__FILE__,__LINE__,uiTscCtrl,uiWorkStatus));
-			if ( (uiTscCtrl != CTRL_PANEL)
-				|| (uiWorkStatus != STANDARD ) )
+			if ( (uiTscCtrl != CTRL_PANEL && uiTscCtrl != CTRL_MANUAL)|| (uiWorkStatus != STANDARD) )
 			{
 				return false;
 			}
@@ -3841,7 +3998,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
 				*((Byte*)sTscMsgSts.pDataBuf) = 0;
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
-				ACE_DEBUG((LM_DEBUG,"%s:%d Send Next Step TscMsg ! \n",__FILE__,__LINE__));
+				//ACE_DEBUG((LM_DEBUG,"%s:%d Send Next Step TscMsg ! \n",__FILE__,__LINE__));
 				pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,6,0,0,0);
 			}
 			else if ( (ucValue > 0) && (ucValue < MAX_PHASE) )  //锁定步伐后进行跳步
@@ -4446,6 +4603,7 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_SYSFUNC_CFG :        //系统其他功能设置
 		case OBJECT_POWERBOARD_CFG :       //电源板配置
 		case OBJECT_GSM_CFG :            //配置GSM功能
+		case OBJECT_COMMAND_SIGNAL:      //上位机命令控制下一阶段相位和方向
 			return true;
 		default:
 			return false;
