@@ -1703,10 +1703,17 @@ void CGbtMsgQueue::SetCommandSignal(Byte* pBuf,int& iRecvIndex)
 		case 0x01 :
 		if(pBuf[iRecvIndex++] ==0x0)
 		{
+		
 			if ( (pManakernel->m_pRunData->uiCtrl!= CTRL_PANEL && pManakernel->m_pRunData->uiCtrl != CTRL_MANUAL)|| (pManakernel->m_pRunData->uiWorkStatus!= STANDARD) )
 			{
 				return ;
-			}							
+			}	
+			if( pManakernel->m_iTimePatternId == 250) //防止上位机方向切回下一相位的时候没有过渡
+			{
+				pManakernel->bNextDirec = false ;
+				pManakernel->m_iTimePatternId = 0;
+				pManakernel->bTmpPattern = false ;
+			}
 			if(pManakernel->m_bNextPhase == true)
 				return ;
 			else
@@ -3714,6 +3721,12 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 			}
 			else if ( 0 == ucValue )
 			{
+				if( pManaKernel->m_iTimePatternId == 250)
+				{
+					pManaKernel->bNextDirec = false ;
+					pManaKernel->m_iTimePatternId = 0;
+					pManaKernel->bTmpPattern = false ;
+				}
 				SThreadMsg sTscMsg;
 				sTscMsg.ulType       = TSC_MSG_SWITCH_CTRL;  
 				sTscMsg.ucMsgOpt     = 0;

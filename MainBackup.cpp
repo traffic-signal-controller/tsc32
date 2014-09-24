@@ -159,7 +159,7 @@ void MainBackup::OperateManual(Ushort mbs)
 	ACE_OS::memset( &sTscMsg    , 0 , sizeof(SThreadMsg));
 	ACE_OS::memset( &sTscMsgSts , 0 , sizeof(SThreadMsg));
 	
-	ACE_DEBUG((LM_DEBUG,"%s:%d    !!!!!!!!!!!!!!    %d      %d     !\n",__FILE__,__LINE__,m_ucLastManualSts,MAINBACKUP_MANUAL_SELF));
+	////ACE_DEBUG((LM_DEBUG,"%s:%d    !!!!!!!!!!!!!!    %d      %d     !\n",__FILE__,__LINE__,m_ucLastManualSts,MAINBACKUP_MANUAL_SELF));
 	if (m_ucLastManualSts != MAINBACKUP_MANUAL_SELF )
 	{
 		ACE_DEBUG((LM_DEBUG,"%s:%d PANEL Control Mode don't changed!\n",__FILE__,__LINE__));
@@ -189,6 +189,12 @@ void MainBackup::OperateManual(Ushort mbs)
 			//}
 			if (m_ucLastManualSts == MAINBACKUP_MANUAL_SELF)
 				return;
+			if( pManaKernel->m_iTimePatternId == 250)
+			{
+				pManaKernel->bNextDirec = false ;
+				pManaKernel->m_iTimePatternId = 0;
+				pManaKernel->bTmpPattern = false ;
+			}
 			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0);
 			ACE_DEBUG((LM_DEBUG,"%s:%d ************** MAINBACKUP_MANUAL_SELF TscMsg! \n",__FILE__,__LINE__));
 			m_ucLastManualSts = MAINBACKUP_MANUAL_SELF;
@@ -1515,7 +1521,7 @@ void MainBackup::DoManual()
 	Byte readManual[6] = {0xaa,0x55,0x03,MAINBACKUP_READ_MANUAL,0xff,0xff};
 	Byte chksum = ~(MAINBACKUP_READ_MANUAL+0xff);
 	readManual[5] = chksum;
-	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: DoManual == readManual[0] %x,readManual[1] %x,readManual[2] %x,readManual[3] %x,readManual[4] %x,readManual[5] %x\n",__FILE__,__LINE__,readManual[0],readManual[1],readManual[2],readManual[3],readManual[4],readManual[5]));
+////	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: DoManual == readManual[0] %x,readManual[1] %x,readManual[2] %x,readManual[3] %x,readManual[4] %x,readManual[5] %x\n",__FILE__,__LINE__,readManual[0],readManual[1],readManual[2],readManual[3],readManual[4],readManual[5]));
 	SendBackup(readManual,6);
 }
 /**************************************************************
@@ -1533,7 +1539,7 @@ void MainBackup::HeartBeat()
 	Byte chksum = ~(MAINBACKUP_HEART+0xff+stepNo);
 	heart[6] = chksum;
 	// 500ms 发送心跳数据，无返回数据
-	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: HeartBeat == heart[0] %x,heart[1] %x,heart[2] %x,heart[3] %x,heart[4] %x,heart[5] %x\n",__FILE__,__LINE__,heart[0],heart[1],heart[2],heart[3],heart[4],heart[5]));
+////	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: HeartBeat == heart[0] %x,heart[1] %x,heart[2] %x,heart[3] %x,heart[4] %x,heart[5] %x\n",__FILE__,__LINE__,heart[0],heart[1],heart[2],heart[3],heart[4],heart[5]));
 //	Byte reByte[8] = {0};
 	SendBackup(heart,7);
 	
@@ -1625,7 +1631,7 @@ Return:         无
 ***************************************************************/
 void MainBackup::ReadID(Byte *pByte)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: ReadID array[0] %d -array[1] %d-array[2] %d-array[3] %d-array[4] %d-array[5] %d-array[6] %d-array[7] %d\n",__FILE__,__LINE__,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7]));
+	////ACE_DEBUG((LM_DEBUG,"%s:%d MSG: ReadID array[0] %d -array[1] %d-array[2] %d-array[3] %d-array[4] %d-array[5] %d-array[6] %d-array[7] %d\n",__FILE__,__LINE__,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7]));
 	return ;
 }
 
@@ -1639,7 +1645,7 @@ Return:         无
 ***************************************************************/
 void MainBackup::WriteIDTF(Byte *pByte)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: ReadID array[0] %d -array[1] %d-array[2] %d-array[3] %d-array[4] %d-array[5] %d-array[6] %d-array[7] %d\n",__FILE__,__LINE__,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7]));
+	////ACE_DEBUG((LM_DEBUG,"%s:%d MSG: ReadID array[0] %d -array[1] %d-array[2] %d-array[3] %d-array[4] %d-array[5] %d-array[6] %d-array[7] %d\n",__FILE__,__LINE__,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7]));
 	return ;
 
 }
@@ -1665,7 +1671,7 @@ Return:         无
 ***************************************************************/
 void MainBackup::CurrentSetp(Byte &setp)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: setp  %d\n",__FILE__,__LINE__,setp));
+	////ACE_DEBUG((LM_DEBUG,"%s:%d MSG: setp  %d\n",__FILE__,__LINE__,setp));
 	return ;
 }
 
@@ -1711,7 +1717,7 @@ void* MainBackup::Recevie(void* arg)
 				ACE_DEBUG((LM_DEBUG,"%s:%d Error: ReadComPort Error %d\n",__FILE__,__LINE__));
 				return NULL;
 			}
-			ACE_DEBUG((LM_DEBUG,"%s:%d Recv: %d bytes, [%X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X]\n",__FILE__,__LINE__,len_tty,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7],pByte[8],pByte[9],pByte[10],pByte[11],pByte[12],pByte[13],pByte[14],pByte[15],pByte[16],pByte[17],pByte[18],pByte[19],pByte[20],pByte[21],pByte[22],pByte[23],pByte[24],pByte[25],pByte[26],pByte[27],pByte[28],pByte[29],pByte[30]));
+			////ACE_DEBUG((LM_DEBUG,"%s:%d Recv: %d bytes, [%X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X]\n",__FILE__,__LINE__,len_tty,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7],pByte[8],pByte[9],pByte[10],pByte[11],pByte[12],pByte[13],pByte[14],pByte[15],pByte[16],pByte[17],pByte[18],pByte[19],pByte[20],pByte[21],pByte[22],pByte[23],pByte[24],pByte[25],pByte[26],pByte[27],pByte[28],pByte[29],pByte[30]));
 			
 			//len_tty = CSerialCtrl::CreateInstance()->WriteComPort(pByte, len_tty);	///这里是将外部设备输入的同时，输出给外部设备。调试使用
 			//CSerialCtrl::CreateInstance()->WriteComPort(" recved:", sizeof(" recved:"));	   //字节类型，所以字符串不能写
@@ -1754,7 +1760,7 @@ void* MainBackup::Recevie(void* arg)
 					ManualBytes[0] = resultBytes[6];
 					ManualBytes[1] = resultBytes[5];
 					ManualButtonSts = bytes2T<Ushort>(ManualBytes);
-					ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));
+					////ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));
 					pMainBackup->OperateManual(ManualButtonSts);
 					//delete ManualBytes
 					break;
