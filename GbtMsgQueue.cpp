@@ -1394,69 +1394,51 @@ Return:         无
 ***************************************************************/
 void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 {
-	CFlashMac* pFlashMac = CFlashMac::CreateInstance();
+	
+	CMacControl * pMacControl = CMacControl::CreateInstance() ;
+	CPowerBoard * pPowerBoard = CPowerBoard::CreateInstance();
+	pMacControl->GetEnvSts();
+	pPowerBoard->CheckVoltage();
+	ACE_OS::sleep(ACE_Time_Value(0, 30000));
 
-	bool bForDoor        = pFlashMac->m_bGetForDoor;   //前门打开
-	bool bPowerType      = pFlashMac->m_bPowerType;    //供电类型 true:交流电 false:太阳能
-	bool bAlarmStatus    = false;//CPowerBoard::CreateInstance()->m_bGetAlarmStatus;   //报警器状态
-	Byte ucDoorValue     = 0;
-	int  iTemperature    = pFlashMac->m_iTemperature;  //温度
-	int  iVoltage        = pFlashMac->m_iVoltage;       //电压
-
-	//温度值
-	if ( iTemperature > -65 && iTemperature < 120 )
-	{
-		iTemperature += 65;
-	}
-	else if ( iTemperature < -65 )
-	{
-		iTemperature = 0;
-	}
-	else if ( iTemperature > 120 )
-	{
-		iTemperature = 185;
-	}
-
-	pBuf[*iSendIndex] = (iTemperature >> 8) & 0xff; //高字节在低位
+	pBuf[*iSendIndex] = pMacControl->m_ucDoorFront ;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucDoorBack;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucLightDev<<6;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = (pMacControl->m_ucWarnDev<<7);
 	*iSendIndex += 1;
 
-	pBuf[*iSendIndex] = iTemperature & 0xff;
+	pBuf[*iSendIndex] = pMacControl->m_ucTemp ;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucHum;
+	*iSendIndex += 1;	
+	pBuf[*iSendIndex] = pMacControl->m_ucFarOut1;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucFarOut2;
 	*iSendIndex += 1;
 
-	//门开关值  校时设备.....
-	if ( bForDoor && bAlarmStatus )   //门打开且当前处于报警状态
-	{
-		ucDoorValue = 0;
-	}
-	else if ( bForDoor && !bAlarmStatus ) 
-	{
-		ucDoorValue = 0x03;
-	}
-	else
-	{
-		ucDoorValue = 0x02;
-	}
-	pBuf[*iSendIndex] = ucDoorValue;
+	pBuf[*iSendIndex] = pMacControl->m_ucFarIn1 ;
 	*iSendIndex += 1;
-	//电压值
-	pBuf[*iSendIndex] = (iVoltage >> 8) & 0xff; //高字节在低位
+	pBuf[*iSendIndex] = pMacControl->m_ucFarIn2;
 	*iSendIndex += 1;
 
-	pBuf[*iSendIndex] = iVoltage & 0xff;
+	pBuf[*iSendIndex] = pMacControl->m_ucAddHot;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucReduHot;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = pMacControl->m_ucCabinet;
+	*iSendIndex += 1;
+	pBuf[*iSendIndex] = CPscMode::CreateInstance()->m_ucBtnNum ;
 	*iSendIndex += 1;
 
-
-	//供电类型
-	if ( bPowerType )
-	{
-		pBuf[*iSendIndex] = 0;
-		*iSendIndex += 1;
-	}
-	else
-	{
-		pBuf[*iSendIndex] = 2;
-		*iSendIndex += 1;
-	}
+	pBuf[*iSendIndex] = pPowerBoard->m_iStongVoltage ;  //强电电压
+	*iSendIndex += 1 ;		
+	pBuf[*iSendIndex] = pPowerBoard->m_iWeakVoltage  ;  //弱电电
+	*iSendIndex += 1 ;		
+	pBuf[*iSendIndex] = pPowerBoard->m_iBusVoltage ;  //总线电压
+	*iSendIndex += 1 ;
 }
 
 
