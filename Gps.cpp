@@ -22,8 +22,8 @@ History:
 #define GpsInternel 600
 bool   CGps::m_bNeedGps     = false;
 time_t CGps::m_tLastTi      = 0;
-//int    CGps::m_iGpsFd       = Serial2::CreateInstance()->GetSerial2Fd();//打开GPS连接串口
-int    CGps::m_iGpsFd  	    = CSerialCtrl::CreateInstance()->GetSerialFd1();
+//打开GPS连接串口
+int    CGps::m_iGpsFd  	    = CSerialCtrl::CreateInstance()->GetSerialFd2();
 char   CGps::m_cBuf[128]    = {0};
 bool   CGps::m_bGpsTime = false ;
 Ushort CGps:: ierrorcount  = 0 ;
@@ -86,13 +86,13 @@ void CGps::RunGpsData()
 	}	
 	
 	//Byte iGps = CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
-	if( (time(NULL)-m_tLastTi)<GpsInternel && GetLastTi() != 0)
+	/*if( (time(NULL)-m_tLastTi)<GpsInternel && GetLastTi() != 0)
 	{	
 		if(m_bGpsTime)
 			m_bGpsTime = false ;
 		return ;
 	}
-
+*/
 	//ACE_OS::memset(m_cBuf,0x0,128);
 	char *pBuf   = m_cBuf;
 	int iFlagGps = 0;	
@@ -101,13 +101,14 @@ void CGps::RunGpsData()
 	//*iTime = m_tLastTi ;
 	m_bGpsTime = true ;
 	//CRs485::CreateInstance()->CtrolGPPIo(1,10) ; //Open Gps io gpp10
-	//CSerialCtrl::CreateInstance()->set_speed(m_iGpsFd, 38400);
+	//CSerialCtrl::CreateInstance()->(m_iGpsFd, 38400);
 	tcflush(m_iGpsFd, TCIFLUSH);
 
-#ifndef WINDOWS
+
 	while ( true ) 
 	{
 		
+		//ACE_DEBUG((LM_DEBUG,"\n%s:%d  RunGpsData while  \n",__FILE__,__LINE__));
 		if ( read(m_iGpsFd, pBuf,1) <= 0 )
 		{
 			ACE_OS::sleep(ACE_Time_Value(0,100*1000));
@@ -116,10 +117,11 @@ void CGps::RunGpsData()
 			{
 			 ACE_DEBUG((LM_DEBUG,"\n%s:%d Cant read gps info than 1000 times!\n",__FILE__,__LINE__));
 			 ierrorcount = 0 ;
-			 return ;
+			 //return ; TODO  这里读取1000次都没有读取到GPS信息，因此记录数据库日志中。
 			}
 			continue;
-		}		
+		}
+		//ACE_DEBUG((LM_DEBUG,"\n%s:%d  RunGpsData while %d \n",__FILE__,__LINE__,pBuf[0]));
 		if ( '$' == *pBuf )
 		{
 			pBuf++;
@@ -129,19 +131,21 @@ void CGps::RunGpsData()
 		{
 			if ( ('*' == *(pBuf-2) ) || ( (pBuf - m_cBuf) >= (int)sizeof(m_cBuf) - 1) )
 			{
-#ifdef TSC_DEBUG
+
 				ACE_DEBUG((LM_DEBUG,"\n%s:%d %c\n",__FILE__,__LINE__,*pBuf));
-#endif
+
 				*(pBuf+1) = '\n';
 				if ( 0 == strncmp(GPRMC, m_cBuf, strlen(GPRMC)) )
 				{
-					//ACE_DEBUG((LM_DEBUG,"\n%s,%d gps_read %s \n", __FILE__, __LINE__, m_cBuf));					
+					ACE_DEBUG((LM_DEBUG,"\n%s,%d gps_read %s \n", __FILE__, __LINE__, m_cBuf));					
 					if ( CheckSum(m_cBuf) )
 					{
-						Extract();						
-						//if(CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue == 0x3)
-							//return ;
-						return ;
+						Extract();
+
+						//day表示几天，也就是线程休眠几天。1表示每天进行校时，2表示第两天进行校时......
+						Byte day = CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS_SCHEDULE].ucValue;
+						ACE_OS::sleep(ACE_Time_Value(0,1000*1000*60*60*24*day));   //这里进行确定多少秒进行GPS读取一次,目前是定死了。以后可以确定为特殊功能里面。86400
+						
 					}
 					else
 					{
@@ -162,7 +166,7 @@ void CGps::RunGpsData()
 			pBuf = m_cBuf;
 		}
 	}
-	#endif
+
 
 	return ;
 }
@@ -323,6 +327,8 @@ void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSe
 		fclose(fpGps);
 	}
 	Ttime += 8 * 60 * 60;
+
+	ACE_DEBUG((LM_DEBUG,"\n%s,%d gps_read time is %s \n", __FILE__, __LINE__, ctime(&Ttime)));	
 	sTscMsg.ulType       = TSC_MSG_CORRECT_TIME;
 	sTscMsg.ucMsgOpt     = OBJECT_UTC_TIME;
 	sTscMsg.uiMsgDataLen = 4;
