@@ -217,7 +217,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	case 9:
 		if(pWorkParaManager->m_pRunData->bIsChkLght == true )
 			pLamp->CheckLight();// check Lampboard status and red&green conflict
-		ACE_DEBUG((LM_DEBUG,"\n%s:%d pMainBackup->bSendStep = %d!\n",__FILE__,__LINE__,pMainBackup->bSendStep));
+		//ACE_DEBUG((LM_DEBUG,"\n%s:%d pMainBackup->bSendStep = %d!\n",__FILE__,__LINE__,pMainBackup->bSendStep));
 		if(pMainBackup->bSendStep)
 			pMainBackup->SendStep();
 		break;

@@ -169,7 +169,7 @@ INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,con
 		fprintf (stderr, "cannot open port %s\n", pComPort);        
 		return (-1);    
 	}    
-	printf("comport fd = %d\n", fd);    
+	//printf("comport fd = %d\n", fd);    
 	tcgetattr (fd, &termios_old);       /* save old termios value */   
 	/* 0 on success, -1 on failure */    
 	retval = set_port_attr (baudrate, databit, stopbit, parity);    
@@ -892,7 +892,7 @@ void CSerialCtrl::OpenALLSerial()
 	}else{
 		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM1));
 	}
-	ret = OpenComPort(SERIALNUM2, 115200, 8, "1", 'N');
+	ret = OpenComPort(SERIALNUM2, 38400, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM2));
 		//return ;	
