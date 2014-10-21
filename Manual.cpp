@@ -3,12 +3,12 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   LampBoard.cpp
 Date:       2013-4-13
-Description:ä¿¡å·æœºç¯æ‰‹æ§æ“ä½œå¤„ç†ç±»æ–‡ä»¶.åŒ…å«å¯¹æ‰‹æ§é¢æ¿å…¨çº¢ï¼Œé»„é—ªï¼Œæ­¥è¿›,æ‰‹åŠ¨è‡ªåŠ¨åˆ‡æ¢æŒ‰é’®æ“ä½œçš„å¤„ç†ã€‚
+Description:ĞÅºÅ»úµÆÊÖ¿Ø²Ù×÷´¦ÀíÀàÎÄ¼ş.°üº¬¶ÔÊÖ¿ØÃæ°åÈ«ºì£¬»ÆÉÁ£¬²½½ø,ÊÖ¶¯×Ô¶¯ÇĞ»»°´Å¥²Ù×÷µÄ´¦Àí¡£
 Version:    V1.0
-History:    2013.05.29 ä¿®æ”¹æŒ‰é’®æŒ‰ä¸‹å’Œæ¾å¼€çš„å¤„ç†ã€‚
-		  2013.05.31 æ·»åŠ å½“æ‰‹åŠ¨çŠ¶æ€ç»´æŠ¤5åˆ†é’Ÿä»¥ä¸Šæ—¶è‡ªåŠ¨åˆ‡æ¢ä¸ºè‡ªåŠ¨çŠ¶æ€.ã€‚
-		  2013.09.10 ä¿®æ”¹æŒ‰é’®æ¥æ”¶å¤„ç†æ–¹å¼ï¼Œç®€åŒ–ä»£ç ã€‚
-		  2014.010.06 ä¿®æ”¹æŒ‰é’®æ¥å—å¤„ç†æ–¹å¼ï¼Œç”±ä½ç§»å¾ªç¯åˆ¤æ–­ä¿®æ”¹ä½è¯»å–é”®å€¼è¿›è¡Œåˆ¤æ–­
+History:    2013.05.29 ĞŞ¸Ä°´Å¥°´ÏÂºÍËÉ¿ªµÄ´¦Àí¡£
+		  2013.05.31 Ìí¼Óµ±ÊÖ¶¯×´Ì¬Î¬»¤5·ÖÖÓÒÔÉÏÊ±×Ô¶¯ÇĞ»»Îª×Ô¶¯×´Ì¬.¡£
+		  2013.09.10 ĞŞ¸Ä°´Å¥½ÓÊÕ´¦Àí·½Ê½£¬¼ò»¯´úÂë¡£
+		  2014.010.06 ĞŞ¸Ä°´Å¥½ÓÊÜ´¦Àí·½Ê½£¬ÓÉÎ»ÒÆÑ­»·ÅĞ¶ÏĞŞ¸ÄÎ»¶ÁÈ¡¼üÖµ½øĞĞÅĞ¶Ï
 ********************************************************************************************/
 #include "Manual.h"
 #include "TscMsgQueue.h"
@@ -17,21 +17,21 @@ History:    2013.05.29 ä¿®æ”¹æŒ‰é’®æŒ‰ä¸‹å’Œæ¾å¼€çš„å¤„ç†ã€‚
 #include "ManaKernel.h"
 #include "GbtMsgQueue.h"
 
-#define MANUAL_TO_AUTO_TIME 10  //æ— äººæ‰‹æ§çŠ¶æ€åˆ‡æ¢åˆ°è‡ªåŠ¨è¿è¡ŒçŠ¶æ€æ—¶é—´ï¼Œå•ä½åˆ†é’Ÿ
+#define MANUAL_TO_AUTO_TIME 10  //ÎŞÈËÊÖ¿Ø×´Ì¬ÇĞ»»µ½×Ô¶¯ÔËĞĞ×´Ì¬Ê±¼ä£¬µ¥Î»·ÖÖÓ
 
 /*
-å½“å‰æ‰‹æ§çŠ¶æ€ç±»å‹æšä¸¾
+µ±Ç°ÊÖ¿Ø×´Ì¬ÀàĞÍÃ¶¾Ù
 */
 enum
 {
-	MAC_CTRL_NOTHING    = 0x00 , //æœªæœ‰ä»»ä½•æ‰‹æ§æ“ä½œ
-	MAC_CTRL_ALLOFF     = 0x01 , //ç­ç¯
-	MAC_CTRL_ALLRED     = 0x02 , //å…¨çº¢
-	MAC_CTRL_FLASH      = 0x03 , //é»„é—ª
-	MAC_CTRL_NEXT_PHASE = 0x04 , //ä¸‹ä¸€ç›¸ä½
-	MAC_CTRL_NEXT_DIR   = 0x05 , //ä¸‹ä¸€æ–¹å‘
-	MAC_CTRL_NEXT_STEP  = 0x06 , //æ­¥è¿›
-	MAC_CTRL_OTHER      = 0x07 , //ä¿ç•™
+	MAC_CTRL_NOTHING    = 0x00 , //Î´ÓĞÈÎºÎÊÖ¿Ø²Ù×÷
+	MAC_CTRL_ALLOFF     = 0x01 , //ÃğµÆ
+	MAC_CTRL_ALLRED     = 0x02 , //È«ºì
+	MAC_CTRL_FLASH      = 0x03 , //»ÆÉÁ
+	MAC_CTRL_NEXT_PHASE = 0x04 , //ÏÂÒ»ÏàÎ»
+	MAC_CTRL_NEXT_DIR   = 0x05 , //ÏÂÒ»·½Ïò
+	MAC_CTRL_NEXT_STEP  = 0x06 , //²½½ø
+	MAC_CTRL_OTHER      = 0x07 , //±£Áô
 };
 
 static int key_value = 0;
@@ -43,10 +43,10 @@ SThreadMsg sTscMsgSts;
 
 /**************************************************************
 Function:       Manual::Manual
-Description:    Manualç±»æ„é€ å‡½æ•°ï¼Œç”¨äºç±»åˆå§‹åŒ–å¤„ç†				
-Input:          æ—               
-Output:         æ— 
-Return:         æ— 
+Description:    ManualÀà¹¹Ôìº¯Êı£¬ÓÃÓÚÀà³õÊ¼»¯´¦Àí				
+Input:          ÎŞ              
+Output:         ÎŞ
+Return:         ÎŞ
 ***************************************************************/
 Manual::Manual() 
 {
@@ -62,10 +62,10 @@ Manual::Manual()
 
 /**************************************************************
 Function:       Manual::~Manual
-Description:    Manualç±»	ææ„å‡½æ•°	
-Input:          æ—               
-Output:         æ— 
-Return:         æ— 
+Description:    ManualÀà	Îö¹¹º¯Êı	
+Input:          ÎŞ              
+Output:         ÎŞ
+Return:         ÎŞ
 ***************************************************************/
 Manual::~Manual() 
 {
@@ -74,10 +74,10 @@ Manual::~Manual()
 
 /**************************************************************
 Function:       Manual::CreateInstance
-Description:    åˆ›å»º	Manualé™æ€å¯¹è±¡
-Input:          æ—               
-Output:         æ— 
-Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
+Description:    ´´½¨	Manual¾²Ì¬¶ÔÏó
+Input:          ÎŞ              
+Output:         ÎŞ
+Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
 ***************************************************************/
 Manual* Manual::CreateInstance()
 {
@@ -87,10 +87,10 @@ Manual* Manual::CreateInstance()
 
 /**************************************************************
 Function:       Manual::OpenDev
-Description:    æ‰“å¼€ç³»ç»ŸæŒ‰é’®è®¾å¤‡æ–‡ä»¶
-Input:          æ—               
-Output:         è®¾ç½®æŒ‰é’®æ–‡ä»¶å¥æŸ„
-Return:         æ— 
+Description:    ´ò¿ªÏµÍ³°´Å¥Éè±¸ÎÄ¼ş
+Input:          ÎŞ              
+Output:         ÉèÖÃ°´Å¥ÎÄ¼ş¾ä±ú
+Return:         ÎŞ
 ***************************************************************/
 void Manual::OpenDev()
 {
@@ -103,11 +103,11 @@ void Manual::OpenDev()
 
 /**************************************************************
 Function:       Manual::DoManual
-Description:    è·å–æ§åˆ¶é¢æ¿ç”¨æˆ·æŒ‰é’®æ“ä½œç»“æœï¼Œå¹¶å¤„ç†ç”¨æˆ·æŒ‰é’®æ“ä½œã€‚
-				100msè°ƒç”¨ä¸€æ¬¡
-Input:          æ—               
-Output:         æ— 
-Return:         æ— 
+Description:    »ñÈ¡¿ØÖÆÃæ°åÓÃ»§°´Å¥²Ù×÷½á¹û£¬²¢´¦ÀíÓÃ»§°´Å¥²Ù×÷¡£
+				100msµ÷ÓÃÒ»´Î
+Input:          ÎŞ              
+Output:         ÎŞ
+Return:         ÎŞ
 ***************************************************************/
 void Manual::DoManual() 
 {	
@@ -263,7 +263,7 @@ void Manual::DoManual()
 		 if(m_ucManual ==1)
 		 {
 			deadmanual++ ;
-			if(deadmanual >MANUAL_TO_AUTO_TIME*600) //10åˆ†é’Ÿ
+			if(deadmanual >MANUAL_TO_AUTO_TIME*600) //10·ÖÖÓ
 			{
 				 m_ucManual = 0 ;
 				 m_ucManualSts =  MAC_CTRL_NOTHING;
@@ -279,34 +279,34 @@ void Manual::DoManual()
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
 	ACE_OS::memset( &sTscMsg    , 0 , sizeof(SThreadMsg));
 	ACE_OS::memset( &sTscMsgSts , 0 , sizeof(SThreadMsg));
-    if ( MAC_CTRL_ALLRED == m_ucManualSts )  //é¢æ¿å…¨çº¢
+    if ( MAC_CTRL_ALLRED == m_ucManualSts )  //Ãæ°åÈ«ºì
 	{
-		if ( MAC_CTRL_ALLRED == m_ucLastManualSts ) //å½“å‰å·²ç»æ˜¯é¢æ¿å…¨çº¢
+		if ( MAC_CTRL_ALLRED == m_ucLastManualSts ) //µ±Ç°ÒÑ¾­ÊÇÃæ°åÈ«ºì
 		{
 			return;
 		}	
 		pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,253);
 		ACE_DEBUG((LM_DEBUG,"%s:%d Send CTRL_PANEL ALLRED TscMsg!\n",__FILE__,__LINE__));
 	}
-	else if ( MAC_CTRL_FLASH == m_ucManualSts )  //é¢æ¿é»„é—ª
+	else if ( MAC_CTRL_FLASH == m_ucManualSts )  //Ãæ°å»ÆÉÁ
 	{
-		if ( MAC_CTRL_FLASH == m_ucLastManualSts ) //å½“å‰å·²ç»æ˜¯é¢æ¿é»„é—ª
+		if ( MAC_CTRL_FLASH == m_ucLastManualSts ) //µ±Ç°ÒÑ¾­ÊÇÃæ°å»ÆÉÁ
 		{
 			return;
 		}	
 		pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,254);
 		ACE_DEBUG((LM_DEBUG,"%s:%d Send CTRL_PANEL FLASH! TscMsg!\n",__FILE__,__LINE__));
 	}
-	else if ( 1 == m_ucManual )  //æ‰‹åŠ¨
+	else if ( 1 == m_ucManual )  //ÊÖ¶¯
 	{
-		if ( 0 == m_ucLastManual )  //ä¸Šæ¬¡éæ‰‹åŠ¨
+		if ( 0 == m_ucLastManual )  //ÉÏ´Î·ÇÊÖ¶¯
 		{			
 			pGbtMsgQueue->SendTscCommand(OBJECT_CURTSC_CTRL,4);
 			ACE_DEBUG((LM_DEBUG,"%s:%d First Send  Manual TscMsg! \n",__FILE__,__LINE__));
 		}		
-		if ( MAC_CTRL_NEXT_STEP == m_ucManualSts )  //æ­¥è¿›
+		if ( MAC_CTRL_NEXT_STEP == m_ucManualSts )  //²½½ø
 		{
-			sTscMsgSts.ulType       = TSC_MSG_LOCK_STEP;  //æŒ‰æ­¥ä¼å‰è¿›
+			sTscMsgSts.ulType       = TSC_MSG_LOCK_STEP;  //°´²½·¥Ç°½ø
 			sTscMsgSts.ucMsgOpt     = 0;
 			sTscMsgSts.uiMsgDataLen = 1;
 			sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
@@ -315,7 +315,7 @@ void Manual::DoManual()
 			ACE_DEBUG((LM_DEBUG,"%s:%d Send Next Step TscMsg ! \n",__FILE__,__LINE__));
 			pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,6,0,0,0);
 		}
-		else if ( MAC_CTRL_NEXT_PHASE == m_ucManualSts )  //ä¸‹ä¸€é˜¶æ®µ  ä¸‹ä¸€ç›¸ä½
+		else if ( MAC_CTRL_NEXT_PHASE == m_ucManualSts )  //ÏÂÒ»½×¶Î  ÏÂÒ»ÏàÎ»
 		{
 			if(pManaKernel->m_bNextPhase == true)
 				return ;
@@ -323,21 +323,21 @@ void Manual::DoManual()
 			{
 				pManaKernel->m_bNextPhase = true ;
 			}
-			sTscMsg.ulType       = TSC_MSG_NEXT_STAGE;  //æŒ‰é˜¶æ®µå‰è¿›
+			sTscMsg.ulType       = TSC_MSG_NEXT_STAGE;  //°´½×¶ÎÇ°½ø
 			sTscMsg.ucMsgOpt     = 0;
 			sTscMsg.uiMsgDataLen = 1;
 			sTscMsg.pDataBuf     = NULL;
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 			ACE_DEBUG((LM_DEBUG,"%s:%d Send MAC_CTRL_NEXT_PHASE TscMsg !\n",__FILE__,__LINE__));
-			//pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,7,0,0,0);  ä¸Šä½æœºæš‚æ—¶ä¸æ”¯æŒä¸‹ä¸€é˜¶æ®µæ—¥å¿—
+			//pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,7,0,0,0);  ÉÏÎ»»úÔİÊ±²»Ö§³ÖÏÂÒ»½×¶ÎÈÕÖ¾
 		}
-		else if ( MAC_CTRL_NEXT_DIR == m_ucManualSts )  //ä¸‹ä¸€æ–¹å‘
+		else if ( MAC_CTRL_NEXT_DIR == m_ucManualSts )  //ÏÂÒ»·½Ïò
 		{
 			if(pManaKernel->m_iTimePatternId == 0)
 			{	
 				pManaKernel->bTmpPattern = true ;
 				pManaKernel->m_iTimePatternId = 250;
-				sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //ä»ç‰¹æ®Šæ–¹æ¡ˆè¿”å›åŸæ¥çŠ¶æ€
+				sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //´ÓÌØÊâ·½°¸·µ»ØÔ­À´×´Ì¬
 				sTscMsg.ucMsgOpt     = 0;
 				sTscMsg.uiMsgDataLen = 1;
 				sTscMsg.pDataBuf     = NULL;
@@ -357,7 +357,7 @@ void Manual::DoManual()
 				{
 					pManaKernel->m_bNextPhase = true ;
 				}
-				sTscMsg.ulType       = TSC_MSG_NEXT_STAGE;  //æŒ‰é˜¶æ®µå‰è¿›
+				sTscMsg.ulType       = TSC_MSG_NEXT_STAGE;  //°´½×¶ÎÇ°½ø
 				sTscMsg.ucMsgOpt     = 0;
 				sTscMsg.uiMsgDataLen = 1;
 				sTscMsg.pDataBuf     = NULL;
@@ -366,7 +366,7 @@ void Manual::DoManual()
 			}			
 		}		
 	}		
-	else if (0 == m_ucManual)  //æ— æ“ä½œä¸”éæ‰‹åŠ¨çŠ¶æ€ä¸‹
+	else if (0 == m_ucManual)  //ÎŞ²Ù×÷ÇÒ·ÇÊÖ¶¯×´Ì¬ÏÂ
 	{		
 		if( MAC_CTRL_NOTHING == m_ucManualSts)
 		{	
@@ -376,7 +376,7 @@ void Manual::DoManual()
 				pManaKernel->bNextDirec = false ;
 				pManaKernel->m_iTimePatternId = 0;
 				pManaKernel->bTmpPattern = false ;
-				sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //ä»ç‰¹æ®Šæ–¹æ¡ˆè¿”å›åŸæ¥çŠ¶æ€
+				sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //´ÓÌØÊâ·½°¸·µ»ØÔ­À´×´Ì¬
 				sTscMsg.ucMsgOpt     = 0;
 				sTscMsg.uiMsgDataLen = 1;
 				sTscMsg.pDataBuf     = NULL;
@@ -384,12 +384,12 @@ void Manual::DoManual()
 				ACE_DEBUG((LM_DEBUG,"%s:%d send TSC_MSG_PATTER_RECOVER TscMsg !\n",__FILE__,__LINE__));				
 			}
 			else
-				pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0); //å½“æŒ‰é’®ä»é¢æ¿é»„é—ªæˆ–è€…å…¨çº¢å¤ä½			
+				pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0); //µ±°´Å¥´ÓÃæ°å»ÆÉÁ»òÕßÈ«ºì¸´Î»			
 		}
 
 	}
-	m_ucLastManualSts = m_ucManualSts;  //ä¿å­˜å½“å‰çš„æ‰‹æ§çŠ¶æ€
-	m_ucLastManual    = m_ucManual;     //ä¿å­˜å½“å‰çš„æ§åˆ¶æ–¹å¼
+	m_ucLastManualSts = m_ucManualSts;  //±£´æµ±Ç°µÄÊÖ¿Ø×´Ì¬
+	m_ucLastManual    = m_ucManual;     //±£´æµ±Ç°µÄ¿ØÖÆ·½Ê½
 
 }
 

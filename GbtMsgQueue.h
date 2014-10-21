@@ -120,7 +120,8 @@ enum
 	OBJECT_DET_EXTENTED    = 0xfc,   //检测器扩展表
 	OBJECT_ADAPT_STAGE     = 0xfd,
 	OBJECT_CONNECT_DEV     = 0xf0,   //外界设备数第一个字节表示倒计时设备数，取值为0-32，0表示没有倒计时设备。第二个字节表示可变标志设备数，取值为0-16，0表示没有可变标志设表示外接检测器数，取值为0-48，0表示没有外接检测器
-	OBJECT_CNTDOWN_STATS   = 0xf2,   //倒计时状态表
+	//OBJECT_CNTDOWN_STATS   = 0xf2,   //倒计时状态表
+	OBJECT_COMMAND_SIGNAL  = 0xf2 ,    //上位机指令控制相位阶段切换和方向
 	OBJECT_CHANNEL_CHK     = 0xff,   //通道灯泡检测配置表 ADD?20130801 1121
 	OBJECT_YWFLASH_CFG     = 0xe1,   //黄闪器配置
 	OBJECT_DET_EXTCFG      = 0xe2,   //检测器扩展配置
@@ -219,7 +220,9 @@ private:
 	void GotoMsgError(Byte ucDealDataIndex,Byte ucErrorSts,Byte ucErrorIdx);
 	void GotoSendToHost(Byte ucDealDataIndex);
 	void GotoDealRecvbuf(Byte ucDealDataIndex);
-void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
+	void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
+	void SetCommandSignal(Byte* pBuf,int& iRecvIndex) ;  //ADD 201409231002
+
 	//Byte m_ucAddrNum;
 	ACE_Message_Queue<ACE_MT_SYNCH>* m_pMsgQue;
       

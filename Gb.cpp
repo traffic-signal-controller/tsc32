@@ -170,9 +170,9 @@ static void* BroadCast(void* arg)
 			(sBroadcastMessage+ucSendCount)[3] = (Byte)(iPort&0xFF);
 			ucSendCount += 4;
 			//ÐÅºÅ»ú°æ±¾
-			(sBroadcastMessage+ucSendCount)[0] = 0;
-			(sBroadcastMessage+ucSendCount)[1] = 1;
-			(sBroadcastMessage+ucSendCount)[2] = 0;
+			(sBroadcastMessage+ucSendCount)[0] = 0x1;
+			(sBroadcastMessage+ucSendCount)[1] = 0xE9;
+			(sBroadcastMessage+ucSendCount)[2] = 0x1;
 			 ucSendCount += 3;
 
 			udpBcast.send(sBroadcastMessage , ucSendCount , addrRemote);
