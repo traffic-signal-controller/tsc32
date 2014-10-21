@@ -82,6 +82,27 @@ static void* GbtMsgQueue(void* arg)
 }
 
 /**************************************************************
+Function:        RunGSM
+Description:    GSM功能调用线程函数		
+Input:          arg - 线程函数参数        
+Output:         无
+Return:         0
+***************************************************************/
+
+static void *RunGSM(void *arg)
+{
+	
+	Byte iGsm = 0 ;
+	CManaKernel * pManaKernel = CManaKernel::CreateInstance() ;
+	ACE_OS::sleep(5);	
+	iGsm = pManaKernel->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue ;
+
+	if(iGsm != 0)//串口5
+		CGsm::CreateInstance()->RunGsmData();
+	
+}
+
+/**************************************************************
 Function:        RunGpsGSM
 Description:    GPS和GSM功能调用线程函数		
 Input:          arg - 线程函数参数        
@@ -89,31 +110,16 @@ Output:         无
 Return:         0
 ***************************************************************/
 
-static void *RunGpsGSM(void *arg)
+static void *RunGps(void *arg)
 {
-	Byte iGps,iGsm = 0 ;
+	
+	Byte iGps = 0 ;
 	CManaKernel * pManaKernel = CManaKernel::CreateInstance() ;
 	ACE_OS::sleep(5);	
-	while(true)
-	{		
-		iGps = pManaKernel->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
-		iGsm = pManaKernel->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue ;
-		if(iGps == 0x0 && iGsm == 0x0)
-		{
-			ACE_OS::sleep(300);	
-		}
-		else 
-		{
-			//static time_t iTimeNow = time(NULL);
-			if(iGsm != 0)
-				CGsm::CreateInstance()->RunGsmData();
-			if(iGps != 0)
-				CGps::CreateInstance()->RunGpsData();
-		}
-		
-	}	
-
-
+	iGps = pManaKernel->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
+	if(iGps != 0)//串口2
+		CGps::CreateInstance()->RunGpsData();
+	
 }
 
 /**************************************************************
@@ -140,8 +146,8 @@ static void* BroadCast(void* arg)
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
 	pGbtMsgQueue->GetNetParaByAce(pIp ,hostname);
 	Uint iPort = pGbtMsgQueue->iPort ;    //ADD:201309250900 
-	ACE_DEBUG((LM_DEBUG,"\nIP= %d.%d.%d.%d  PortNum = %d\n  HostName = %s",pIp[0],pIp[1],pIp[2],pIp[3] ,iPort ,hostname));
-	ACE_DEBUG((LM_DEBUG,"\nMAC=%02x:%02x:%02x:%02x:%02x:%02x IP= %d.%d.%d.%d MASK=%d.%d.%d.%d GateWay=%d.%d.%d.%d PortNum = %d\n",pHwEther[0],pHwEther[1],pHwEther[2],pHwEther[3],pHwEther[4],pHwEther[5],pIp[0],pIp[1],pIp[2],pIp[3],pMask[0],pMask[1],pMask[2],pMask[3],pGateway[0], pGateway[1],pGateway[2], pGateway[3] ,iPort ));
+	//ACE_DEBUG((LM_DEBUG,"\nIP= %d.%d.%d.%d  PortNum = %d\n  HostName = %s",pIp[0],pIp[1],pIp[2],pIp[3] ,iPort ,hostname));
+	//ACE_DEBUG((LM_DEBUG,"\nMAC=%02x:%02x:%02x:%02x:%02x:%02x IP= %d.%d.%d.%d MASK=%d.%d.%d.%d GateWay=%d.%d.%d.%d PortNum = %d\n",pHwEther[0],pHwEther[1],pHwEther[2],pHwEther[3],pHwEther[4],pHwEther[5],pIp[0],pIp[1],pIp[2],pIp[3],pMask[0],pMask[1],pMask[2],pMask[3],pGateway[0], pGateway[1],pGateway[2], pGateway[3] ,iPort ));
 
 	for(;;)
 	{
@@ -184,8 +190,8 @@ Return:         无
 ***************************************************************/
 void RunGb()
 {
-	ACE_thread_t  tThreadId[8];
-	ACE_hthread_t hThreadHandle[8];
+	ACE_thread_t  tThreadId[9];
+	ACE_hthread_t hThreadHandle[9];
 
 	(CDbInstance::m_cGbtTscDb).InitDb(DB_NAME);  //数据库类初始化
 	
@@ -282,7 +288,8 @@ void RunGb()
 	/********************************************************************************/
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
 	{
-		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGpsGSM, //开启gps校时线程
+		
+		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGps, //开启gps校时线程
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[6],
@@ -295,12 +302,28 @@ void RunGb()
 			TscAceDebug((LM_DEBUG,"Error: CGps thread faild\n"));
 		}
 	}
-
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)MainBackup::Recevie, //备份单片机的实时通信线程
+	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue )
+	{
+		
+		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGSM, //开启GSM校时线程
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[7],
 								&hThreadHandle[7],
+								ACE_DEFAULT_THREAD_PRIORITY,
+								0,
+								ACE_DEFAULT_THREAD_STACKSIZE,
+								0) == -1 )
+		{
+			TscAceDebug((LM_DEBUG,"Error: CGps thread faild\n"));
+		}
+	}
+
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)MainBackup::Recevie, //备份单片机的实时通信线程
+								0,
+								THR_NEW_LWP | THR_JOINABLE,
+								&tThreadId[8],
+								&hThreadHandle[8],
 								ACE_DEFAULT_THREAD_PRIORITY,
 								0,
 								ACE_DEFAULT_THREAD_STACKSIZE,
@@ -315,13 +338,17 @@ void RunGb()
 	ACE_Thread::join(hThreadHandle[3]);
 	ACE_Thread::join(hThreadHandle[4]);
 	ACE_Thread::join(hThreadHandle[5]);
-	ACE_Thread::join(hThreadHandle[6]);
-	ACE_Thread::join(hThreadHandle[7]);
+	//ACE_Thread::join(hThreadHandle[6]);
+	ACE_Thread::join(hThreadHandle[8]);
 
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
 	{
 		ACE_Thread::join(hThreadHandle[6]);
-	}		
+	}	
+	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue )
+	{
+		ACE_Thread::join(hThreadHandle[7]);
+	}	
 	
 	CDbInstance::m_cGbtTscDb.CloseDb();  //关闭数据库	
 
