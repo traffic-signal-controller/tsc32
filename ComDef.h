@@ -306,7 +306,8 @@ enum
 	FUN_WLAN		   = 18 , //WLAN无线网络
 	FUN_CNTTYPE	       = 19,  //倒计时类型
 	FUN_LIGHTCHECK	= 20,		//灯泡检测开关
-	FUN_COUNT                 // 总到特定功能数量值
+	FUN_COUNT          =21,       // 总到特定功能数量值
+	FUN_GPS_INTERVAL =22		//GPS定时更新时间
 };
 
 /*
