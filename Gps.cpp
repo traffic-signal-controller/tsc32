@@ -144,7 +144,7 @@ void CGps::RunGpsData()
 
 						//day表示几天，也就是线程休眠几天。1表示每天进行校时，2表示第两天进行校时......
 						Byte day = CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS_INTERVAL].ucValue;
-						ACE_OS::sleep(ACE_Time_Value(0,1000*1000*60*60*24*day));   //这里进行确定多少秒进行GPS读取一次,目前是定死了。以后可以确定为特殊功能里面。86400
+						ACE_OS::sleep(ACE_Time_Value(0,1000*60*60*day));   //这里进行确定多少秒进行GPS读取一次,目前是定死了。以后可以确定为特殊功能里面。86400
 						
 					}
 					else
