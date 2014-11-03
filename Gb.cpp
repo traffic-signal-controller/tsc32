@@ -37,7 +37,7 @@ Return:         -1  程序启动失败
 ***************************************************************/
 int main(int argc, char *argv[]) 
 {
-	ACE_Process_Mutex ationMutex("ation"); //进程互斥量
+	ACE_Process_Mutex ationMutex("ation"); //process mutex
 	int iRetAcquire = ationMutex.tryacquire();
 	if ( 0 != iRetAcquire )
 	{
@@ -45,10 +45,9 @@ int main(int argc, char *argv[])
 		ationMutex.release();
 		return -1;
 	}
-	//CheckSystemTime(); //检查修正系统时间	
-	RunGb();	       //系统核心入口函数
+	RunGb();	       //core fuction
 	ationMutex.release();
-	return 0; 
+	return 0 ;
 }
 
 
@@ -61,9 +60,9 @@ Return:         0
 ***************************************************************/
 static void* SignalMsgQueue(void *arg)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d  开启信号机控制消息队列线程!\n",__FILE__,__LINE__));	
+	ACE_DEBUG((LM_DEBUG,"%s:%d  Begin to run TSC message handle thread!\r\n",__FILE__,__LINE__));	
 	CTscMsgQueue::CreateInstance()->DealData();
-	return 0;
+	return NULL ;
 }
 
 
@@ -76,9 +75,9 @@ Return:         0
 ***************************************************************/
 static void* GbtMsgQueue(void* arg)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d  开启gbt消息处理队列线程!\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d  Begin to run GBT message handle thread!\r\n",__FILE__,__LINE__));
 	CGbtMsgQueue::CreateInstance()->DealData();
-	return 0;
+	return NULL;
 }
 
 /**************************************************************
@@ -95,11 +94,11 @@ static void *RunGSM(void *arg)
 	Byte iGsm = 0 ;
 	CManaKernel * pManaKernel = CManaKernel::CreateInstance() ;
 	ACE_OS::sleep(5);	
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d Begin to run GMS thread!\r\n",__FILE__,__LINE__));
 	iGsm = pManaKernel->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue ;
-
-	if(iGsm != 0)//串口5
+	if(iGsm != 0)// serial 5
 		CGsm::CreateInstance()->RunGsmData();
-	
+	return NULL ;
 }
 
 /**************************************************************
@@ -116,9 +115,11 @@ static void *RunGps(void *arg)
 	Byte iGps = 0 ;
 	CManaKernel * pManaKernel = CManaKernel::CreateInstance() ;
 	ACE_OS::sleep(5);	
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d Begin to run GPS thread!\r\n",__FILE__,__LINE__));
 	iGps = pManaKernel->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
-	if(iGps != 0)//串口2
+	if(iGps != 0)//serial 2
 		CGps::CreateInstance()->RunGpsData();
+	return NULL ;
 	
 }
 
@@ -132,7 +133,7 @@ Return:         0
 ***************************************************************/
 static void* BroadCast(void* arg)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d  开启广播线程!\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d  Begin to run broadcast thread!\r\n",__FILE__,__LINE__));
 	ACE_INET_Addr addrBroadcast(DEFAULT_BROADCAST_PORT),addrRemote;
 	ACE_SOCK_Dgram_Bcast udpBcast(addrBroadcast);
 	char buf[10];
@@ -146,8 +147,6 @@ static void* BroadCast(void* arg)
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
 	pGbtMsgQueue->GetNetParaByAce(pIp ,hostname);
 	Uint iPort = pGbtMsgQueue->iPort ;    //ADD:201309250900 
-	//ACE_DEBUG((LM_DEBUG,"\nIP= %d.%d.%d.%d  PortNum = %d\n  HostName = %s",pIp[0],pIp[1],pIp[2],pIp[3] ,iPort ,hostname));
-	//ACE_DEBUG((LM_DEBUG,"\nMAC=%02x:%02x:%02x:%02x:%02x:%02x IP= %d.%d.%d.%d MASK=%d.%d.%d.%d GateWay=%d.%d.%d.%d PortNum = %d\n",pHwEther[0],pHwEther[1],pHwEther[2],pHwEther[3],pHwEther[4],pHwEther[5],pIp[0],pIp[1],pIp[2],pIp[3],pMask[0],pMask[1],pMask[2],pMask[3],pGateway[0], pGateway[1],pGateway[2], pGateway[3] ,iPort ));
 
 	for(;;)
 	{
@@ -170,8 +169,8 @@ static void* BroadCast(void* arg)
 			(sBroadcastMessage+ucSendCount)[3] = (Byte)(iPort&0xFF);
 			ucSendCount += 4;
 			//信号机版本
-			(sBroadcastMessage+ucSendCount)[0] = 0x1;
-			(sBroadcastMessage+ucSendCount)[1] = 0xE9;
+			(sBroadcastMessage+ucSendCount)[0] = 0x2;
+			(sBroadcastMessage+ucSendCount)[1] = 0xEA;
 			(sBroadcastMessage+ucSendCount)[2] = 0x1;
 			 ucSendCount += 3;
 
@@ -179,6 +178,7 @@ static void* BroadCast(void* arg)
 			ucSendCount = 0;
 		}
 	}
+	return NULL ;
 }
 
 /**************************************************************
@@ -338,7 +338,6 @@ void RunGb()
 	ACE_Thread::join(hThreadHandle[3]);
 	ACE_Thread::join(hThreadHandle[4]);
 	ACE_Thread::join(hThreadHandle[5]);
-	//ACE_Thread::join(hThreadHandle[6]);
 	ACE_Thread::join(hThreadHandle[8]);
 
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )

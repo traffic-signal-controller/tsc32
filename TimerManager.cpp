@@ -6,6 +6,7 @@ enum
 {
 	TIMER_TSC_INDEX    = 0,  //信号机控制模块的定时器
 	TIMER_GBT_INDEX    = 1,  //通信协议模块的定时器
+	TIMER_WIRELESSBTN_INDEX = 2 // 无线遥控按钮超时定时器
 };
 
 
@@ -16,8 +17,9 @@ CTimerManager::CTimerManager()
 		m_lTimerId[iIndex] = 0;
 	}
 
-	m_pTscTimer = NULL;
-	m_pGbtTimer = NULL;
+	m_pTscTimer = new CTscTimer(10);
+	m_pGbtTimer = CGbtTimer::CreateInstance();
+	m_pWirelessBtnTimer = CWirelessBtnTimer::CreateInstance();
 	
 	m_tActiveTimer.timer_queue()->gettimeofday(getCurrTime);
 	m_tActiveTimer.activate();
@@ -50,8 +52,6 @@ void CTimerManager::CreateAllTimer()
 {
 
 	ACE_DEBUG((LM_DEBUG,"%s : %d 延时开启TSC GBT 定时器!\n",__FILE__,__LINE__));
-	m_pTscTimer = new CTscTimer(10);
-	m_pGbtTimer = CGbtTimer::CreateInstance();
 	
     const ACE_Time_Value curr_tv = getCurrTime();
 	//100毫秒定时器,延迟3秒启动
@@ -105,6 +105,25 @@ void CTimerManager::CloseTscTimer()
 	if ( m_lTimerId[TIMER_TSC_INDEX] > 0 )
 	{
 		m_tActiveTimer.cancel(m_lTimerId[TIMER_TSC_INDEX]);
+	}
+}
+
+/*
+*开启无线遥控器超时定时器
+*/
+void CTimerManager::StartWirelessBtnTimer()
+{
+	m_lTimerId[TIMER_WIRELESSBTN_INDEX] =   //1秒定时器,立马启动
+		m_tActiveTimer.schedule(m_pWirelessBtnTimer,NULL,getCurrTime(),ACE_Time_Value(1)); 
+}
+/*
+*关闭无线遥控器超时定时器
+*/
+void CTimerManager::CloseWirelessBtn()
+{
+	if ( m_lTimerId[TIMER_WIRELESSBTN_INDEX] > 0 )
+	{
+		m_tActiveTimer.cancel(m_lTimerId[TIMER_WIRELESSBTN_INDEX]);
 	}
 }
 

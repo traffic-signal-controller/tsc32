@@ -19,7 +19,7 @@ History:
 #include "PscMode.h"
 #include "LampBoard.h"
 #include "MacControl.h"
-#include "Manual.h"
+#include "WirelessButtons.h"
 #include "GaCountDown.h"
 #include "MainBackup.h"
 

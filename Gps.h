@@ -12,23 +12,21 @@ class CGps
 public:
 	static CGps* CreateInstance();
 	void RunGpsData();
-	static time_t GetLastTi();
-	static int Extract();
+	time_t GetLastTi();
+	int Extract();
 	void InitGps();
 	void ForceAdjust();
-	static bool CheckSum(char *cMsg);
-	static void SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSec);
-	static bool m_bGpsTime ;
+    bool CheckSum(char *cMsg);
+	void SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSec);
+	bool m_bGpsTime ;  //判断是否处于较时状态
 
 private:
 	CGps();
-	~CGps();
-
-	static bool   m_bNeedGps;
-	static int    m_iGpsFd;
-	static char   m_cBuf[128];
-	static time_t m_tLastTi;
-	static Ushort  ierrorcount ;
+	~CGps();	
+	 int    m_iGpsFd;
+	 char   m_cBuf[128];
+	 time_t m_tLastTi;
+	 Ushort  ierrorcount ;
 };
 
-#endif //_GPS_H_
+#endif 

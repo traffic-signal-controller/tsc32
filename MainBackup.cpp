@@ -67,9 +67,8 @@ MainBackup::MainBackup()
 	OpenDev();
 	bSendStep = false;
 	m_ucLastManualSts = MAINBACKUP_MANUAL_SELF;
-#ifdef TSC_DEBUG
-	ACE_DEBUG((LM_DEBUG,"create MainBackup\n"));
-#endif
+	ACE_DEBUG((LM_DEBUG,"%s:%d Init  MainBackup Object!\r\n",__FILE__,__LINE__));
+
 }
 /**************************************************************
 Function:        CreateInstance
@@ -92,9 +91,8 @@ Return:         无
 ***************************************************************/
 MainBackup::~MainBackup() 
 {
-#ifdef TSC_DEBUG
-	ACE_DEBUG((LM_DEBUG,"destroy MainBackup\n"));
-#endif
+	ACE_DEBUG((LM_DEBUG,"%s:%d Destrcut MainBackup object!\r\n",__FILE__,__LINE__));
+
 }
 
 /**************************************************************
@@ -140,8 +138,7 @@ Output:         无
 Return:         无
 ***************************************************************/
 bool MainBackup::RecevieBackup(Byte *pByte ,int iSize)
-{
-	
+{	
 	return true;
 }
 
@@ -157,34 +154,11 @@ void MainBackup::OperateManual(Ushort mbs)
 	
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
 	ACE_OS::memset( &sTscMsg    , 0 , sizeof(SThreadMsg));
-	ACE_OS::memset( &sTscMsgSts , 0 , sizeof(SThreadMsg));
-	
-	/*if (m_ucLastManualSts != MAINBACKUP_MANUAL_SELF )	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d PANEL Control Mode don't changed!\n",__FILE__,__LINE__));
-
-		deadmanual++ ;
-		if(deadmanual >MANUAL_TO_AUTO_TIME*600) //10鍒嗛挓
-		{
-				
-			deadmanual = 0;
-			CMainBoardLed::CreateInstance()->DoAutoLed(true);  //ADD: 201309231500
-			if (m_ucLastManualSts == MAINBACKUP_MANUAL_SELF)
-				return;
-			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0);
-			ACE_DEBUG((LM_DEBUG,"%s:%d ************** MAINBACKUP_MANUAL_SELF TscMsg! \n",__FILE__,__LINE__));
-			m_ucLastManualSts = MAINBACKUP_MANUAL_SELF;
-		}
-	
-	}*/
-	
+	ACE_OS::memset( &sTscMsgSts , 0 , sizeof(SThreadMsg));	
 	switch(mbs)
 	{
-		case MAINBACKUP_MANUAL_SELF:
-			//if(!bDoAuto)
-			//{
-				CMainBoardLed::CreateInstance()->DoAutoLed(true);
-			//	bDoAuto = true;
-			//}
+		case MAINBACKUP_MANUAL_SELF:			
+			CMainBoardLed::CreateInstance()->DoAutoLed(true);			
 			if (m_ucLastManualSts == MAINBACKUP_MANUAL_SELF)
 				return;
 			if( pManaKernel->m_iTimePatternId == 250)
@@ -196,22 +170,21 @@ void MainBackup::OperateManual(Ushort mbs)
 			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0);
 			ACE_DEBUG((LM_DEBUG,"%s:%d ************** MAINBACKUP_MANUAL_SELF TscMsg! \n",__FILE__,__LINE__));
 			m_ucLastManualSts = MAINBACKUP_MANUAL_SELF;
-			//true 为tsc模式
+			pManaKernel->m_pRunData->ucManualType = Manual_CTRL_NO;
 			
+			//true 为tsc模式			
 			break;
 		case MAINBACKUP_MANUAL_MANUAL:
-			//if(bDoAuto)
-			//{
-				CMainBoardLed::CreateInstance()->DoAutoLed(false);
-			//	bDoAuto = false;
-			//}
+			
+		   CMainBoardLed::CreateInstance()->DoAutoLed(false);
+			
 			if (m_ucLastManualSts == MAINBACKUP_MANUAL_MANUAL)
 				return;
 			pGbtMsgQueue->SendTscCommand(OBJECT_CURTSC_CTRL,4);
 			ACE_DEBUG((LM_DEBUG,"%s:%d First Send  Manual TscMsg! \n",__FILE__,__LINE__));
 			m_ucLastManualSts = MAINBACKUP_MANUAL_MANUAL;
-			//true 为tsc模式 false 为 psc 模式
-			
+			pManaKernel->m_pRunData->ucManualType = Manual_CTRL_PANEL;
+			//true 为tsc模式 false 为 psc 模		
 			break;
 		case MAINBACKUP_MANUAL_NEXT_STEP:
 			
@@ -222,14 +195,14 @@ void MainBackup::OperateManual(Ushort mbs)
 			//true 为tsc模式 false 为 psc 模式
 			
 			break;
-		case MAINBACKUP_MANUAL_YELLOW_FLASH:
-			
+		case MAINBACKUP_MANUAL_YELLOW_FLASH:			
 			if (m_ucLastManualSts == MAINBACKUP_MANUAL_YELLOW_FLASH)
 			{
 				ACE_DEBUG((LM_DEBUG,"%s:%d the old ctrl equals the new ctrl ! \n",__FILE__,__LINE__));
 				return ;
 			}
 			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,254);
+			pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,2,0,0,0); //ADD:20141031
 			ACE_DEBUG((LM_DEBUG,"%s:%d Send CTRL_PANEL FLASH! TscMsg!\n",__FILE__,__LINE__));
 			m_ucLastManualSts = MAINBACKUP_MANUAL_YELLOW_FLASH;
 			//true 为tsc模式 false 为 psc 模式
@@ -243,6 +216,7 @@ void MainBackup::OperateManual(Ushort mbs)
 				return ;
 			}
 			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,253);
+			pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,4,0,0,0); //ADD:20141031
 			ACE_DEBUG((LM_DEBUG,"%s:%d Send CTRL_PANEL ALLRED TscMsg!\n",__FILE__,__LINE__));
 			m_ucLastManualSts = MAINBACKUP_MANUAL_ALL_RED;
 			//true 为tsc模式 false 为 psc 模式
@@ -459,7 +433,7 @@ void MainBackup::DoWriteLED(Byte ucByte)
 
 void MainBackup::SendOneStep(Uint i)
 {
-		
+	;
 }
 
 /**************************************************************
@@ -477,7 +451,7 @@ void MainBackup::SendStep()
 		i = 0;
 		bSendStep = false;
 	}
-	//ACE_DEBUG((LM_DEBUG,"%s:%d================= pRunData->ucStepNum:  %d!================   i   ===   %d\n",__FILE__,__LINE__,pRunData->ucStepNum,i));
+	ACE_DEBUG((LM_DEBUG,"%s:%d================= pRunData->ucStepNum:  %d!================   i   ===   %d\n",__FILE__,__LINE__,pRunData->ucStepNum,i));
 	if(bSendStep)
 	{
 		if(i<(pRunData->ucStepNum))
@@ -1471,7 +1445,7 @@ void MainBackup::SendStep()
 			Byte sendStep[19] = {0xaa,0x55,0x10,MAINBACKUP_LAMP,i,sendBit[0],sendBit[1],sendBit[2],sendBit[3],sendBit[4],sendBit[5],sendBit[6],sendBit[7],sendBit[8],sendBit[9],sendBit[10],sendBit[11],sendBit[12],0xff};
 			Byte chksum = ~(MAINBACKUP_LAMP+i+sendBit[0]+sendBit[1]+sendBit[2]+sendBit[3]+sendBit[4]+sendBit[5]+sendBit[6]+sendBit[7]+sendBit[8]+sendBit[9]+sendBit[10]+sendBit[11]+sendBit[12]);
 			sendStep[18] = chksum;
-			//ACE_DEBUG((LM_DEBUG,"%s:%d<<<<< Send Step: sendStep[0]=%x sendStep[1]=%x sendStep[2]=%x sendStep[3]=%x sendStep[4]=%x sendStep[5]=%x sendStep[6]=%x sendStep[7]=%x sendStep[8]=%x sendStep[9]=%x sendStep[10]=%x sendStep[11]=%x sendStep[12]=%x sendStep[13]=%x sendStep[14]=%x sendStep[15]=%x sendStep[16]=%x sendStep[17]=%x sendStep18]=%x >>>>>>\n",__FILE__,__LINE__,sendStep[0],sendStep[1],sendStep[2],sendStep[3],sendStep[4],sendStep[5],sendStep[6],sendStep[7],sendStep[8],sendStep[9],sendStep[10],sendStep[11],sendStep[12],sendStep[13],sendStep[14],sendStep[15],sendStep[16],sendStep[17],sendStep[18]));
+			ACE_DEBUG((LM_DEBUG,"%s:%d<<<<< Send Step: sendStep[0]=%x sendStep[1]=%x sendStep[2]=%x sendStep[3]=%x sendStep[4]=%x sendStep[5]=%x sendStep[6]=%x sendStep[7]=%x sendStep[8]=%x sendStep[9]=%x sendStep[10]=%x sendStep[11]=%x sendStep[12]=%x sendStep[13]=%x sendStep[14]=%x sendStep[15]=%x sendStep[16]=%x sendStep[17]=%x sendStep18]=%x >>>>>>\n",__FILE__,__LINE__,sendStep[0],sendStep[1],sendStep[2],sendStep[3],sendStep[4],sendStep[5],sendStep[6],sendStep[7],sendStep[8],sendStep[9],sendStep[10],sendStep[11],sendStep[12],sendStep[13],sendStep[14],sendStep[15],sendStep[16],sendStep[17],sendStep[18]));
 			MainBackup::CreateInstance()->SendBackup(sendStep,19);
 			i++;
 		}
@@ -1519,14 +1493,14 @@ void MainBackup::DoManual()
 	Byte readManual[6] = {0xaa,0x55,0x03,MAINBACKUP_READ_MANUAL,0xff,0xff};
 	Byte chksum = ~(MAINBACKUP_READ_MANUAL+0xff);
 	readManual[5] = chksum;
+////	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: DoManual == readManual[0] %x,readManual[1] %x,readManual[2] %x,readManual[3] %x,readManual[4] %x,readManual[5] %x\n",__FILE__,__LINE__,readManual[0],readManual[1],readManual[2],readManual[3],readManual[4],readManual[5]));
 	SendBackup(readManual,6);
-	//ACE_DEBUG((LM_DEBUG,"%s:%d MSG: DoManual == readManual[0] %x,readManual[1] %x,readManual[2] %x,readManual[3] %x,readManual[4] %x,readManual[5] %x\n",__FILE__,__LINE__,readManual[0],readManual[1],readManual[2],readManual[3],readManual[4],readManual[5]));	SendBackup(readManual,6);
 }
 /**************************************************************
 Function:        MainBackup::HeartBeat
 Description:    心跳			
 Input:          无
-Output:         无
+Output:        无
 Return:         无
 ***************************************************************/
 void MainBackup::HeartBeat()
@@ -1537,7 +1511,8 @@ void MainBackup::HeartBeat()
 	Byte chksum = ~(MAINBACKUP_HEART+0xff+stepNo);
 	heart[6] = chksum;
 	// 500ms 发送心跳数据，无返回数据
-	//ACE_DEBUG((LM_DEBUG,"%s:%d MSG: HeartBeat == heart[0] %x,heart[1] %x,heart[2] %x,heart[3] %x,heart[4] %x,heart[5] %x\n",__FILE__,__LINE__,heart[0],heart[1],heart[2],heart[3],heart[4],heart[5]));//	Byte reByte[8] = {0};
+////	ACE_DEBUG((LM_DEBUG,"%s:%d MSG: HeartBeat == heart[0] %x,heart[1] %x,heart[2] %x,heart[3] %x,heart[4] %x,heart[5] %x\n",__FILE__,__LINE__,heart[0],heart[1],heart[2],heart[3],heart[4],heart[5]));
+//	Byte reByte[8] = {0};
 	SendBackup(heart,7);
 	
 }
@@ -1666,9 +1641,9 @@ Input:          无
 Output:         无
 Return:         无
 ***************************************************************/
-void MainBackup::CurrentSetp(Byte &setp)
-{
-	//ACE_DEBUG((LM_DEBUG,"%s:%d MSG: setp  %d\n",__FILE__,__LINE__,setp));	return ;
+void MainBackup::CurrentSetp(Byte &setp){
+	////ACE_DEBUG((LM_DEBUG,"%s:%d MSG: setp  %d\n",__FILE__,__LINE__,setp));
+	return ;
 }
 
 /**************************************************************
@@ -1680,12 +1655,11 @@ Return:         无
 ***************************************************************/
 void MainBackup::SetpTable(Byte *setpTable)
 {
-
 	return ;
 }
 
 /**************************************************************
-Function:        MainBackup::OperateBackup
+Function:        MainBackup::Recevie
 Description:     公共方法，包括备份单片机中手动，指示灯，备份功能共用			
 Input:          pbytes 字节数组，是发送到pic的指令
 				rsLen  pic单片机返回给核心板的数据长度
@@ -1694,34 +1668,27 @@ Return:         无
 ***************************************************************/
 void* MainBackup::Recevie(void* arg)
 {
-	//OpenDev();
-		//ACE_Guard<ACE_Thread_Mutex> guard(m_sMutex);
-		//ACE_DEBUG((LM_DEBUG,"%s:%d sizeof(pbytes)/sizeof(pbytes[0]): %d  \n",__FILE__,__LINE__,sizeof(pbytes)/sizeof(pbytes[0])));
-		//SendBackup(pbytes,pLen);
-		//ACE_DEBUG((LM_DEBUG,"%s:%d ####################OperateManual #############! \n",__FILE__,__LINE__));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d ####################OperateManual #############! \n",__FILE__,__LINE__));
 	Byte pByte[255] = {0};
 	MainBackup *pMainBackup = MainBackup::CreateInstance();
-	//CSerialCtrl::CreateInstance()->OpenComPort(3, BR57600, 8, "1", 'N');
-		//pMainBackup->RecevieBackup(rsBytes, 8);
-		while(1){
+	while(1){
 			bzero(pByte, 255);
 			int len_tty = -1;
-			len_tty = CSerialCtrl::CreateInstance()->ReadComPortBySerial3(pByte, 255);
-		
+			len_tty = CSerialCtrl::CreateInstance()->ReadComPortBySerial3(pByte, 255);		
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Recv:m_iSerial3fd %d   iSize  %d  \n" ,__FILE__,__LINE__,m_iSerial3fd,iSize));
 			if (len_tty < 0) {		
 				ACE_DEBUG((LM_DEBUG,"%s:%d Error: ReadComPort Error %d\n",__FILE__,__LINE__));
 				return NULL;
 			}
-			//ACE_DEBUG((LM_DEBUG,"%s:%d Recv: %d bytes, [%X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X]\n",__FILE__,__LINE__,len_tty,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7],pByte[8],pByte[9],pByte[10],pByte[11],pByte[12],pByte[13],pByte[14],pByte[15],pByte[16],pByte[17],pByte[18],pByte[19],pByte[20],pByte[21],pByte[22],pByte[23],pByte[24],pByte[25],pByte[26],pByte[27],pByte[28],pByte[29],pByte[30]));			
+			////ACE_DEBUG((LM_DEBUG,"%s:%d Recv: %d bytes, [%X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X]\n",__FILE__,__LINE__,len_tty,pByte[0],pByte[1],pByte[2],pByte[3],pByte[4],pByte[5],pByte[6],pByte[7],pByte[8],pByte[9],pByte[10],pByte[11],pByte[12],pByte[13],pByte[14],pByte[15],pByte[16],pByte[17],pByte[18],pByte[19],pByte[20],pByte[21],pByte[22],pByte[23],pByte[24],pByte[25],pByte[26],pByte[27],pByte[28],pByte[29],pByte[30]));
+			
 			//len_tty = CSerialCtrl::CreateInstance()->WriteComPort(pByte, len_tty);	///这里是将外部设备输入的同时，输出给外部设备。调试使用
 			//CSerialCtrl::CreateInstance()->WriteComPort(" recved:", sizeof(" recved:"));	   //字节类型，所以字符串不能写
 			
 			//>>这里主要是将得到的字节数组255个中的有用的部分取出，放到resultBytes.
 			Uint bLen= pByte[2] + 3;   //后面的3表示   aa 55 len  的三个字节
 			Byte *resultBytes = new Byte[bLen];
-			ACE_OS::memcpy(resultBytes,pByte,bLen);
-	
+			ACE_OS::memcpy(resultBytes,pByte,bLen);		
 		//ACE_DEBUG((LM_DEBUG,"%s:%d pbytes[0]: %d  -- pbytes[1]: %d -- pbytes[2]: %d -- pbytes[3]: %d -- pbytes[4]: %d -- pbytes[5]: %d -- pbytes[6]: %d -- pbytes[7]: %d\n",__FILE__,__LINE__,pbytes[0],pbytes[1],pbytes[2],pbytes[3],pbytes[4],pbytes[5],pbytes[6],pbytes[7]));
 		//这里是查询按钮状态，返回数据0xaa 55 05 03 FF [00  00] chk
 			Byte ManualBytes[2] = {0};
@@ -1741,7 +1708,6 @@ void* MainBackup::Recevie(void* arg)
 //		ACE_DEBUG((LM_DEBUG,"%s:%d Error: ManualButtonSts \n",__FILE__,__LINE__,ManualButtonSts));
 		if (resultBytes[0] == 0xaa && resultBytes[1] == 0x55)
 		{
-			//ACE_DEBUG((LM_DEBUG,"%s:%d aa 55\n",__FILE__,__LINE__));
 			switch(resultBytes[3])
 			{	
 				//ACE_DEBUG((LM_DEBUG,"%s:%d aa 55 5\n",__FILE__,__LINE__));
@@ -1749,9 +1715,11 @@ void* MainBackup::Recevie(void* arg)
 					ManualBytes[0] = resultBytes[6];
 					ManualBytes[1] = resultBytes[5];
 					ManualButtonSts = bytes2T<Ushort>(ManualBytes);
-					//ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));					pMainBackup->OperateManual(ManualButtonSts);
-					//delete ManualBytes
-					break;
+					////ACE_DEBUG((LM_DEBUG,"%s:%d ManualButtonSts: %d\n",__FILE__,__LINE__,ManualButtonSts));
+					if(pManaKernel->m_pRunData->ucManualType == Manual_CTRL_NO || pManaKernel->m_pRunData->ucManualType == Manual_CTRL_PANEL)					
+						pMainBackup->OperateManual(ManualButtonSts);
+					break;					
+					
 				case MAINBACKUP_RECEVIE_ID:
 					readId[0] = resultBytes[5];
 					readId[1] = resultBytes[6];
@@ -1777,8 +1745,7 @@ void* MainBackup::Recevie(void* arg)
 					break;
 				case MAINBACKUP_RECEVIE_READ_LED:
 					LEDStatus = resultBytes[5];
-					pMainBackup->ReadLED(LEDStatus);
-					
+					pMainBackup->ReadLED(LEDStatus);					
 					break;
 				case MAINBACKUP_RECEVIE_WRITE_LED_TF:  ///送发数据到PIC
 					writeLED =  resultBytes[5];
@@ -1789,8 +1756,7 @@ void* MainBackup::Recevie(void* arg)
 					setp = resultBytes[5];
 					pMainBackup->CurrentSetp(setp);
 					break;
-				case MAINBACKUP_RECEVIE_SETP_TABLE:
-					
+				case MAINBACKUP_RECEVIE_SETP_TABLE:					
 					//pMainBackup->SendStep();
 					break;
 				case MAINBACKUP_RECEVIE_NONE:

@@ -32,6 +32,7 @@ History:
 #include "Configure.h"
 #include "SerialCtrl.h"
 #include "MacControl.h"
+#include "WirelessButtons.h"
 
 /**************************************************************
 Function:        CGbtMsgQueue::CGbtMsgQueue
@@ -375,12 +376,8 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 			tvCurTime.sec(iTotalSec);
 			tvDateTime.update(tvCurTime);
 
-			//CDate cCorrDate((Uint)tvDateTime.year(),(Byte)tvDateTime.month(),(Byte)tvDateTime.day());
-			//if ( !cCorrDate.IsRightDate() ) MOD:201309281025
 			if (!IsRightDate((Uint)tvDateTime.year(),(Byte)tvDateTime.month(),(Byte)tvDateTime.day()))
 			{
-				//ACE_DEBUG((LM_DEBUG,"%s:%d %d-%d-%d\n",
-				//__FILE__,__LINE__,tvDateTime.year(),tvDateTime.month(),tvDateTime.day()));
 				GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
 				return;
 			}
@@ -393,10 +390,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 			iRecvIndex += 4;
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 
-			if ( CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )
-			{
-				CGps::CreateInstance()->ForceAdjust();
-			}
+			
 		}
 		break;
 	case OBJECT_LOCAL_TIME:
@@ -448,10 +442,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 			ACE_OS::memcpy(sTscMsg.pDataBuf,m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf+iRecvIndex,4);
 			iRecvIndex += 4;
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
-			if ( CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )
-			{
-				CGps::CreateInstance()->ForceAdjust();
-			}
+			
 		}
 		break;
 	default:
@@ -805,6 +796,17 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 		{		 
 			
 			SetCommandSignal(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
+		}		
+		break ;
+    case OBJECT_BUTTONPHASE_CFG:
+		if ( GBT_SEEK_REQ == ucRecvOptType )  
+		{
+			;
+		}
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
+		{		 
+			
+			SetButtonPhase(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}		
 		break ;
 	case OBJECT_SYSFUNC_CFG :    //系统其他功能配置
@@ -1317,16 +1319,12 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			break;
 		case 3: //工作方式
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue = ucTmp ;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1     , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_STAND_STAGEID+1  , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CORSS1_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CORSS1_STAGEID+1 , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
 			CManaKernel::CreateInstance()->SetUpdateBit();
 			break;
@@ -1374,11 +1372,31 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			pTscCfg->sSpecFun[FUN_CNTTYPE].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CNTTYPE+1 , ucTmp);	
 			break;
-		/*case 10:
+		 case 10:
 			ucTmp = pBuf[iRecvIndex++];
 			pTscCfg->sSpecFun[FUN_LIGHTCHECK].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_LIGHTCHECK+1 , ucTmp);
-			break;*/
+			break;
+		 case 11:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_GPS_INTERVAL].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_GPS_INTERVAL+1 , ucTmp);
+		 	break ;
+		 case 12:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_WIRELESSBTN_TIMEOUT].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_WIRELESSBTN_TIMEOUT+1 , ucTmp);
+		 	break ;	
+		case 13:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_GPS].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_GPS+1 , ucTmp);
+		 	break ;
+		case 14:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_MSG_ALARM].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_MSG_ALARM+1 , ucTmp);
+		 	break ;			
 		default:
 			break;
 	}
@@ -1453,7 +1471,7 @@ Return:         无
 
 void CGbtMsgQueue::SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen)
 {
-	char tmpstr[400] = {0};	
+	//char tmpstr[400] = {0};	
 	/*
 	CSerialCtrl* pGsmSerial = CSerialCtrl::CreateInstance() ;	
 	int fd = pGsmSerial->GetSerialFd(1);
@@ -1668,6 +1686,44 @@ void CGbtMsgQueue::SetLampBdtCfg(Byte* pBuf,int& iRecvIndex)
 	pLampBd->SendSingleCfg(ucBdIndex);
 }
 
+
+/**************************************************************
+Function:       CGbtMsgQueue::SetButtonPhase
+Description:   设置按钮方向上的方向相位
+Input:          pBuf   接收设置缓存指针
+		     iRecvIndex     当前设置取值地址
+Output:         无
+Return:         无
+***************************************************************/
+
+void CGbtMsgQueue::SetButtonPhase(Byte* pBuf,int& iRecvIndex)
+{
+
+	//CManaKernel *pManakernel = CManaKernel::CreateInstance();
+	try
+	{
+		SCanFrame sSendFrameTmp;	
+		ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));	
+		Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , BOARD_ADDR_WIRELESS_BTNCTRLA , &(sSendFrameTmp.ulCanId));
+		Byte m_ucWirelessBtnHead = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6 ) | m_ucWirelessBtnHead;  //0x2 表示无线遥控器发送数据给主控板
+		sSendFrameTmp.pCanData[1] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[2] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[3] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[4] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[5] = pBuf[iRecvIndex++];
+		sSendFrameTmp.ucCanDataLen = 6 ;
+		CWirelessBtn::CreateInstance()->RecvMacCan(sSendFrameTmp);
+	}
+	catch(...)
+	{
+		ACE_OS::printf("%s:%d WirelessBtn Simulation  error!  \r\n",__FILE__,__LINE__);
+		return ;
+	}
+		
+}
+
+
 /**************************************************************
 Function:       CGbtMsgQueue::SetCommandSignal
 Description:   接收上位机控制信号机信号指令包括下一相位方向等.
@@ -1880,6 +1936,11 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 				sTscMsg.pDataBuf     = NULL; 			
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));	
 				break;
+			}
+		case 0x7:
+			{
+				CGps::CreateInstance()->ForceAdjust();
+				break ;
 			}
 		
 		default:
@@ -3424,7 +3485,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 					                    MAX_BUF_LEN-iSendIndex,    //发送帧的剩余缓存长度
 										ucErrorSts,  //错误状态
 										ucErrorIdx); //错误索引
-				ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
+				//ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
 				if ( iFunRet < 0 )
 				{
 #ifdef TSC_DEBUG
@@ -3482,10 +3543,10 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			}
 			else
 			{
-#ifdef TSC_DEBUG
+
 				ACE_DEBUG((LM_DEBUG,"%s:%d,ObjNum error num:%d\n"
 					                ,__FILE__,__LINE__,m_sGbtDealData[ucDealDataIndex].iObjNum));
-#endif
+
 				ucErrorSts = 5;
 				ucErrorIdx = 0;
 				GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
@@ -3493,15 +3554,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			}
 			
 		}		
-		/*
-		ucIndexCnt    = 0;   //索引个数
-		ucErrorSts    = 0;   //错误状态
-		ucErrorIdx    = 0;   //错误索引
-		ucObjId       = 0;   //对象名(表名)
-		ucIdxFst      = 255;  //第一个索引(id1)
-		ucIdxSnd      = 255;  //第二个索引(id2)
-		ucSubId       = 0;    //子对象(字段下标)
-		*/
+	
 	}
 }
 
@@ -3952,8 +4005,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.ulType       = TSC_MSG_NEXT_STAGE;  //按阶段前进
 				sTscMsgSts.ucMsgOpt     = 0;
 				sTscMsgSts.uiMsgDataLen = 1;
-				sTscMsgSts.pDataBuf     = NULL ;
-				
+				sTscMsgSts.pDataBuf     = NULL ;				
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 				
 			}
@@ -4439,7 +4491,7 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 				ACE_OS::memcpy(sMsg.pDataBuf,pBuf,iRecvCount);
 
 				pGbtMsgQueue->SendGbtMsg(&sMsg,sizeof(sMsg));
-				ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
+			//	ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
 			}
 			else
 			{	///超过4个客户大小，无法再接收新数据
@@ -4562,9 +4614,6 @@ bool CGbtMsgQueue::IsOtherObject(Byte ucObjectFlag)
 	{
 	case OBJECT_UTC_TIME:
 	case OBJECT_LOCAL_TIME:
-#ifdef TSC_DEBUG
-		ACE_DEBUG((LM_DEBUG,"\n IsOtherObject\n"));
-#endif
 		return true;
 	default:
 		return false;
@@ -4599,6 +4648,7 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_POWERBOARD_CFG :       //电源板配置
 		case OBJECT_GSM_CFG :            //配置GSM功能
 		case OBJECT_COMMAND_SIGNAL:      //上位机命令控制下一阶段相位和方向
+		case OBJECT_BUTTONPHASE_CFG:     //方向按键相位配置
 			return true;
 		default:
 			return false;
@@ -4618,6 +4668,8 @@ int CGbtMsgQueue::GbtCtrl2TscCtrl(Byte ucctrl)
 {
 	switch ( ucctrl )
 	{
+	case 1:
+		return CTRL_MANUAL;
 	case 2:
 		return CTRL_UTCS;
 	case 3:
@@ -4778,8 +4830,8 @@ void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
 	char hostname[MAXHOSTNAMELEN];
     ACE_OS::hostname(hostname, sizeof (hostname));
 	phost_name = hostname;
-	printf("host name is %s\n", hostname);
-	printf("--------------------------\n");
+	ACE_OS::printf("%s:%d Host name is %s\n", __FILE__,__LINE__,hostname);
+	ACE_OS::printf("--------------------------\n");
 
 
     ACE_INET_Addr* addr_array1; 
@@ -4800,12 +4852,12 @@ void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
 		struct in_addr *paddr_stru = (in_addr*)&net_order_ip;
 		InterceptStr(ACE_OS::inet_ntoa(*paddr_stru),(char*)".",pip,3);
 		
-		printf("format 0: %s\n", ACE_OS::inet_ntoa(*paddr_stru));
+		ACE_OS::printf("%s:%d Format 0: %s\n", __FILE__,__LINE__,ACE_OS::inet_ntoa(*paddr_stru));
 
 		addr_array2->addr_to_string(address, sizeof (address), 1);
-		printf("format 1: %s\n", address);
+		ACE_OS::printf("%s:%d Format 1: %s\n", __FILE__,__LINE__,address);
         addr_array2++;
-		printf("--------------------------\n");
+		ACE_OS::printf("--------------------------\n");
 	
     }
 

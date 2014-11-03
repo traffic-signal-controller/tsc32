@@ -22,7 +22,6 @@
 #define AF_CAN PF_CAN
 #endif
 
-
 class Can
 {
 public:

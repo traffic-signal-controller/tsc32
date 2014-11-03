@@ -93,11 +93,6 @@ void CGsm::RunGsmData()
 		else
 			bInit = true ;
 	}
-		
-	Byte iGps = 0 ;	
-	//CRs485::CreateInstance()->CtrolGPPIo(0,10) ; //Open Gps io gpp10
-	
-	//pGsmSerial->set_speed(m_iGsmFd, 9600);   
 	  
 	  	if(GetString(m_iGsmFd ,charMsg))
 		{				

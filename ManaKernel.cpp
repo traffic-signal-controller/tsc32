@@ -73,7 +73,7 @@ CManaKernel::CManaKernel()
 	bValidSoftWare = true ;
 	bUTS  = false ;
 	bDegrade = false ; //ADD:201311121140
-	bChkManul = true ;  //ADD:201403311059
+	//bChkManul = true ;  //ADD:201403311059
 	iCntFlashTime = 0 ;
 	bSecondPriority = false ; //ADD:201406191130
 	ACE_OS::memset(m_pTscConfig->sOverlapPhase,0,MAX_OVERLAP_PHASE*sizeof(SOverlapPhase));
@@ -1256,6 +1256,7 @@ void CManaKernel::OverCycle()
 		{
 			m_pRunData->bOldLock = false;
 			ACE_DEBUG((LM_DEBUG,"%s:%d  begin setcyclestepinfo\n",__FILE__,__LINE__));
+
 			SetCycleStepInfo(0); //单单构造整个周期的步伐信息即可
 		}
 
@@ -1645,7 +1646,6 @@ void CManaKernel::GetRunDataStandard()
 			GBT_DB::TblSchedule tblSchedule;
 			GBT_DB::Schedule* pSchedule = NULL;
 			ACE_OS::memset(&tblSchedule,0,sizeof(GBT_DB::TblSchedule));
-
 			
 			/*
 			ACE_Date_Time tvTime(GetCurTime());
@@ -1713,7 +1713,7 @@ void CManaKernel::GetRunDataStandard()
 	 if(m_pRunData->bNeedUpdate || ucCurTimePatternId != m_pRunData->ucTimePatternId || m_iTimePatternId == 251 || m_iTimePatternId == 250)
 	{
 		Byte ucCurScheduleTimeId = GetScheduleTimeId(ucCurTimePatternId,m_ucUtcsComCycle,m_ucUtscOffset); //获取配时阶段表号
-ACE_DEBUG((LM_DEBUG,"%s:%d m_iTimePatternId2 = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
+		ACE_DEBUG((LM_DEBUG,"%s:%d m_iTimePatternId2 = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
 		m_pRunData->ucTimePatternId = ucCurTimePatternId;
 				
 		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId) ||m_iTimePatternId == 251 )
@@ -1889,21 +1889,18 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 
 
 /**************************************************************
-Function:       CManaKernel::GetScheduleId
+Function:       CManaKernel::GetTimePatternId
 Description:    根据月、日、星期获取当前的时段表号
 Input:          ucScheduleId ：时段表号       
 Output:         ucCtrl	 ： 当前控制模式
-				ucStatus ： 当前工作状态
-				ucCycle      - 周期    暂时未用
+			ucStatus ： 当前工作状态
+			ucCycle      - 周期    暂时未用
 		        ucOffSet     - 相位差  暂时未用
 Return:         配时方案号 
 ***************************************************************/
 Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucStatus )
 {	
 	ACE_DEBUG((LM_DEBUG,"%s:%d m_pRunData->uiCtrl= %d m_iTimePatternId= %d\n" ,__FILE__,__LINE__,m_pRunData->uiCtrl ,m_iTimePatternId));
-	//如果当前的运行状态控制方式为面板控制或者系统优化控制，并且当前配饰方案号不为0
-	//if ( ( ( ( CTRL_PANEL == m_pRunData->uiCtrl ) || ( CTRL_UTCS == m_pRunData->uiCtrl ) )  && ( m_iTimePatternId != 0 ) )||  m_iTimePatternId == 250)
-	
 	bool bLastTem           = false;
 	int  iIndex             = 0;
 	Byte ucCurTimePatternId = 0;
@@ -2868,14 +2865,12 @@ Return:         无
 **********************************************************************************/
 void CManaKernel::SwitchStatus(unsigned int uiWorkStatus)
 {
-#ifndef TSC_DEBUG
-	ACE_DEBUG((LM_DEBUG,"%s:%d New WorkStatus:%d,Old WorkStatus:%d\n",__FILE__,__LINE__,uiWorkStatus,m_pRunData->uiWorkStatus));
-#endif
+	ACE_DEBUG((LM_DEBUG,"%s:%d SwitchStatus new WorkStatus:%d,Old WorkStatus:%d\n",__FILE__,__LINE__,uiWorkStatus,m_pRunData->uiWorkStatus));
+
 	if ( uiWorkStatus == m_pRunData->uiWorkStatus )
 	{
 		return;
 	}
-
 	if ( ( SIGNALOFF == m_pRunData->uiWorkStatus ) && ( STANDARD == uiWorkStatus ) )  //关灯切换到标准 需要经过黄闪
 	{
 		m_pRunData->uiWorkStatus = FLASH;
@@ -3300,17 +3295,11 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 		iIndex++;
 	}
 
-	//ACE_DEBUG((LM_DEBUG,"******iTotalSec:%d\n",iTotalSec));
-
-	if ( ucType == OBJECT_LOCAL_TIME ) //本地时间
-	{
-		iTotalSec = iTotalSec + 8 * 3600;
-	}
-	else
+	if ( ucType == OBJECT_UTC_TIME) //utc时间
 	{
 		iTotalSec = iTotalSec - 8 * 3600;
-
 	}
+	
 	tvCurTime.sec(iTotalSec);
 	tvDateTime.update(tvCurTime);
 	
@@ -3322,20 +3311,8 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 
 	CTimerManager::CreateInstance()->CloseAllTimer();
 
-#ifdef WINDOWS
-	SYSTEMTIME st;
-	st.wYear   = (WORD)tvDateTime.year();
-	st.wMonth  = (WORD)tvDateTime.month();
-	st.wDay    = (WORD)tvDateTime.day();
-	st.wHour   = (WORD)tvDateTime.hour();
-	st.wMinute = (WORD)tvDateTime.minute();
-	st.wSecond = (WORD)tvDateTime.second(); 
-	st.wMilliseconds = 0; 
-	//SetSystemTime(&st); 
-#else
 	struct tm now;
 	time_t ti = iTotalSec;
-
 	now.tm_year = tvDateTime.year();
 	now.tm_mon  = tvDateTime.month();
 	now.tm_mday = tvDateTime.day();
@@ -3345,14 +3322,8 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 
 	now.tm_year -= 1900;
 	now.tm_mon--;
-	now.tm_zone = 0;
-	
+	now.tm_zone = 0;	
 	ti = mktime(&now);
-	//ACE_DEBUG((LM_DEBUG, "%s:%d iTotalSec =%d\n",__FILE__,__LINE__,iTotalSec));
-	//ACE_DEBUG((LM_DEBUG, "%s:%d ti =%d\n",__FILE__,__LINE__,ti));
-   	//ACE_DEBUG((LM_DEBUG, "%s:%d  %4d-%02d-%02d %02d:%02d:%02d \n",__FILE__,__LINE__,now.tm_year,now.tm_mon,now.tm_mday,now.tm_hour,now.tm_min,now.tm_sec));
-	//ACE_DEBUG((LM_DEBUG, "22222222222\n"));
-
 	stime(&ti);   //设置系统时间	
 	fd = open(DEV_RTC, O_WRONLY, 0);
 	if(fd > 0)
@@ -3360,18 +3331,22 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 		ioctl(fd, RTC_SET_TIME, &now);
 		close(fd);
 	}
-#endif
+	else
+	{
+		ACE_OS::printf("%s:%d open RTC error, cant write time to RTC!\r\n",__FILE__,__LINE__);
+	}
 	
 	CTimerManager::CreateInstance()->StartAllTimer();
-
 	SetUpdateBit();
-	CWirelessCoord::CreateInstance()->ForceAssort();
-
+	if(m_pRunData->uiCtrl == CTRL_WIRELESS) //处于无线协调控制
+		CWirelessCoord::CreateInstance()->ForceAssort();
+	
 	SThreadMsg sTscMsg;
 	sTscMsg.ulType       = TSC_MSG_LOG_WRITE;
 	sTscMsg.ucMsgOpt     = LOG_TYPE_CORRECT_TIME;
 	sTscMsg.uiMsgDataLen = 4;
 	sTscMsg.pDataBuf     = ACE_OS::malloc(4);
+	iTotalSec += 8*3600 ;
 	((Byte*)(sTscMsg.pDataBuf))[3] = iTotalSec &0xff ;
 	((Byte*)(sTscMsg.pDataBuf))[2] = (iTotalSec>>8) &0xff ;
 	((Byte*)(sTscMsg.pDataBuf))[1] = (iTotalSec>>16) &0xff ;
@@ -4909,8 +4884,7 @@ void CManaKernel::SetDirecChannelColor(Byte iDirecType)
 	Byte ucIndex = 0;
 	Uint ucDirVaule = 0;
 	ACE_OS::memset(m_ucLampOn,0,MAX_LAMP);
-	ACE_OS::memset(m_ucLampFlash,0,MAX_LAMP);
-	//ACE_DEBUG((LM_DEBUG,"%s:%d ucIndex == %d ,MAX_DREC == %d !\n",__FILE__,__LINE__,ucIndex,MAX_DREC));
+	ACE_OS::memset(m_ucLampFlash,0,MAX_LAMP);	
 	while(ucIndex< MAX_DREC)	
 	{
 		ucDirVaule = (m_pTscConfig->sPhaseToDirec[ucIndex]).ucId ;
@@ -4925,7 +4899,6 @@ void CManaKernel::SetDirecChannelColor(Byte iDirecType)
 				else if((m_pTscConfig->sPhaseToDirec[ucIndex]).ucOverlapPhase != 0)
 					SetPhaseColor(false,(m_pTscConfig->sPhaseToDirec[ucIndex]).ucOverlapPhase);
 			}
-
 		}
 		else
 		{
@@ -4933,7 +4906,49 @@ void CManaKernel::SetDirecChannelColor(Byte iDirecType)
 			continue;
 		}
 		ucIndex++;
-	}
+	}	
+	
 	SetRedOtherLamp(m_ucLampOn);
 	CLampBoard::CreateInstance()->SetLamp(m_ucLampOn,m_ucLampFlash);
 }
+
+/**************************************************************
+Function:        CManaKernel::SetWirelessBtbDirecCfg
+Description:    设置无线遥控按键一个或多个方向上的绿灯放行	
+Input:          RecvBtnDirecData -4字节的北东南西方向的绿灯放行,每个放行一个字节，每个字节
+		     包含 左、直、右人行调头。				  
+Output:         无
+Return:         无
+Date:            2014-10-21 16:06
+***************************************************************/
+void CManaKernel::SetWirelessBtnDirecCfg(Uint RecvBtnDirecData)
+{	
+	Byte BtnDirecData = 0 ;
+	Byte ucLampIndex = 0 ;
+	ACE_OS::memset(m_ucLampOn,0,MAX_LAMP);
+	ACE_OS::memset(m_ucLampFlash,0,MAX_LAMP);
+	for(Byte idex = 0 ; idex <4 ; idex++)   // 北东南西索引 0 1 2 3
+	{
+		BtnDirecData = (RecvBtnDirecData>>8*idex) ;
+		//ACE_OS::printf("Direc= %d ,BtbDirecData=%d \r\n",idex,BtnDirecData);
+		for(Byte idex2 = 0 ; idex2< 5 ; idex2++) //左直右人行调头索引
+		{
+			if(BtnDirecData>>idex2 &0x1)
+			{
+				if(idex2 ==4) //调头，北东南西调头通道默认17 18 19 20
+				{
+					m_ucLampOn[(16+idex)*3+2] = 1;
+				}
+				else
+				{
+					m_ucLampOn[(4*idex+idex2)*3+2] = 1; //左直右人行
+				}
+			}
+		}
+		
+	}	
+	SetRedOtherLamp(m_ucLampOn);
+	CLampBoard::CreateInstance()->SetLamp(m_ucLampOn,m_ucLampFlash);
+}
+
+

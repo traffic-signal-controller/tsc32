@@ -436,10 +436,10 @@ bool VaildSN()
 	int i,bol;
 	ReadTscSN(fileSN);
 	GetMainBroadCdKey(deviceSN);
-	for(i=0; i<8; i++) 
-	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d fileSN: 0x%x  deviceSN: 0x%x!\n",__FILE__,__LINE__,fileSN[i],deviceSN[i]));
-	}
+	//for(i=0; i<8; i++) 
+	//{
+		//ACE_DEBUG((LM_DEBUG,"%s:%d fileSN: 0x%x  deviceSN: 0x%x!\n",__FILE__,__LINE__,fileSN[i],deviceSN[i]));
+	//}
 	bol = ACE_OS::strcmp(fileSN,deviceSN);
 	if(bol == 0)
 	{
