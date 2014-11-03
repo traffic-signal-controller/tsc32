@@ -30,22 +30,10 @@ Output:         ÎÞ
 Return:         ÎÞ
 ***************************************************************/
 CMainBoardLed::CMainBoardLed()
-{
-	STscConfig* pSTscConfig = NULL ;
-	pSTscConfig =  CManaKernel::CreateInstance()->m_pTscConfig ;
-	
+{	
 	for(int iNumFun = 0 ; iNumFun < 12 ;iNumFun++)
 		LedBoardStaus[iNumFun] = 0x1 ;
-	if ( 0 !=pSTscConfig->sSpecFun[FUN_GPS].ucValue )
-		LedBoardStaus[8] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_3G].ucValue )
-		LedBoardStaus[4] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue )
-		LedBoardStaus[5] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_CAM].ucValue )
-		LedBoardStaus[6] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_WLAN].ucValue )
-		LedBoardStaus[7] = 0x2;
+	
 	LedBoardStaus[9] = 0x2;//»ÆÉÁÆ÷
 	can1Bool = true;
 	can0Bool = true;
@@ -231,10 +219,19 @@ Return:         ÎÞ
 ***************************************************************/
 void CMainBoardLed::DoLedBoardShow()
 {
+	STscConfig* pSTscConfig =CManaKernel::CreateInstance()->m_pTscConfig ;
 	if(IsEthLinkUp())
 		LedBoardStaus[3] = 0x2 ;
 	else
 		LedBoardStaus[3] = 0x1 ;
+	if ( 0 !=pSTscConfig->sSpecFun[FUN_GPS].ucValue )
+		LedBoardStaus[8] = 0x2;	
+	else
+		LedBoardStaus[8] = 0x1;	
+	if ( 0 != pSTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue )
+		LedBoardStaus[5] = 0x2;
+	else
+		LedBoardStaus[5] = 0x1;
 	if(CFlashMac::CreateInstance()->GetHardwareFlash())
 		LedBoardStaus[9] = 0x3 ;
 	if(CGps::CreateInstance()->m_bGpsTime)
@@ -268,7 +265,7 @@ void CMainBoardLed::SetLedBoardShow()
 		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[6]&0x3)<<4 ;
 		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[7]&0x3)<<6 ;
 
-		sSendFrameTmp.pCanData[3] = LedBoardStaus[8]&0x3 ;
+		sSendFrameTmp.pCanData[3] =  LedBoardStaus[8]&0x3 ;
 		sSendFrameTmp.pCanData[3] |= (LedBoardStaus[9]&0x3)<<2 ;		
 		sSendFrameTmp.ucCanDataLen = 4;	
 		Can::CreateInstance()->Send(sSendFrameTmp);
