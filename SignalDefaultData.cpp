@@ -424,6 +424,8 @@ void SignalDefaultData::InsertGbDefaultData()
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WIRELESSBTN          + 1) , 0);
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_LIGHTCHECK          + 1) , 0);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_COUNT          + 1) , 0);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_GPS_INTERVAL          + 1) , 1);
 	}
 
 	/*******************添加默认检测器参数*******************/

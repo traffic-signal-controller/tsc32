@@ -3,12 +3,12 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   LampBoard.cpp
 Date:       2013-4-13
-Description:信号机灯手控操作处理类文件.包含对手控面板全红，黄闪，步进,手动自动切换按钮操作的处理。
+Description:信号机灯手控操作处理类文�?包含对手控面板全红，黄闪，步�?手动自动切换按钮操作的处理�?
 Version:    V1.0
-History:    2013.05.29 修改按钮按下和松开的处理。
-		  2013.05.31 添加当手动状态维护5分钟以上时自动切换为自动状态.。
-		  2013.09.10 修改按钮接收处理方式，简化代码。
-		  2014.10.06 修改按钮接受处理方式，由位移循环判断修改位读取键值进行判断
+History:    2013.05.29 修改按钮按下和松开的处理�?
+		  2013.05.31 添加当手动状态维�?分钟以上时自动切换为自动状�?�?
+		  2013.09.10 修改按钮接收处理方式，简化代码�?
+		  2014.10.06 修改按钮接受处理方式，由位移循环判断修改位读取键值进行判�?
 		  2014.10.23 �����֧�����߰����ֿؿ���
 ********************************************************************************************/
 #include "WirelessButtons.h"
@@ -46,9 +46,9 @@ enum{
 /**************************************************************
 Function:       CWirelessBtn::CWirelessBtn
 Description:    CWirelessBtn类构造函数，用于类初始化处理				
-Input:          无              
-Output:         无
-Return:         无
+Input:          �?             
+Output:         �?
+Return:         �?
 ***************************************************************/
 CWirelessBtn::CWirelessBtn() 
 {	
@@ -62,10 +62,10 @@ CWirelessBtn::CWirelessBtn()
 
 /**************************************************************
 Function:       CWirelessBtn::~CWirelessBtn
-Description:    CWirelessBtn类	析构函数	
-Input:          无              
-Output:         无
-Return:         无
+Description:    CWirelessBtn�?析构函数	
+Input:          �?             
+Output:         �?
+Return:         �?
 ***************************************************************/
 CWirelessBtn::~CWirelessBtn() 
 {
@@ -74,10 +74,10 @@ CWirelessBtn::~CWirelessBtn()
 
 /**************************************************************
 Function:       Manual::CreateInstance
-Description:    创建	Manual静态对象
-Input:          无              
-Output:         无
-Return:         静态对象指针
+Description:    创建	Manual静态对�?
+Input:          �?             
+Output:         �?
+Return:         静态对象指�?
 ***************************************************************/
 CWirelessBtn* CWirelessBtn::CreateInstance()
 {
@@ -313,7 +313,7 @@ void CWirelessBtn::RecvMacCan(SCanFrame sRecvCanTmp)
 					else if(m_ucLastManualSts == BUTTON_MANUAL_NEXT_STEP)
 					{
 						bTransitSetp = true ;	
-						SetCurrenStepFlash(0x2); //��ǰ������λ�����	
+						SetCurrenStepFlash(0x2); //��ǰ������λ����?
 						ACE_OS::sleep(2);	
 						SetCurrenStepFlash(0x1); //��ǰ������λ�Ƶ�
 						bTransitSetp = false ;
@@ -340,7 +340,7 @@ void CWirelessBtn::RecvMacCan(SCanFrame sRecvCanTmp)
 					else if(m_ucLastManualSts == BUTTON_MANUAL_NEXT_STEP)
 					{
 						bTransitSetp = true ;	
-						SetCurrenStepFlash(0x2); //��ǰ������λ�����	
+						SetCurrenStepFlash(0x2); //��ǰ������λ����?
 						ACE_OS::sleep(2);	
 						SetCurrenStepFlash(0x1); //��ǰ������λ�Ƶ�
 						bTransitSetp = false ;

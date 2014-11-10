@@ -379,7 +379,7 @@ struct STscRunData
 	SStepInfo         sStageStepInfo[MAX_STEP];   //各个步伐信息
 	//ACE_Thread_Mutex  mMutex;                     //互斥体
 	bool              bIsChkLght ;
-	bool              b8cndtown ;   //ADD:20131107
+	bool              b8cndtown ;   //ADD:20131107	Byte 			  ucManualType ;//ADD:20141021 当前手控类型	
 	Byte 			  ucManualType ;//ADD:20141021 当前手控类型	
 	Byte			  flashType ;   //ADD:20141106 当系统处于黄闪状态时候黄闪类型
 }

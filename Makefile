@@ -8,7 +8,6 @@ CC  = $(CROSS_COMPILE)g++
 LIB     =  -L $(ACE_ROOT)/ace  -l pthread  -l rt -l dl  # -L$(ACE_ROOT)/ace -lACE
 ACELIB =  $(ACE_ROOT)/ace/libACE.so
 DEST =  Gb.aiton
-
 all:	$(DEST) Makefile
 %.o: %.cpp
 	$(CC) -c $(CFLAGS) $< -o $@ $(INCLUDE) -I$(ACE_ROOT) -L$(ACE_ROOT)/ace
