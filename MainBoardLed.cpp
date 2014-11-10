@@ -22,6 +22,8 @@ History:
 
 #define DEV_PATH "/sys/class/gpio/"
 
+
+
 /**************************************************************
 Function:       CMainBoardLed
 Description:    CMainBoardLed 构造函数
@@ -30,23 +32,11 @@ Output:         无
 Return:         无
 ***************************************************************/
 CMainBoardLed::CMainBoardLed()
-{
-	STscConfig* pSTscConfig = NULL ;
-	pSTscConfig =  CManaKernel::CreateInstance()->m_pTscConfig ;
+{	
+	for(Byte LedIndex = 0 ; LedIndex < MAXLED ;LedIndex++)
+		LedBoardStaus[LedIndex] = LED_STATUS_OFF;
 	
-	for(int iNumFun = 0 ; iNumFun < 12 ;iNumFun++)
-		LedBoardStaus[iNumFun] = 0x1 ;
-	if ( 0 !=pSTscConfig->sSpecFun[FUN_GPS].ucValue )
-		LedBoardStaus[8] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_3G].ucValue )
-		LedBoardStaus[4] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue )
-		LedBoardStaus[5] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_CAM].ucValue )
-		LedBoardStaus[6] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_WLAN].ucValue )
-		LedBoardStaus[7] = 0x2;
-	LedBoardStaus[9] = 0x2;//黄闪器
+	LedBoardStaus[LED_YWFLASH] = LED_STATUS_ON;//黄闪器作为基本模块默认点亮
 	can1Bool = true;
 	can0Bool = true;
 
@@ -208,15 +198,11 @@ bool CMainBoardLed::IsEthLinkUp()
 	fpsys = NULL;
 	if(rusult ==(Byte)'1')
 	{
-		//printf("\nEth0 link up!\n");
-		//LedBoardStaus[3] = 0x2 ;
 		return true ;
 	}
 	else
 	
 	{
-		//printf("\nEth0 link down!\n");
-		//LedBoardStaus[3] = 0x1 ;
 		return false ;
 	}
 	
@@ -231,14 +217,15 @@ Return:         无
 ***************************************************************/
 void CMainBoardLed::DoLedBoardShow()
 {
+	STscConfig* pSTscConfig =CManaKernel::CreateInstance()->m_pTscConfig ;
 	if(IsEthLinkUp())
-		LedBoardStaus[3] = 0x2 ;
+		LedBoardStaus[LED_NETWORK] = LED_STATUS_ON;
 	else
-		LedBoardStaus[3] = 0x1 ;
+		LedBoardStaus[LED_NETWORK] = LED_STATUS_OFF;	
 	if(CFlashMac::CreateInstance()->GetHardwareFlash())
-		LedBoardStaus[9] = 0x3 ;
-	if(CGps::CreateInstance()->m_bGpsTime)
-		LedBoardStaus[8] = 0x3 ;
+		LedBoardStaus[LED_YWFLASH] = LED_STATUS_FLASH ;
+	else
+		LedBoardStaus[LED_YWFLASH] = LED_STATUS_ON ;
 	SetLedBoardShow();
 }
 
@@ -258,22 +245,37 @@ void CMainBoardLed::SetLedBoardShow()
 		//ACE_DEBUG((LM_DEBUG,"%s:%d LEDCANID:%x \n",__FILE__,__LINE__,sSendFrameTmp.ulCanId));
 		sSendFrameTmp.ulCanId = 0x91032ff0 ;
 		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND<< 6) | LED_BOARD_SHOW;				
-		sSendFrameTmp.pCanData[1] = LedBoardStaus[0]&0x3 ;
-		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[1]&0x3)<<2 ;
-		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[2]&0x3)<<4 ;
-		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[3]&0x3)<<6 ;
+		sSendFrameTmp.pCanData[1] = LedBoardStaus[LED_RADIATOR]&0x3 ;
+		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_HEATER]&0x3)<<2 ;
+		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_ILLUMINATOR]&0x3)<<4 ;
+		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_NETWORK]&0x3)<<6 ;
 
-		sSendFrameTmp.pCanData[2] = LedBoardStaus[4]&0x3 ;
-		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[5]&0x3)<<2 ;
-		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[6]&0x3)<<4 ;
-		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[7]&0x3)<<6 ;
+		sSendFrameTmp.pCanData[2] = LedBoardStaus[LED_3G]&0x3 ;
+		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[LED_MSG]&0x3)<<2 ;
+		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[LED_CAM]&0x3)<<4 ;
+		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[LED_WIRELESSBUTTON]&0x3)<<6 ;
 
-		sSendFrameTmp.pCanData[3] = LedBoardStaus[8]&0x3 ;
-		sSendFrameTmp.pCanData[3] |= (LedBoardStaus[9]&0x3)<<2 ;		
+		sSendFrameTmp.pCanData[3] =  LedBoardStaus[LED_GPS]&0x3 ;
+		sSendFrameTmp.pCanData[3] |= (LedBoardStaus[LED_YWFLASH]&0x3)<<2 ;		
 		sSendFrameTmp.ucCanDataLen = 4;	
 		Can::CreateInstance()->Send(sSendFrameTmp);
 		//ACE_DEBUG((LM_DEBUG,"%s:%d pCanData[1]= %02x , pCanData[2]= %02x ,pCanData[3]= %02x \n ",__FILE__,__LINE__,sSendFrameTmp.pCanData[1],sSendFrameTmp.pCanData[2],sSendFrameTmp.pCanData[3]));
 
 }
 
+/**************************************************************
+Function:       SetSignalLed
+Description:   设置单独的显示灯板LED灯状态
+Input:           LedIndex - 模块LED灯索引
+			LedStatus - 指定LED灯状态
+Output:         无
+Return:         无
+Date:           20141106
+***************************************************************/
 
+void CMainBoardLed::SetSignalLed(Byte LedIndex ,Byte LedStatus)
+{
+	if(LedIndex>(MAXLED-1) && LedIndex<0)
+		return ;
+	LedBoardStaus[LedIndex] = LedStatus ;
+}

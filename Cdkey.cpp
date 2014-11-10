@@ -9,8 +9,6 @@ History:
 ***************************************************************/
 #include "Cdkey.h"
 
-
-
 /**************************************************************
 Function:       Cdkey::Cdkey
 Description:    CDKEY的构造函数
@@ -20,7 +18,7 @@ Return:         0
 ***************************************************************/
 Cdkey::Cdkey()
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d construnt Cdkey object ok !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d Construnt Cdkey object ok !\n",__FILE__,__LINE__));
 }
 
 /**************************************************************
@@ -32,7 +30,7 @@ Return:         0
 ***************************************************************/
 Cdkey::~ Cdkey()
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d destroy Cdkey object ok !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d Destroy Cdkey object ok !\n",__FILE__,__LINE__));
 }
 
 /**************************************************************
@@ -57,7 +55,7 @@ Return:         无
 ***************************************************************/
 void Cdkey::InitCdkey()
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d init Cdkey object ok !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d init Cdkey object ok !\r\n",__FILE__,__LINE__));
 }
 /**************************************************************
 Function:        Cdkey::GetCdkey(char (&cdkey)[8])
@@ -80,26 +78,26 @@ bool Cdkey::GetCdkey(char (&cdkey)[8])
 	//char passwd[8] = {"0"};	
 	//char passwd2[8] = {"1"};
 	//ACE_DEBUG((LM_DEBUG,"%s:%d read all data from EEPROM !\n",__FILE__,__LINE__));
-	fd = open("/dev/sysinfo", O_RDWR);	
+	fd = ACE_OS::open("/dev/sysinfo", O_RDWR);	
 	if (fd < 0) 
 	{		
-		printf("open /dev/sysinfo error!\n");		
+		ACE_OS::printf("%s:%d Open /dev/sysinfo error!\n",__FILE__,__LINE__);		
 		return -1;	
 	}	
-	ret = read(fd, buf, 120);	
-	for (i=0; i<120; i++) 
-	{		
-		printf("0x%x  ", buf[i]);	
-	}	
-	printf("\n");	
+	ret = ACE_OS::read(fd, buf, 120);	
+	//for (i=0; i<120; i++) 
+	//{		
+		//printf("0x%x  ", buf[i]);	
+	//}	
+	//printf("\n");	
 	ACE_DEBUG((LM_DEBUG,"%s:%d chip ID is !\n",__FILE__,__LINE__));
 	for(i=0; i<8; i++) 
 	{		
 		id[i] = buf[112+i];
 		cdkey[i] = id[i];
-		ACE_DEBUG((LM_DEBUG,"%s:%d  0x%x !\n",__FILE__,__LINE__,id[i]));
+		//ACE_DEBUG((LM_DEBUG,"%s:%d  0x%x !\n",__FILE__,__LINE__,id[i]));
 	}
 	//cdkey = id;
-	close(fd);
+	ACE_OS::close(fd);
 	return true;
 }

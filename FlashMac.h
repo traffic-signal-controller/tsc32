@@ -73,8 +73,6 @@ private:
 	Byte m_ucRightCnt;      	//连续接受到正确数据的次数
 
 	bool m_bSetHardwareFlash;  //设置 硬件黄闪
-	//bool m_bSetColdFan;      //设置 散热风扇
-	//bool m_bSetHotFan;       //设置 加热风扇
 	Byte m_ucSetFanSts;        //风扇状态
 	Byte m_ucLastSetFanSts;    //风扇上次的状态
 

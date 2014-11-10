@@ -97,8 +97,7 @@ void CGaCountDown::GaGetCntDownInfo()
 			{
 				ucPhaseId     = m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucPhase;
 				bIsAllowPhase = true;
-			}
-		
+			}		
 			//相位类型+相位id-->通道信息(ryg)
 			ucSignalGrpNum = 0;
 			pCWorkParaManager->GetSignalGroupId(bIsAllowPhase ,ucPhaseId,&ucSignalGrpNum,ucSignalGrp);
@@ -361,7 +360,7 @@ bool CGaCountDown::PackSendBuf( Byte ucDirIndex , Byte ucColor , Byte ucCountTim
 
 	ucCheckSum = 0x7f & (m_sGaSendBuf[ucDirIndex][1] ^ m_sGaSendBuf[ucDirIndex][2] ^ m_sGaSendBuf[ucDirIndex][3]);
 	m_sGaSendBuf[ucDirIndex][4] = ucCheckSum;
-	ACE_DEBUG((LM_DEBUG,"%s:%d Direc=%d Color=%d CntDownTime=%d 485:FE %02x %02x %02x %02x   \n",__FILE__,__LINE__,ucDirIndex,ucColor,ucCountTime,m_sGaSendBuf[ucDirIndex][1], m_sGaSendBuf[ucDirIndex][2], m_sGaSendBuf[ucDirIndex][3], m_sGaSendBuf[ucDirIndex][4]));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d Direc=%d Color=%d CntDownTime=%d 485:FE %02x %02x %02x %02x   \n",__FILE__,__LINE__,ucDirIndex,ucColor,ucCountTime,m_sGaSendBuf[ucDirIndex][1], m_sGaSendBuf[ucDirIndex][2], m_sGaSendBuf[ucDirIndex][3], m_sGaSendBuf[ucDirIndex][4]));
 	return true;
 }
 
@@ -436,7 +435,7 @@ void CGaCountDown::GaUpdateCntDownCfg()
 			iIndex++;
 			continue ;
 		}
-		ACE_DEBUG((LM_DEBUG,"%s:%d Direc=%d phase=%d overlapphase=%d \n",__FILE__,__LINE__,pPhaseToDirec[iIndex].ucId,pPhaseToDirec[iIndex].ucPhase,pPhaseToDirec[iIndex].ucOverlapPhase));
+		//ACE_DEBUG((LM_DEBUG,"%s:%d Direc=%d phase=%d overlapphase=%d \n",__FILE__,__LINE__,pPhaseToDirec[iIndex].ucId,pPhaseToDirec[iIndex].ucPhase,pPhaseToDirec[iIndex].ucOverlapPhase));
 		GaGetDirLane(pPhaseToDirec[iIndex].ucId , ucDirIndex , ucLaneIndex );
 		if ( ucDirIndex < GA_MAX_DIRECT && ucLaneIndex < GA_MAX_LANE )
 		{

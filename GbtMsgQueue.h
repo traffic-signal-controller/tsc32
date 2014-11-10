@@ -131,7 +131,8 @@ enum
 	OBJECT_SYSFUNC_CFG     = 0xe4,      //系统其他功能设置
 	OBJECT_SENDCLIENT_CNTDOWN = 0xe6 ,
 	OBJECT_POWERBOARD_CFG     = 0xe7,   //电源板配置
-	OBJECT_GSM_CFG            = 0xe8   //GSM配置
+	OBJECT_GSM_CFG            = 0xe8 ,  //GSM配置
+	OBJECT_BUTTONPHASE_CFG    = 0xe9    //模拟无线按键按钮
 };
 /*****************GBT协议对象标志类型和扩充协议标志类型那个枚举********************/
 
@@ -143,8 +144,7 @@ public:
 
 
 	int  SendGbtMsg(SThreadMsg* pMsg,int iLen);
-	void DealData();
-	//void CheckTimeOut();
+	void DealData();	
 #ifdef GBT_TCP
 	SGbtDealData* GetGbtDealDataPoint();
 	Byte GetDealDataIndex(bool bReportSelf , ACE_SOCK_Stream& sockStreamRemote);
@@ -157,10 +157,11 @@ public:
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex);
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId);
 	void ReworkNetPara(Byte* cIp ,Byte* cMask,Byte* cGateWay);
-	void RecordNetPara(/*char* pHwEtherCmd ,*/ char* pIpAndMaskCmd , char* pGatewayCmd );
-	void GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* pGateway);
+	void GetNetPara(Byte* pIp , Byte* pMask , Byte* pGateway);
 	void InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCnt);
 	void GetNetParaByAce(Byte* pip,char* phost_name);  //add 2014 03 20   lurenhua 通过ACE来取得IP地址，可以取得多个
+	
+	bool GetSystemShellRst(const char* shellcmd , char * cshellrst ,Byte datasize); //ADD:201411041430
 public:
 	ACE_INET_Addr m_addrLocal;
 #ifdef GBT_TCP
@@ -198,7 +199,6 @@ private:
 	int GetManualCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl);
 
 	void TscCopyFile(char* fpSrc, char* fpDest);
-	void ReworkIp(Byte ucIp1,Byte ucIp2,Byte ucIp3,Byte ucIp4);
 	void UpdateNetPara(Byte* pIp);  //add: 2014 03 20   lurenhua zlg m3352核心板IP地址修改函数
 	
 	void GetWatchPara(Byte* pBuf,int *iSendIndex);
@@ -222,6 +222,7 @@ private:
 	void GotoDealRecvbuf(Byte ucDealDataIndex);
 	void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
 	void SetCommandSignal(Byte* pBuf,int& iRecvIndex) ;  //ADD 201409231002
+	void SetButtonPhase(Byte* pBuf,int& iRecvIndex);        //ADD 201410181052
 
 	//Byte m_ucAddrNum;
 	ACE_Message_Queue<ACE_MT_SYNCH>* m_pMsgQue;

@@ -12,6 +12,7 @@ History:
 #include "ManaKernel.h"
 #include "DbInstance.h"
 #include "ComFunc.h"
+#include "WirelessButtons.h"
 
 /**************************************************************
 Function:        CTscMsgQueue::CTscMsgQueue
@@ -117,6 +118,7 @@ void CTscMsgQueue::DealData()
 	tTmp.tv_usec = 10000;
 
 	CManaKernel* pWorkParaManager = CManaKernel::CreateInstance();
+	CWirelessBtn* pWirelessBtn = CWirelessBtn::CreateInstance();
 
 	for(;;)
 	{
@@ -186,6 +188,10 @@ void CTscMsgQueue::DealData()
 			break;
 		case TSC_MSG_PATTER_RECOVER:
 			pWorkParaManager->ChangePatter(sMsg.ucMsgOpt);
+			break ;
+		case TSC_MSG_MANUALBUTTON_HANDLE:
+			pWirelessBtn->HandleSpecialDirec((Uint*)sMsg.pDataBuf);
+			break ;
 		default:
 			break;
 		}

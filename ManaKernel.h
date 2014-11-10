@@ -56,11 +56,11 @@ public:
 	bool IsVehile(); 		 //ADD: 201307241020
 	void ChangePatter(Byte iParama);	 //ADD: 201309181530
 	void SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte ucLogVau3,Byte ucLogVau4); //ADD:201309251100
-
+	void  SetWirelessBtnDirecCfg(Uint RecvBtnDirecData , Byte Lampcolor); //ADD:201410211700
 	
 
 	bool m_bFinishBoot;         //psc模式使用变量 开机完成过度步后进入可以进入psc模式
-	STscConfig* m_pTscConfig;   //信号机配置信息
+	STscConfig* m_pTscConfig;   //信号机配置信息A
 	STscRunData* m_pRunData;    //信号机动态参数信息
 	/*************按照特定配时方案号执行*************/
 	int m_iTimePatternId;    //指定的配时方案号  合法值1-32 0没有指定
@@ -69,7 +69,7 @@ public:
 	bool bTmpPattern ;     //临时方案
 	bool bUTS ;            //中心平台联网控制
 	bool bDegrade ;        //是否降级
-	bool bChkManul ;       //用于判断系统启动初始手控状态
+	//bool bChkManul ;       //用于判断系统启动初始手控状态NEW:单片机代替
 	bool bSecondPriority ; //用于次线半感应控制逻辑判断  ADD：20140618
 
 private:
@@ -134,12 +134,9 @@ private:
 	
 	
 	bool m_bRestart;        //是否重启 gbt协议测试部分
-
 	bool m_bWaitStandard;   //等待由四面红进入标准
-
 	bool m_bSpeStatusTblSchedule;  //时段表里定义的特殊工作状态
 	bool m_bVirtualStandard;      //非真正进入标准状态
-
 	bool m_bSpeStatus;            //标示特殊状态 用于特殊状态-->STANDARD重新刷新参数
 
 	

@@ -21,7 +21,8 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
           GaCountDown.o  Log.o           Coordinate.o       \
           GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o 		\
           GbtMsgQueue.o  Gb.o            Can.o         	ComFunc.o		\
-	 	  MacControl.o	 MainBackup.o		 SignalDefaultData.o  SerialCtrl.o	Configure.o	Gsm.o
+	 	  MacControl.o	 MainBackup.o		 SignalDefaultData.o  SerialCtrl.o	Configure.o	 Gsm.o \
+	 	  WirelessButtons.o
 
 
 	$(CC) $(LIB) $(CFLAGS) \
@@ -33,8 +34,8 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
         GaCountDown.o  Log.o           Coordinate.o     \
         GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o      \
         GbtMsgQueue.o  Gb.o         	Can.o 			ComFunc.o      \
-		MacControl.o 	MainBackup.o 		SignalDefaultData.o	  SerialCtrl.o	Configure.o	Gsm.o\
-	   -o Gb.aiton 
+		MacControl.o 	MainBackup.o 		SignalDefaultData.o	  SerialCtrl.o	Configure.o	 Gsm.o   \
+		WirelessButtons.o   -o Gb.aiton 
 
 release:
 	tar zcvf Gb.tar Gb.aiton rcS run.sh stop.sh install.sh update.sh uninstall.sh

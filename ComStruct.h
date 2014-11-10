@@ -296,6 +296,7 @@ struct STscConfig
 	Byte DegradeMode ; 									//降级模式 201310191100
 	Byte DegradePattern ; 						  	    //降级基准方案 201310191400
 	GBT_DB::CntDownDev sCntDownDev[MAX_CNTDOWNDEV];     //倒计时表配置
+	Uint DirecButtonPhase[4] ;    //方向按键相位配置北东南西
  }
 /*
 #ifndef WINDOWS
@@ -378,7 +379,9 @@ struct STscRunData
 	SStepInfo         sStageStepInfo[MAX_STEP];   //各个步伐信息
 	//ACE_Thread_Mutex  mMutex;                     //互斥体
 	bool              bIsChkLght ;
-	bool             b8cndtown ;   //ADD:20131107
+	bool              b8cndtown ;   //ADD:20131107
+	Byte 			  ucManualType ;//ADD:20141021 当前手控类型	
+	Byte			  flashType ;   //ADD:20141106 当系统处于黄闪状态时候黄闪类型
 }
 /*
 #ifndef WINDOWS

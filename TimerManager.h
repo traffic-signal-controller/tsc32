@@ -4,6 +4,7 @@
 #include "ComStruct.h"
 #include "TscTimer.h"
 #include "GbtTimer.h"
+#include "WirelessButtons.h"
 //#include "ComDef.h"
 
 const int MAX_TIMER = 2;   //最大的定时器数量 
@@ -20,6 +21,8 @@ public:
 	void StartAllTimer(); 
 	void CloseTscTimer();
 	void StartTscTimer();
+	void StartWirelessBtnTimer();//ADD:20141023
+	void CloseWirelessBtn();     //ADD:20141023
 private:
 	CTimerManager();
 	~CTimerManager();
@@ -28,6 +31,8 @@ private:
 	ActiveTimer m_tActiveTimer;
 	CTscTimer* m_pTscTimer;
 	CGbtTimer* m_pGbtTimer;
+	CWirelessBtnTimer* m_pWirelessBtnTimer;
+	
 };
 
 #endif //_TIMERMANAGER_H_

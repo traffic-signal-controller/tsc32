@@ -32,6 +32,7 @@ History:
 #include "Configure.h"
 #include "SerialCtrl.h"
 #include "MacControl.h"
+#include "WirelessButtons.h"
 
 /**************************************************************
 Function:        CGbtMsgQueue::CGbtMsgQueue
@@ -375,12 +376,8 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 			tvCurTime.sec(iTotalSec);
 			tvDateTime.update(tvCurTime);
 
-			//CDate cCorrDate((Uint)tvDateTime.year(),(Byte)tvDateTime.month(),(Byte)tvDateTime.day());
-			//if ( !cCorrDate.IsRightDate() ) MOD:201309281025
 			if (!IsRightDate((Uint)tvDateTime.year(),(Byte)tvDateTime.month(),(Byte)tvDateTime.day()))
 			{
-				//ACE_DEBUG((LM_DEBUG,"%s:%d %d-%d-%d\n",
-				//__FILE__,__LINE__,tvDateTime.year(),tvDateTime.month(),tvDateTime.day()));
 				GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
 				return;
 			}
@@ -393,10 +390,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 			iRecvIndex += 4;
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 
-			if ( CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )
-			{
-				CGps::CreateInstance()->ForceAdjust();
-			}
+			
 		}
 		break;
 	case OBJECT_LOCAL_TIME:
@@ -448,10 +442,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 			ACE_OS::memcpy(sTscMsg.pDataBuf,m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf+iRecvIndex,4);
 			iRecvIndex += 4;
 			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
-			if ( CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )
-			{
-				CGps::CreateInstance()->ForceAdjust();
-			}
+			
 		}
 		break;
 	default:
@@ -807,6 +798,17 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			SetCommandSignal(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
 		}		
 		break ;
+    case OBJECT_BUTTONPHASE_CFG:
+		if ( GBT_SEEK_REQ == ucRecvOptType )  
+		{
+			;
+		}
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
+		{		 
+			
+			SetButtonPhase(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
+		}		
+		break ;
 	case OBJECT_SYSFUNC_CFG :    //系统其他功能配置
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
@@ -835,7 +837,7 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 	m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex = iSendIndex;
 	m_sGbtDealData[ucDealDataIndex].iObjNum--;
 	
-	ACE_DEBUG((LM_DEBUG,"%s:%d iRecvIndex = %d iRecvBufLen = %d\n",__FILE__,__LINE__,iRecvIndex,iRecvBufLen));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d iRecvIndex = %d iRecvBufLen = %d\n",__FILE__,__LINE__,iRecvIndex,iRecvBufLen));
 	if ( iRecvIndex == iRecvBufLen )  
 	{
 		if ( 0 == m_sGbtDealData[ucDealDataIndex].iObjNum ) 
@@ -870,13 +872,11 @@ Return:         无
 void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 {
 	Byte ucTmp       = 0;
-	Byte pHwEther[6] = {0};
 	Byte pIp[4]      = {0};
 	Byte pMask[4]    = {0};
 	Byte pGateway[4] = {0};
 	STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
-
-	GetNetPara(pHwEther , pIp , pMask , pGateway);
+	GetNetPara(pIp , pMask , pGateway);
 
 	//设备动作取值
 	pBuf[iSendIndex++] = 0;
@@ -964,14 +964,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex)
 	pBuf[iSendIndex+3] = pGateway[3];
 	iSendIndex += 16;
 	
-	/*
-	pBuf[iSendIndex++] = pHwEther[0];
-	pBuf[iSendIndex++] = pHwEther[1];
-	pBuf[iSendIndex++] = pHwEther[2];
-	pBuf[iSendIndex++] = pHwEther[3];
-	pBuf[iSendIndex++] = pHwEther[4];
-	pBuf[iSendIndex++] = pHwEther[5];
-	*/
+
 }
 
 
@@ -986,7 +979,7 @@ Return:         无
 void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 {
 	Byte ucTmp       = 0;
-	Byte pHwEther[6] = {0};
+	//Byte pHwEther[6] = {0};
 	Byte pIp[4]      = {0};
 	Byte pMask[4]    = {0};
 	Byte pGateway[4] = {0};
@@ -1061,7 +1054,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			pBuf[iSendIndex++] = ucTmp;
 			break;
 		case 6:  //ip
-			GetNetPara(pHwEther , pIp , pMask , pGateway);
+			GetNetPara(pIp , pMask , pGateway);
 			pBuf[iSendIndex]   = pIp[0];
 			pBuf[iSendIndex+1] = pIp[1];
 			pBuf[iSendIndex+2] = pIp[2];
@@ -1069,7 +1062,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			iSendIndex += 16;
 			break;
 		case 7: //net mask
-			GetNetPara(pHwEther , pIp , pMask , pGateway);
+			GetNetPara( pIp , pMask , pGateway);
 			pBuf[iSendIndex]   = pMask[0];
 			pBuf[iSendIndex+1] = pMask[1];
 			pBuf[iSendIndex+2] = pMask[2];
@@ -1077,7 +1070,7 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			iSendIndex += 16;
 			break;
 		case 8: //gate way
-			GetNetPara(pHwEther , pIp , pMask , pGateway);
+			GetNetPara(pIp , pMask , pGateway);
 			pBuf[iSendIndex]   = pGateway[0];
 			pBuf[iSendIndex+1] = pGateway[1];
 			pBuf[iSendIndex+2] = pGateway[2];
@@ -1090,10 +1083,10 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			ucTmp = pTscCfg->sSpecFun[FUN_CNTTYPE].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			break;
-		/*case 10:  //灯泡检测
+		case 10:  //灯泡检测
 			ucTmp = pTscCfg->sSpecFun[FUN_LIGHTCHECK].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
-			break;*/
+			break;
 		default:
 			break;
 
@@ -1218,17 +1211,6 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	cGateWay[3] = *(pBuf+iRecvIndex + 3);
 	iRecvIndex += 16;
 
-	//物理地址 不让修改
-	/*
-	cHwEther[0] = *(pBuf+iRecvIndex);
-	cHwEther[1] = *(pBuf+iRecvIndex + 1);
-	cHwEther[2] = *(pBuf+iRecvIndex + 2);
-	cHwEther[3] = *(pBuf+iRecvIndex + 3);
-	cHwEther[4] = *(pBuf+iRecvIndex + 4);
-	cHwEther[5] = *(pBuf+iRecvIndex + 5);
-	iRecvIndex += 6;
-	*/
-
 	ReworkNetPara(cIp,cMask,cGateWay);
 
 }
@@ -1317,16 +1299,12 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			break;
 		case 3: //工作方式
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue = ucTmp ;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1     , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_STAND_STAGEID+1  , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CORSS1_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CORSS1_STAGEID+1 , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
-			//pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
 			CManaKernel::CreateInstance()->SetUpdateBit();
 			break;
@@ -1374,11 +1352,31 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			pTscCfg->sSpecFun[FUN_CNTTYPE].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CNTTYPE+1 , ucTmp);	
 			break;
-		/*case 10:
+		 case 10:
 			ucTmp = pBuf[iRecvIndex++];
 			pTscCfg->sSpecFun[FUN_LIGHTCHECK].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_LIGHTCHECK+1 , ucTmp);
-			break;*/
+			break;
+		 case 11:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_GPS_INTERVAL].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_GPS_INTERVAL+1 , ucTmp);
+		 	break ;
+		 case 12:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_WIRELESSBTN_TIMEOUT].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_WIRELESSBTN_TIMEOUT+1 , ucTmp);
+		 	break ;	
+		case 13:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_GPS].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_GPS+1 , ucTmp);
+		 	break ;
+		case 14:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_MSG_ALARM].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_MSG_ALARM+1 , ucTmp);
+		 	break ;			
 		default:
 			break;
 	}
@@ -1453,7 +1451,7 @@ Return:         无
 
 void CGbtMsgQueue::SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen)
 {
-	char tmpstr[400] = {0};	
+	//char tmpstr[400] = {0};	
 	/*
 	CSerialCtrl* pGsmSerial = CSerialCtrl::CreateInstance() ;	
 	int fd = pGsmSerial->GetSerialFd(1);
@@ -1628,7 +1626,7 @@ void CGbtMsgQueue::SetTmpPattern(Byte* pBuf,int& iRecvIndex)
 		(CDbInstance::m_cGbtTscDb).ModStagePattern(17, 1, TmpStgPatterb);		
 		ACE_DEBUG((LM_DEBUG,"%s:%d usAllowPhase ==%d \n",__FILE__,__LINE__,TmpStgPatterb.usAllowPhase));
 		pManaKernel->UpdateConfig();
-		
+		/***************************************************************
 		SThreadMsg sTscMsg ;
 		pManaKernel->m_iTimePatternId = 251;
 		sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  //从特殊方案返回原来状态
@@ -1637,6 +1635,7 @@ void CGbtMsgQueue::SetTmpPattern(Byte* pBuf,int& iRecvIndex)
 		sTscMsg.pDataBuf     = NULL;
 		CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 		ACE_DEBUG((LM_DEBUG,"%s:%d TSC_MSG_TIMEPATTERN == 251 \n",__FILE__,__LINE__));
+		*****************************************************************/
 	 }
 	 else
 	 	return ;
@@ -1668,6 +1667,44 @@ void CGbtMsgQueue::SetLampBdtCfg(Byte* pBuf,int& iRecvIndex)
 	pLampBd->SendSingleCfg(ucBdIndex);
 }
 
+
+/**************************************************************
+Function:       CGbtMsgQueue::SetButtonPhase
+Description:   设置按钮方向上的方向相位
+Input:          pBuf   接收设置缓存指针
+		     iRecvIndex     当前设置取值地址
+Output:         无
+Return:         无
+***************************************************************/
+
+void CGbtMsgQueue::SetButtonPhase(Byte* pBuf,int& iRecvIndex)
+{
+
+	//CManaKernel *pManakernel = CManaKernel::CreateInstance();
+	try
+	{
+		SCanFrame sSendFrameTmp;	
+		ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));	
+		Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , BOARD_ADDR_WIRELESS_BTNCTRLA , &(sSendFrameTmp.ulCanId));
+		Byte m_ucWirelessBtnHead = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6 ) | m_ucWirelessBtnHead;  //0x2 表示无线遥控器发送数据给主控板
+		sSendFrameTmp.pCanData[1] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[2] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[3] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[4] = pBuf[iRecvIndex++];
+		sSendFrameTmp.pCanData[5] = pBuf[iRecvIndex++];
+		sSendFrameTmp.ucCanDataLen = 6 ;
+		CWirelessBtn::CreateInstance()->RecvMacCan(sSendFrameTmp);
+	}
+	catch(...)
+	{
+		ACE_OS::printf("%s:%d WirelessBtn Simulation  error!  \r\n",__FILE__,__LINE__);
+		return ;
+	}
+		
+}
+
+
 /**************************************************************
 Function:       CGbtMsgQueue::SetCommandSignal
 Description:   接收上位机控制信号机信号指令包括下一相位方向等.
@@ -1689,13 +1726,7 @@ void CGbtMsgQueue::SetCommandSignal(Byte* pBuf,int& iRecvIndex)
 			if ( (pManakernel->m_pRunData->uiCtrl!= CTRL_PANEL && pManakernel->m_pRunData->uiCtrl != CTRL_MANUAL)|| (pManakernel->m_pRunData->uiWorkStatus!= STANDARD) )
 			{
 				return ;
-			}	
-			if( pManakernel->m_iTimePatternId == 250) //防止上位机方向切回下一相位的时候没有过渡
-			{
-				pManakernel->bNextDirec = false ;
-				pManakernel->m_iTimePatternId = 0;
-				pManakernel->bTmpPattern = false ;
-			}
+			}		
 			if(pManakernel->m_bNextPhase == true)
 				return ;
 			else
@@ -1707,23 +1738,17 @@ void CGbtMsgQueue::SetCommandSignal(Byte* pBuf,int& iRecvIndex)
 			sTscMsgSts.ucMsgOpt     = 0;
 			sTscMsgSts.uiMsgDataLen = 1;
 			sTscMsgSts.pDataBuf     = NULL ;				
-			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
-							
+			CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));							
 		}			
 		break ;
 		case 0x02 :
 		if ( (pManakernel->m_pRunData->uiCtrl!= CTRL_PANEL && pManakernel->m_pRunData->uiCtrl != CTRL_MANUAL)|| (pManakernel->m_pRunData->uiWorkStatus!= STANDARD) )
 		{
-				return ;
+			return ;
 		}
 		if(pBuf[iRecvIndex++] ==0x0)
 		{						
-			static int directype = 0 ;
-			if(pManakernel->m_iTimePatternId == 0)
-			{	
-				pManakernel->bTmpPattern = true ;
-				pManakernel->m_iTimePatternId = 250;//运行四方向切换				
-			}
+			static int directype = 0 ;		
 			SThreadMsg sTscMsg ;
 			sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  
 			sTscMsg.ucMsgOpt     = (directype++)%4;
@@ -1740,12 +1765,7 @@ void CGbtMsgQueue::SetCommandSignal(Byte* pBuf,int& iRecvIndex)
 				return ;
 			}			
 			if(Direc<1 || Direc >4)   //方向0-北方 1-东方 2-南方 3-西方
-				return ;
-			if(pManakernel->m_iTimePatternId == 0)
-			{	
-				pManakernel->bTmpPattern = true ;
-				pManakernel->m_iTimePatternId = 250;//运行四方向切换				
-			}	
+				return ;		
 			SThreadMsg sTscMsg;
 			sTscMsg.ulType       = TSC_MSG_PATTER_RECOVER;  
 			sTscMsg.ucMsgOpt     = (Direc-1);
@@ -1815,8 +1835,6 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 				{
 					uEndTime |= (pBuf[iRecvIndex++])<<(8*uNum);
 				}
-				//ACE_DEBUG((LM_DEBUG,"%s:%d StartTime = %0X \n",__FILE__,__LINE__,uStartTime));
-				//ACE_DEBUG((LM_DEBUG,"%s:%d EndTime = %0X \n",__FILE__,__LINE__,uEndTime));
 				 (CDbInstance::m_cGbtTscDb).DelEventLog(uEvtTypeId , uStartTime , uEndTime) ;
 				
 			break ;
@@ -1881,6 +1899,11 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));	
 				break;
 			}
+		case 0x7:
+			{
+				CGps::CreateInstance()->ForceAdjust();
+				break ;
+			}
 		
 		default:
 			break ;
@@ -1936,7 +1959,8 @@ void  CGbtMsgQueue::SetFlashCtrl(Byte* pBuf,int& iRecvIndex)
 			pFlashMac->FlashForceEnd();
 			break ;
 		case 0x04 :			
-			pFlashMac->FlashForceStart(pBuf[iRecvIndex++]);
+			pFlashMac->FlashForceStart(pBuf[iRecvIndex++]);			
+			CManaKernel::CreateInstance()->m_pRunData->flashType = CTRLBOARD_FLASH_FORCEFLASH;
 			break ;
 		case 0x03 :			
 			pFlashMac->m_ucSetFlashRate = pBuf[iRecvIndex] & 0x0f;
@@ -3409,6 +3433,10 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 				GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
 				return;
 			}
+			else if((ucObjId == OBJECT_SWITCH_SYSTEMCONTROL|| ucObjId==OBJECT_SWITCH_MANUALCONTROL)&& m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[iRecvIndex]==0xFE)
+			{
+				CManaKernel::CreateInstance()->m_pRunData->flashType = CTRLBOARD_FLASH_MANUALCTRL;
+			}
 			iRecvIndex++;
 		}
 		else //数据库操作对象
@@ -3424,7 +3452,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 					                    MAX_BUF_LEN-iSendIndex,    //发送帧的剩余缓存长度
 										ucErrorSts,  //错误状态
 										ucErrorIdx); //错误索引
-				ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
+				//ACE_DEBUG((LM_DEBUG,"%s:%d,ucObjId:%02X  ucIdxFst:%d ucIdxSnd:%d ucSubId:%d	sizeleft:%d	 \n",__FILE__,__LINE__,ucObjId,ucIdxFst,ucIdxSnd,ucSubId,MAX_BUF_LEN-iSendIndex));
 				if ( iFunRet < 0 )
 				{
 #ifdef TSC_DEBUG
@@ -3482,10 +3510,10 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			}
 			else
 			{
-#ifdef TSC_DEBUG
+
 				ACE_DEBUG((LM_DEBUG,"%s:%d,ObjNum error num:%d\n"
 					                ,__FILE__,__LINE__,m_sGbtDealData[ucDealDataIndex].iObjNum));
-#endif
+
 				ucErrorSts = 5;
 				ucErrorIdx = 0;
 				GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
@@ -3493,15 +3521,7 @@ void CGbtMsgQueue::DealRecvBuf(Byte ucDealDataIndex)
 			}
 			
 		}		
-		/*
-		ucIndexCnt    = 0;   //索引个数
-		ucErrorSts    = 0;   //错误状态
-		ucErrorIdx    = 0;   //错误索引
-		ucObjId       = 0;   //对象名(表名)
-		ucIdxFst      = 255;  //第一个索引(id1)
-		ucIdxSnd      = 255;  //第二个索引(id2)
-		ucSubId       = 0;    //子对象(字段下标)
-		*/
+	
 	}
 }
 
@@ -3702,13 +3722,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				return false;
 			}
 			else if ( 0 == ucValue )
-			{
-				if( pManaKernel->m_iTimePatternId == 250)
-				{
-					pManaKernel->bNextDirec = false ;
-					pManaKernel->m_iTimePatternId = 0;
-					pManaKernel->bTmpPattern = false ;
-				}
+			{			
 				SThreadMsg sTscMsg;
 				sTscMsg.ulType       = TSC_MSG_SWITCH_CTRL;  
 				sTscMsg.ucMsgOpt     = 0;
@@ -3952,8 +3966,7 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				sTscMsgSts.ulType       = TSC_MSG_NEXT_STAGE;  //按阶段前进
 				sTscMsgSts.ucMsgOpt     = 0;
 				sTscMsgSts.uiMsgDataLen = 1;
-				sTscMsgSts.pDataBuf     = NULL ;
-				
+				sTscMsgSts.pDataBuf     = NULL ;				
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 				
 			}
@@ -3968,10 +3981,6 @@ bool CGbtMsgQueue::SendTscCommand(Byte ucObjType,Byte ucValue)
 				CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 				
 			}			
-			else if( ucValue == 250)
-			{
-				
-			}
 			else 
 			{
 				return false;
@@ -4439,7 +4448,7 @@ void* CGbtMsgQueue::RunGbtRecv(void* arg)
 				ACE_OS::memcpy(sMsg.pDataBuf,pBuf,iRecvCount);
 
 				pGbtMsgQueue->SendGbtMsg(&sMsg,sizeof(sMsg));
-				ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
+			//	ACE_DEBUG((LM_DEBUG,"%s :%d recv udp data from %s  %d !\n",__FILE__,__LINE__,addrRemote.get_host_addr(),addrRemote.get_port_number())); //ADD: 2013 0613 1008
 			}
 			else
 			{	///超过4个客户大小，无法再接收新数据
@@ -4562,9 +4571,6 @@ bool CGbtMsgQueue::IsOtherObject(Byte ucObjectFlag)
 	{
 	case OBJECT_UTC_TIME:
 	case OBJECT_LOCAL_TIME:
-#ifdef TSC_DEBUG
-		ACE_DEBUG((LM_DEBUG,"\n IsOtherObject\n"));
-#endif
 		return true;
 	default:
 		return false;
@@ -4599,6 +4605,7 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_POWERBOARD_CFG :       //电源板配置
 		case OBJECT_GSM_CFG :            //配置GSM功能
 		case OBJECT_COMMAND_SIGNAL:      //上位机命令控制下一阶段相位和方向
+		case OBJECT_BUTTONPHASE_CFG:     //方向按键相位配置
 			return true;
 		default:
 			return false;
@@ -4618,6 +4625,8 @@ int CGbtMsgQueue::GbtCtrl2TscCtrl(Byte ucctrl)
 {
 	switch ( ucctrl )
 	{
+	case 1:
+		return CTRL_MANUAL;
 	case 2:
 		return CTRL_UTCS;
 	case 3:
@@ -4662,101 +4671,29 @@ Output:        	无
 Return:         无
 ***************************************************************/
 void CGbtMsgQueue::ReworkNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay)
-{
-	Byte cHwEther[6] = {0};
-	Byte cIp[4]      = {0};
-	Byte cMask[4]    = {0};
-	Byte cGateWay[4] = {0};
-	char cIpAndMaskCmd[64] = {0};
-	char cGatewayCmd[64]   = {0};
-
-	GetNetPara(cHwEther , cIp , cMask , cGateWay);
-	
+{		
 	if ( pIp != NULL )
 	{
-		ACE_OS::memcpy(cIp,pIp,4);
+		char cCfgIp[64] 	   = {0};
+		ACE_OS::sprintf(cCfgIp , "eeprom net set ip %d.%d.%d.%d",pIp[0],pIp[1], pIp[2],pIp[3]) ;
+		ACE_OS::system(cCfgIp);
 	}
 	if ( pMask != NULL )
 	{
-		ACE_OS::memcpy(cMask,pMask,4);
+		char cCfgMask[64]      = {0};
+		ACE_OS::sprintf(cCfgMask , "eeprom net set netmask %d.%d.%d.%d",pMask[0],pMask[1], pMask[2],pMask[3]) ;
+		ACE_OS::system(cCfgMask);
 	}
 	if ( pGateWay != NULL )
 	{
-		ACE_OS::memcpy(cGateWay,pGateWay,4);
-	}
-
-
-	ACE_OS::sprintf(cIpAndMaskCmd , "/sbin/ifconfig eth0 %d.%d.%d.%d netmask %d.%d.%d.%d up\n",
-		cIp[0]   , cIp[1]   , cIp[2]   , cIp[3] , 
-		cMask[0] , cMask[1] , cMask[2] , cMask[3] ) ;
-	ACE_OS::sprintf(cGatewayCmd , "/sbin/route add default gw %d.%d.%d.%d\n",
-		cGateWay[0] , cGateWay[1] , cGateWay[2] , cGateWay[3] ) ;
-
-	system("/sbin/ifconfig eth0 down\n");	
-	system(cIpAndMaskCmd);
-	system(cGatewayCmd);	
-	
-	RecordNetPara( cIpAndMaskCmd , cGatewayCmd );	
+		char cCfgGateWay[64]   = {0};
+		ACE_OS::sprintf(cCfgGateWay , "eeprom net set gateway %d.%d.%d.%d",pGateWay[0],pGateWay[1], pGateWay[2],pGateWay[3]) ;
+		ACE_OS::system(cCfgGateWay);
+	}	
+		
 }
 
 
-/**************************************************************
-Function:       CGbtMsgQueue::RecordNetPara
-Description:    永久修改网络配置参数
-Input:        
-				pIpAndMaskCmd - ip地址和网关命令
-				pGatewayCmd   - 网关命令
-Output:        	无
-Return:         无
-***************************************************************/
-void CGbtMsgQueue::RecordNetPara(/*char* pHwEtherCmd ,*/ char* pIpAndMaskCmd , char* pGatewayCmd )
-{
-	FILE* fpRcs    = NULL;
-	FILE* fpRcsTmp = NULL;
-	char  sTmp[1024] = {0};
-
-	//if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/init.d/rcS", "r") ) )
-	if ( NULL == ( fpRcs = ACE_OS::fopen("rcS", "r") ) )
-	{
-		return;
-	}
-
-	//if ( (fpRcsTmp = ACE_OS::fopen("/etc/init.d/rcS_tmp", "w")) != NULL ) 
-	if ( (fpRcsTmp = ACE_OS::fopen("rcS_tmp", "w")) != NULL ) 
-	{
-		while ( fgets(sTmp , 1024 , fpRcs) != NULL ) 
-		{
-			/*
-			if ( strstr(sTmp , "hw") != NULL && strstr(sTmp , "ether") != NULL )
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::memcpy(sTmp , pHwEtherCmd , strlen(pHwEtherCmd) );
-			}
-			else*/ if ( strstr(sTmp , "eth0") != NULL && strstr(sTmp , "netmask") != NULL ) 
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::memcpy(sTmp , pIpAndMaskCmd , strlen(pIpAndMaskCmd) );
-			}
-			else if ( strstr(sTmp , "default") != NULL && strstr(sTmp , "gw") != NULL ) 
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::memcpy(sTmp , pGatewayCmd , strlen(pGatewayCmd) );
-			}
-			fputs(sTmp, fpRcsTmp);
-			ACE_OS::memset(sTmp , 0 , 1024);
-		}
-		fclose(fpRcs);
-		fclose(fpRcsTmp);
-#ifdef LINUX
-		TscCopyFile((char*)"/etc/init.d/rcS_tmp" , (char*)"/etc/init.d/rcS");
-		remove((char*)"/etc/init.d/rcS_tmp");
-#endif
-	} 
-	else 
-	{
-		fclose(fpRcs);
-	}
-}
 
 /**************************************************************
 Function:       CGbtMsgQueue::GetNetParaByAce
@@ -4778,8 +4715,8 @@ void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
 	char hostname[MAXHOSTNAMELEN];
     ACE_OS::hostname(hostname, sizeof (hostname));
 	phost_name = hostname;
-	printf("host name is %s\n", hostname);
-	printf("--------------------------\n");
+	ACE_OS::printf("%s:%d Host name is %s\n", __FILE__,__LINE__,hostname);
+	ACE_OS::printf("--------------------------\n");
 
 
     ACE_INET_Addr* addr_array1; 
@@ -4800,12 +4737,12 @@ void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
 		struct in_addr *paddr_stru = (in_addr*)&net_order_ip;
 		InterceptStr(ACE_OS::inet_ntoa(*paddr_stru),(char*)".",pip,3);
 		
-		printf("format 0: %s\n", ACE_OS::inet_ntoa(*paddr_stru));
+		ACE_OS::printf("%s:%d Format 0: %s\n", __FILE__,__LINE__,ACE_OS::inet_ntoa(*paddr_stru));
 
 		addr_array2->addr_to_string(address, sizeof (address), 1);
-		printf("format 1: %s\n", address);
+		ACE_OS::printf("%s:%d Format 1: %s\n", __FILE__,__LINE__,address);
         addr_array2++;
-		printf("--------------------------\n");
+		ACE_OS::printf("--------------------------\n");
 	
     }
 
@@ -4814,56 +4751,69 @@ void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
 
 	//getchar();
 }
+
+/**************************************************************
+Function:       CGbtMsgQueue::GetSystemShellRst
+Description:    获取 系统SHELL命令执行结果
+Input:        	shellcmd      -SHELL命令
+			cshellrst  - 命令结果存储字符串指针
+			datasize - 默认获取结果大小
+Output:        	无
+Return:          true - 命令执行成功
+			false-命令执行失败
+Date:            201411041430
+***************************************************************/
+bool CGbtMsgQueue::GetSystemShellRst(const char* shellcmd , char * cshellrst ,Byte datasize)
+{
+	FILE *fstream=NULL; 	  
+	if(NULL==(fstream=popen(shellcmd,"r"))) 	  
+	{	   
+		  pclose(fstream);	 
+		  return false ;
+	}	   
+	if(NULL==fgets(cshellrst, datasize, fstream))	   
+	{		  
+		pclose(fstream);	 
+		return false;	  
+	}	
+	pclose(fstream);
+	return true ; 
+}
+
 /**************************************************************
 Function:       CGbtMsgQueue::GetNetPara
-Description:    获取物理地址 ip地址 掩码 网关
+Description:    获取 ip地址 掩码 网关
 Input:        	pIp      - IP地址
-				pHwEther - 物理地址
-				pMask   - 子网掩码
-				pGateway - 网关
+			pMask   - 子网掩码
+			pGateway - 网关
 Output:        	无
 Return:         无
 ***************************************************************/
-void CGbtMsgQueue::GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* pGateway)
-{
-	FILE* fpRcs      = NULL;
-	char* pStart     = NULL;
-	//char* pEnd       = NULL;
-	char  sTmp[200] = {0};
-
-	if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/eth0-setting", "r") ) )
-	{
-		return;
+void CGbtMsgQueue::GetNetPara(Byte* pIp , Byte* pMask , Byte* pGateway)
+{	
+	bool bcmdok = false ;
+	if(pIp != NULL)
+	{		 
+		char shellcmdrst[32]={0};
+		bcmdok = GetSystemShellRst((const char*)"eeprom net show ip",shellcmdrst,sizeof(shellcmdrst));
+		if(bcmdok != false)
+			InterceptStr(shellcmdrst,(char*)".",pIp,3);
 	}
-
-	while ( fgets(sTmp , 100 , fpRcs) != NULL ) 
-	{
-		if ( (pStart=strstr(sTmp , "MAC=")) != NULL )
-		{
-			pStart = pStart + ACE_OS::strlen("MAC=");
-			InterceptStr(pStart,(char*)":",pHwEther,5);
-		}
-		else if ( (pStart=strstr(sTmp , "IP=")) != NULL ) 
-		{
-			pStart = pStart + ACE_OS::strlen("IP=") ;
-			InterceptStr(pStart,(char*)".",pIp,3);
-		}
-		else if( (pStart=strstr(sTmp , "Mask=")) != NULL)
-		{
-			pStart = pStart + ACE_OS::strlen("Mask=") ;
-			InterceptStr(pStart,(char*)".",pMask,3);
-		}
-		else if (( pStart=strstr(sTmp , "Gateway=") ) != NULL) 
-		{
-			pStart = pStart + ACE_OS::strlen((char*)"Gateway=");
-			InterceptStr(pStart,(char*)".",pGateway,3);
-		}
-
-		pStart = NULL;
-		ACE_OS::memset(sTmp , 0 , 200);
+	if(pMask != NULL)
+	{		 
+		char shellcmdrst[32]={0};
+		bcmdok = GetSystemShellRst((const char*)"eeprom net show netmask",shellcmdrst,sizeof(shellcmdrst));
+		if(bcmdok != false)
+			InterceptStr(shellcmdrst,(char*)".",pMask,3);
 	}
+	if(pGateway != NULL)
+	{		 
+		char shellcmdrst[32]={0};
+		bcmdok = GetSystemShellRst((const char*)"eeprom net show gateway",shellcmdrst,sizeof(shellcmdrst));
+		if(bcmdok != false)
+			InterceptStr(shellcmdrst,(char*)".",pGateway,3);
+	}	
 
-	fclose(fpRcs);
 }
 
 
@@ -4871,7 +4821,7 @@ void CGbtMsgQueue::GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* p
 Function:       CGbtMsgQueue::InterceptStr
 Description:   截取所要的值
 Input:        	pBuf  - 截取的字符串 pstr  - 截取标示
-				pData - 转化后的值   ucCnt - 个数
+			pData - 转化后的值   ucCnt - 个数
 Output:        	无
 Return:         无
 ***************************************************************/
@@ -4884,10 +4834,10 @@ void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCn
 
 	while ( ucIndex < ucCnt )
 	{
-		if ( (pEnd = strstr(pStrart,pstr)) != NULL )
+		if ( (pEnd = ACE_OS::strstr(pStrart,pstr)) != NULL )
 		{
 			ACE_OS::strncpy(sTmp , pStrart , pEnd - pStrart);
-			pData[ucIndex] = atoi(sTmp);
+			pData[ucIndex] = ACE_OS::atoi(sTmp);
 			
 			pStrart = ++pEnd;
 			ACE_OS::memset(sTmp , 0 , 8);
@@ -4896,64 +4846,17 @@ void CGbtMsgQueue::InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCn
 		ucIndex++;
 	}
 
-	if ( (pEnd = strstr(pStrart," ")) != NULL )
+	if ( (pEnd = ACE_OS::strstr(pStrart," ")) != NULL )
 	{
 		ACE_OS::strncpy(sTmp , pStrart , pEnd - pStrart);
-		pData[ucIndex] = atoi(sTmp);
+		pData[ucIndex] = ACE_OS::atoi(sTmp);
 	}
 	else
 	{
-		pData[ucIndex] = atoi(pStrart);
+		pData[ucIndex] = ACE_OS::atoi(pStrart);
 	}
 }
 
-
-/**************************************************************
-Function:       CGbtMsgQueue::ReworkIp
-Description:    修改ip，永久生效
-Input:        	ucIp1 - 192
-		        ucIp2 - 168     
-                ucIp3 - 1
-                ucIp4 - 20
-Output:        	无
-Return:         无
-***************************************************************/
-void CGbtMsgQueue::ReworkIp(Byte ucIp1,Byte ucIp2,Byte ucIp3,Byte ucIp4)
-{
-	FILE* fpRcs    = NULL;
-	FILE* fpRcsTmp = NULL;
-	char  sTmp[1024] = {0};
-	
-	if ( NULL == ( fpRcs = ACE_OS::fopen("/etc/init.d/rcS", "r") ) )
-	{
-		return;
-	}
-	
-	if ( (fpRcsTmp = ACE_OS::fopen("/etc/init.d/rcS_tmp", "w")) != NULL ) 
-	{
-		while ( fgets(sTmp , 1024 , fpRcs) != NULL ) 
-		{
-			if ( strstr(sTmp , "eth0") != NULL && strstr(sTmp , "netmask") != NULL )
-			{
-				ACE_OS::memset(sTmp , 0 , 1024);
-				ACE_OS::sprintf(sTmp, "/sbin/ifconfig eth0 %d.%d.%d.%d\n"
-					        , ucIp1 , ucIp2 , ucIp3 , ucIp4);
-			}
-			fputs(sTmp, fpRcsTmp);
-			ACE_OS::memset(sTmp , 0 , 1024);
-		}
-		fclose(fpRcs);
-		fclose(fpRcsTmp);
-#ifdef LINUX
-		TscCopyFile((char*)"/etc/init.d/rcS_tmp" , (char*)"/etc/init.d/rcS");
-		remove("/etc/init.d/rcS_tmp");
-#endif
-	} 
-	else 
-	{
-		fclose(fpRcs);
-	}
-}
 
 
 
@@ -4972,27 +4875,26 @@ void CGbtMsgQueue::TscCopyFile(char* fpSrc, char* fpDest)
 	char cBuf[100] = {0};
 	int iReadCnt = 0;
 
-	if ( strcmp(fpSrc, fpDest) == 0 )
+	if ( ACE_OS::strcmp(fpSrc, fpDest) == 0 )
 	{
 		return;
 	}
-
-	iSrcFd = open(fpSrc, O_RDONLY);
-	iDestFd = open(fpDest, O_CREAT | O_WRONLY | O_TRUNC, 0755);
+	iSrcFd = ACE_OS::open(fpSrc, O_RDONLY);
+	iDestFd = ACE_OS::open(fpDest, O_CREAT | O_WRONLY | O_TRUNC, 0755);
 	if ( -1 == iSrcFd || -1 == iDestFd )
 	{
 		return;
 	}
 
-	while ( (iReadCnt = read(iSrcFd, cBuf, sizeof(cBuf))) > 0 ) 
+	while ( (iReadCnt = ACE_OS::read(iSrcFd, cBuf, sizeof(cBuf))) > 0 ) 
 	{
 #ifdef TSC_DEBUG
 		ACE_DEBUG((LM_DEBUG,"%s:%d iReadCnt:%d cBuf:%s" , __FILE__ , __LINE__ , iReadCnt , cBuf));
 #endif
-		write(iDestFd, cBuf, iReadCnt);
+		ACE_OS::write(iDestFd, cBuf, iReadCnt);
 	}
 	
-	close(iSrcFd);
-	close(iDestFd);
+	ACE_OS::close(iSrcFd);
+	ACE_OS::close(iDestFd);
 #endif
 }
