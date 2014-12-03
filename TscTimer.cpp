@@ -19,7 +19,7 @@ History:
 #include "PscMode.h"
 #include "LampBoard.h"
 #include "MacControl.h"
-#include "Manual.h"
+#include "WirelessButtons.h"
 #include "GaCountDown.h"
 #include "MainBackup.h"
 
@@ -83,12 +83,12 @@ Return:         0
 ***************************************************************/
 int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /* = 0 */)
 {
-	
+	//ACE_Date_Time tvTime(ACE_OS::gettimeofday());
+	//static int num = 0 ;
 	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
 
-	if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-		pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
-		
+	//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+	//	pDetector->SearchAllStatus();  //ADD: 2013 0723 1620		
 	//手控按钮每100ms侦查一次  // ADD:0514 9:42
 	//pMainBackup->DoManual();
 	//pMainBackup->Recevie();
@@ -97,50 +97,45 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 	{
 	case 0: 
 		//核心板发送心跳给，备份单片机。500ms   。另外 在case 5调用
+		//ACE_OS::printf("%s:%d num =%d \n",__FILE__,__LINE__,num++);
 		pMainBackup->HeartBeat();
 		ChooseDecTime();
 		pLamp->SendLamp();//4	////4个灯控板信息发送
+	
 		//pMainBoardLed->DoRunLed();  
 		break;
 	case 1:
 		//pMacControl->GetEnvSts(); 
-		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28
-		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-			pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
+		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28	
 		pMacControl->SndLcdShow() ; //ADD:201309281710
 		
 		break;
 	case 2: 		
-		CPowerBoard::iHeartBeat++;
-		if(CPowerBoard::iHeartBeat >2)
-		{
-			//ACE_DEBUG((LM_DEBUG,"\n%s:%d 重起Can总线!\n",__FILE__,__LINE__));
-			//ACE_OS::system("up link set can0 up type can restart");
-			CPowerBoard::iHeartBeat = 0;	
-			//pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);			
-		}
-		pPower->CheckVoltage();
-
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620
+		 //CPowerBoard::iHeartBeat++;
+		//if(CPowerBoard::iHeartBeat >2)
+		//{			
+			//CPowerBoard::iHeartBeat = 0;	
+		//}		
+		
 		//手控按钮每100ms侦查一次  // ADD:0514 9:42
 		pMainBackup->DoManual();
 		break;
-
-	case 3:
+	case 3:		
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			pDetector->IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
 		if(ucModeType != MODE_TSC &&  pWorkParaManager->m_bFinishBoot)
 		{
 			pCPscMode->DealButton();
 		}
 		break;
 
-	case 4:
-		//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE ) &&  pRunData->uiWorkStatus == STANDARD)
-		//	pDetector->GetOccupy();  //
-		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-		{
-			pDetector->IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
-		}
+	case 4:		
+		pPower->CheckVoltage();
 		break;
 	case 5://500ms 执行一次
+	
 		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 ) //这里2表示闪断式倒计时
 		{	
 			if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
@@ -205,19 +200,25 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		
 		break;
 	case 7://700ms 发送心跳数据给电源板
+		
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620
 		pPower->HeartBeat();
 		//手控按钮每100ms侦查一次  // ADD:0514 9:42
 		pMainBackup->DoManual();
 		break;
 
 	case 8:	
+		
+		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			pDetector->IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
 		if(ucModeType != MODE_TSC && pWorkParaManager->m_bFinishBoot)
 			pCPscMode->DealButton();
 		break;
 	case 9:
+		
 		if(pWorkParaManager->m_pRunData->bIsChkLght == true )
 			pLamp->CheckLight();// check Lampboard status and red&green conflict
-		ACE_DEBUG((LM_DEBUG,"\n%s:%d pMainBackup->bSendStep = %d!\n",__FILE__,__LINE__,pMainBackup->bSendStep));
 		if(pMainBackup->bSendStep)
 			pMainBackup->SendStep();
 		break;
