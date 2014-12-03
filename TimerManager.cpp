@@ -16,8 +16,8 @@ CTimerManager::CTimerManager()
 		m_lTimerId[iIndex] = 0;
 	}
 
-	m_pTscTimer = NULL;
-	m_pGbtTimer = NULL;
+	m_pTscTimer = new CTscTimer(10);
+	m_pGbtTimer = CGbtTimer::CreateInstance();
 	
 	m_tActiveTimer.timer_queue()->gettimeofday(getCurrTime);
 	m_tActiveTimer.activate();
@@ -50,8 +50,6 @@ void CTimerManager::CreateAllTimer()
 {
 
 	ACE_DEBUG((LM_DEBUG,"%s : %d 延时开启TSC GBT 定时器!\n",__FILE__,__LINE__));
-	m_pTscTimer = new CTscTimer(10);
-	m_pGbtTimer = CGbtTimer::CreateInstance();
 	
     const ACE_Time_Value curr_tv = getCurrTime();
 	//100毫秒定时器,延迟3秒启动
@@ -107,5 +105,6 @@ void CTimerManager::CloseTscTimer()
 		m_tActiveTimer.cancel(m_lTimerId[TIMER_TSC_INDEX]);
 	}
 }
+
 
 
