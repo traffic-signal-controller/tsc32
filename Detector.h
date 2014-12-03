@@ -47,8 +47,9 @@ enum
 	DET_HEAD_FRENCY_GET = 0x18 , 		 	  //表示主控板请求检测器发送16个通道的震荡频率设置
 	DET_HEAD_FRENCY_SET = 0x19 , 		      //表示主控板发送给检测器16个通道的震荡频率设置。
 
-	DET_HEAD_WORK_SET = 0x1a  		 		 //表示主控板设置检测器工作方式。
-	
+	DET_HEAD_WORK_SET = 0x1a , 		 		 //表示主控板设置检测器工作方式。
+	DET_HEAD_VER      =0xff                  //表示检测器版本 ADD:20141201
+	  
 };
 
 
@@ -61,7 +62,7 @@ public:
 	void SelectDetectorBoardCfg(int *pDetCfg);
 	bool CheckDetector();	
 	bool SelectBrekonCardStatus(Byte ucBoardIndex, Byte ucAddress);
-	void SearchAllStatus();
+	void SearchAllStatus(bool chkcar,bool chkdecstatus);
 	void SearchSpeed(Byte ucBoardIndex, Byte ucAddress, Byte ucRecAddress);
 	void GetOccupy();
 	int GetActiveDetSum();
@@ -84,7 +85,7 @@ public:
 	void GetAllWorkSts(); 
 
 	void RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp);// 处理从CAN总线接收回来的数据   //ADD: 2013 0710 10 54
-
+	
 /*
 #ifndef WINDOWS
 	void GetHaveCarTime(time_t* pTime);
@@ -115,7 +116,6 @@ public:
 
 	void SendRecordBoardMsg(Byte ucDetIndex,Byte ucType);
 	void PrintDetInfo(char* pFileName,int iFileLine,Byte ucBoardIndex,char* sErrSrc,int iPrintCnt,Byte* ucRecvBuf);
-
 public:
 	
 	Byte m_ucActiveBoard1; /* 1  - 16 活动的检测器板*/
@@ -149,6 +149,7 @@ public:
 	Byte m_iChkType ;
 	Byte m_ucSetSensibility[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD] ; //ADD 2013 0816 1530
 	Byte m_ucGetSensibility[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD] ; //ADD 2013 0816 1530
+	Byte m_ucDecBoardVer[MAX_DET_BOARD][5]; //ADD:20141201  检测器板卡 的程序版本
 private:
 	CDetector();
 	~CDetector();
