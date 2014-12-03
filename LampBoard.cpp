@@ -608,7 +608,8 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 
 			if (!CFlashMac::CreateInstance()->GetHardwareFlash() && isFlash != 0)
 			{
-				CFlashMac::CreateInstance()->FlashForceStart(isFlash);
+				CFlashMac::CreateInstance()->FlashForceStart(isFlash);				
+				CManaKernel::CreateInstance()->m_pRunData->flashType = CTRLBOARD_FLASH_LAMPCHECK;
 				(CDbInstance::m_cGbtTscDb).SetSystemData("ucDownloadFlag",isFlash);
 				return ;
 			}
