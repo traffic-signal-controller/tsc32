@@ -142,25 +142,25 @@ INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,con
 	switch (ComPort) 
 	{    
 		case 0:        
-			pComPort = "/dev/ttyO0";        
+			pComPort = (char *)"/dev/ttyO0";        
 			break;    
 		case 1:        
-			pComPort = "/dev/ttyO1";        
+			pComPort = (char *)"/dev/ttyO1";        
 			break;    
 		case 2:        
-			pComPort = "/dev/ttyO2";        
+			pComPort = (char *)"/dev/ttyO2";        
 			break;    
 		case 3:        
-			pComPort = "/dev/ttyO3";        
+			pComPort = (char *)"/dev/ttyO3";        
 			break;    
 		//case 4:        
 		//	pComPort = "/dev/ttyO4";        
 		//	break;    
 		case 5:        
-			pComPort = "/dev/ttyO5";        
+			pComPort = (char *)"/dev/ttyO5";        
 			break;    
 		default:        
-			pComPort = "/dev/ttyO0";        
+			pComPort = (char *)"/dev/ttyO0";        
 			break;    
 	}    
 	fd = open (pComPort, O_RDWR | O_NOCTTY);    
@@ -169,7 +169,7 @@ INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,con
 		fprintf (stderr, "cannot open port %s\n", pComPort);        
 		return (-1);    
 	}    
-	printf("comport fd = %d\n", fd);    
+	printf("%s:%d SerialComPort fd = %d\n",__FILE__,__LINE__,fd);    
 	tcgetattr (fd, &termios_old);       /* save old termios value */   
 	/* 0 on success, -1 on failure */    
 	retval = set_port_attr (baudrate, databit, stopbit, parity);    
@@ -892,7 +892,7 @@ void CSerialCtrl::OpenALLSerial()
 	}else{
 		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM1));
 	}
-	ret = OpenComPort(SERIALNUM2, 115200, 8, "1", 'N');
+	ret = OpenComPort(SERIALNUM2, 38400, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM2));
 		//return ;	
