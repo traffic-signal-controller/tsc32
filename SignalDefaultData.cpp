@@ -421,7 +421,7 @@ void SignalDefaultData::InsertGbDefaultData()
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_PRINT_FLAGII  + 1) , 0);
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CAM           + 1) , 0);
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_3G            + 1) , 0);
-	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WLAN          + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WIRELESSBTN          + 1) , 0);
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_LIGHTCHECK          + 1) , 0);
 	}
