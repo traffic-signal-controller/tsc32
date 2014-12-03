@@ -33,6 +33,7 @@ History:
 #include <sys/types.h>
 #include <fcntl.h>
 #include <string.h>
+#include <ace/Date_Time.h>
 
 #endif
 
@@ -94,6 +95,7 @@ CDetector::CDetector()
 	ACE_OS::memset(m_ucSetFrency   , 0 , sizeof(Byte) * MAX_DET_BOARD*MAX_DETECTOR_PER_BOARD); //ADD: 20130805 1720
 	ACE_OS::memset(m_ucSetSensibility   , 0 , sizeof(Byte) * MAX_DET_BOARD*MAX_DETECTOR_PER_BOARD); //ADD: 20130816 1420
 	ACE_OS::memset(m_ucGetSensibility   , 0 , sizeof(Byte) * MAX_DET_BOARD*MAX_DETECTOR_PER_BOARD); //ADD: 20130816 1420
+	ACE_OS::memset(m_ucDecBoardVer     , 0 , sizeof(Byte)*MAX_DET_BOARD * 5); //ADD:20141201
 		
 	for ( int i=0; i<MAX_DETECTOR; i++ )
 	{
@@ -637,38 +639,27 @@ Input:          无
 Output:         无
 Return:         无
 ***************************************************************/
- void CDetector::SearchAllStatus()
+ void CDetector::SearchAllStatus(bool bchkcar ,bool bchkdetstatus)
  {
 	Byte ucIndex = 0;
-	static int iTick = 0;
-	unsigned int uiTclCtl = CManaKernel::CreateInstance()->m_pRunData->uiCtrl;
-//	ACE_DEBUG((LM_DEBUG,"%s:%d, SearchAllStatus----------------: \n", __FILE__, __LINE__));
 	while ( ucIndex < MAX_DET_BOARD )
 	{
-		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&& ( m_iDetCfg[ucIndex] != 0 ) && iTick%5 == 0)
-		{
-			
+		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&& ( m_iDetCfg[ucIndex] != 0 ))
+		{			
 			//SelectBrekonCardStatus(ucIndex, ucIndex);  //第iIndex片检测器板车辆状态及故障状态 MOD:20130723 1620
-			if(CManaKernel::CreateInstance()->IsVehile()) //ADD:2013 0724 1010
+			if(bchkcar) //ADD:2013 0724 1010
 			{	
 				GetAllVehSts(DET_HEAD_VEHSTS,ucIndex); //查询车检板有车无车通过
 			}
-		 
-			GetAllVehSts(DET_HEAD_STS,ucIndex);    //查询检测器通道状态  开路 正常 短路等情况。								
-		}		
+		 	if(bchkdetstatus)
+		 	{
+				GetAllVehSts(DET_HEAD_STS,ucIndex);    //查询检测器通道状态  开路 正常 短路等情况。								
+		    }
+			}		
 		ucIndex++;
-	}
-		
-		iTick++;
-		if ( iTick >= MAX_REGET_TIME )  // 1S一次检查车检板状态和有无车情况
-		{
-			iTick = 0;
-		}
-	
-	if ( (CTRL_VEHACTUATED == uiTclCtl) || (CTRL_MAIN_PRIORITY == uiTclCtl) || (CTRL_SECOND_PRIORITY == uiTclCtl) ) 
-	{
-		IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
-	}
+	}	
+	//ACE_Date_Time tvTime(ACE_OS::gettimeofday());	
+	//ACE_DEBUG((LM_DEBUG,"%s:%d  Query car!Time %d:%d\n",__FILE__,__LINE__,tvTime.minute(),tvTime.second()));
 
 }
 
@@ -843,7 +834,10 @@ void CDetector::GetDecVars(Byte ucBoardIndex,Byte GetType)
 
 	Can::BuildCanId(CAN_MSG_TYPE_101 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , BoardAddr  , &(sSendFrameTmp.ulCanId));
 
-	sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND<< 6) | GetType;
+	if(GetType == 0xff)
+		sSendFrameTmp.pCanData[0]= 0xff;
+	else
+		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND<< 6) | GetType;
 	sSendFrameTmp.ucCanDataLen = 1;	
 
 	Can::CreateInstance()->Send(sSendFrameTmp);
@@ -1627,12 +1621,17 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		
 	Byte ucDetBoardIndex = 0;
 	Byte ucValueTmp = 0;
-	Byte RecvType = sRecvCanTmp.pCanData[0] & 0x3F ;		 
+	Byte RecvType = 0 ;
+	if(sRecvCanTmp.pCanData[0] == 0xff)
+		RecvType = 0xff ;
+	else		
+		RecvType = sRecvCanTmp.pCanData[0] & 0x3F ;
 	
-	//ACE_DEBUG((LM_DEBUG,"%s:%d Get from DetBoard:%x!\n",__FILE__,__LINE__,ucBoardAddr));
+    //ACE_DEBUG((LM_DEBUG,"%s:%d Dectyep=%02x!\n",__FILE__,__LINE__,sRecvCanTmp.pCanData[0]));
+	ACE_Date_Time tvTime(ACE_OS::gettimeofday());	
 	switch ( ucBoardAddr )
 	{
-		case BOARD_ADDR_DETECTOR1:    //dector1 			
+		case BOARD_ADDR_DETECTOR1:   		
 			ucDetBoardIndex = 0;
 			break;
 		case BOARD_ADDR_DETECTOR2:
@@ -1648,9 +1647,9 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 			ACE_DEBUG((LM_DEBUG,"%s:%d error\n",__FILE__,__LINE__));
 			return;
 		}
-		
 		if ( DET_HEAD_VEHSTS ==RecvType )
-		{			
+		{				
+			//ACE_DEBUG((LM_DEBUG,"%s:%d Get car info %2x:%2x !Time %d:%d\n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],sRecvCanTmp.pCanData[2],tvTime.minute(),tvTime.second()));
 				//数据字节只使用到两个字节
 			for ( int i=1; i<sRecvCanTmp.ucCanDataLen; i++ )
 			{				
@@ -1673,8 +1672,11 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 						
 						if ( 0 == m_iLastDetSts[iDetId] )
 						{
-							ACE_DEBUG((LM_DEBUG,"%s:%d Detcotr No.:%d has car,%02x!\n",__FILE__,__LINE__,ucDetBoardIndex*16+(i-1)*8+j+1,sRecvCanTmp.pCanData[i]));
+							///ACE_DEBUG((LM_DEBUG,"%s:%d Detcotr No.:%d has car,%02x!\n",__FILE__,__LINE__,ucDetBoardIndex*16+(i-1)*8+j+1,sRecvCanTmp.pCanData[i]));
+							if(m_ucTotalStat[iDetId]==0xff)
+								m_ucTotalStat[iDetId]=0;
 							m_ucTotalStat[iDetId] += 1;   //计算车流量 上次无车此次有车才为有车 
+							
 							m_iAdapTotalStat[iDetId] += 1; 
 						}
 					}
@@ -1688,6 +1690,8 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		{			
 			Byte ucDecId = 0 ;
 			CManaKernel * pManakernel = CManaKernel::CreateInstance() ;
+			
+			//ACE_DEBUG((LM_DEBUG,"%s:%d Get det status %2x:%2x !Time %d:%d\n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],sRecvCanTmp.pCanData[2],tvTime.minute(),tvTime.second()));
 			for ( int i=1; i<sRecvCanTmp.ucCanDataLen; i++ )
 			{
 				ucValueTmp = sRecvCanTmp.pCanData[i];
@@ -1711,7 +1715,7 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 						{
 							
 							CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_DETECTOR, ucDecId+1,m_ucDetError[ucDecId],0,0);			
-							ACE_DEBUG((LM_DEBUG,"%s:%d m_ucDetError[%d] bad:%d!\n",__FILE__,__LINE__,ucDecId,(ucValueTmp >> j) & 0x3));
+						//	ACE_DEBUG((LM_DEBUG,"%s:%d m_ucDetError[%d] bad:%d!\n",__FILE__,__LINE__,ucDecId,(ucValueTmp >> j) & 0x3));
 						}
 					}
 				}
@@ -1733,13 +1737,10 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 			m_ucGetDetDelicacy[ucDetBoardIndex][5+iNdex]= sRecvCanTmp.pCanData[3]>>4 &0xf ;
 			m_ucGetDetDelicacy[ucDetBoardIndex][6+iNdex]= sRecvCanTmp. pCanData[4] &0xf ;
 			m_ucGetDetDelicacy[ucDetBoardIndex][7+iNdex]= sRecvCanTmp.pCanData[4]>>4 &0xf ;
-			ACE_DEBUG((LM_DEBUG,"%s:%d  DecBoard:%d Senso-Grade-> %d:%x %d:%x %d:%x %d:%x %d:%x %d:%x %d:%x %d:%x\n",__FILE__,__LINE__,ucDetBoardIndex+1,1+iNdex, sRecvCanTmp.pCanData[1] &0xf ,2+iNdex,\
-			sRecvCanTmp.pCanData[1]>>4 &0xf,3+iNdex,sRecvCanTmp.pCanData[2] &0xf,4+iNdex,sRecvCanTmp.pCanData[2]>>4 &0xf ,5+iNdex ,sRecvCanTmp.pCanData[3] &0xf,6+iNdex,sRecvCanTmp.pCanData[3]>>4 &0xf,7+iNdex,\
-			sRecvCanTmp.pCanData[4] &0xf,8+iNdex, sRecvCanTmp.pCanData[4]>>4 &0xf));
 
-		}
-		else if(DET_HEAD_SPEED0104 == RecvType || DET_HEAD_SPEED0508 == RecvType)
-		{
+			}
+			else if(DET_HEAD_SPEED0104 == RecvType || DET_HEAD_SPEED0508 == RecvType)
+			{
 			int iNdex = 0 ;
 			if(DET_HEAD_SPEED0508 == RecvType)
 				iNdex = 4 ;
@@ -1812,11 +1813,23 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 			else if(DET_HEAD_WORK_SET == RecvType)
 			{
 				m_iChkType = sRecvCanTmp.pCanData[1];
-				printf(" Get m_iChkType=%d ",sRecvCanTmp.pCanData[1]);
+				//printf(" Get m_iChkType=%d ",sRecvCanTmp.pCanData[1]);
 			}
 			
+			
 		}
-
+		else if(DET_HEAD_VER ==RecvType)
+	{
+				m_ucDecBoardVer[ucDetBoardIndex][0]=sRecvCanTmp.pCanData[1];
+				m_ucDecBoardVer[ucDetBoardIndex][1]=sRecvCanTmp.pCanData[2];
+				m_ucDecBoardVer[ucDetBoardIndex][2]=sRecvCanTmp.pCanData[3];
+				m_ucDecBoardVer[ucDetBoardIndex][3]=sRecvCanTmp.pCanData[4];
+				m_ucDecBoardVer[ucDetBoardIndex][4]=sRecvCanTmp.pCanData[5];
+				//printf("\nDecBoard: %d ",ucDetBoardIndex+1);
+				//for(int i = 0 ;i<5 ;i++)
+				//	printf("%02x ",m_ucDecBoardVer[ucDetBoardIndex][i]);
+				//printf("\n");
+	   }
 		
 }
 
