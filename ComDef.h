@@ -30,7 +30,7 @@ enum
 	BOARD_ADDR_LAMP3        = 0x15 ,  //灯控板3
 	BOARD_ADDR_LAMP4        = 0x16 ,  //灯控板4
 	BOARD_ADDR_LAMP5        = 0x17,   //灯控板5 
-	BOARD_ADDR_ALLLAMP    = 0x19 ,  //灯控板组播
+	BOARD_ADDR_ALLLAMP      = 0x19 ,  //灯控板组播
 	BOARD_ADDR_POWER        = 0x20 ,  //电源模块
 	BOARD_ADDR_DETECTOR1    = 0x24 ,  //检测器1
 	BOARD_ADDR_DETECTOR2    = 0x25 ,  //检测器2
@@ -40,7 +40,10 @@ enum
 	BOARD_ADDR_ALLINTEDET   = 0x2B ,  //检测器接口板组播
 	BOARD_ADDR_FLASH        = 0x2E ,  //硬件黄闪器
 	BOARD_ADDR_HARD_CONTROL = 0x30 ,  //硬件控制模块
-	BOARD_ADDR_LED          = 0x32    //显示灯组 ADD:20130808 15 50
+	BOARD_ADDR_LED          = 0x32 ,  //显示灯组 ADD:20130808 15 50
+	BOARD_ADDR_WIRELESS_BTNCTRLA = 0x33 , //无线遥控器A	多键通信版（15键，315M）//ADD:20141021
+	BOARD_ADDR_WIRELESS_BTNCTRLB = 0x34   //无线遥控器B	高级版，一对多遥控加设置//ADD:20141021
+	
 };
 
 /*
@@ -160,6 +163,21 @@ enum
 };
 
 /*
+新增控制器LCD 黄闪原因20141106
+*/
+enum
+{
+	CTRLBOARD_FLASH_NORMAL 		 = 0x0  , //正常情况下黄闪	
+	CTRLBOARD_FLASH_MANUALCTRL	 = 0x01 , //手控黄闪	
+	CTRLBOARD_FLASH_NOPATTERN	 = 0x03 , //无方案黄闪
+	CTRLBOARD_FLASH_LAMPCHECK    = 0x02 , //灯泡检测黄闪
+	CTRLBOARD_FLASH_DOWNGRADE 	 = 0x04 , //降级黄闪
+	CTRLBOARD_FLASH_FORCEFLASH	 = 0x05 , //黄闪器强制黄闪
+	CTRLBOARD_FLASH_PHASECONFLIC = 0x06 , //相位冲突
+	
+};
+
+/*
 信号机控制队列消息枚举类型
 */
 enum
@@ -180,7 +198,8 @@ enum
 	TSC_MSG_CORRECT_TIME     ,  //时间校时  SpeTimePattern
 	TSC_MSG_TIMEPATTERN      ,  //特定的时间方案
 	TSC_MSG_GREENCONFLICT    ,   //绿冲突
-	TSC_MSG_PATTER_RECOVER       //特定方案切换
+	TSC_MSG_PATTER_RECOVER   ,    //特定方案切换
+	TSC_MSG_MANUALBUTTON_HANDLE   //无线手控按键处理ADD:201411051548
 };
 
 /*
@@ -281,6 +300,19 @@ enum
 };
 
 /*
+*信号机手动控制类型
+*Date:201410211730
+*/
+enum
+{
+	Manual_CTRL_NO               = 0 ,	  //不处于手控状态
+	Manual_CTRL_PANEL            = 1 ,	  //面板手控
+	Manual_CTRL_WIRELESSBUTTONS  = 2 , 	  //无线遥控器
+	Manual_CTRL_SYSTEM 	         = 3      //上位机命令
+};
+
+
+/*
 *信号机特定功能类型枚举
 */
 enum
@@ -303,11 +335,14 @@ enum
 	FUN_PRINT_FLAGII   = 15 , //打印标志  0倒计时 1StartTime 2CostTime
 	FUN_CAM			   = 16 , // 摄像头
 	FUN_3G             = 17 , //3G通信
-	FUN_WLAN		   = 18 , //WLAN无线网络
-	FUN_CNTTYPE	       = 19,  //倒计时类型
-	FUN_LIGHTCHECK	= 20,	//灯泡检测开关
-	FUN_COUNT                 // 总到特定功能数量值
+	FUN_WIRELESSBTN	   = 18 , //无线手控
+	FUN_CNTTYPE	       = 19 ,  //倒计时类型
+	FUN_LIGHTCHECK	   = 20 ,	//灯泡检测开关	
+	FUN_GPS_INTERVAL   = 21	,	//GPS定时更新时间 1 表示每天，2表示每2天
+	FUN_WIRELESSBTN_TIMEOUT = 22, //无线手控按键手动控制超时时间单位分钟 ADD:201410231639
+	FUN_COUNT          = 23      // 总到特定功能数量值
 };
+
 
 /*
 *信号及日志类型枚举
@@ -339,8 +374,8 @@ const int MIN_GBT_MSG_LEN        = 3;     //gbt协议消息的最小长度
 const int MAX_CLIENT_NUM         = 4;     //最大的客户端连接数
 const int DEFAULT_GBT_PORT       = 8801;  //默认开辟的端口号
 const int DEFAULT_BROADCAST_PORT = 8808;  //默认开辟的端口号
-const int MAX_GBT_PORT          = 10024; //最大端口号    
-const int MIN_GBT_PORT          = 1024;  //最小端口号
+const int MAX_GBT_PORT           = 10024; //最大端口号    
+const int MIN_GBT_PORT           = 1024;  //最小端口号
 const int MAX_BUF_LEN            = 8192;  //最大帧的长度
 /*************************GBT协议消息处理常量定义************************/
 
