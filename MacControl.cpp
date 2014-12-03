@@ -345,6 +345,7 @@ Return:         无
 void CMacControl::SndLcdShow()
 {
 	static Byte ucTimeCnt = 0 ;
+	CManaKernel * pManakernel = CManaKernel::CreateInstance();
 	if(ucTimeCnt++ >=30)   //30s显示更新显示时间和电压值
 	{
 		ucTimeCnt = 0 ;
@@ -373,11 +374,9 @@ void CMacControl::SndLcdShow()
 		sSendFrameTmp.ucCanDataLen = 2;			
 		Can::CreateInstance()->Send(sSendFrameTmp);	
 		
-		/****信号机IP地址****/
-		ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
-		char hostname[MAXHOSTNAMELEN];
+		/****信号机IP地址****/		
 		Byte pIp[4]      = {0};
-		CGbtMsgQueue::CreateInstance()->GetNetParaByAce(pIp ,hostname);
+		CGbtMsgQueue::CreateInstance()->GetNetPara(pIp,NULL,NULL);
 		
 		Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  , BOARD_ADDR_HARD_CONTROL , &(sSendFrameTmp.ulCanId));
 		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_CHECK << 6 ) | CTRLBOARD_HEAD_IP;
@@ -392,22 +391,31 @@ void CMacControl::SndLcdShow()
 	{		
 		static Byte uiLcdCtrl = 0 ;
 		static Byte uiPatternNo = 0 ;
+		static Byte uiFlashType= 0 ;
 		LcdCtrlMod = GetCtrlStaus();
 		
-		if(uiLcdCtrl !=  LcdCtrlMod || uiPatternNo != CManaKernel::CreateInstance()->m_pRunData->ucTimePatternId || bSendCtrlOk ==false)
+		if(uiLcdCtrl !=  LcdCtrlMod || uiPatternNo != pManakernel->m_pRunData->ucTimePatternId || bSendCtrlOk ==false)
 		{
 			if(bSendCtrlOk != false)
 				bSendCtrlOk = false ;
 			uiLcdCtrl =  LcdCtrlMod ;
-			uiPatternNo = CManaKernel::CreateInstance()->m_pRunData->ucTimePatternId ;
+			uiPatternNo = pManakernel->m_pRunData->ucTimePatternId ;
+			uiFlashType = pManakernel->m_pRunData->flashType ;
 			/****发送当前控制状态信息****/
 			SCanFrame sSendFrameTmp;		
 			ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
 			Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  , BOARD_ADDR_HARD_CONTROL , &(sSendFrameTmp.ulCanId));
 			sSendFrameTmp.pCanData[0] = ( DATA_HEAD_CHECK << 6 ) | CTRLBOARD_HEAD_CTRLSTATUS;
 			sSendFrameTmp.pCanData[1] = LcdCtrlMod;
-			sSendFrameTmp.pCanData[2] = CManaKernel::CreateInstance()->m_pRunData->ucTimePatternId;
-			sSendFrameTmp.pCanData[3] =  CManaKernel::CreateInstance()->bDegrade?1:0 ;
+			if(LcdCtrlMod ==CTRLBOARD_LCD_LAMPFLASH)
+			{
+				sSendFrameTmp.pCanData[2] = uiFlashType ;
+			}
+			else
+			{
+				sSendFrameTmp.pCanData[2] = pManakernel->m_pRunData->ucTimePatternId;
+			}
+			sSendFrameTmp.pCanData[3] =  pManakernel->bDegrade?1:0 ;
 			sSendFrameTmp.ucCanDataLen = 4;				
 			Can::CreateInstance()->Send(sSendFrameTmp);
 		}
