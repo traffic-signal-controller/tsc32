@@ -131,28 +131,28 @@ bool Can::Send(SCanFrame& sendFrame)
 		switch(erronum)
 		{
 			case EBADF :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d can socket 错误的文件描述符!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d can socket 错误的文件描述符!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 				break ;
 			case EFAULT :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d 错误的地址!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d 错误的地址!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 				break ;
 			case ENOTSOCK :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d can Socket操作在一个非socket上!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d can Socket操作在一个非socket上!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 				break ;
 			case EINTR :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d EINTR系统调用被阻止!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d EINTR系统调用被阻止!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 				break ;
 			case EAGAIN :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d EAGAIN资源暂时不能获得!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d EAGAIN资源暂时不能获得!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 				break ;
 			case ENOBUFS :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ENOBUFS没有可用的缓存空间!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d ENOBUFS没有可用的缓存空间!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 				break ;
 			case EINVAL :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d EINVAL无效的参数!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d EINVAL无效的参数!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 				break ;
 			default :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d errno = %d!\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
+				//ACE_DEBUG((LM_DEBUG,"%s:%d errno = %d!\n",__FILE__,__LINE__,erronum));//MOD??:20130523 14 25
 				break ;
 			
 			return false ;
@@ -163,12 +163,12 @@ bool Can::Send(SCanFrame& sendFrame)
 
 	if ( ulBytes == sizeof(struct can_frame) )
 	{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MOD??:20130523 14 25
 		//这里影响到的can数据的发送
 		pMainBoardLed->DoCan0Led();
 	}
 
-		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
+		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MOD??:20130523 14 25
 	return true;
 }
 
@@ -188,7 +188,7 @@ bool Can::Recv(SCanFrame& recvFrame)
 #ifdef LINUX
 	ulBytes = recvfrom(m_socketHandle  , &m_frameCan,sizeof(struct can_frame) , 0  ,(struct sockaddr *)&m_addrCan,(socklen_t*)&ulLen);
 	
-	//ACE_DEBUG((LM_DEBUG,"%s:%d Recv %d bytes from can_frame! \n",__FILE__,__LINE__,ulBytes));//MODå:20130523 1422
+	//ACE_DEBUG((LM_DEBUG,"%s:%d Recv %d bytes from can_frame! \n",__FILE__,__LINE__,ulBytes));//MOD??:20130523 1422
 	recvFrame.ulCanId = m_frameCan.can_id;
 	ACE_OS::memcpy(recvFrame.pCanData,m_frameCan.data,m_frameCan.can_dlc);
 	recvFrame.ucCanDataLen = m_frameCan.can_dlc;
@@ -228,7 +228,7 @@ void Can::BuildCanId(Ulong u1CanMsgType
 	ulCanIdTmp = ulCanIdTmp | (u1ModuleAddr << 20);
 	ulCanIdTmp = ulCanIdTmp | (u1CanMsgType << 26);
 
-	//À©Õ¹Ö¡
+	//????????????
 	ulCanIdTmp = ulCanIdTmp | (1 << 31);
 	*ulCanId = ulCanIdTmp;
 }
@@ -397,6 +397,7 @@ void * Can::DealCanData(void* arg)
 	CPowerBoard  *pPower = CPowerBoard::CreateInstance(); //ADD :2013 0712 17 54
 	CMacControl  *pMacControl = CMacControl::CreateInstance(); //ADD: 2013 0815 0920
 	CWirelessBtn *pWirelessBtn = CWirelessBtn::CreateInstance();  //ADD: 20141022 1123
+
 
 	ACE_Time_Value nowait(GetCurTime());	
 	

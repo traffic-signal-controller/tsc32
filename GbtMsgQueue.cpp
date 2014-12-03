@@ -240,7 +240,7 @@ Return:         无
 ***************************************************************/
 void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 {
-	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //ÊÕµœÖ¡µÄ²Ù×÷ÀàÐÍ
+	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????×÷??à????
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          

@@ -176,6 +176,7 @@ void CWirelessCoord::GetDeflection()
 	time_t tTi, tTi0;
 	struct tm *tNow;
 	
+
 	tTi  = time(NULL);	
 	tNow = localtime(&tTi);
 

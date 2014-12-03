@@ -165,7 +165,8 @@ void MainBackup::OperateManual(Ushort mbs)
 			pManaKernel->m_pRunData->ucManualType = Manual_CTRL_NO;			
 			break;
 		case MAINBACKUP_MANUAL_MANUAL:			
-		   CMainBoardLed::CreateInstance()->DoAutoLed(false);			
+		   
+CMainBoardLed::CreateInstance()->DoAutoLed(false);			
 			if (m_ucLastManualSts == MAINBACKUP_MANUAL_MANUAL)
 				return;
 			pGbtMsgQueue->SendTscCommand(OBJECT_CURTSC_CTRL,4);
