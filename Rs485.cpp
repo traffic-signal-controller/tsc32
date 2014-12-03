@@ -122,25 +122,25 @@ INT32 CRs485::OpenComPort(INT32 ComPort, INT32 baudrate, INT32 databit,const cha
 	switch (ComPort) 
 	{    
 		case 0:        
-			pComPort = "/dev/ttyO0";        
+			pComPort = (char *)"/dev/ttyO0";        
 			break;    
 		case 1:        
-			pComPort = "/dev/ttyO1";        
+			pComPort = (char *)"/dev/ttyO1";        
 			break;    
 		case 2:        
-			pComPort = "/dev/ttyO2";        
+			pComPort = (char *)"/dev/ttyO2";        
 			break;    
 		case 3:        
-			pComPort = "/dev/ttyO3";        
+			pComPort = (char *)"/dev/ttyO3";        
 			break;    
 		case 4:        
-			pComPort = "/dev/ttyO4";        
+			pComPort = (char *)"/dev/ttyO4";        
 			break;    
 		case 5:        
-			pComPort = "/dev/ttyO5";        
+			pComPort = (char *)"/dev/ttyO5";        
 			break;    
 		default:        
-			pComPort = "/dev/ttyO0";        
+			pComPort = (char *)"/dev/ttyO0";        
 			break;    
 	}    
 	fd = open (pComPort, O_RDWR | O_NOCTTY);    
@@ -150,7 +150,7 @@ INT32 CRs485::OpenComPort(INT32 ComPort, INT32 baudrate, INT32 databit,const cha
 
 		return (-1);    
 	}    
-	printf("comport fd = %d\n", fd);    
+	printf("%s:%d SerialComport fd = %d\n",__FILE__,__LINE__, fd);    
 	tcgetattr (fd, &termios_old);       /* save old termios value */   
 	/* 0 on success, -1 on failure */    
 	retval = set_port_attr (baudrate, databit, stopbit, parity);    
@@ -453,7 +453,7 @@ static INT32 Bxx2baudrate (INT32 _baudrate)
 bool CRs485::Send(Byte* pBuffer, int iSize)
 {
 
-	ACE_DEBUG((LM_DEBUG,"%s:%d  CRs485::Send %x %x %x %x %x  size = %d\n",__FILE__,__LINE__,pBuffer[0],pBuffer[1],pBuffer[2],pBuffer[3],pBuffer[4],iSize));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d  CRs485::Send %x %x %x %x %x  size = %d\n",__FILE__,__LINE__,pBuffer[0],pBuffer[1],pBuffer[2],pBuffer[3],pBuffer[4],iSize));
 	/*
 	if ( ( (pTscCfg->sSpecFun[FUN_PRINT_FLAGII].ucValue) & 1 ) != 0 )
 	{
