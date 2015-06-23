@@ -6117,7 +6117,7 @@ int SetPhaseToDirec(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
 		{
 			uErrorSts = GBT_MSG_ERROR_OTHER;
 			uErrorIdx = 0;
-//			ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModDetDelicacy(%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
+			//ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModDetDelicacy(%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
 			return -1;
 		}
 	}
@@ -6366,7 +6366,7 @@ int SetOverlapPhase(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
         {
             uErrorSts = GBT_MSG_ERROR_OTHER;
             uErrorIdx = 0;
-            ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModOverlapPhase(%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
+            ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModOverlapPhase(OverlapPhaseId =%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
             return -1;
         }
     }

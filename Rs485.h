@@ -28,6 +28,7 @@ public:
 	INT32 ReadComPort(Byte *data, INT32 datalength);
 	INT32 WriteComPort(Byte * data, INT32 datalength);
 	int SetOpt(int fd,int nSpeed,int nBits, char nEvent, int nStop);
+	INT32 SetBaudrateType() ;
 private:
 	CRs485();
 	~CRs485();

@@ -12,6 +12,7 @@ History:
 #include "PowerBoard.h"
 #include "LampBoard.h"
 #include "GaCountDown.h"
+#include "MacControl.h"
 
 /*
 行人按钮模式状态类型枚举
@@ -97,6 +98,8 @@ void CPscMode::InitPara()
 	m_pWorkParaManager  = CManaKernel::CreateInstance();
 	m_bStartCntCown     = false;
 	m_ucBtnNum = 0 ;
+	m_ucNextTime = 0 ;
+	m_psc_intervaltime = 10 ;
 }
 
 
@@ -115,9 +118,10 @@ void CPscMode::DealButton()
 	Byte ucStageCross1      = 0;
 	Byte ucStageCross2      = 0;
 	Byte ucButton           = 0;
-	//CPowerBoard::CreateInstance()->m_ucCurFootBtn;
+	//CPowerBoard::CreateInstance()->m_ucCurFootBtn;	
+	time_t ucNow            = time(NULL);
 	static GBT_DB::SpecFun* pSpecFun = m_pWorkParaManager->m_pTscConfig->sSpecFun;
-
+	m_ucBtnNum = CMacControl::CreateInstance()->m_ucPsc ;
 	while ( ucIndex < MAX_PUSHS )
 	{
 		if ( (m_ucBtnNum >> ucIndex) & 1 )
@@ -137,7 +141,7 @@ void CPscMode::DealButton()
 		ucIndex++;
 	}
 	
-	if ( !bPressBtn || PSC_STAND_STATUS != m_ucPscStatus )
+	if ( !bPressBtn || PSC_STAND_STATUS != m_ucPscStatus|| (ucNow -m_ucNextTime < m_psc_intervaltime ) )
 	{
 		//printf("\niCtn = %d\n",iCtn);
 		m_ucBtnNum = 0 ;
@@ -177,7 +181,7 @@ void CPscMode::DealButton()
 	
 	if ( (PSC_STAND_STATUS == m_ucPscStatus) && (m_ucCurStep == m_ucStandStep) )
 	{
-		if ( MODE_PSC2 == pSpecFun[FUN_CROSS_TYPE].ucValue )
+		if ( MODE_PSC2 == m_pWorkParaManager->m_pRunData->ucWorkMode )
 		{
 			if ( m_bBoxPush[PSC_LEFT_PUSH2] || m_bBoxPush[PSC_RIGHT_PUSH2] )
 			{
@@ -312,16 +316,9 @@ void CPscMode::GoNextStep()
 				ACE_DEBUG((LM_DEBUG,"\n%s:%d OverCycle\n" , CPSCMODE_FILE , __LINE__));
 			}
 
-			/*if ( 0 == iType )
-			{
-				iType = 1;
-			}
-			else if ( 1 == iType )
-			{
-				iType = 2;
-			}*/
+		
 		}
-//	}
+
 
 	pRunData->ucElapseTime = 0;
 	pRunData->ucStepTime   = pRunData->sStageStepInfo[pRunData->ucStepNo].ucStepLen;
@@ -338,6 +335,7 @@ void CPscMode::GoNextStep()
 	if ( m_bStartCntCown )
 	{
 		#ifdef GA_COUNT_DOWN
+		
 		CGaCountDown::CreateInstance()->GaSendStepPer();
 		#endif
 	}
@@ -354,7 +352,7 @@ Return:         无
 ***************************************************************/
 void CPscMode::PscSwitchStatus()
 {
-	if ( MODE_PSC1 == m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue )
+	if ( MODE_PSC1 == m_pWorkParaManager->m_pRunData->ucWorkMode )
 	{
 		if ( PSC_WAIT_PG_STATUS == m_ucPscStatus )
 		{
@@ -392,6 +390,7 @@ void CPscMode::PscSwitchStatus()
 			m_pWorkParaManager->UpdateConfig();
 		}
 		m_pWorkParaManager->GetRunDataStandard();
+		m_ucNextTime = time(NULL);
 	}
 }
 

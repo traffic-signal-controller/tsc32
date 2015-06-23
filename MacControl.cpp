@@ -27,7 +27,8 @@ enum
 	CTRLBOARD_HEAD_MAINCTRL		 = 0x06 , //主控板直接控制模块中设备，如加热器，散热器,本地报警器，照明设备和远程IO控制口
 	CTRLBOARD_HEAD_CTRLSTATUS 	 = 0x07 , //给控制器LCD发送当前信号及控制模式和状态
 	CTRLBOARD_HEAD_VOLTAGE 	 	 = 0x08 , //给控制器LCD发送当前强电压值
-	CTRLBOARD_HEAD_IP            = 0x09   //给控制器发送信号机IP地址
+	CTRLBOARD_HEAD_IP            = 0x09 ,  //给控制器发送信号机IP地址
+	CTRLBOARD_HEAD_VER           = 0xff    //获取控制器程序版本
 };
 
 /*
@@ -43,7 +44,8 @@ enum
 	CTRLBOARD_LCD_SCHEDULE	     = 0x05 , //控制器LCD显示信号机处于多时段控制
 	CTRLBOARD_LCD_VECHE	    	 = 0x06 , //控制器LCD显示信号机处于感应控制
 	CTRLBOARD_LCD_ADAPTIVE	     = 0x07 , //控制器LCD显示信号机处于自适应控制
-	CTRLBOARD_LCD_UTCS	     	 = 0x08  //控制器LCD显示信号机处于协调控制
+	CTRLBOARD_LCD_UTCS	     	 = 0x08 , //控制器LCD显示信号机处于协调控制
+	CTRLBOARD_LCD_PSC			 = 0x09   //控制器LCD显示信号机处于PSC模式
 	
 };
 
@@ -119,7 +121,7 @@ void CMacControl::SetCfg2()
 	sSendFrameTmp.pCanData[1] |= m_ucSetDoorPlan << 2;
 	sSendFrameTmp.pCanData[1] |= m_ucSetLedLight << 4;
 	sSendFrameTmp.pCanData[1] |= m_ucSetLedDisplay << 6;
-	ACE_Date_Time tvTime(GetCurTime());
+	ACE_Date_Time tvTime(ACE_OS::gettimeofday());
 	sSendFrameTmp.pCanData[2] = (Byte)(tvTime.year() & 0xff);
 	sSendFrameTmp.pCanData[3] = (Byte)(tvTime.year() >> 8 & 0xff);
 	sSendFrameTmp.pCanData[4] = (Byte)tvTime.month();
@@ -238,7 +240,11 @@ void CMacControl::MainBoardCtrl()
 *****************************************************************/
 void CMacControl::RecvMacCan(SCanFrame sRecvCanTmp)
 {
-	Byte ucType = sRecvCanTmp.pCanData[0] & 0x3F;
+	Byte ucType = 0x0;
+	if(sRecvCanTmp.pCanData[0] == 0xff)
+		ucType = 0xff ;
+	else		
+		ucType = sRecvCanTmp.pCanData[0] & 0x3F ;
 	switch(ucType)
 	{
 		case CTRLBOARD_HEAD_ENVSTS :
@@ -257,7 +263,8 @@ void CMacControl::RecvMacCan(SCanFrame sRecvCanTmp)
 			m_ucAddHot   = (sRecvCanTmp.pCanData[4] >> 4) & 0x1;
 			m_ucReduHot  = (sRecvCanTmp.pCanData[4] >> 5) & 0x1;
 			m_ucCabinet  = (sRecvCanTmp.pCanData[4] >> 6) & 0x1;
-			ACE_DEBUG((LM_DEBUG,"%s:%d DoorFront: %d  m_ucDoor: %d Back Temp:%d℃ Hum:%d\n"	,__FILE__,__LINE__,m_ucDoorFront,m_ucDoorBack,m_ucTemp,m_ucHum)); //MOD:0604 1415
+			m_ucPsc      = sRecvCanTmp.pCanData[5];
+			//ACE_DEBUG((LM_DEBUG,"%s:%d DoorFront: %d  m_ucDoor: %d Back Temp:%d℃ Hum:%d\n"	,__FILE__,__LINE__,m_ucDoorFront,m_ucDoorBack,m_ucTemp,m_ucHum)); //MOD:0604 1415
 			
 			break ;
 		case CTRLBOARD_HEAD_CFGSET1 :
@@ -270,10 +277,21 @@ void CMacControl::RecvMacCan(SCanFrame sRecvCanTmp)
 			bSendCtrlOk = true ;
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Get MacCtrol  SendCtrlOk\n"	,__FILE__,__LINE__));
 			break ;
+		case CTRLBOARD_HEAD_VER:
+			m_ucMacContolVer[0]=sRecvCanTmp.pCanData[1];
+			m_ucMacContolVer[1]=sRecvCanTmp.pCanData[2];
+			m_ucMacContolVer[2]=sRecvCanTmp.pCanData[3];
+			m_ucMacContolVer[3]=sRecvCanTmp.pCanData[4];
+			m_ucMacContolVer[4]=sRecvCanTmp.pCanData[5];
+	//		ACE_OS::printf("%s:%d MacControlver:%d %d %d %d %d \n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],
+				//	sRecvCanTmp.pCanData[2],sRecvCanTmp.pCanData[3],sRecvCanTmp.pCanData[4],sRecvCanTmp.pCanData[5]);
+			break ;
 		default :
 			break ;
-
-	}
+	   	}
+			
+		
+	
 
 }
 
@@ -290,6 +308,7 @@ Byte CMacControl::GetCtrlStaus()
 	CManaKernel * pManaKernel = CManaKernel::CreateInstance();
 	uiWorkStaus = pManaKernel->m_pRunData->uiWorkStatus ;
 	uiCtrl =pManaKernel->m_pRunData->uiCtrl;
+	uiLcdCtrl = CTRLBOARD_LCD_LAST ;
 	switch(uiWorkStaus)
 	{
 	case SIGNALOFF :
@@ -318,14 +337,19 @@ Byte CMacControl::GetCtrlStaus()
 				break ;
 			case CTRL_ACTIVATE :
 				uiLcdCtrl = CTRLBOARD_LCD_ADAPTIVE ;
-				break ;
+				break ;		
+			case CTRL_WIRELESS:
+			case CTRL_LINE:
 			case CTRL_UTCS :
 				uiLcdCtrl = CTRLBOARD_LCD_UTCS ;
 				break ;
 			default:
 				break ;
-
 			}
+		if(pManaKernel->m_pRunData->ucWorkMode != MODE_TSC)
+		{
+			return CTRLBOARD_LCD_PSC ;
+		}
 		break ;
 	
 	default :
@@ -388,19 +412,16 @@ void CMacControl::SndLcdShow()
 		Can::CreateInstance()->Send(sSendFrameTmp);		
 	}
 	else 
-	{		
-		static Byte uiLcdCtrl = 0 ;
-		static Byte uiPatternNo = 0 ;
-		static Byte uiFlashType= 0 ;
-		LcdCtrlMod = GetCtrlStaus();
-		
-		if(uiLcdCtrl !=  LcdCtrlMod || uiPatternNo != pManakernel->m_pRunData->ucTimePatternId || bSendCtrlOk ==false)
+	{	
+		LcdCtrlMod = GetCtrlStaus();		
+		if(uiOldLcdCtrl !=  LcdCtrlMod || uiOldPatternNo != pManakernel->m_pRunData->ucTimePatternId || uiOldbDegrade !=pManakernel->bDegrade|| bSendCtrlOk ==false)
 		{
 			if(bSendCtrlOk != false)
 				bSendCtrlOk = false ;
-			uiLcdCtrl =  LcdCtrlMod ;
-			uiPatternNo = pManakernel->m_pRunData->ucTimePatternId ;
-			uiFlashType = pManakernel->m_pRunData->flashType ;
+			uiOldLcdCtrl =  LcdCtrlMod ;
+			uiOldPatternNo = pManakernel->m_pRunData->ucTimePatternId ;
+			uiOldFlashType = pManakernel->m_pRunData->flashType ;
+			uiOldbDegrade = pManakernel->bDegrade ;
 			/****发送当前控制状态信息****/
 			SCanFrame sSendFrameTmp;		
 			ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
@@ -409,16 +430,27 @@ void CMacControl::SndLcdShow()
 			sSendFrameTmp.pCanData[1] = LcdCtrlMod;
 			if(LcdCtrlMod ==CTRLBOARD_LCD_LAMPFLASH)
 			{
-				sSendFrameTmp.pCanData[2] = uiFlashType ;
+				sSendFrameTmp.pCanData[2] = uiOldFlashType ;
 			}
 			else
 			{
 				sSendFrameTmp.pCanData[2] = pManakernel->m_pRunData->ucTimePatternId;
 			}
-			sSendFrameTmp.pCanData[3] =  pManakernel->bDegrade?1:0 ;
+			sSendFrameTmp.pCanData[3] =  uiOldbDegrade?1:0 ;
 			sSendFrameTmp.ucCanDataLen = 4;				
 			Can::CreateInstance()->Send(sSendFrameTmp);
 		}
 	}
 
 }
+void CMacControl::GetMacControlVer()
+{
+	SCanFrame sSendFrameTmp;
+	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
+
+	Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  , BOARD_ADDR_HARD_CONTROL , &(sSendFrameTmp.ulCanId));
+	sSendFrameTmp.pCanData[0] = CTRLBOARD_HEAD_VER;	
+	sSendFrameTmp.ucCanDataLen = 1;
+	Can::CreateInstance()->Send(sSendFrameTmp);
+}
+

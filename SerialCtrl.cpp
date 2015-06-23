@@ -25,6 +25,7 @@ History:
 #include <string.h>             /* bzero, memcpy */
 #include <limits.h>             /* CHAR_MAX */
 #include "Define.h"
+#include <ace/OS.h>
 
 
 
@@ -169,7 +170,7 @@ INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,con
 		fprintf (stderr, "cannot open port %s\n", pComPort);        
 		return (-1);    
 	}    
-	printf("%s:%d SerialComPort fd = %d\n",__FILE__,__LINE__,fd);    
+	ACE_OS::printf("\n%s:%d***OpenComPort*** SerialComPort fd = %d \n ",__FILE__,__LINE__,fd);    
 	tcgetattr (fd, &termios_old);       /* save old termios value */   
 	/* 0 on success, -1 on failure */    
 	retval = set_port_attr (baudrate, databit, stopbit, parity);    
@@ -616,7 +617,7 @@ Return:         0 -错误  1-正确
 ***************************************************************/
 INT32 CSerialCtrl::WriteComPortBySerial5(Byte * data, INT32 datalength)
 {
-	INT32           retval, len = 0, total_len = 0;    
+	INT32  retval, len = 0, total_len = 0;    
 	FD_ZERO (&fs_write);    
 	FD_SET (m_iSerial5fd, &fs_write);    
 	tv_timeout.tv_sec = TIMEOUT_SEC (datalength, get_baudrate());    
@@ -811,7 +812,9 @@ static INT32 baudrate2Bxx (INT32 baudrate)
 		case 1200:      
 			return (B1200);  
 		case 2400:    
-			return (B2400);  
+			return (B2400); 
+		case 4800:    
+			return (B4800);
 		case 9600:    
 			return (B9600);  
 		case 19200:    
@@ -860,6 +863,8 @@ static INT32 Bxx2baudrate (INT32 _baudrate)
 			return (1200);  
 		case B2400:    
 			return (2400);  
+		case B4800:    
+			return (4800);
 		case B9600:    
 			return (9600); 
 		case B19200:    
@@ -890,21 +895,21 @@ void CSerialCtrl::OpenALLSerial()
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM1));
 		//return ;	
 	}else{
-		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM1));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***OpenALLSerial***Open ComPort %d Success !\n",__FILE__,__LINE__,SERIALNUM1));
 	}
 	ret = OpenComPort(SERIALNUM2, 38400, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM2));
 		//return ;	
 	}else{
-		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM2));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***OpenALLSerial***Open Com Port %d Success!\n",__FILE__,__LINE__,SERIALNUM2));
 	}
 	ret = OpenComPort(SERIALNUM3, 57600, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM3));
 		//return ;	
 	}else{
-		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM3));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***OpenALLSerial***Open Com Port %d Success!\n",__FILE__,__LINE__,SERIALNUM3));
 	}
 	/*ret = OpenComPort(SERIALNUM4, 9600, 8, "1", 'N');
 	if (ret < 0) {
@@ -918,7 +923,7 @@ void CSerialCtrl::OpenALLSerial()
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM5));
 		//return ;	
 	}else{
-		ACE_DEBUG((LM_DEBUG,"Open Com Port %d Success, Now going to read port\n",SERIALNUM5));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***OpenALLSerial***Open Com Port %d Success!\n",__FILE__,__LINE__,SERIALNUM5));
 	}
 }
 
@@ -969,7 +974,6 @@ Return:         串口设备句柄
 int CSerialCtrl::GetSerialFd4()
 {
 	return m_iSerial4fd;
-
 }
 /**************************************************************
 Function:       CSerialCtrl::GetSerialFd1
@@ -981,7 +985,6 @@ Return:         串口设备句柄
 int CSerialCtrl::GetSerialFd5()
 {
 	return m_iSerial5fd;
-
 }
 
 

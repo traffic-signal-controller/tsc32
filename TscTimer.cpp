@@ -22,7 +22,8 @@ History:
 #include "WirelessButtons.h"
 #include "GaCountDown.h"
 #include "MainBackup.h"
-
+#include "Can.h"
+#include "PreAnalysis.h"
 
 
 /************************ADD:201309231530***************************/
@@ -35,6 +36,7 @@ static MainBackup*        pMainBackup      = MainBackup::CreateInstance();      
 static CDetector*      pDetector    = CDetector::CreateInstance() ;  		 //ADD: 20130709 945	
 static CPscMode * pCPscMode = CPscMode::CreateInstance() ;	
 static CGaCountDown *pGaCountDown = CGaCountDown::CreateInstance();
+static CPreAnalysis *pPreAnalysis = CPreAnalysis::CreateInstance();
 static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
 /************************ADD:201309231530***************************/	
 
@@ -56,7 +58,7 @@ CTscTimer::CTscTimer(Byte ucMaxTick)
 	{
 		WatchDog::CreateInstance()->OpenWatchdog();
 	}
-	ACE_DEBUG((LM_DEBUG,"%s:%d Init TscTimer object ok !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d Init TscTimer object ok !\n",__FILE__,__LINE__));
 
 }
 
@@ -85,14 +87,12 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 {
 	//ACE_Date_Time tvTime(ACE_OS::gettimeofday());
 	//static int num = 0 ;
-	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-
+	Byte ucModeType = pWorkParaManager->m_pRunData->ucWorkMode ; //ADD: 2013 0828 0931
 	//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 	//	pDetector->SearchAllStatus();  //ADD: 2013 0723 1620		
 	//手控按钮每100ms侦查一次  // ADD:0514 9:42
 	//pMainBackup->DoManual();
-	//pMainBackup->Recevie();
-	
+	//pMainBackup->Recevie();	
 	switch ( m_ucTick )
 	{
 	case 0: 
@@ -100,25 +100,18 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		//ACE_OS::printf("%s:%d num =%d \n",__FILE__,__LINE__,num++);
 		pMainBackup->HeartBeat();
 		ChooseDecTime();
-		pLamp->SendLamp();//4	////4个灯控板信息发送
-	
+		pLamp->SendLamp();//4	////4个灯控板信息发送	
 		//pMainBoardLed->DoRunLed();  
+		
 		break;
 	case 1:
 		//pMacControl->GetEnvSts(); 
-		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28	
-		pMacControl->SndLcdShow() ; //ADD:201309281710
-		
+		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28			
+		pMacControl->SndLcdShow() ; //ADD:201309281710		
 		break;
 	case 2: 		
 		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-			pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620
-		 //CPowerBoard::iHeartBeat++;
-		//if(CPowerBoard::iHeartBeat >2)
-		//{			
-			//CPowerBoard::iHeartBeat = 0;	
-		//}		
-		
+			pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620		
 		//手控按钮每100ms侦查一次  // ADD:0514 9:42
 		pMainBackup->DoManual();
 		break;
@@ -130,13 +123,19 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 			pCPscMode->DealButton();
 		}
 		break;
-
-	case 4:		
+	case 4:	
+		CPowerBoard::iHeartBeat++;
+		if(CPowerBoard::iHeartBeat >2)
+		{		
+			ACE_OS::system("/sbin/ip link set can0 up type can restart");
+			CPowerBoard::iHeartBeat = 0;	
+			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);			
+		} 
 		pPower->CheckVoltage();
 		break;
 	case 5://500ms 执行一次
 	
-		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 ) //这里2表示闪断式倒计时
+		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_FLASHOFF) //这里2表示闪断式倒计时
 		{	
 			if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
 			|| (FLASH   == pRunData->uiWorkStatus)|| (CTRL_MANUAL == pRunData->uiCtrl) 
@@ -154,32 +153,31 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 				    ucMode = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode ;
 					ucPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].usPhase ;
 					ucOverPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucOverlapPhase ;
-					if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0 || ucOverPhaseId !=0 ) )
+					if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0||ucOverPhaseId !=0 ) )
 					{					
 						Byte ucSignalGrpNum = 0;					
 						Byte ucSignalGrp[MAX_CHANNEL] = {0};
 						Byte nChannelIndex = 0 ;
-				
+						
 						pWorkParaManager->GetSignalGroupId(ucPhaseId?true:false,ucPhaseId?ucPhaseId:ucOverPhaseId,&ucSignalGrpNum,ucSignalGrp);
 						while(nChannelIndex<ucSignalGrpNum)
 						{
 							Byte ucChannelId = ucSignalGrp[nChannelIndex] ;
 							if(ucChannelId >0)
-								pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|0x60);
+								pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|(pWorkParaManager->m_pTscConfig->sSpecFun[FUN_FLASHCNTDOWN_TIME].ucValue<<4));
 							nChannelIndex++ ;						
 						}
 						pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode &=0x7f ;
-						
 					}
 				}	
 				
-				for(Byte index = 0 ;index < MAX_LAMP_BOARD-3 ;index++)
+				for(Byte index = 0 ;index < MAX_LAMP_BOARD ;index++)
 				{				
 					pLamp->SendSingleLamp(index,pGaCountDown->m_ucLampBoardFlashBreak[index]);
 					if(pGaCountDown->m_ucLampBoardFlashBreak[index] != 0x0)
 					{
 						pGaCountDown->m_ucLampBoardFlashBreak[index] = 0x0 ;
-					}					
+					}	
 					
 				}
 			}
@@ -217,10 +215,16 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	case 9:
 		
+		pWorkParaManager->CwpmGetCntDownSecStep();		
 		if(pWorkParaManager->m_pRunData->bIsChkLght == true )
 			pLamp->CheckLight();// check Lampboard status and red&green conflict
 		if(pMainBackup->bSendStep)
 			pMainBackup->SendStep();
+		if(pRunData->uiCtrl == CTRL_PREANALYSIS) //事先分析控制
+		{
+			pPreAnalysis->QueryAccessDev();
+			pPreAnalysis->HandPreAnalysis();
+		}
 		break;
 	default:
 	
@@ -267,10 +271,10 @@ void CTscTimer::ChooseDecTime()
 		pWorkParaManager->DecTime();
 		
 	}
-	else if ( pWorkParaManager->m_bFinishBoot 	&& pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue != MODE_TSC	)
+	else if ( pWorkParaManager->m_bFinishBoot 	&& pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC	)
 	{
-	if ((MODE_PSC1 == pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue &&2 != pWorkParaManager->m_pRunData->ucStageCount)
-	  ||(MODE_PSC2 == pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue &&3 != pWorkParaManager->m_pRunData->ucStageCount))
+	if ((MODE_PSC1 == pWorkParaManager->m_pRunData->ucWorkMode &&2 != pWorkParaManager->m_pRunData->ucStageCount)
+	  ||(MODE_PSC2 == pWorkParaManager->m_pRunData->ucWorkMode &&3 != pWorkParaManager->m_pRunData->ucStageCount))
 		{
 			//ACE_DEBUG((LM_DEBUG,"\n%s:%d SpecFun[FUN_CROSS_TYPE]=%d ,m_pRunData->ucStageCount = %d \n",__FILE__,__LINE__,pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue, pWorkParaManager->m_pRunData->ucStageCount));
 			pWorkParaManager->DecTime();

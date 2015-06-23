@@ -38,17 +38,18 @@ enum
 	
 	DET_HEAD_SENDATA0107_GET = 0x12 ,         //表示主控板请求检测器发送1-7级的灵敏度数值   //ADD: 2013 08 05 1600 
 	DET_HEAD_SENDATA0814_GET = 0x13 ,         //表示主控板请求检测器发送8-14级的灵敏度数值
-	DET_HEAD_SENDATA1516_GET = 0x14 ,         //表示主控板请求检测器发送1-7级的灵敏度数值
+	DET_HEAD_SENDATA1516_GET = 0x14 ,         //表示主控板请求检测器发送15-16级的灵敏度数值
 
 	DET_HEAD_SENDATA0107_SET = 0x15 ,         //表示主控板设置检测器发送1-7级的灵敏度数值
 	DET_HEAD_SENDATA0814_SET = 0x16 ,         //表示主控板设置检测器发送8-14级的灵敏度数值
-	DET_HEAD_SENDATA1516_SET = 0x17 ,         //表示主控板设置检测器发送1-7级的灵敏度数值
+	DET_HEAD_SENDATA1516_SET = 0x17 ,         //表示主控板设置检测器发送15-16级的灵敏度数值
 
 	DET_HEAD_FRENCY_GET = 0x18 , 		 	  //表示主控板请求检测器发送16个通道的震荡频率设置
 	DET_HEAD_FRENCY_SET = 0x19 , 		      //表示主控板发送给检测器16个通道的震荡频率设置。
 
 	DET_HEAD_WORK_SET = 0x1a , 		 		 //表示主控板设置检测器工作方式。
-	DET_HEAD_VER      =0xff                  //表示检测器版本 ADD:20141201
+	DET_HEAD_VER      =0xff  ,                //表示检测器版本 ADD:20141201
+	DET_HEAD_ID       =0x0                    //表示检测器的ID号
 	  
 };
 
@@ -83,9 +84,10 @@ public:
 
 	//主控板请求发送所有检测器的工作状态 //ADD: 2013 1114 0930
 	void GetAllWorkSts(); 
+	void GetAllDecVer(); //查询所有车检板接口板存在与否ADD 20150202 1427
 
 	void RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp);// 处理从CAN总线接收回来的数据   //ADD: 2013 0710 10 54
-	
+	Byte GetDecBoardIndex(Byte DecBoardHexAddr) ;  //返回检测器板接口板地址索引ADD: 20150202
 /*
 #ifndef WINDOWS
 	void GetHaveCarTime(time_t* pTime);
@@ -118,7 +120,7 @@ public:
 	void PrintDetInfo(char* pFileName,int iFileLine,Byte ucBoardIndex,char* sErrSrc,int iPrintCnt,Byte* ucRecvBuf);
 public:
 	
-	Byte m_ucActiveBoard1; /* 1  - 16 活动的检测器板*/
+	Byte m_ucActiveBoard1; 	/* 1  - 16 活动的检测器板*/
 	Byte m_ucActiveBoard2;   //17 - 32 活动的检测器板
 	Byte m_ucActiveBoard3;	//33 - 48 活动的检测器板
 	Byte m_ucActiveBoard4 ; //65-96	活动的检测器板
@@ -150,6 +152,7 @@ public:
 	Byte m_ucSetSensibility[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD] ; //ADD 2013 0816 1530
 	Byte m_ucGetSensibility[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD] ; //ADD 2013 0816 1530
 	Byte m_ucDecBoardVer[MAX_DET_BOARD][5]; //ADD:20141201  检测器板卡 的程序版本
+	Byte m_ucDecBoardId[MAX_DET_BOARD][4]; //ADD 20150112 检测器板卡ID
 private:
 	CDetector();
 	~CDetector();

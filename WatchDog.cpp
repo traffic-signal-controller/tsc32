@@ -20,7 +20,7 @@ Return:         无
 WatchDog::WatchDog()
 {
 	m_watchdogFd = -1;
-	ACE_DEBUG((LM_DEBUG,"%s:%d Init WatchDog object ok !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d Init WatchDog object ok !\n",__FILE__,__LINE__));
 }
 
 /**************************************************************
@@ -65,7 +65,7 @@ void WatchDog::OpenWatchdog()
 	timeout = 3;
 	ioctl(m_watchdogFd, WDIOC_SETTIMEOUT, &timeout);
 	ioctl(m_watchdogFd, WDIOC_GETTIMEOUT, &timeout);
-	ACE_DEBUG((LM_DEBUG,"%s:%d The timeout was is %d seconds\n",__FILE__,__LINE__,timeout));
+	ACE_DEBUG((LM_DEBUG,"%s:%d The timeout was is %d seconds\n\n",__FILE__,__LINE__,timeout));
 	
 	//下面为forlinux核心板里的代码
 	//m_watchdogFd = open(DEV_WATCHDOG, O_WRONLY, 0);

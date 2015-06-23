@@ -15,8 +15,6 @@ enum{
 
 };
 
-
-
 /*********Ä£¿éLEDµÆÃ¶¾Ù*******************20141106*/
 
 enum{
@@ -49,6 +47,10 @@ public:
 	void SetLedBoardShow();//ADD 2013 0809 15 40
 	void DoLedBoardShow(); //ADD: 2013 0809 1700
 	void SetSignalLed(Byte LedIndex ,Byte LedStatus); //ADD:201411060926
+	
+	void RecvMainBdLedCan(SCanFrame sRecvCanTmp);
+	void GetMBLedVer();
+	Byte m_ucMBLedVer[5];
 private:
 	CMainBoardLed();
 	~CMainBoardLed();

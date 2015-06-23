@@ -24,7 +24,7 @@ CGbtTimer::CGbtTimer()
 	m_ucMaxTick = 10;
 
 	ACE_OS::memset(m_sReportInfo , 0 , MAX_REPORT_NUM*sizeof(SReportSelf) );
-	ACE_DEBUG((LM_DEBUG,"%s:%d Init GbtTimer object ok !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d Init GbtTimer object ok !\n\n",__FILE__,__LINE__));
 }
 
 /**************************************************************

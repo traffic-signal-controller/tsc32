@@ -22,6 +22,12 @@ History:
 
 #define DEV_PATH "/sys/class/gpio/"
 
+enum
+{
+	LED_BOARD_SHOW  = 0x2 ,
+	LED_BOARD_VER   =0xff
+
+};
 
 
 /**************************************************************
@@ -140,8 +146,6 @@ Return:         无
 ***************************************************************/
 void CMainBoardLed::DoCan0Led()
 {
-	
-
 	if(can0Bool)
 	{
 		can0Bool = false;
@@ -217,7 +221,6 @@ Return:         无
 ***************************************************************/
 void CMainBoardLed::DoLedBoardShow()
 {
-	STscConfig* pSTscConfig =CManaKernel::CreateInstance()->m_pTscConfig ;
 	if(IsEthLinkUp())
 		LedBoardStaus[LED_NETWORK] = LED_STATUS_ON;
 	else
@@ -244,7 +247,7 @@ void CMainBoardLed::SetLedBoardShow()
 		//Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , BOARD_ADDR_LED  , &(sSendFrameTmp.ulCanId));
 		//ACE_DEBUG((LM_DEBUG,"%s:%d LEDCANID:%x \n",__FILE__,__LINE__,sSendFrameTmp.ulCanId));
 		sSendFrameTmp.ulCanId = 0x91032ff0 ;
-		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND<< 6) | LED_BOARD_SHOW;				
+		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6) | LED_BOARD_SHOW;				
 		sSendFrameTmp.pCanData[1] = LedBoardStaus[LED_RADIATOR]&0x3 ;
 		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_HEATER]&0x3)<<2 ;
 		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_ILLUMINATOR]&0x3)<<4 ;
@@ -279,3 +282,50 @@ void CMainBoardLed::SetSignalLed(Byte LedIndex ,Byte LedStatus)
 		return ;
 	LedBoardStaus[LedIndex] = LedStatus ;
 }
+
+
+/****************************************************************
+*
+Function:       CMainBoardLed::RecvMainBdLedCan
+Description:    对从灯条CAN数据进行处理
+Input:            Can总线接收到的灯条数据帧
+Output:         无
+Return:         无
+Date:           20141023
+*****************************************************************/
+void CMainBoardLed::RecvMainBdLedCan(SCanFrame sRecvCanTmp)
+{	
+	Byte RecvType = 0x0;
+	if(sRecvCanTmp.pCanData[0] == 0xff)
+		RecvType = 0xff ;
+	else		
+		RecvType = sRecvCanTmp.pCanData[0] & 0x3F ;
+
+//	ACE_OS::printf("%s:%d MainBdLedver,type =%d \n",__FILE__,__LINE__,RecvType);
+	if(RecvType == 0xff)
+	{
+		m_ucMBLedVer[0]=sRecvCanTmp.pCanData[1];
+		m_ucMBLedVer[1]=sRecvCanTmp.pCanData[2];
+		m_ucMBLedVer[2]=sRecvCanTmp.pCanData[3];
+		m_ucMBLedVer[3]=sRecvCanTmp.pCanData[4];
+		m_ucMBLedVer[4]=sRecvCanTmp.pCanData[5];
+		//ACE_OS::printf("%s:%d MainBdLedver:%d %d %d %d %d \n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],
+		//sRecvCanTmp.pCanData[2],sRecvCanTmp.pCanData[3],sRecvCanTmp.pCanData[4],sRecvCanTmp.pCanData[5]);
+		
+	}
+	return ;
+}
+
+void CMainBoardLed::GetMBLedVer()
+{
+	SCanFrame sSendFrameTmp;
+	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));	
+	//Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN	, FRAME_MODE_P2P  , BOARD_ADDR_LED, &(sSendFrameTmp.ulCanId));
+	sSendFrameTmp.ulCanId = 0x91032ff0 ;
+	sSendFrameTmp.pCanData[0] = 0xff; 
+	sSendFrameTmp.ucCanDataLen = 1;
+	Can::CreateInstance()->Send(sSendFrameTmp);
+
+}
+
+

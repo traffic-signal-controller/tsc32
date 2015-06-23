@@ -33,6 +33,7 @@ History:
 #include "SerialCtrl.h"
 #include "MacControl.h"
 #include "WirelessButtons.h"
+#include "MainBackup.h"
 
 /**************************************************************
 Function:        CGbtMsgQueue::CGbtMsgQueue
@@ -49,7 +50,7 @@ CGbtMsgQueue::CGbtMsgQueue()
 	timeval tTmp;
 	ACE_Message_Block *mb = NULL;
 	SThreadMsg sMsg; 
-	ACE_Time_Value nowait(GetCurTime());
+	ACE_Time_Value nowait(getCurrTime());
 #endif
 
 	iPort     = 0;
@@ -141,7 +142,7 @@ int CGbtMsgQueue::SendGbtMsg(SThreadMsg* pMsg,int iLength)
 	ACE_Message_Block *mb = new ACE_Message_Block(iLength);  //构造消息块
 	mb->copy((char*)pMsg, iLength); // 将数据拷贝进消息块
 
-	ACE_Time_Value nowait(GetCurTime()+ACE_Time_Value(1));
+	ACE_Time_Value nowait(getCurrTime()+ACE_Time_Value(1));
 	m_pMsgQue->enqueue_tail(mb, &nowait);  //向 ACE_Message_Queue中添加新数据块
 	//ACE_DEBUG((LM_DEBUG,"%s:%d pMsg Send ok !\n",__FILE__,__LINE__));
 	return 1;
@@ -161,7 +162,7 @@ void CGbtMsgQueue::DealData()
 	timeval tTmp;
 	ACE_Message_Block *mb = NULL;
 	SThreadMsg sMsg; 
-	ACE_Time_Value nowait(GetCurTime());
+	ACE_Time_Value nowait(getCurrTime());
 
 	tTmp.tv_sec = 0;
 	tTmp.tv_usec = 10 * 1000;
@@ -240,7 +241,7 @@ Return:         无
 ***************************************************************/
 void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 {
-	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //????????????????????×÷??à????
+	Byte ucRecvOptType = ( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf[0]) & 0xf;   //ÊÕµœÖ¡µÄ²Ù×÷ÀàÐÍ
 	int iRecvIndex     = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iIndex;          
 	int iRecvBufLen    = m_sGbtDealData[ucDealDataIndex].sRecvFrame.iBufLen;
 	int iSendIndex     = m_sGbtDealData[ucDealDataIndex].sSendFrame.iIndex;          
@@ -345,7 +346,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 	case OBJECT_UTC_TIME:
 		if ( GBT_SEEK_REQ == ucRecvOptType ) 
 		{
-			ACE_Time_Value tvCurTime = GetCurTime();
+			ACE_Time_Value tvCurTime = ACE_OS::gettimeofday();
 			unsigned int iTotalSec   = (unsigned int)tvCurTime.sec();    //utc time
 			iTotalSec = iTotalSec +8*3600 ;
 
@@ -396,7 +397,7 @@ void CGbtMsgQueue::PackOtherObject(Byte ucDealDataIndex)
 	case OBJECT_LOCAL_TIME:
 		if ( GBT_SEEK_REQ == ucRecvOptType )  
 		{
-			ACE_Time_Value tvCurTime = GetCurTime();
+			ACE_Time_Value tvCurTime =ACE_OS::gettimeofday();
 			unsigned int iTotalSec = (unsigned int)tvCurTime.sec() + 8 * 60 * 60; 
 			
 			/*采取网络字节序，高字节在低位*/
@@ -695,7 +696,10 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 	case OBJECT_MODULE_STATUS:  
 		if (  GBT_SEEK_REQ == ucRecvOptType )
 		{
-			GetModuleStatus(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,&iSendIndex); 
+			
+			Byte ucQueryType =( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
+			Byte ucBdIndx= (m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
+			GetModuleStatus(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,&iSendIndex,ucSubId,ucQueryType,ucBdIndx); 
 		}
 		else
 		{
@@ -828,6 +832,19 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			SetSmsFunc(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex,iRecvBufLen); 
 		}
 		break;
+	case OBJECT_BUSPRIORITY_CFG:
+		if ( GBT_SEEK_REQ == ucRecvOptType )  
+		{
+			
+			Byte ucQueryType =( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
+			GetBusPriorityCfg(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,ucQueryType,&iSendIndex); 			
+		}
+		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
+		{		 
+			ACE_OS::printf("%s:%d  Set Buspriority Parameters!",__FILE__,__LINE__);
+			SetBusPriorityCfg(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
+		}
+		break ;
 	default:
 		ACE_DEBUG((LM_DEBUG,"%s:%d,ObjectId error objectId:%d\n",__FILE__,__LINE__,ucObjId));
 		GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
@@ -1087,6 +1104,37 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			ucTmp = pTscCfg->sSpecFun[FUN_LIGHTCHECK].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 			break;
+	    /*********************ADD 20150129*******************************/
+		 case 11:		 	
+			ucTmp = pTscCfg->sSpecFun[FUN_GPS_INTERVAL].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+			break;
+		 case 12:		 		
+		    ucTmp = pTscCfg->sSpecFun[FUN_WIRELESSBTN_TIMEOUT].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+			break;
+		case 13:		 	
+			ucTmp = pTscCfg->sSpecFun[FUN_GPS].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+		 	break ;
+		case 14:		 	
+			ucTmp = pTscCfg->sSpecFun[FUN_MSG_ALARM].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+		 	break ;
+		case 15:		 	
+			ucTmp = pTscCfg->sSpecFun[FUN_CROSSSTREET_TIMEOUT].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+		 	break ;
+        case 16:		 		
+			ucTmp = pTscCfg->sSpecFun[FUN_RS485_BITRATE].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+		 	break ;
+		 case 17:		 		
+			ucTmp = pTscCfg->sSpecFun[FUN_FLASHCNTDOWN_TIME].ucValue;
+			pBuf[iSendIndex++] = ucTmp;
+		 	break ;
+		
+	   /*********************ADD 20150129*******************************/
 		default:
 			break;
 
@@ -1160,16 +1208,12 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex)
 	
 	/***********工作方式***********/
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1    , ucTmp);
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_STAND_STAGEID].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_STAND_STAGEID+1  , ucTmp);
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_CORSS1_STAGEID].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CORSS1_STAGEID+1 , ucTmp);
 	ucTmp = pBuf[iRecvIndex++];
-	//pTscCfg->sSpecFun[FUN_CROSS2_STAGEID].ucValue  = ucTmp;
 	(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
 
 	/**********通信接口***********/
@@ -1233,6 +1277,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 	Byte cMask[4]    = {0};
 	Byte cGateWay[4] = {0};
 	STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
+	STscRunData * pTscRunData =  CManaKernel::CreateInstance()->m_pRunData;
 			//bit0  重启系统
 			//bit1  进入自检
 			//bit2  进入升级
@@ -1298,15 +1343,16 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_SERIOUS_FLASH+1 , (ucTmp>>7)&1 );
 			break;
 		case 3: //工作方式
-			ucTmp = pBuf[iRecvIndex++];
-			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1     , ucTmp);
+			 ucTmp = pBuf[iRecvIndex++];
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS_TYPE+1     , ucTmp);			
+			 pTscCfg->sSpecFun[FUN_CROSS_TYPE].ucValue=ucTmp;
+			 pTscRunData->ucWorkMode = ucTmp ;
 			ucTmp = pBuf[iRecvIndex++];
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_STAND_STAGEID+1  , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CORSS1_STAGEID+1 , ucTmp);
 			ucTmp = pBuf[iRecvIndex++];
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSS2_STAGEID+1 , ucTmp);
-			CManaKernel::CreateInstance()->SetUpdateBit();
 			break;
 		case 4:  //通信接口
 			ucTmp       = pBuf[iRecvIndex++];
@@ -1376,7 +1422,22 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 		 	ucTmp = pBuf[iRecvIndex++];
 			pTscCfg->sSpecFun[FUN_MSG_ALARM].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_MSG_ALARM+1 , ucTmp);
-		 	break ;			
+		 	break;
+		case 15:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_CROSSSTREET_TIMEOUT].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_CROSSSTREET_TIMEOUT+1 , ucTmp);
+		 	break;
+        case 16:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_RS485_BITRATE].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_RS485_BITRATE+1 , ucTmp);
+		 	break;	
+	    case 17:
+		 	ucTmp = pBuf[iRecvIndex++];
+			pTscCfg->sSpecFun[FUN_FLASHCNTDOWN_TIME].ucValue = ucTmp;
+			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_FLASHCNTDOWN_TIME+1 , ucTmp);
+		 	break;
 		default:
 			break;
 	}
@@ -1397,7 +1458,7 @@ void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 	CPowerBoard * pPowerBoard = CPowerBoard::CreateInstance();
 	pMacControl->GetEnvSts();
 	pPowerBoard->CheckVoltage();
-	ACE_OS::sleep(ACE_Time_Value(0, 30000));
+	ACE_OS::sleep(ACE_Time_Value(0, 100000));
 
 	pBuf[*iSendIndex] = pMacControl->m_ucDoorFront ;
 	*iSendIndex += 1;
@@ -1428,7 +1489,7 @@ void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 	*iSendIndex += 1;
 	pBuf[*iSendIndex] = pMacControl->m_ucCabinet;
 	*iSendIndex += 1;
-	pBuf[*iSendIndex] = CPscMode::CreateInstance()->m_ucBtnNum ;
+	pBuf[*iSendIndex] = pMacControl->m_ucPsc;
 	*iSendIndex += 1;
 
 	pBuf[*iSendIndex] = pPowerBoard->m_iStongVoltage ;  //强电电压
@@ -1523,70 +1584,113 @@ Input:          iSendIndex  当前发送帧字节地址
 Output:         pBuf  发送帧地址
 Return:         无
 ***************************************************************/
-void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex)
+void CGbtMsgQueue::GetModuleStatus(Byte* pBuf,int *iSendIndex ,Byte subId,Byte ucQueryType,Byte ucBdindex)
 {
 	Byte ucTmp = 0;
-	CDetector* pDet          = CDetector::CreateInstance();
-	CLampBoard* pLamp        = CLampBoard::CreateInstance();
 	CFlashMac* pFlashMac     = CFlashMac::CreateInstance();
-		//灯控板
-	if ( pLamp->m_bRecordSts[0] != true )
+	if(ucQueryType == 0xff)
 	{
-		ucTmp |= 1;
-	}
-	if (  pLamp->m_bRecordSts[1] != true )
-	{
-		ucTmp |= 1<<1;
-	}
-	if ( pLamp->m_bRecordSts[2] != true )
-	{
-		ucTmp |= 1<<2;
-	}
-	if ( pLamp->m_bRecordSts[3] != true )
-	{
-		ucTmp |= 1<<3;
-	}
-
-	//检测器板
-	if ( pDet->m_bRecordSts[0] != true )
-	{
-		ucTmp |= 1<<4;
-	}
-	if ( pDet->m_bRecordSts[1] != true )
-	{
-		ucTmp |= 1<<5;
-	}
-	if ( pDet->m_bRecordSts[2] != true)
-	{
-		ucTmp |= 1<<6;
-	}
-	if ( pDet->m_bRecordSts[3] != true )
-	{
-		ucTmp |= 1<<7;
-	}
-	pBuf[*iSendIndex] = ucTmp;   
-	*iSendIndex      += 1;
-	ucTmp             = 0;
-
-	//电源板
-	if ( false )//if ( pPowerBoard->m_bRecordSts != true )
-	{
-		ucTmp |= 1;
+		switch(subId)
+		{
+			case 0x3: //灯驱板	
+			{
+				CLampBoard* pLamp		 = CLampBoard::CreateInstance();
+				pLamp->GetLampBoardVer(ucBdindex);
+				pBuf[(*iSendIndex)++] = 0xff ;
+				pBuf[(*iSendIndex)++] = ucBdindex ;
+				pBuf[(*iSendIndex)++] = pLamp->m_ucLampBoardVer[ucBdindex][0];
+				pBuf[(*iSendIndex)++] = pLamp->m_ucLampBoardVer[ucBdindex][1] ;
+				pBuf[(*iSendIndex)++] = pLamp->m_ucLampBoardVer[ucBdindex][2] ;
+				pBuf[(*iSendIndex)++] = pLamp->m_ucLampBoardVer[ucBdindex][3] ;
+				pBuf[(*iSendIndex)++] = pLamp->m_ucLampBoardVer[ucBdindex][4] ;
+				break ;
+			}
+			case 0x4: //电源板
+			{
+				CPowerBoard*pPower = CPowerBoard::CreateInstance();
+				pPower->GetPowerVer(ucBdindex);
+				pBuf[(*iSendIndex)++] = 0xff ;
+				pBuf[(*iSendIndex)++] = ucBdindex ;
+				
+				pBuf[(*iSendIndex)++] = pPower->m_ucPowerBoardVer[ucBdindex][0];
+				pBuf[(*iSendIndex)++] = pPower->m_ucPowerBoardVer[ucBdindex][1] ;
+				pBuf[(*iSendIndex)++] = pPower->m_ucPowerBoardVer[ucBdindex][2] ;
+				pBuf[(*iSendIndex)++] = pPower->m_ucPowerBoardVer[ucBdindex][3] ;
+				pBuf[(*iSendIndex)++] = pPower->m_ucPowerBoardVer[ucBdindex][4] ;
+				break ;
+			}
+			case 0x05: //检测器
+			case 0x06://接口板
+			{
+				CDetector* pDetctor 	 = CDetector::CreateInstance();
+				pDetctor->GetDecVars(ucBdindex,0xff);
+				pBuf[(*iSendIndex)++] = 0xff ;
+				pBuf[(*iSendIndex)++] = ucBdindex ;
+				pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBdindex][0];
+				pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBdindex][1] ;
+				pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBdindex][2] ;
+				pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBdindex][3] ;
+				pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBdindex][4] ;
+				break ;	
+			}
+			case 0x7: //黄闪器
+			{
+				CFlashMac*pFlash = CFlashMac::CreateInstance();
+				pFlash->FlashGetVer();
+				pBuf[(*iSendIndex)++] = 0xff ;
+				pBuf[(*iSendIndex)++] = ucBdindex ;
+				pBuf[(*iSendIndex)++] = pFlash->m_ucFlashVer[0];
+				pBuf[(*iSendIndex)++] = pFlash->m_ucFlashVer[1] ;
+				pBuf[(*iSendIndex)++] = pFlash->m_ucFlashVer[2] ;
+				pBuf[(*iSendIndex)++] = pFlash->m_ucFlashVer[3] ;
+				pBuf[(*iSendIndex)++] = pFlash->m_ucFlashVer[4] ;
+				break ;		
+			}
+			case 0x8: //控制器
+			{
+				CMacControl* pMacControl = CMacControl::CreateInstance();
+				pMacControl->GetMacControlVer();
+				pBuf[(*iSendIndex)++] = 0xff ;
+				pBuf[(*iSendIndex)++] = ucBdindex ;				
+				pBuf[(*iSendIndex)++] = pMacControl->m_ucMacContolVer[0];
+				pBuf[(*iSendIndex)++] = pMacControl->m_ucMacContolVer[1] ;
+				pBuf[(*iSendIndex)++] = pMacControl->m_ucMacContolVer[2] ;
+				pBuf[(*iSendIndex)++] = pMacControl->m_ucMacContolVer[3] ;
+				pBuf[(*iSendIndex)++] = pMacControl->m_ucMacContolVer[4] ;
+				break;
+			}
+			case 0x9: //主板备份单片机
+			{
+				MainBackup* pMainBackup = MainBackup::CreateInstance();
+				pMainBackup->GetMainBackVer();
+				pBuf[(*iSendIndex)++] = 0xff ;
+				pBuf[(*iSendIndex)++] = ucBdindex ;				
+				pBuf[(*iSendIndex)++] = pMainBackup->m_ucMainBackVer[0] ;
+				pBuf[(*iSendIndex)++] = pMainBackup->m_ucMainBackVer[1] ;
+				pBuf[(*iSendIndex)++] = pMainBackup->m_ucMainBackVer[2] ;
+				pBuf[(*iSendIndex)++] = pMainBackup->m_ucMainBackVer[3] ;
+				pBuf[(*iSendIndex)++] = pMainBackup->m_ucMainBackVer[4] ;
+				break;
+			}
+			case 0xa: //灯条		
+			{
+				CMainBoardLed* pMainBdLed = CMainBoardLed::CreateInstance();
+				pMainBdLed->GetMBLedVer();
+				pBuf[(*iSendIndex)++] = 0xff ;
+				pBuf[(*iSendIndex)++] = ucBdindex ; 			
+				pBuf[(*iSendIndex)++] = pMainBdLed->m_ucMBLedVer[0] ;
+				pBuf[(*iSendIndex)++] = pMainBdLed->m_ucMBLedVer[1] ;
+				pBuf[(*iSendIndex)++] = pMainBdLed->m_ucMBLedVer[2] ;
+				pBuf[(*iSendIndex)++] = pMainBdLed->m_ucMBLedVer[3] ;
+				pBuf[(*iSendIndex)++] = pMainBdLed->m_ucMBLedVer[4] ;	
+				break ;
+			}
+			default:
+				break ;
+			
+		}
 	}
 	
-	//监控板 黄闪器板
-	if ( pFlashMac->m_bRecordSts != true )
-	{
-		ucTmp |= 1<<1;
-	}
-	pBuf[*iSendIndex] = ucTmp;   
-	*iSendIndex      += 1;
-
-	pBuf[*iSendIndex] = 0;   
-	*iSendIndex      += 1;
-
-	pBuf[*iSendIndex] = 0;   
-	*iSendIndex      += 1;
 }
 
 /**************************************************************
@@ -1702,6 +1806,47 @@ void CGbtMsgQueue::SetButtonPhase(Byte* pBuf,int& iRecvIndex)
 	}
 		
 }
+
+
+void CGbtMsgQueue::SetBusPriorityCfg(Byte* pBuf,int& iRecvIndex)
+{
+	try
+	{
+		Byte ucTmp = 0x0 ;		
+		STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
+		ucTmp = pBuf[iRecvIndex++];
+		pTscCfg->sSpecFun[FUN_BUS_PRIORITY].ucValue  = ucTmp;		
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY+1 , ucTmp);
+		ucTmp = pBuf[iRecvIndex++];
+		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_EARLYRED].ucValue = ucTmp;		
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_EARLYRED+1, ucTmp);
+		ucTmp = pBuf[iRecvIndex++];
+		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_GREENDELAY].ucValue = ucTmp;		
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_GREENDELAY+1, ucTmp);
+		ucTmp = pBuf[iRecvIndex++];
+		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_DEFAULTTIME].ucValue = ucTmp;		
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_DEFAULTTIME+1 , ucTmp);
+		ucTmp = pBuf[iRecvIndex++];
+		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_NONBUSPHASEREDUCE].ucValue  = ucTmp;		
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_NONBUSPHASEREDUCE+1, ucTmp);
+		ucTmp = pBuf[iRecvIndex++];
+		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_BUSPHASEID].ucValue = ucTmp;	
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_BUSPHASEID+1 , ucTmp);		
+		
+		
+	}
+	catch(...)
+	{
+		ACE_OS::printf("%s:%d BusPrioty Configure  error!\r\n",__FILE__,__LINE__);
+		return ;
+	}
+
+
+
+}
+
+
+
 
 
 /**************************************************************
@@ -1826,7 +1971,7 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 				Uint uStartTime = 0 ;
 				Uint uEndTime = 0 ;
 				uEvtTypeId = pBuf[iRecvIndex++] ;
-				ACE_DEBUG((LM_DEBUG,"%s:%d uEvtTypeId = %d \n",__FILE__,__LINE__,uEvtTypeId));
+			//	ACE_DEBUG((LM_DEBUG,"%s:%d uEvtTypeId = %d \n",__FILE__,__LINE__,uEvtTypeId));
 				for(Byte uNum = 0 ;uNum <4 ;uNum++)
 				{
 					uStartTime |= (pBuf[iRecvIndex++])<<(8*uNum);
@@ -1853,7 +1998,7 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 			}
 			else if(updatetype == 0x03)
 			{
-				ACE_OS::system("rm -f Gb.aiton") ;
+				//ACE_OS::system("rm -f Gb.aiton") ;
 				ACE_OS::system("mv -f Gb.aiton.bak Gb.aiton");
 				ACE_OS::system("reboot") ;
 			}
@@ -1874,7 +2019,7 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 			}
 			else if(updatetype == 0x03)
 			{
-				ACE_OS::system("rm -f GbAitonTsc.db") ;
+				//ACE_OS::system("rm -f GbAitonTsc.db") ;
 				ACE_OS::system("mv -f GbAitonTsc.db.bak GbAitonTsc.db");
 				ACE_OS::system("reboot") ;
 			}
@@ -1940,6 +2085,51 @@ void CGbtMsgQueue::GetFlashCfg(Byte* pBuf,int *iSendIndex)
 
 
 /**************************************************************
+Function:       CGbtMsgQueue::GetBusPriorityCfg
+Description:    获取公交优先参数设置	
+Input:         	iSendIndex     发送帧当前写地址
+Output:         pBuf   发送帧地址指针
+Return:         无
+Date:            20150615
+***************************************************************/
+void CGbtMsgQueue::GetBusPriorityCfg(Byte* pBuf,Byte ucQueryType, int *iSendIndex)
+{
+	try	{
+			if(ucQueryType==0x1)//查询参数
+			{
+				STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;		
+				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY].ucValue;	
+				*iSendIndex += 1;
+				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_EARLYRED].ucValue;
+				*iSendIndex += 1;
+		
+				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_GREENDELAY].ucValue;		
+				*iSendIndex += 1;
+				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_DEFAULTTIME].ucValue;		
+				*iSendIndex += 1;
+				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_NONBUSPHASEREDUCE].ucValue;		
+				*iSendIndex += 1;
+				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_BUSPHASEID].ucValue;
+				*iSendIndex += 1;
+			}
+			else if(ucQueryType ==0x2) //查询状态
+			{
+				
+
+			}
+		}		
+	catch(...)
+	{
+		ACE_OS::printf("%s:%d Get BusPrioty Configure  error!\r\n",__FILE__,__LINE__);
+		return ;
+	}
+		
+
+}
+
+
+
+/**************************************************************
 Function:       CGbtMsgQueue::SetFlashCtrl
 Description:    黄闪器控制与配置信息设置	
 Input:         	pBuf     接收帧地址指针
@@ -1950,9 +2140,8 @@ Return:         无
 void  CGbtMsgQueue::SetFlashCtrl(Byte* pBuf,int& iRecvIndex)
 {
 	Byte Tmp = pBuf[iRecvIndex++];
-	CFlashMac* pFlashMac = CFlashMac::CreateInstance();
-	pFlashMac->FlashForceEnd();
-	
+	CFlashMac* pFlashMac = CFlashMac::CreateInstance();	
+	//pFlashMac->FlashForceEnd();	
 	switch(Tmp)
 	{
 		case 0x05 :
@@ -2003,11 +2192,10 @@ void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
 			Byte VolPlan = 0 ;
 			pPowerBoard->GetPowerBoardCfg();
 			ACE_OS::sleep(ACE_Time_Value(0, 30000));
-		//	printf("get powerd 0x3\n");
 		
 			pBuf[*iSendIndex] = pPowerBoard->m_iGetWarnHighVol;
 			*iSendIndex += 1 ;
-			pBuf[*iSendIndex] = //pPowerBoard->m_iGetWarnLowVol ;
+			pBuf[*iSendIndex] = pPowerBoard->m_iGetWarnLowVol ;
 			*iSendIndex += 1 ;
 			VolPlan |= pPowerBoard->m_ucGetStongHighVolPlan ;
 			VolPlan |= pPowerBoard->m_ucGetStongLowVolPlan <<2 ;
@@ -2018,7 +2206,6 @@ void  CGbtMsgQueue::GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType)
 			pBuf[*iSendIndex] = pPowerBoard->m_ucSetWatchCfg ;	
 			*iSendIndex += 1 ;
 			break ;
-		//	printf("get powerd 0x3 -2\n");
 		}
 			
 		 default:
@@ -2203,8 +2390,25 @@ void CGbtMsgQueue::GetDetCfg(Byte* pBuf,Byte ucBdIndex,Byte ucQueryType,int *iSe
 			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBoardIndex][1] ;
 			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBoardIndex][2] ;
 			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBoardIndex][3] ;
-			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBoardIndex][4] ;			
+			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardVer[ucBoardIndex][4] ;
+			pDetctor->m_ucDecBoardVer[ucBoardIndex][0]=0;
+			pDetctor->m_ucDecBoardVer[ucBoardIndex][1]=0;
+			pDetctor->m_ucDecBoardVer[ucBoardIndex][2]=0;
+			pDetctor->m_ucDecBoardVer[ucBoardIndex][3]=0;
+			pDetctor->m_ucDecBoardVer[ucBoardIndex][4]=0;
+			
 			break ;
+		case 0x0:
+			pDetctor->GetDecVars(ucBoardIndex,0x0);
+			pBuf[(*iSendIndex)++] = 0x0 ;
+			pBuf[(*iSendIndex)++] = ucBoardIndex ;
+			ACE_OS::sleep(tv);
+			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardId[ucBoardIndex][0];
+			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardId[ucBoardIndex][1] ;
+			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardId[ucBoardIndex][2] ;
+			pBuf[(*iSendIndex)++] = pDetctor->m_ucDecBoardId[ucBoardIndex][3] ;						
+			break ;
+		
 		default :
 			return ;
 	}
@@ -3077,8 +3281,8 @@ void CGbtMsgQueue::PackTscExStatus(Byte ucDealDataIndex,void* pValue)
 	switch ( ucObjId )
 	{
 	case OBJECT_EXT_TSC_STATUS:  /*当前信号机的控制状态*/
-		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,(Byte*)pValue,25);
-		iSendIndex += 25;
+		ACE_OS::memcpy(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf+iSendIndex,(Byte*)pValue,26);
+		iSendIndex += 26;
 		break;
 	default:
 		GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
@@ -4616,6 +4820,7 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_GSM_CFG :            //配置GSM功能
 		case OBJECT_COMMAND_SIGNAL:      //上位机命令控制下一阶段相位和方向
 		case OBJECT_BUTTONPHASE_CFG:     //方向按键相位配置
+		case OBJECT_BUSPRIORITY_CFG:     //公交优先设置
 			return true;
 		default:
 			return false;
@@ -4725,8 +4930,8 @@ void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
 	char hostname[MAXHOSTNAMELEN];
     ACE_OS::hostname(hostname, sizeof (hostname));
 	phost_name = hostname;
-	ACE_OS::printf("%s:%d Host name is %s\n", __FILE__,__LINE__,hostname);
-	ACE_OS::printf("--------------------------\n");
+	ACE_OS::printf("\n%s:%d Host name is %s\n", __FILE__,__LINE__,hostname);
+	ACE_OS::printf("--------------------------------------------------------\n");
 
 
     ACE_INET_Addr* addr_array1; 
@@ -4752,7 +4957,7 @@ void CGbtMsgQueue::GetNetParaByAce(Byte* pip,char* phost_name)
 		addr_array2->addr_to_string(address, sizeof (address), 1);
 		ACE_OS::printf("%s:%d Format 1: %s\n", __FILE__,__LINE__,address);
         addr_array2++;
-		ACE_OS::printf("--------------------------\n");
+		ACE_OS::printf("--------------------------------------------------------\n\n");
 	
     }
 

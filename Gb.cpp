@@ -27,6 +27,7 @@ History:
 #include "ComFunc.h"
 #include "Gsm.h"
 #include "WirelessButtons.h"
+#include "BusPriority.h"
 
 /**************************************************************
 Function:        main
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
 		ationMutex.release();
 		return -1;
 	}
+	StartBeep(); //BEEP	
 	RunGb();	       //core fuction
 	ationMutex.release();
 	return 0 ;
@@ -61,7 +63,7 @@ Return:         0
 ***************************************************************/
 static void* SignalMsgQueue(void *arg)
 {
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d  Begin to run TSC message handle thread!\r\n",__FILE__,__LINE__));	
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d ***THREAD*** Begin to run TSC message handle thread!\r\n",__FILE__,__LINE__));	
 	CTscMsgQueue::CreateInstance()->DealData();
 	return NULL ;
 }
@@ -76,7 +78,7 @@ Return:         0
 ***************************************************************/
 static void* GbtMsgQueue(void* arg)
 {
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d  Begin to run GBT message handle thread!\r\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d ***THREAD*** Begin to run GBT message handle thread!\r\n",__FILE__,__LINE__));
 	CGbtMsgQueue::CreateInstance()->DealData();
 	return NULL;
 }
@@ -95,7 +97,7 @@ static void *RunGSM(void *arg)
 	Byte iGsm = 0 ;
 	CManaKernel * pManaKernel = CManaKernel::CreateInstance() ;
 	ACE_OS::sleep(60);	
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d Begin to run GMS thread!\r\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d ***THREAD*** Begin to run GMS thread!\r\n",__FILE__,__LINE__));
 	iGsm = pManaKernel->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue ;
 	if(iGsm != 0)// serial 5
 		CGsm::CreateInstance()->RunGsmData();
@@ -116,7 +118,7 @@ static void *RunGps(void *arg)
 	Byte iGps = 0 ;
 	CManaKernel * pManaKernel = CManaKernel::CreateInstance() ;
 	ACE_OS::sleep(30);	
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d Begin to run GPS thread!\r\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d ***THREAD*** Begin to run GPS thread!\r\n",__FILE__,__LINE__));
 	iGps = pManaKernel->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
 	if(iGps != 0)//serial 2
 		CGps::CreateInstance()->RunGpsData();
@@ -137,7 +139,7 @@ static void *RunWirelessBtnHandle(void *arg)
 {
 	CWirelessBtn *pWirelessBtn = CWirelessBtn::CreateInstance() ;
 	ACE_OS::sleep(20); //先等待其他线程运行	
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d Begin to run WirelessBtnHandle thread!\r\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d ***THREAD*** Begin to run WirelessBtnHandle thread!\r\n",__FILE__,__LINE__));
 	while(true)
 	{
 		if(pWirelessBtn->GetbHandleWirelessBtnMsg())
@@ -155,6 +157,7 @@ static void *RunWirelessBtnHandle(void *arg)
 }
 
 
+
 /**************************************************************
 Function:        BroadCast
 Description:    广播线程函数，回送广播消息，包括IP地址，系统端口，
@@ -165,7 +168,7 @@ Return:         0
 ***************************************************************/
 static void* BroadCast(void* arg)
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d  Begin to run broadcast thread!\r\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d ***THREAD***  Begin to run broadcast thread!\r\n",__FILE__,__LINE__));
 	ACE_INET_Addr addrBroadcast(DEFAULT_BROADCAST_PORT),addrRemote;
 	ACE_SOCK_Dgram_Bcast udpBcast(addrBroadcast);
 	char buf[10];
@@ -202,8 +205,8 @@ static void* BroadCast(void* arg)
 			ucSendCount += 4;
 			//信号机版本
 			(sBroadcastMessage+ucSendCount)[0] = 0x2;
-			(sBroadcastMessage+ucSendCount)[1] = 0xEB;
-			(sBroadcastMessage+ucSendCount)[2] = 0x6;
+			(sBroadcastMessage+ucSendCount)[1] = 0xF5;
+			(sBroadcastMessage+ucSendCount)[2] = 0xD;
 			 ucSendCount += 3;
 
 			udpBcast.send(sBroadcastMessage , ucSendCount , addrRemote);
@@ -376,6 +379,18 @@ void RunGb()
 			TscAceDebug((LM_DEBUG,"Error: MainBackup thread faild\n"));
 		}
 	
+ 	if ( ACE_Thread::spawn((ACE_THR_FUNC)CBusPriority::RunRecevBusPriority, //公交优先处理线程
+								0,
+								THR_NEW_LWP | THR_JOINABLE,
+								&tThreadId[10],
+								&hThreadHandle[10],
+								ACE_DEFAULT_THREAD_PRIORITY,
+								0,
+								ACE_DEFAULT_THREAD_STACKSIZE,
+								0) == -1 )
+		{
+			TscAceDebug((LM_DEBUG,"Error: RunRecevBusPriority thread faild\n"));
+		}
 	ACE_Thread::join(hThreadHandle[0]);   //回收线程资源
 	ACE_Thread::join(hThreadHandle[1]);
 	ACE_Thread::join(hThreadHandle[2]);
@@ -384,7 +399,7 @@ void RunGb()
 	ACE_Thread::join(hThreadHandle[5]);
 	ACE_Thread::join(hThreadHandle[8]);
 	ACE_Thread::join(hThreadHandle[9]);
-
+	ACE_Thread::join(hThreadHandle[10]);
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
 	{
 		ACE_Thread::join(hThreadHandle[6]);
@@ -395,6 +410,29 @@ void RunGb()
 	}	
 	
 	CDbInstance::m_cGbtTscDb.CloseDb();  //关闭数据库	
+
+}
+
+/**************************************************************
+Function:       StartBeep
+Description:    信号机系统开机鸣叫1秒		
+Input:          无        
+Output:         无
+Return:         无
+Date:           20150327
+***************************************************************/
+
+void StartBeep()
+{
+#ifdef LINUX 
+	ACE_OS::system("echo 113 >/sys/class/gpio/export");	
+	ACE_OS::system("echo out >/sys/class/gpio/gpio113/direction");			
+	ACE_OS::system("echo 0 > /sys/class/gpio/gpio113/value");		
+	ACE_OS::sleep(1);			
+	ACE_OS::system("echo 1 > /sys/class/gpio/gpio113/value");	
+	ACE_OS::system("echo in >/sys/class/gpio/gpio113/direction");			
+	ACE_OS::system("echo 113 >/sys/class/gpio/unexport");	
+#endif
 
 }
 

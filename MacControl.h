@@ -24,6 +24,7 @@ public:
 	void RecvMacCan(SCanFrame sRecvCanTmp); //ADD 20130815 0850
 	void SndLcdShow() ; //ADD 201309101706
 	Byte GetCtrlStaus() ; //ADD 201309101400
+	void GetMacControlVer();
 
 private:
 	CMacControl();
@@ -73,6 +74,12 @@ private:
 	Byte m_ucGetFarIo1;       
 	Byte m_ucGetFarIo2;      
 	bool bSendCtrlOk ; //判断是否控制发送LCD显示成功
+
+	Byte uiOldLcdCtrl ;
+	Byte uiOldPatternNo  ;
+	Byte uiOldFlashType ;
+	bool uiOldbDegrade ; 
+		
 public:
 	//out
 	//Byte m_ucManualSts;  //手控状态
@@ -93,6 +100,8 @@ public:
 	Byte m_ucAddHot;   //加热器
 	Byte m_ucReduHot;  //散热器
 	Byte m_ucCabinet;  //机柜  0静止 1震动
+	Byte m_ucMacContolVer[5]; // 控制器程序版本
+	Byte m_ucPsc ;  //行人按钮值
 	
 	
 };

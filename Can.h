@@ -55,7 +55,6 @@ private:
 	~Can();
 	int m_socketHandle;
 	CMainBoardLed* pMainBoardLed;
-	
 	#ifdef LINUX
 	struct sockaddr_can m_addrCan;
 	struct ifreq m_ifrCan;

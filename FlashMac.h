@@ -38,6 +38,7 @@ public:
 
 	void FlashForceStart(Byte ucType);  	   // 黄闪器强制黄闪   ADD:0605 08 49
 	void FlashForceEnd();   				   //黄山器退出强制黄闪  ADD:0605 08 50
+	void FlashGetVer();
 
 	bool m_bGetHardwareFlash;  //获取 硬件黄闪
 	bool m_bGetColdFan;        //获取 散热风扇
@@ -64,6 +65,7 @@ public:
 	Byte m_ucGetFlashRate;	//黄闪频率
 	Byte m_ucGetSyType;   //黄闪同步方式
 	Byte m_ucFlashStatus ; //黄闪类型
+	Byte m_ucFlashVer[5] ; //黄闪器版本
 
 private:
 	CFlashMac();

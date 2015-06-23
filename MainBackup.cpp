@@ -20,6 +20,7 @@ History:    2014.05.29
 #include <iostream>
 #include "ace/Thread_Manager.h"
 #include "ace/Process_Mutex.h"
+#include "Can.h"
 
 #define BR115200 	115200
 #define BR57600 	57600
@@ -165,8 +166,7 @@ void MainBackup::OperateManual(Ushort mbs)
 			pManaKernel->m_pRunData->ucManualType = Manual_CTRL_NO;			
 			break;
 		case MAINBACKUP_MANUAL_MANUAL:			
-		   
-CMainBoardLed::CreateInstance()->DoAutoLed(false);			
+		   CMainBoardLed::CreateInstance()->DoAutoLed(false);			
 			if (m_ucLastManualSts == MAINBACKUP_MANUAL_MANUAL)
 				return;
 			pGbtMsgQueue->SendTscCommand(OBJECT_CURTSC_CTRL,4);
@@ -182,23 +182,23 @@ CMainBoardLed::CreateInstance()->DoAutoLed(false);
 			m_ucLastManualSts = MAINBACKUP_MANUAL_NEXT_STEP;			
 			break;
 		case MAINBACKUP_MANUAL_YELLOW_FLASH:			
-			if (m_ucLastManualSts == MAINBACKUP_MANUAL_YELLOW_FLASH)
+			if (m_ucLastManualSts == MAINBACKUP_MANUAL_YELLOW_FLASH) //和外面相反
 			{
 				return ;
 			}
-			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,254);
-			pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,2,0,0,0); //ADD:20141031
+			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,253);
+			pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,4,0,0,0); //ADD:20141031
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Send CTRL_PANEL FLASH! TscMsg!\n",__FILE__,__LINE__));
 			m_ucLastManualSts = MAINBACKUP_MANUAL_YELLOW_FLASH;	
 			pManaKernel->m_pRunData->flashType = CTRLBOARD_FLASH_MANUALCTRL;
 			break;
 		case MAINBACKUP_MANUAL_ALL_RED:			
 			if (m_ucLastManualSts == MAINBACKUP_MANUAL_ALL_RED)
-			{
+			{	
 				return ;
 			}
-			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,253);
-			pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,4,0,0,0); //ADD:20141031
+			pGbtMsgQueue->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,254);
+			pManaKernel->SndMsgLog(LOG_TYPE_MANUAL,2,0,0,0); //ADD:20141031
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Send CTRL_PANEL ALLRED TscMsg!\n",__FILE__,__LINE__));
 			m_ucLastManualSts = MAINBACKUP_MANUAL_ALL_RED;			
 			break;
@@ -354,11 +354,7 @@ void MainBackup::SendStep()
 	if(bSendStep)
 	{
 		if(i<(pRunData->ucStepNum))
-		{
-
-		//	}
-		//for(i=0;i<(pRunData->ucStepNum);i++)
-		//{
+		{		
 			int j;
 			SStepInfo stepInfo = pRunData->sStageStepInfo[i];
 			Byte lampOn[MAX_LAMP] = {0};
@@ -371,7 +367,7 @@ void MainBackup::SendStep()
 			sendBit[0] = time;
 			for(j=0;j<MAX_LAMP;j++)
 			{
-				//ACE_DEBUG((LM_DEBUG,"%s:%d<<<<< Send Step: lampOn %d!>>>>>>\n",__FILE__,__LINE__,lampOn[j]));
+				//ACE_DEBUG((LM_DEBUG,"%s:%d<<<<< Send Step: j=%d  lampOn %d! lamflash %d >>>>>>\n",__FILE__,__LINE__,j ,lampOn[j],lampFlash[j]));
 				if(lampFlash[j] == 1 && lampOn[j] == 1)	//灯闪
 				{
 					switch(j)
@@ -401,6 +397,7 @@ void MainBackup::SendStep()
 						case 7:
 							sendBit[12] |= 0x40;
 							sendBit[11] |= 0x01;
+							
 							break;
 						case 8:
 							sendBit[12] |= 0x80;
@@ -425,16 +422,21 @@ void MainBackup::SendStep()
 							sendBit[11] |= 0x60;
 							break;
 						case 15:
-							sendBit[11] |= 0x00;
+							sendBit[11] |= 0x0;
 							sendBit[10] |= 0x02;
+						//	printf("%s:%d sendBit[11]=%02x sendBit[10]=%02x \n",__FILE__,__LINE__,sendBit[11],sendBit[10]);
 							break;
 						case 16:
-							sendBit[11] |= 0x01;
+							sendBit[11] |= 0x80;//0x0
 							sendBit[10] |= 0x02;
+						
+						//printf("%s:%d sendBit[11]=%02x sendBit[10]=%02x \n",__FILE__,__LINE__,sendBit[11],sendBit[10]);
 							break;
 						case 17:
 							sendBit[11] |= 0x00;
 							sendBit[10] |= 0x03;
+						
+						//printf("%s:%d sendBit[11]=%02x sendBit[10]=%02x \n",__FILE__,__LINE__,sendBit[11],sendBit[10]);
 							break;
 						case 18:
 							sendBit[10] |= 0x10;
@@ -475,14 +477,20 @@ void MainBackup::SendStep()
 						case 30:
 							sendBit[9] |= 0x00;
 							sendBit[8] |= 0x01;
+							
+							//printf("%s:%d sendBit[9]=%02x sendBit[8]=%02x \n",__FILE__,__LINE__,sendBit[9],sendBit[8]);
 							break;
 						case 31:
-							sendBit[9] |= 0x01;
+							sendBit[9] |= 0x40; //0x1
 							sendBit[8] |= 0x01;
+						
+						//printf("%s:%d sendBit[9]=%02x sendBit[8]=%02x \n",__FILE__,__LINE__,sendBit[9],sendBit[8]);
 							break;
 						case 32:
 							sendBit[9] |= 0x02;
 							sendBit[8] |= 0x01;
+						
+						//printf("%s:%d sendBit[9]=%02x sendBit[8]=%02x \n",__FILE__,__LINE__,sendBit[9],sendBit[8]);
 							break;
 						case 33:
 							sendBit[8] |= 0x08;
@@ -503,11 +511,11 @@ void MainBackup::SendStep()
 							sendBit[8] |= 0x60;
 							break;
 						case 39:
-							sendBit[8] |= 0x00;
+							sendBit[8] |= 0x0; //0x0
 							sendBit[7] |= 0x02;
 							break;
 						case 40:
-							sendBit[8] |= 0x01;
+							sendBit[8] |= 0x80; //0x1
 							sendBit[7] |= 0x02;
 							break;
 						case 41:
@@ -555,11 +563,11 @@ void MainBackup::SendStep()
 							sendBit[5] |= 0x01;
 							break;
 						case 55:
-							sendBit[6] |= 0x01;
+							sendBit[6] |= 0x40; //0x1
 							sendBit[5] |= 0x01;
 							break;
 						case 56:
-							sendBit[6] |= 0x02;
+							sendBit[6] |= 0x80; //0x2
 							sendBit[5] |= 0x01;
 							break;
 						case 57:
@@ -585,7 +593,7 @@ void MainBackup::SendStep()
 							sendBit[4] |= 0x02;
 							break;
 						case 64:
-							sendBit[5] |= 0x01;
+							sendBit[5] |= 0x80; //0x0
 							sendBit[4] |= 0x02;
 							break;
 						case 65:
@@ -633,11 +641,11 @@ void MainBackup::SendStep()
 							sendBit[2] |= 0x01;
 							break;
 						case 79:
-							sendBit[3] |= 0x01;
+							sendBit[3] |= 0x40; //0x1
 							sendBit[2] |= 0x01;
 							break;
 						case 80:
-							sendBit[3] |= 0x02;
+							sendBit[3] |= 0x80; //0x2
 							sendBit[2] |= 0x01;
 							break;
 						case 81:
@@ -663,7 +671,7 @@ void MainBackup::SendStep()
 							sendBit[1] |= 0x02;
 							break;
 						case 88:
-							sendBit[2] |= 0x01;
+							sendBit[2] |= 0x80; //0x1
 							sendBit[1] |= 0x02;
 							break;
 						case 89:
@@ -1670,3 +1678,55 @@ void* MainBackup::Recevie(void* arg)
 		resultBytes = NULL;
 	}
 }
+
+/**************************************************************
+Function:        MainBackup::GetMainBackVer
+Description:    获取备份单片机程序版本	
+Input:            无			
+Output:          无
+Return:          无
+Date:             20150310
+***************************************************************/
+void MainBackup::GetMainBackVer()
+{
+	SCanFrame sSendFrameTmp;
+	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));	
+	Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN	, FRAME_MODE_P2P  , BOARD_ADDR_MAINBACK, &(sSendFrameTmp.ulCanId));
+	sSendFrameTmp.pCanData[0] = 0xff; 
+	sSendFrameTmp.ucCanDataLen = 1;
+	Can::CreateInstance()->Send(sSendFrameTmp);
+}
+
+
+/****************************************************************
+*
+Function:       MainBackup::RecvMainBackCan
+Description:    对从备份单片机CAN数据进行处理
+Input:            Can总线接收到的备份单片机数据帧
+Output:         无
+Return:         无
+Date:           20150310
+*****************************************************************/
+void MainBackup::RecvMainBackCan(SCanFrame sRecvCanTmp)
+{	
+	Byte RecvType = 0x0;
+	if(sRecvCanTmp.pCanData[0] == 0xff)
+		RecvType = 0xff ;
+	else		
+		RecvType = sRecvCanTmp.pCanData[0] & 0x3F ;
+
+	if(RecvType == 0xff)
+	{
+		m_ucMainBackVer[0]=sRecvCanTmp.pCanData[1];
+		m_ucMainBackVer[1]=sRecvCanTmp.pCanData[2];
+		m_ucMainBackVer[2]=sRecvCanTmp.pCanData[3];
+		m_ucMainBackVer[3]=sRecvCanTmp.pCanData[4];
+		m_ucMainBackVer[4]=sRecvCanTmp.pCanData[5];
+		//ACE_OS::printf("%s:%d MainBdLedver:%d %d %d %d %d \n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],
+		//sRecvCanTmp.pCanData[2],sRecvCanTmp.pCanData[3],sRecvCanTmp.pCanData[4],sRecvCanTmp.pCanData[5]);
+		
+	}
+	return ;
+}
+
+

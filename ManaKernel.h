@@ -58,6 +58,11 @@ public:
 	void SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte ucLogVau3,Byte ucLogVau4); //ADD:201309251100
 	void  SetWirelessBtnDirecCfg(Uint RecvBtnDirecData , Byte Lampcolor); //ADD:201410211700
 	
+	void CwpmGetCntDownSecStep();
+	Byte GetPhaseStageNo(Byte ucPhaseId) ;
+
+	void GetPhaseStatus(SPhaseSts* pPhaseSts);
+	void RefreshCycle(); //ADD 20150515
 
 	bool m_bFinishBoot;         //psc模式使用变量 开机完成过度步后进入可以进入psc模式
 	STscConfig* m_pTscConfig;   //信号机配置信息A
@@ -71,12 +76,10 @@ public:
 	bool bDegrade ;        //是否降级
 	//bool bChkManul ;       //用于判断系统启动初始手控状态NEW:单片机代替
 	bool bSecondPriority ; //用于次线半感应控制逻辑判断  ADD：20140618
-
-private:
+	private:
 	CManaKernel();
 	~CManaKernel();
 	void SetPhaseColor(bool bOverPhase,Byte iPhaseId);
-	void MemeryConfigDataRun();
 	void SetLampColor(Byte ColorType);
 	void SetDirecChannelColor(Byte iDirecType);
 	bool GaGetDirLane(Byte ucTableId , Byte  ucDir );
@@ -92,7 +95,6 @@ private:
 	Byte GetPhaseStepLen( SPhaseStep* pPhaseStep );
 	Byte GetPhaseStepIndex( SPhaseStep* pPhaseStep );
 
-	void GetPhaseStatus(SPhaseSts* pPhaseSts);
 	void GetOverlapPhaseStatus(SOverlapPhaseSts* pOverlapPhaseSts);
 	void GetChannelStatus(SChannelSts* pChannelSts);
 	Byte GetPhaseIdWithChannel(Byte ucChannelNo);
@@ -111,8 +113,7 @@ private:
 	
 	bool InConflictPhase();
 	void AllotActiveTime();
-	void CwpmGetCntDownSecStep();
-	void SetRedOtherLamp(Byte* ucLampOn);
+	void SetRedOtherLamp(Byte* ucLampOn,Byte* ucLampFlash);
 	void UtcsAdjustCycle();
 
 	void GetOverlapPhaseStepTime( 
@@ -126,7 +127,7 @@ private:
 	void GetUseLampBoard(bool* bUseLampBoard);
 	bool GetUseLampBoard(int iLampBoard);
 	Byte OverlapPhaseToPhase(Uint uiCurAllowPhase,Byte ucOverlapPhaseIndex);
-	int GetStageMinGreen(Ushort usAllowPhase);
+	int  GetStageMinGreen(Ushort usAllowPhase);
 	bool ExitOvelapPhase(Byte ucOverlapPhaseId,Byte ucPhaseCnt,SPhaseStep* pPhaseStep);
 	bool ExitStageStretchPhase(SScheduleTime* pScheduleTime);
 

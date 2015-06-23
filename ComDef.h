@@ -25,13 +25,24 @@ enum
 enum
 {
 	BOARD_ADDR_MAIN         = 0x10 ,  //主控板
+	BOARD_ADDR_MAINBACK     = 0x11 ,  //主板备份单片机
 	BOARD_ADDR_LAMP1        = 0x13 ,  //灯控板1
 	BOARD_ADDR_LAMP2        = 0x14 ,  //灯控板2
 	BOARD_ADDR_LAMP3        = 0x15 ,  //灯控板3
 	BOARD_ADDR_LAMP4        = 0x16 ,  //灯控板4
-	BOARD_ADDR_LAMP5        = 0x17,   //灯控板5 
+	BOARD_ADDR_LAMP5        = 0x17,   //扩展灯控板1	
+	BOARD_ADDR_LAMP6        = 0x18,   //扩展灯控板2 
 	BOARD_ADDR_ALLLAMP      = 0x19 ,  //灯控板组播
-	BOARD_ADDR_POWER        = 0x20 ,  //电源模块
+	
+	BOARD_ADDR_LAMP7        = 0x1a,   //扩展灯控板3 	
+	BOARD_ADDR_LAMP8        = 0x1b,   //扩展灯控板4 
+	BOARD_ADDR_LAMP9        = 0x1c,   //扩展灯控板5 
+	BOARD_ADDR_LAMPa        = 0x1d,   //扩展灯控板6
+	BOARD_ADDR_LAMPb        = 0x1e,   //扩展灯控板7 
+	BOARD_ADDR_LAMPc        = 0x1f,   //扩展灯控板8
+		
+	BOARD_ADDR_POWER        = 0x20 ,  //电源模块	
+	BOARD_ADDR_POWER2       = 0x22 ,  //电源模块2
 	BOARD_ADDR_DETECTOR1    = 0x24 ,  //检测器1
 	BOARD_ADDR_DETECTOR2    = 0x25 ,  //检测器2
 	BOARD_ADDR_ALLDETECTOR  = 0x26 ,  //检测器组播
@@ -102,10 +113,10 @@ const int MAX_LAMP_NUM_PER_BOARD = 12;   //每块板的灯具数量
 const int MAX_LAMPGROUP_PER_BOARD =4 ;
 const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //最大通道（信号组）表数 1板4通道
 const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
-const int MAX_DET_BOARD          = 4;    //最大检测器板数量
+const int MAX_DET_BOARD          = 4;    //最大检测器板数(包含接口板)
 const int MAX_DETECTOR_PER_BOARD = 16;   //每块板包含的检测器数量
 const int MAX_INTERFACE_PER_BOARD =32 ;  //每块接口板包含的通道数量
-const int MAX_DETECTOR           = MAX_DET_BOARD * MAX_DETECTOR_PER_BOARD;   //最大检测器数量
+const int MAX_DETECTOR           = (MAX_DETECTOR_PER_BOARD+MAX_INTERFACE_PER_BOARD)*MAX_DET_BOARD/2;   //最大检测器数量
 
 const int MAX_SPESTATUS_CYCLE    = 10;   //时段表里定义的特殊状态周期时长 
 const int MIN_GREEN_TIME	     = 7;    //最小绿灯时长
@@ -116,6 +127,8 @@ const int MAX_WORK_TIME          = 3;    //3次一样的才起作用
 const int BOARD_REPEART_TIME     = 5;    //板状态判断的重复次数
 const int MAX_DREC               = 80;  //最大方向数量   201310181705->201401031017 8个方向，每个方向10个支流
 const Byte MAX_CNTDOWNDEV        = MAX_PHASE ;  //支持最大的倒计时设备数32,相位倒计时
+const Byte MAX_MODULE            =50 ;  //最大设备模块数 20150112
+const Byte MAX_POWERBOARD        =2 ;    //最大电源板数量
 /************************************************************************************************/
 
 /*
@@ -158,8 +171,12 @@ enum
 	CTRL_MAIN_PRIORITY   = 8  ,  //单点主线优先半感应
     CTRL_SECOND_PRIORITY = 9  ,  //单点次线优先半感应
 	CTRL_ACTIVATE        = 10 ,  //自适应
-	CTRL_PANEL           = 11 ,  //面板控制
-	CTRL_LAST_CTRL       = 12    //上次的控制方式
+	CTRL_PANEL           = 11 ,  //面板控制	
+	CTRL_SCHEDULE_OFF    = 12 ,  //时段表关灯	
+	CTRL_SCHEDULE_FLASH  = 13 ,  //时段表黄闪	
+	CTRL_SCHEDULE_RED    = 14 ,  //时段表全红
+	CTRL_PREANALYSIS     = 15 ,
+	CTRL_LAST_CTRL       = 16    //上次的控制方式
 };
 
 /*
@@ -199,7 +216,8 @@ enum
 	TSC_MSG_TIMEPATTERN      ,  //特定的时间方案
 	TSC_MSG_GREENCONFLICT    ,   //绿冲突
 	TSC_MSG_PATTER_RECOVER   ,    //特定方案切换
-	TSC_MSG_MANUALBUTTON_HANDLE   //无线手控按键处理ADD:201411051548
+	TSC_MSG_MANUALBUTTON_HANDLE ,  //无线手控按键处理ADD:201411051548
+	TSC_MSG_BUSPRIORITY_HANDLE     //公交优先处理
 };
 
 /*
@@ -339,10 +357,33 @@ enum
 	FUN_CNTTYPE	       = 19 ,  //倒计时类型
 	FUN_LIGHTCHECK	   = 20 ,	//灯泡检测开关	
 	FUN_GPS_INTERVAL   = 21	,	//GPS定时更新时间 1 表示每天，2表示每2天
-	FUN_WIRELESSBTN_TIMEOUT = 22, //无线手控按键手动控制超时时间单位分钟 ADD:201410231639
-	FUN_COUNT          = 23      // 总到特定功能数量值
+	FUN_WIRELESSBTN_TIMEOUT = 22, //无线手控按键手动控制超时时间单位分钟 ADD:201410231639	
+	FUN_CROSSSTREET_TIMEOUT = 23, //无线手控按键手动控制超时时间单位分钟 ADD:201501091738
+	FUN_RS485_BITRATE       =24 , //485倒计时比特率 0-9600 1-2400-2-4800 3-38400   4-15200
+	
+	FUN_FLASHCNTDOWN_TIME   =25,  //闪断式倒计时闪断时间 0-0ms 1-50ms 2-100ms,以此类推. //ADD 20150605
+	FUN_BUS_PRIORITY        =26 , //公交优先启用
+	FUN_BUS_PRIORITY_EARLYRED = 27, //公交优先红灯早断类型 0-最小绿 1-设定值
+	FUN_BUS_PRIORITY_GREENDELAY = 28,//公交优先绿灯延长时间
+	FUN_BUS_PRIORITY_DEFAULTTIME = 29, //公交车从读卡器位置到通过路口默认时间
+	FUN_BUS_PRIORITY_NONBUSPHASEREDUCE = 30, //非公交相位缩短时间
+	FUN_BUS_PRIORITY_BUSPHASEID        = 31, //公交相位
+	FUN_COUNT                 = 32    // 总到特定功能数量值
 };
 
+/*
+*信号机倒计时类型
+*Date:201503251001
+*/
+enum
+{
+	COUNTDOWN_STUDY               = 0 ,	  //学习式倒计时
+	COUNTDOWN_GAT5082004          = 1 ,	  //通讯式倒计时国标GAT508-2004 ,固定支持4个倒计时，每个方向一个倒计时
+	COUNTDOWN_FLASHOFF 			  = 2 ,   //闪断式倒计时 发闪断指令给灯驱板，支持32个倒计时
+	COUNTDOWN_GAT5082014  	      = 3 ,   //通讯式倒计时国标GAT508-2004最大支持32个倒计时
+	COUNTDOWN_GAT5082014V2        = 4 ,   //通讯史倒计时国标GAT508-2004兼容支持4方向
+	COUNTDOWN_GAT5082004V2        = 5      //通讯式倒计时国标GAT508-2004 ，支持8个倒计时
+};
 
 /*
 *信号及日志类型枚举
@@ -412,11 +453,7 @@ enum
 };
 
 
-enum
-{
-	LED_BOARD_SHOW  = 2 
 
-};
 const int MAX_ADJUST_CYCLE = 3;
 const int MAX_PLUS_SCALE   = 30;  //一个周期增加的最大比例 
 const int MAX_MINU_SCALE   = 20;  //每个周期减少的最大比例

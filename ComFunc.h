@@ -19,3 +19,7 @@ void RecordTscSN();
 
 void ReadTscSN(char *cdkey);
 bool VaildSN();
+
+//数据校验函数
+Ushort fcs16(Byte  *buf,Ushort len);
+Byte sum8(Byte  *buf,Byte len);

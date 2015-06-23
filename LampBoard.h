@@ -34,6 +34,10 @@ public:
 	void CheckTemp();
 	void CheckSingleTemp(Byte ucLampBoardId);
 	void RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp); //ADD: 2013 0712 CAN接收灯泡检测数据
+	Byte GetLampBoardAddr(Byte LampBoardIndex); //获取灯驱板CAN地址ADD:20141226
+	Byte GetLampBoardVer(Byte LampBoardIndex); //获取灯驱板程序版本ADD20150113
+	
+	void GetLamp(Byte* pLampOn,Byte* pLampFlash);//获取灯驱灯色ADD:20150313
 private:
 	CLampBoard();
 	~CLampBoard();
@@ -42,6 +46,8 @@ public:
 	bool m_bRecordSts[MAX_LAMP/12];  //各个灯控板的通信状态
 	bool IsChkLight ;
 	Byte m_ucCheckCfg[MAX_LAMP_BOARD];        //bit 0 1 存是否开启灯泡损坏检测,bit 2 3保存是否开启红绿冲突检测  //ADD: 2013 0712 1111
+	
+	Byte m_ucLampBoardVer[MAX_LAMP_BOARD][5]; //各个灯驱板版本
 private:
 	//input para
 	Byte m_ucLampBoardError[MAX_LAMP_BOARD] ;

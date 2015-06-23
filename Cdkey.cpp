@@ -71,33 +71,22 @@ bool Cdkey::GetCdkey(char (&cdkey)[8])
 	int fd;	
 	char buf[120];	
 	char id[8];	
-	//unsigned char CRP[8];	
-	//char random[64];	
-	//char host_out[20];	
-	//char chip_out[20];	
-	//char passwd[8] = {"0"};	
-	//char passwd2[8] = {"1"};
-	//ACE_DEBUG((LM_DEBUG,"%s:%d read all data from EEPROM !\n",__FILE__,__LINE__));
+	
 	fd = ACE_OS::open("/dev/sysinfo", O_RDWR);	
 	if (fd < 0) 
 	{		
 		ACE_OS::printf("%s:%d Open /dev/sysinfo error!\n",__FILE__,__LINE__);		
 		return -1;	
 	}	
-	ret = ACE_OS::read(fd, buf, 120);	
-	//for (i=0; i<120; i++) 
-	//{		
-		//printf("0x%x  ", buf[i]);	
-	//}	
-	//printf("\n");	
-	ACE_DEBUG((LM_DEBUG,"%s:%d chip ID is !\n",__FILE__,__LINE__));
+	ret = ACE_OS::read(fd, buf, 120);		
 	for(i=0; i<8; i++) 
 	{		
 		id[i] = buf[112+i];
 		cdkey[i] = id[i];
-		//ACE_DEBUG((LM_DEBUG,"%s:%d  0x%x !\n",__FILE__,__LINE__,id[i]));
 	}
-	//cdkey = id;
+	//cdkey = id;	
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d***GetCdkey*** SystemChip Id: %02x %02x %02x %02x %02x %02x %02x %02x  !\n",__FILE__,__LINE__,\
+	id[0],id[1],id[2],id[3],id[4],id[5],id[6],id[7]));
 	ACE_OS::close(fd);
 	return true;
 }

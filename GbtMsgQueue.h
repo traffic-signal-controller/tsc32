@@ -114,25 +114,26 @@ enum
 	OBJECT_SET_REPORTSELF   = 0xf7,   //¶¨ÖÆÖ÷¶¯ÉÏ±¨
 	OBJECT_EXT_TSC_STATUS   = 0xf8,   //×´Ì¬ÀàÐÍ±í²ÎÊý
 	OBJECT_MODULE_STATUS    = 0xf9 ,   //Ä£¿é×´Ì¬
-	OBJECT_CNTDOWN_DEV     = 0xf1,   //µ¹¼ÆÊ±Éè±¸±í    ADD:2013071 1034
-	OBJECT_PHASETODIRECT   = 0xfa,   //ÏàÎ»Óë·½Ïò¶ÔÓ¦±í
-	OBJECT_ADAPTPARA       = 0xfb,   //×ÔÊÊÓ¦²ÎÊýÖµ
-	OBJECT_DET_EXTENTED    = 0xfc,   //¼ì²âÆ÷À©Õ¹±í
-	OBJECT_ADAPT_STAGE     = 0xfd,
-	OBJECT_CONNECT_DEV     = 0xf0,   //Íâ½çÉè±¸ÊýµÚÒ»¸ö×Ö½Ú±íÊ¾µ¹¼ÆÊ±Éè±¸Êý£¬È¡ÖµÎª0-32£¬0±íÊ¾Ã»ÓÐµ¹¼ÆÊ±Éè±¸¡£µÚ¶þ¸ö×Ö½Ú±íÊ¾¿É±ä±êÖ¾Éè±¸Êý£¬È¡ÖµÎª0-16£¬0±íÊ¾Ã»ÓÐ¿É±ä±êÖ¾Éè±íÊ¾Íâ½Ó¼ì²âÆ÷Êý£¬È¡ÖµÎª0-48£¬0±íÊ¾Ã»ÓÐÍâ½Ó¼ì²âÆ÷
+	OBJECT_CNTDOWN_DEV      = 0xf1,   //µ¹¼ÆÊ±Éè±¸±í    ADD:2013071 1034
+	OBJECT_PHASETODIRECT    = 0xfa,   //ÏàÎ»Óë·½Ïò¶ÔÓ¦±í
+	OBJECT_ADAPTPARA        = 0xfb,   //×ÔÊÊÓ¦²ÎÊýÖµ
+	OBJECT_DET_EXTENTED     = 0xfc,   //¼ì²âÆ÷À©Õ¹±í
+	OBJECT_ADAPT_STAGE      = 0xfd,
+	OBJECT_CONNECT_DEV      = 0xf0,   //Íâ½çÉè±¸ÊýµÚÒ»¸ö×Ö½Ú±íÊ¾µ¹¼ÆÊ±Éè±¸Êý£¬È¡ÖµÎª0-32£¬0±íÊ¾Ã»ÓÐµ¹¼ÆÊ±Éè±¸¡£µÚ¶þ¸ö×Ö½Ú±íÊ¾¿É±ä±êÖ¾Éè±¸Êý£¬È¡ÖµÎª0-16£¬0±íÊ¾Ã»ÓÐ¿É±ä±êÖ¾Éè±íÊ¾Íâ½Ó¼ì²âÆ÷Êý£¬È¡ÖµÎª0-48£¬0±íÊ¾Ã»ÓÐÍâ½Ó¼ì²âÆ÷
 	//OBJECT_CNTDOWN_STATS   = 0xf2,   //µ¹¼ÆÊ±×´Ì¬±í
-	OBJECT_COMMAND_SIGNAL  = 0xf2 ,    //ÉÏÎ»»úÖ¸Áî¿ØÖÆÏàÎ»½×¶ÎÇÐ»»ºÍ·½Ïò
-	OBJECT_CHANNEL_CHK     = 0xff,   //Í¨µÀµÆÅÝ¼ì²âÅäÖÃ±í ADD?20130801 1121
-	OBJECT_YWFLASH_CFG     = 0xe1,   //»ÆÉÁÆ÷ÅäÖÃ
-	OBJECT_DET_EXTCFG      = 0xe2,   //¼ì²âÆ÷À©Õ¹ÅäÖÃ
-	OBJECT_LAMPBOARD_CFG   = 0xe3,   //µÆ¿Ø°åµÆÅÝ¼ì²âºÍºìÂÌ³åÍ»¼ì²âÅäÖÃ
-	OBJECT_PSCBTN_NUM 	   = 0xee,    //Ä£Äâ8Î»ÐÐÈË°´Å¥ÊäÈë ADD:2013 0829 1540
-	OBJECT_TMPPATTERN_CFG  = 0xe6,    //12·½ÏòÁÙÊ±×éºÏ·½°¸£¬Ä¬ÈÏ60Ãë
-	OBJECT_SYSFUNC_CFG     = 0xe4,      //ÏµÍ³ÆäËû¹¦ÄÜÉèÖÃ
+	OBJECT_COMMAND_SIGNAL   = 0xf2 ,    //ÉÏÎ»»úÖ¸Áî¿ØÖÆÏàÎ»½×¶ÎÇÐ»»ºÍ·½Ïò
+	OBJECT_CHANNEL_CHK      = 0xff,   //Í¨µÀµÆÅÝ¼ì²âÅäÖÃ±í ADD?20130801 1121
+	OBJECT_YWFLASH_CFG      = 0xe1,   //»ÆÉÁÆ÷ÅäÖÃ
+	OBJECT_DET_EXTCFG       = 0xe2,   //¼ì²âÆ÷À©Õ¹ÅäÖÃ
+	OBJECT_LAMPBOARD_CFG    = 0xe3,   //µÆ¿Ø°åµÆÅÝ¼ì²âºÍºìÂÌ³åÍ»¼ì²âÅäÖÃ
+	OBJECT_PSCBTN_NUM 	    = 0xee,    //Ä£Äâ8Î»ÐÐÈË°´Å ¥ÊäÈë ADD:2013 0829 1540
+	OBJECT_TMPPATTERN_CFG   = 0xef,    //12·½ÏòÁÙÊ±×éºÏ·½°¸£¬Ä¬ÈÏ60Ãë
+	OBJECT_SYSFUNC_CFG      = 0xe4,      //ÏµÍ³ÆäËû¹¦ÄÜÉèÖÃ
 	OBJECT_SENDCLIENT_CNTDOWN = 0xe6 ,
 	OBJECT_POWERBOARD_CFG     = 0xe7,   //µçÔ´°åÅäÖÃ
 	OBJECT_GSM_CFG            = 0xe8 ,  //GSMÅäÖÃ
-	OBJECT_BUTTONPHASE_CFG    = 0xe9    //Ä£ÄâÎÞÏß°´¼ü°´Å¥
+	OBJECT_BUTTONPHASE_CFG    = 0xe9 ,   //Ä£ÄâÎÞÏß°´¼ü°´Å¥
+	OBJECT_BUSPRIORITY_CFG    = 0xea     //¹«½»ÓÅÏÈÅäÖÃ
 };
 /*****************GBTÐ­Òé¶ÔÏó±êÖ¾ÀàÐÍºÍÀ©³äÐ­Òé±êÖ¾ÀàÐÍÄÇ¸öÃ¶¾Ù********************/
 
@@ -199,8 +200,8 @@ private:
 	void TscCopyFile(char* fpSrc, char* fpDest);
 	void UpdateNetPara(Byte* pIp);  //add: 2014 03 20   lurenhua zlg m3352ºËÐÄ°åIPµØÖ·ÐÞ¸Äº¯Êý
 	
-	void GetWatchPara(Byte* pBuf,int *iSendIndex);
-	void GetModuleStatus(Byte* pBuf,int *iSendIndex);
+	void GetWatchPara(Byte* pBuf,int *iSendIndex);	
+	void GetModuleStatus(Byte* pBuf,int *iSendIndex ,Byte subId,Byte ucQueryType,Byte ucBdindex);
 	void PackTscExStatus(Byte ucDealDataIndex,void* pValue);
 	void GetFlashCfg(Byte* pBuf,int *iSendIndex) ;  //ADD: 2013 0808 10 30
 	void SetFlashCtrl(Byte* pBuf,int& iRecvIndex); //ADD 2013 0808 1430
@@ -221,7 +222,8 @@ private:
 	void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
 	void SetCommandSignal(Byte* pBuf,int& iRecvIndex) ;  //ADD 201409231002
 	void SetButtonPhase(Byte* pBuf,int& iRecvIndex);        //ADD 201410181052
-
+    void SetBusPriorityCfg(Byte* pBuf,int& iRecvIndex);  //ADD 20150615
+    void GetBusPriorityCfg(Byte* pBuf,int *iSendIndex) ;  //ADD: 2015 0615 10 30
 	//Byte m_ucAddrNum;
 	ACE_Message_Queue<ACE_MT_SYNCH>* m_pMsgQue;
       

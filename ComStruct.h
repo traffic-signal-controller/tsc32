@@ -296,7 +296,7 @@ struct STscConfig
 	Byte DegradeMode ; 									//降级模式 201310191100
 	Byte DegradePattern ; 						  	    //降级基准方案 201310191400
 	GBT_DB::CntDownDev sCntDownDev[MAX_CNTDOWNDEV];     //倒计时表配置
-	Uint DirecButtonPhase[4] ;    //方向按键相位配置北东南西
+	//Uint DirecButtonPhase[4] ;    //方向按键相位配置北东南西
  }
 /*
 #ifndef WINDOWS
@@ -382,6 +382,7 @@ struct STscRunData
 	bool              b8cndtown ;   //ADD:20131107
 	Byte 			  ucManualType ;//ADD:20141021 当前手控类型	
 	Byte			  flashType ;   //ADD:20141106 当系统处于黄闪状态时候黄闪类型
+	Byte              ucPlanId ;    //ADD:20150310 时基号
 }
 /*
 #ifndef WINDOWS
@@ -556,6 +557,16 @@ __attribute__( ( packed, aligned(1) ) )
 PACKED
 ;
 
+/*
+*新国标GAT508-2014 32个地址倒计时信息
+*/
+struct SNewGBCntDownTimeInfo
+{
+	Byte CntDownColor;               //倒计时设备颜色
+	Byte CntDownTime;                //倒计时设备时间
+}
+PACKED
+;
 
 
 
@@ -601,6 +612,31 @@ struct SendCntDownNum
 	bool bUsed ;
 	ACE_INET_Addr addClient;  //客户端地址
 };
+/*
+*公交优先数据包结构
+*/
+struct SBusPriorityData 
+{
+	Byte RfId ; //射频设备ID号，莫惹和相位号一一对应.
+	Byte BusPhaseId ;
+	Uint ucTransTime ; //传输时间utc
+};
+
+/*
+*事前分析控制传递参数
+*/
+struct SPreAnalysisParaData 
+{
+	Byte DevId ; //设备号	
+	bool    IsUsed ;
+	bool    IsOffline ; //是否离线
+	Ushort CarLength ; //车辆排队长度
+	Ushort CarNumber ; //车辆数目
+	Byte   CarDirecLamp ; //车辆车道方向
+	Byte   PhaseId ;	
+};
+
+
 
 //#pragma pack(pop)
 #undef PACKED 

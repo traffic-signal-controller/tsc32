@@ -50,12 +50,13 @@ enum
 enum
 {
 	LAMPBOARD_HEAD_SETCOLOR      = 0x02 ,  //设置灯控板灯具的颜色
-	LAMPBOARD_HEAD_CFG             = 0x03 ,  //对灯控板下发配置数据
+	LAMPBOARD_HEAD_CFG           = 0x03 ,  //对灯控板下发配置数据
 	LAMPBOARD_HEAD_LIGHT_CHK     = 0x04 ,  //请求灯控板发送灯泡检测数据
 	LAMPBOARD_HEAD_ELECT_CHK134  = 0x05 ,  //请求灯控板发送通道1，3，4的灯泡电流检测
 	LAMPBOARD_HEAD_ELECT_CHK679  = 0x06 ,  //请求灯控板发送通道6，7，9的灯泡电流检测
 	LAMPBOARD_HEAD_ELECT_CHK1012 = 0x07 ,  //请求灯控板发送通道10，12 的灯泡电流检测
-	LAMPBOARD_HEAD_TEMPE_CHK     = 0x08    //请求灯控板发送灯控板板载温度检测的温度值
+	LAMPBOARD_HEAD_TEMPE_CHK     = 0x08 ,  //请求灯控板发送灯控板板载温度检测的温度值
+	LAMPBOARD_HEAD_VER           = 0xff    //请求灯控板版本程序
 };
 
 /**************************************************************
@@ -76,6 +77,8 @@ CLampBoard::CLampBoard()
 	ACE_OS::memset(m_usLampElect , 0 , MAX_LAMP_BOARD*8); // ADD: 2013 0712 14 11
 	ACE_OS::memset(m_ucLampOnCfg , 0 , MAX_LAMP_BOARD*3); // ADD: 2013 0712 11 40
 	ACE_OS::memset(m_ucLampConflic , 0 , MAX_LAMP_BOARD*4); // ADD: 2013 0802 11 20
+	ACE_OS::memset(m_ucLampBoardVer , 0 , MAX_LAMP_BOARD*5); // ADD: 2015011311 20
+	
 	m_bSeriousFlash = false;
 	IsChkLight = true ;
     pManakernel= CManaKernel::CreateInstance() ;
@@ -212,11 +215,29 @@ void CLampBoard::SetLamp(Byte* pLampOn,Byte* pLampFlash)
 	ACE_OS::memcpy(m_ucLampFlash,pLampFlash,MAX_LAMP);
 }
 
+/**************************************************************
+Function:        CLampBoard::GetLamp
+Description:     获取灯具颜色，正常一个步伐设置一次	
+Input:          pLampOn  灯亮灭状态缓存指针
+			pLampFlash  灯闪烁装他缓存指针
+Output:         无
+Return:         无
+***************************************************************/
+void CLampBoard::GetLamp(Byte* pLampOn,Byte* pLampFlash)
+{
+	if ( NULL == pLampOn || NULL == pLampFlash )
+	{
+		return;
+	}
+	ACE_OS::memcpy(pLampOn,m_ucLampOn,MAX_LAMP);
+	ACE_OS::memcpy(pLampFlash,m_ucLampFlash,MAX_LAMP);
+}
+
 
 /**************************************************************
 Function:        CLampBoard::SendSingleLamp
 Description:     发送单一个灯控板的数据，设置灯控板灯具颜色	
-Input:          ucLampBoardId  灯控板下标索引 0 1 2 3
+Input:          ucLampBoardId  灯控板下标索引 0 1 2 3 4  5  6  7 
 Output:         无
 Return:         无
 ***************************************************************/
@@ -224,13 +245,13 @@ void CLampBoard::SendSingleLamp(Byte ucLampBoardId,Byte ucFlashBreak)
 {
 	Byte ucDataTemp  = 0;
 	Byte ucLampIndex = 0;
-	SCanFrame sSendFrameTmp;
-	
+	Byte ucLampBoardCanAddr = GetLampBoardAddr(ucLampBoardId);
+	SCanFrame sSendFrameTmp;	
 	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
 	
-	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , BOARD_ADDR_LAMP1 + ucLampBoardId  , &(sSendFrameTmp.ulCanId));
+	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , ucLampBoardCanAddr  , &(sSendFrameTmp.ulCanId));
 
-	sSendFrameTmp.pCanData[0] = ( DATA_HEAD_CHECK << 6 ) | LAMPBOARD_HEAD_SETCOLOR;
+	sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6 ) | LAMPBOARD_HEAD_SETCOLOR;
 	for ( int iDataIndex=1; iDataIndex<4; iDataIndex++ ) //一块灯控板由3个字节存储灯色信息，每个通道灯色信息占2bit位,一个字节存储4通道灯色信息
 	{
 		ucDataTemp  = 0;
@@ -280,7 +301,7 @@ Return:         无
 void CLampBoard::SendLamp()
 {
 	ACE_Guard<ACE_Thread_Mutex>  guard(m_mutexLamp);
-	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD-3; iBdINdex++ )	
+	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD; iBdINdex++ )	
 	{
 		if(m_ucLampBoardError[iBdINdex] == DEV_IS_CONNECTED)
 		{
@@ -313,7 +334,7 @@ Return:         无
 ***************************************************************/
 void CLampBoard::SendCfg()
 {
-	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD-3; iBdINdex++ )
+	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD; iBdINdex++ )
 	{
 		if(m_ucLampBoardError[iBdINdex] == DEV_IS_CONNECTED)
 			SendSingleCfg(iBdINdex);
@@ -331,10 +352,10 @@ Return:         无
 void CLampBoard::SendSingleCfg(Byte ucLampBoardId)
 {	
 	
+	Byte ucLampBoardCanAddr = GetLampBoardAddr(ucLampBoardId);
 	SCanFrame sSendFrameTmp;	
-	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
-	
-	Can::BuildCanId(CAN_MSG_TYPE_101 , BOARD_ADDR_MAIN , FRAME_MODE_P2P  , BOARD_ADDR_LAMP1 + ucLampBoardId , &(sSendFrameTmp.ulCanId));
+	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));	
+	Can::BuildCanId(CAN_MSG_TYPE_101 , BOARD_ADDR_MAIN , FRAME_MODE_P2P  , ucLampBoardCanAddr , &(sSendFrameTmp.ulCanId));
 
 	sSendFrameTmp.pCanData[0]  = ( DATA_HEAD_CHECK << 6 ) | LAMPBOARD_HEAD_CFG;
 	//bit0-bit1 00:保持当前设置不变 01:关闭灯泡检测      2:打开灯泡检测      3:保留 备用
@@ -356,10 +377,8 @@ Return:         无
 ***************************************************************/
 void CLampBoard::CheckLight()
 {
-	if(IsChkLight == false || pManakernel->m_pRunData->bIsChkLght == false )				
-		return ;		
 	 
-	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD-3; iBdINdex++ )
+	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD; iBdINdex++ )
 	{	
 		if(m_ucLampBoardError[iBdINdex] == DEV_IS_CONNECTED)
 		{	
@@ -378,9 +397,11 @@ Return:         无
 ***************************************************************/
 void CLampBoard::CheckSingleLight(Byte ucLampBoardId)
 {
+	
+	Byte ucLampBoardCanAddr = GetLampBoardAddr(ucLampBoardId);
 	SCanFrame sSendFrameTmp;
 	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
-	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , BOARD_ADDR_LAMP1 + ucLampBoardId , &(sSendFrameTmp.ulCanId));
+	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , ucLampBoardCanAddr , &(sSendFrameTmp.ulCanId));
 
 	sSendFrameTmp.pCanData[0]  = ( DATA_HEAD_RESEND << 6 ) | LAMPBOARD_HEAD_LIGHT_CHK;  //DATA_HEAD_CHECK--->DATA_HEAD_RESEND MOD:0605 2121
 	sSendFrameTmp.ucCanDataLen = 1;
@@ -413,9 +434,11 @@ Return:         无
 ***************************************************************/
 void CLampBoard::CheckLampElect(Byte ucLampBoardId,Byte ucType)
 {
+	
+	Byte ucLampBoardCanAddr = GetLampBoardAddr(ucLampBoardId);
 	SCanFrame sSendFrameTmp;
 	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
-	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , BOARD_ADDR_LAMP1 + ucLampBoardId  , &(sSendFrameTmp.ulCanId));
+	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , ucLampBoardCanAddr , &(sSendFrameTmp.ulCanId));
 
 	sSendFrameTmp.pCanData[0]  = (DATA_HEAD_RESEND << 6 ) | ucType;
 	sSendFrameTmp.ucCanDataLen = 1;
@@ -459,7 +482,7 @@ Return:         无
 ***************************************************************/
 void CLampBoard::CheckElect()
 {
-	for ( Byte ucLampBoardIndex=0; ucLampBoardIndex<MAX_LAMP_BOARD-3; ucLampBoardIndex++ )
+	for ( Byte ucLampBoardIndex=0; ucLampBoardIndex<MAX_LAMP_BOARD; ucLampBoardIndex++ )
 	{
 		CheckSingleElect(ucLampBoardIndex);
 	}
@@ -475,7 +498,7 @@ Return:         无
 ***************************************************************/
 void CLampBoard::CheckTemp()
 {
-	for ( Byte ucLampBoardIndex=0; ucLampBoardIndex<MAX_LAMP_BOARD-3; ucLampBoardIndex++ )
+	for ( Byte ucLampBoardIndex=0; ucLampBoardIndex<MAX_LAMP_BOARD; ucLampBoardIndex++ )
 	{
 		CheckSingleTemp(ucLampBoardIndex);
 	}
@@ -491,26 +514,18 @@ Return:         无
 ***************************************************************/
 void CLampBoard::CheckSingleTemp(Byte ucLampBoardId)
 {
+	
+	Byte ucLampBoardCanAddr = GetLampBoardAddr(ucLampBoardId);
 	SCanFrame sSendFrameTmp;	
 	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
 	
-	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , BOARD_ADDR_LAMP1 + ucLampBoardId , &(sSendFrameTmp.ulCanId));
+	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , ucLampBoardCanAddr , &(sSendFrameTmp.ulCanId));
 
 	sSendFrameTmp.pCanData[0]  = (DATA_HEAD_RESEND << 6 ) | LAMPBOARD_HEAD_TEMPE_CHK;
 	sSendFrameTmp.ucCanDataLen = 1;
 
 	Can::CreateInstance()->Send(sSendFrameTmp);
-	/*
-	if ( ( (m_pTscCfg->sSpecFun[FUN_PRINT_FLAG].ucValue>>3) & 1 )  != 0 )	
-	ACE_DEBUG((LM_DEBUG,"%s:%d CheckSingleTemp%d\n",__FILE__,__LINE__,ucLampBoardId+1));
-	ACE_DEBUG((LM_DEBUG,"CanId:%08x CanDataLen:%d\nData:",sSendFrameTmp.ulCanId,sSendFrameTmp.ucCanDataLen));
-	for ( int iPrtIndex=0; iPrtIndex<sSendFrameTmp.ucCanDataLen; iPrtIndex++ )
-	{
-		ACE_DEBUG((LM_DEBUG,"%02x ",sSendFrameTmp.pCanData[iPrtIndex]));
-	}	
-	**********************TSET 2013 0712 14 23
-	Can::PrintInfo((char*)__FILE__,__LINE__,ucLampBoardId+1,sSendFrameTmp);	
-	*/
+
 }
 
 
@@ -526,8 +541,12 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 {		
 	Byte ucLampBoardId = 0;
 	Byte isFlash = 0 ;
-	Byte ucType = sRecvCanTmp.pCanData[0] & 0x3F;
-		
+	Byte ucType = 0x0;
+	if(sRecvCanTmp.pCanData[0] == 0xff)
+		ucType = 0xff ;
+	else		
+		ucType = sRecvCanTmp.pCanData[0] & 0x3F ;
+	//ACE_OS::printf("%s:%d BoardAddr:%2x ucType=%d \n",__FILE__,__LINE__,ucBoardAddr,ucType);
 	switch ( ucBoardAddr )
 	{
 		case BOARD_ADDR_LAMP1:
@@ -541,9 +560,19 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 			break;
 		case BOARD_ADDR_LAMP4:
 			ucLampBoardId = 3;
+			break ;
 		case BOARD_ADDR_LAMP5:
 			ucLampBoardId = 4;
 			break;
+		case BOARD_ADDR_LAMP6:
+			ucLampBoardId = 5;
+			break;
+		case BOARD_ADDR_LAMP7:
+			ucLampBoardId = 6;
+			break ;
+		case BOARD_ADDR_LAMP8:
+			ucLampBoardId = 7;
+			break ;
 		default:				
 			return;
 	}
@@ -626,6 +655,17 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 			}
 
 		}	
+		if(LAMPBOARD_HEAD_VER == ucType)
+		{
+			m_ucLampBoardVer[ucLampBoardId][0]=sRecvCanTmp.pCanData[1];
+			m_ucLampBoardVer[ucLampBoardId][1]=sRecvCanTmp.pCanData[2];
+			m_ucLampBoardVer[ucLampBoardId][2]=sRecvCanTmp.pCanData[3];
+			m_ucLampBoardVer[ucLampBoardId][3]=sRecvCanTmp.pCanData[4];
+			m_ucLampBoardVer[ucLampBoardId][4]=sRecvCanTmp.pCanData[5];
+			//ACE_OS::printf("%s:%d LampBoardver[%d]:%d %d %d %d %d \n",__FILE__,__LINE__,ucLampBoardId,sRecvCanTmp.pCanData[1],
+				//	sRecvCanTmp.pCanData[2],sRecvCanTmp.pCanData[3],sRecvCanTmp.pCanData[4],sRecvCanTmp.pCanData[5]);
+	   		return ;
+	}
 
 	if ( LAMPBOARD_HEAD_SETCOLOR == ucType )
 		{
@@ -655,7 +695,6 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 	
 	}
 
-
 	if ( LAMPBOARD_HEAD_ELECT_CHK134 == ucType || LAMPBOARD_HEAD_ELECT_CHK679 == ucType || LAMPBOARD_HEAD_ELECT_CHK1012)
 	{
 		switch( ucType )
@@ -676,12 +715,11 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 				break;
 			default:
 				break;
-		}
+		}	
 
 		return ;
-
 	}	
-		
+	
 }
 
 
@@ -690,3 +728,72 @@ bool CLampBoard::IsFlash()
 {
 	return m_bSeriousFlash ;
 }
+
+/**************************************************************
+Function:        CLampBoard::GetLampBoardAddr
+Description:     获取灯驱板CAN地址
+Input:             LampBoardIndex  灯控板下标索引 0 1 2 3 4 5 6 7
+Output:         无
+Return:          灯驱板对应CAN地址
+***************************************************************/
+Byte CLampBoard::GetLampBoardAddr(Byte LampBoardIndex)
+{
+	Byte LampBoardCanAddr = 0 ;
+	switch(LampBoardIndex)
+	{
+		case 0:
+			LampBoardCanAddr = BOARD_ADDR_LAMP1 ;
+			break ;
+		case 1:			
+			LampBoardCanAddr = BOARD_ADDR_LAMP2 ;
+			break ;
+		case 2:
+			LampBoardCanAddr = BOARD_ADDR_LAMP3 ;
+			break ;
+		case 3:			
+			LampBoardCanAddr = BOARD_ADDR_LAMP4 ;
+			break ;
+		case 4:
+			LampBoardCanAddr = BOARD_ADDR_LAMP5 ;
+			break ;
+		case 5:			
+			LampBoardCanAddr = BOARD_ADDR_LAMP6 ;
+			break ;
+		case 6:
+			LampBoardCanAddr = BOARD_ADDR_LAMP7 ;
+			break ;
+		case 7:			
+			LampBoardCanAddr = BOARD_ADDR_LAMP8 ;
+			break ;
+		case 8:
+			LampBoardCanAddr = BOARD_ADDR_LAMP9 ;
+			break ;
+		case 9:			
+			LampBoardCanAddr = BOARD_ADDR_LAMPa ;
+			break ;
+		case 10:
+			LampBoardCanAddr = BOARD_ADDR_LAMPb ;
+			break ;
+		case 11:			
+			LampBoardCanAddr = BOARD_ADDR_LAMPc ;
+			break ;
+		default:
+			break;
+	}
+	return LampBoardCanAddr ;
+}
+
+Byte CLampBoard::GetLampBoardVer(Byte LampBoardIndex)
+{
+	Byte ucLampBoardCanAddr = 0x0;
+	SCanFrame sSendFrameTmp;
+	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));	
+	sSendFrameTmp.pCanData[0]  = 0xff;	
+	sSendFrameTmp.ucCanDataLen = 1;
+	ucLampBoardCanAddr = GetLampBoardAddr(LampBoardIndex);
+	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , ucLampBoardCanAddr , &(sSendFrameTmp.ulCanId));			
+	Can::CreateInstance()->Send(sSendFrameTmp);
+	
+}
+
+

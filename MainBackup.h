@@ -121,6 +121,11 @@ public:
 	void DoSendStep(STscRunData *m_pRunData);
 	void SendOneStep(Uint i);
 	void SendStep();
+
+	
+	void RecvMainBackCan(SCanFrame sRecvCanTmp); //ADD:20150310
+	void GetMainBackVer(); //ADD:20150310	
+	Byte m_ucMainBackVer[5]; // 备份单片机版本ADD:20150310
 	bool bSendStep;
 private:
 	

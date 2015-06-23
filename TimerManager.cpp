@@ -49,7 +49,7 @@ CTimerManager* CTimerManager::CreateInstance()
 void CTimerManager::CreateAllTimer()
 {
 
-	ACE_DEBUG((LM_DEBUG,"%s : %d 延时开启TSC GBT 定时器!\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d***CreateAllTimer*** Delay 3 seconds to boot all timers!\n",__FILE__,__LINE__));
 	
     const ACE_Time_Value curr_tv = getCurrTime();
 	//100毫秒定时器,延迟3秒启动

@@ -16,6 +16,7 @@ History:
 #include "GbtExchg.h"
 #include "ComStruct.h"
 #include "ComFunc.h"
+#include "Dbinstance.h"
 
 #ifndef SHORT_FILE
 #define SHORT_FILE "GbtDb.cpp" //MOD: 201309231000’˚¿ÌÀ≥–Ú
@@ -692,7 +693,7 @@ bool CGbtTscDb::InitDb(const char* sDbPath)
         ::sqlite3_close(m_pSqlite);
     }
     m_pSqlite = NULL;
-	ACE_DEBUG ((LM_DEBUG, "%s:%04d\t Begin init AitonTsc database!\n", SHORT_FILE, __LINE__));
+	ACE_DEBUG ((LM_DEBUG, "%s:%04d@@@@@@InitDb@@@@@ Begin init TSC database!\n", SHORT_FILE, __LINE__));
     if (SQLITE_OK != ::sqlite3_open(sDbPath, &m_pSqlite))
     {      
 		return false;
@@ -708,7 +709,8 @@ bool CGbtTscDb::InitDb(const char* sDbPath)
             }
         }
     }
-    AddDefault();     //ÃÌº”≤ø∑÷ ˝æ›ø‚±Ìƒ¨»œ÷µ
+   // AddDefault();     //ÃÌº”≤ø∑÷ ˝æ›ø‚±Ìƒ¨»œ÷µ
+    InitDefaultData(); //ADD:20141209
     m_gTscDb = this;
 	return true;
 }
@@ -747,7 +749,7 @@ bool CGbtTscDb::IsTableExist(const char* sTable)
     ACE_OS::sprintf(sSql, "select * from sqlite_master where type='table' and name='%s'", sTable);
     if (!Query(sSql, qryRst))
     {
-		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Query\n", SHORT_FILE, __LINE__));
+		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Query %s \n", SHORT_FILE, __LINE__,sTable));
         return false;
     }
     if (qryRst.m_iRow <= 0)
@@ -757,6 +759,507 @@ bool CGbtTscDb::IsTableExist(const char* sTable)
     return true;
 }
 
+void CGbtTscDb::InitDefaultData()
+{
+	GBT_DB::TblPlan tblPlan;
+	GBT_DB::Plan    sPlan;
+
+	GBT_DB::TblSchedule tblSchedule;
+	GBT_DB::Schedule    sSchedule;
+
+	GBT_DB::TblPattern tblPattern;
+	GBT_DB::Pattern    sPattern;
+
+	GBT_DB::TblStagePattern tblStage;
+	GBT_DB::StagePattern    sStage;
+	
+	GBT_DB::TblPhase tblPhase;
+	GBT_DB::Phase    sPhase;	
+
+	GBT_DB::TblOverlapPhase tblOverlapPhase;
+	GBT_DB::OverlapPhase    sOverlapPhase;
+
+	GBT_DB::TblChannel tblChannel;
+	GBT_DB::Channel    sChannel;
+
+	GBT_DB::TblDetector tblDetector;
+	GBT_DB::Detector    sDetector;
+
+	GBT_DB::TblCollision tblCollision;
+	GBT_DB::Collision    sCollision;
+	
+	GBT_DB::TblModule tblModule;
+	GBT_DB::Module    sModule;
+
+	GBT_DB::TblSpecFun tblSpecFun;
+	GBT_DB::SpecFun    sSpecFun;
+
+	GBT_DB::TblPhaseToDirec tblPhaseToDirec;
+	GBT_DB::PhaseToDirec sPhaseToDirec;	
+	
+	GBT_DB::TblChannelChk tblChannelChk;
+	GBT_DB::ChannelChk    sChannelChk;
+
+	GBT_DB::TblCntDownDev tblCntdownDev;
+	GBT_DB::CntDownDev    sCntDownDev;
+
+	char   sSql[LARGE_BUF_SIZE];
+    CSqliteRst  qryRst;
+    ACE_OS::sprintf(sSql, "select * from %s", Table_Desc[TBL_SYSTEM].sTblName);
+
+    if (!Query(sSql, qryRst))
+    {
+        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Query TBL_SYSTEM\n", SHORT_FILE, __LINE__));
+    }
+
+    if (qryRst.m_iRow > 0)
+    {
+        return;
+    }
+
+    ACE_OS::sprintf(sSql, "insert into %s(usDeviceId)values(0)",Table_Desc[TBL_SYSTEM].sTblName);
+    
+    if (!ExecuteCmd(sSql))
+    {
+        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
+    }     
+    ACE_OS::sprintf(sSql, "select * from %s", Table_Desc[TBL_CONSTANT].sTblName);
+
+    if (!Query(sSql, qryRst))
+    {
+        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Query TBL_CONSTANT\n", SHORT_FILE, __LINE__));
+    }
+
+    if (qryRst.m_iRow <= 0)
+    {
+        ACE_OS::sprintf(sSql, "insert into %s(ucMaxModule)values(16)",Table_Desc[TBL_CONSTANT].sTblName);     
+        if (!ExecuteCmd(sSql))
+        {
+            ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
+        }
+    }
+
+	/********************Õ®µ¿µ∆≈›ºÏ≤‚≈‰÷√±Ì*****************************/
+	(CDbInstance::m_cGbtTscDb).QueryChannelChk(tblChannelChk);
+	if(0 == tblChannelChk.GetCount())
+	{
+		for(int i = 0 ;i<MAX_LAMP;i++)
+		{
+			sChannelChk.ucSubChannelId= i+1;
+			sChannelChk.ucIsCheck = 0 ;
+			(CDbInstance::m_cGbtTscDb).AddChannelChk(sChannelChk.ucSubChannelId,sChannelChk);
+		}
+	}
+	/**************ÃÌº”ƒ¨»œµ˜∂»º∆ªÆ≤Œ ˝***********/
+	(CDbInstance::m_cGbtTscDb).QueryPlan(tblPlan);
+	if ( 0 == tblPlan.GetCount() )
+	{
+		sPlan.ucId         = 1;
+		sPlan.usMonthFlag  = 0x1ffe;               
+		sPlan.ucWeekFlag   = 0xfe;               
+		sPlan.ulDayFlag    = 0xfffffffe;               
+		sPlan.ucScheduleId = 1;
+		(CDbInstance::m_cGbtTscDb).AddPlan(1,sPlan);   
+	}
+
+	/**************ÃÌº”ƒ¨»œ ±∂Œ±Ì ˝æ›***********/
+	(CDbInstance::m_cGbtTscDb).QuerySchedule(tblSchedule);
+	if ( 0 == tblSchedule.GetCount() )
+	{
+		sSchedule.ucScheduleId = 1;                
+		sSchedule.ucEvtId      = 1;                     
+		sSchedule.ucBgnHour    = 8;                   
+		sSchedule.ucBgnMinute  = 0;                
+		sSchedule.ucCtrlMode   = 0;  
+		sSchedule.ucPatternNo  = 1;              
+		sSchedule.ucAuxOut     = 0;                   
+		sSchedule.ucSpecialOut = 0;               
+		(CDbInstance::m_cGbtTscDb).AddSchedule(sSchedule.ucScheduleId,sSchedule.ucEvtId,sSchedule);
+	}
+
+	(CDbInstance::m_cGbtTscDb).QueryPattern(tblPattern);
+	if ( 0 == tblPattern.GetCount() )
+	{
+		sPattern.ucPatternId = 1; 
+		sPattern.ucCycleTime = 120; 
+		sPattern.ucOffset    = 30;      
+		sPattern.ucCoorPhase = 10;             
+		sPattern.ucStagePatternId = 1;  
+		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
+		sPattern.ucPatternId = 2;
+		sPattern.ucStagePatternId = 2;		
+		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
+		sPattern.ucPatternId = 3;
+		sPattern.ucStagePatternId = 3;		
+		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
+		sPattern.ucPatternId = 15;
+		sPattern.ucStagePatternId = 15;		
+		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
+		sPattern.ucPatternId = 16;
+		sPattern.ucStagePatternId = 16;		
+		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
+		
+	
+	}
+
+	/**************Ω◊∂Œ≈‰ ±∑Ω∞∏±Ì***********/
+	(CDbInstance::m_cGbtTscDb).QueryStagePattern(tblStage);
+	if ( 0 == tblStage.GetCount() )
+	{  //Ω◊∂Œ≈‰ ±1  Æ◊÷¬∑ø⁄
+		sStage.ucStagePatternId = 1;      
+		sStage.ucStageNo        = 1;            
+		sStage.usAllowPhase     = 32771; //±±◊Û÷± Œ˜»À––
+		sStage.ucGreenTime      = 15;           
+		sStage.ucYellowTime     = 3;         
+		sStage.ucRedTime        = 0;             
+		sStage.ucOption         = 1;
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 2;            
+		sStage.usAllowPhase     = 56;  //∂´◊Û÷±±±»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 3;            
+		sStage.usAllowPhase     = 896; //ƒœ◊Û÷± ∂´»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 4;            
+		sStage.usAllowPhase     = 14336; //Œ˜◊Û÷±ƒœ»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+      //Ω◊∂Œ≈‰ ±2  Æ◊÷¬∑ø⁄			
+	
+		sStage.ucStagePatternId = 2;      
+		sStage.ucStageNo        = 1;            
+		sStage.usAllowPhase     = 257; //ƒœ±±◊Û
+		sStage.ucGreenTime      = 20;           
+		sStage.ucYellowTime     = 3;         
+		sStage.ucRedTime        = 0;             
+		sStage.ucOption         = 1;
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 2;            
+		sStage.usAllowPhase     = 33410;  //ƒœ±±÷± ∂´Œ˜»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 3;            
+		sStage.usAllowPhase     = 4112; //∂´Œ˜◊Û
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 4;            
+		sStage.usAllowPhase     = 10280; //∂´Œ˜÷± ƒœ±±»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+ 		//∂°◊÷¬∑ø⁄∂´Œ˜±±
+		sStage.ucStagePatternId = 3;      
+		sStage.ucStageNo        = 1;            
+		sStage.usAllowPhase     = 8224; //∂´Œ˜÷±
+		sStage.ucGreenTime      = 20;           
+		sStage.ucYellowTime     = 3;         
+		sStage.ucRedTime        = 0;             
+		sStage.ucOption         = 1;
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 2;            
+		sStage.usAllowPhase     = 12288;  //Œ˜◊Û÷±
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 3;            
+		sStage.usAllowPhase     = 1; //±±◊Û±ﬂ
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+		//ƒ¨»œø™ª˙ºÏ≤‚√øøÈ∞Âµ∆…´∑Ω∞∏
+		sStage.ucStagePatternId = 15;      
+		sStage.ucStageNo        = 1;            
+		sStage.usAllowPhase     = 15; //µ⁄“ªøÈ∞Â ±±◊Û÷±”“»À––
+		sStage.ucGreenTime      = 7;           
+		sStage.ucYellowTime     = 3;         
+		sStage.ucRedTime        = 0;             
+		sStage.ucOption         = 1;
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 2;            
+		sStage.usAllowPhase     = 240;  //µ⁄∂˛øÈ∞Â∂´◊Û÷±”“»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 3;            
+		sStage.usAllowPhase     = 3840; //µ⁄»˝øÈ∞Âƒœ◊Û÷±”“»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+		sStage.ucStageNo        = 4;            
+		sStage.usAllowPhase     = 61440;  //µ⁄ÀƒøÈ∞ÂŒ˜◊Û÷±”“»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 5;            
+		sStage.usAllowPhase     = 983040; //∂˛¥Œπ˝Ω÷±±∂´ƒœŒ˜
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+			sStage.ucStageNo    = 6;            
+		sStage.usAllowPhase     = 15728640; //µ˜Õ∑±±∂´ƒœŒ˜
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+		sStage.ucStageNo        = 7;            
+		sStage.usAllowPhase     = 251658240;  //Ãÿ ‚±±∂´ƒœŒ˜
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 8;            
+		sStage.usAllowPhase     = 4026531840; //∆‰À˚±±∂´ƒœŒ˜
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		
+
+		//ƒ¨»œ»À––π˝Ω÷ ∑Ω∞∏16
+		sStage.ucStagePatternId = 16;      
+		sStage.ucStageNo        = 1;            
+		sStage.usAllowPhase     = 8224; //∂´Œ˜÷±
+		sStage.ucGreenTime      = 15;           
+		sStage.ucYellowTime     = 3;         
+		sStage.ucRedTime        = 0;             
+		sStage.ucOption         = 1;
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+
+		sStage.ucStageNo        = 2;  
+		sStage.ucGreenTime      = 15;           
+		sStage.ucYellowTime     = 0;  
+		sStage.usAllowPhase     = 32896;  //ƒœ±±»À––
+		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
+			sStage.ucStageNo, sStage);
+		
+	}
+
+	/**************œ‡Œª±Ì***********/
+	(CDbInstance::m_cGbtTscDb).QueryPhase(tblPhase);
+	if ( 0 == tblPhase.GetCount() )
+	{
+		sPhase.ucPhaseId         = 1;                 
+		sPhase.ucPedestrianGreen = 0;           
+		sPhase.ucPedestrianClear = 0;          
+		sPhase.ucMinGreen        = 15;                
+		sPhase.ucGreenDelayUnit  = 8;          
+		sPhase.ucMaxGreen1       = 40;                
+		sPhase.ucMaxGreen2       = 60;                
+		sPhase.ucFixGreen        = 7;                 
+		sPhase.ucGreenFlash      = 2; 
+		sPhase.ucPhaseTypeFlag   = 32;    //32 µØ–‘œ‡Œª0x40¥˝∂®œ‡Œª0x80πÃ∂®œ‡Œª
+		sPhase.ucPhaseOption     = 0;               
+		sPhase.ucExtend          = 0;
+		sPhase.ucPedestrianGreen = 0; 
+
+		for ( int i=1; i<(MAX_PHASE+1); i++ )
+		{
+			sPhase.ucPhaseId = i; 
+			
+			if (i==4 ||i==8 || i==12 || i==16||i==17 ||i==18 || i==19 ||i==20) 
+			{  //ƒ¨»œ»À––œ‡Œª 4 8 12 16 21 22 23 24
+				sPhase.ucPhaseOption = 2; 
+			}
+			else
+			{				
+				sPhase.ucPhaseOption = 1; //ƒ¨»œœ‡Œª∆Ù”√£¨0Œ™Œ¥÷™
+			}					
+			(CDbInstance::m_cGbtTscDb).AddPhase(sPhase.ucPhaseId, sPhase);
+		}
+	}
+
+	/**************Õ®µ¿±Ì***********/
+	(CDbInstance::m_cGbtTscDb).QueryChannel(tblChannel);
+	ACE_OS::memset(&sChannel,0,sizeof(GBT_DB::Channel));
+	sChannel.ucCtrlType = 1;
+	if ( 0 == tblChannel.GetCount() )
+	{
+		for (int i=0; i<MAX_CHANNEL; i++ )
+		{
+			sChannel.ucChannelId = 1 + i; 
+			sChannel.ucCtrlSrc   = 1 + i; 
+			Byte setChannelId = sChannel.ucChannelId ;
+			
+			if (setChannelId==4 ||setChannelId==8 ||setChannelId==12 || setChannelId==16 ||
+				setChannelId==17||setChannelId==18|| setChannelId==19||setChannelId==20)
+				sChannel.ucCtrlType  = CHANNEL_FOOT;
+			else
+				sChannel.ucCtrlType  = CHANNEL_VEHICLE;
+			(CDbInstance::m_cGbtTscDb).AddChannel(sChannel.ucChannelId,sChannel);
+		}
+	}
+	
+	/**************************ÃÌº”ƒ¨»œ”≤º˛ƒ£øÈ************************/
+	(CDbInstance::m_cGbtTscDb).QueryModule(tblModule);
+
+	if ( 0 == tblModule.GetCount() )
+	{		
+		sModule.ucModuleId = 1;
+		sModule.strDevNode.SetString("DET-0-1");
+		sModule.strModel.SetString("hd");
+		sModule.strVersion.SetString("V1.0");   
+		sModule.ucType = 2;
+		(CDbInstance::m_cGbtTscDb).ModModule(sModule.ucModuleId,  sModule);
+
+		sModule.ucModuleId = 2;
+		sModule.strDevNode.SetString("DET-1-17");							
+		sModule.strModel.SetString("hd");
+		sModule.strVersion.SetString("V1.0");   
+		sModule.ucType = 2;
+		(CDbInstance::m_cGbtTscDb).ModModule(sModule.ucModuleId,  sModule);
+		sModule.ucModuleId = 3;
+		sModule.strDevNode.SetString("DET-2-33");
+		sModule.strModel.SetString("hd");
+		sModule.strVersion.SetString("V1.0");   
+		sModule.ucType = 2;
+		(CDbInstance::m_cGbtTscDb).ModModule(sModule.ucModuleId,  sModule);
+
+		sModule.ucModuleId = 4;
+		sModule.strDevNode.SetString("DET-3-65");							
+		sModule.strModel.SetString("hd");
+		sModule.strVersion.SetString("V1.0");   
+		sModule.ucType = 2;
+		(CDbInstance::m_cGbtTscDb).ModModule(sModule.ucModuleId,  sModule);
+	}
+
+	/************************ÃÌº”ƒ¨»œÃÿ∂®π¶ƒ‹**************************/
+	(CDbInstance::m_cGbtTscDb).QuerySpecFun(tblSpecFun);
+
+	if ( tblSpecFun.GetCount() == 0 )
+	{
+		sSpecFun.ucFunType = FUN_SERIOUS_FLASH + 1;
+		sSpecFun.ucValue   = 0;
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(sSpecFun.ucFunType , sSpecFun.ucValue);
+		
+		sSpecFun.ucFunType = FUN_COUNT_DOWN + 1;
+		sSpecFun.ucValue   = COUNTDOWN_STUDY;
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(sSpecFun.ucFunType , sSpecFun.ucValue);
+
+		sSpecFun.ucFunType = FUN_GPS + 1;
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(sSpecFun.ucFunType , sSpecFun.ucValue);
+ 
+		sSpecFun.ucFunType = FUN_MSG_ALARM + 1;
+		(CDbInstance::m_cGbtTscDb).ModSpecFun(sSpecFun.ucFunType , sSpecFun.ucValue);
+
+		
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CROSS_TYPE     + 1) , 0);  //0-tsc 1-psc1  2-psc2
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_STAND_STAGEID  + 1) , 1);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CORSS1_STAGEID + 1) , 2);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CROSS2_STAGEID + 1) , 3);
+
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_TEMPERATURE    + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_VOLTAGE        + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_DOOR           + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_COMMU_PARA     + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_PORT_LOW       + 1) , 59);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_PORT_HIGH      + 1) , 21);
+
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_PRINT_FLAG    + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_PRINT_FLAGII  + 1) , 0);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CAM          + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_3G            + 1) , 0);
+	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WIRELESSBTN   + 1) , 0);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_LIGHTCHECK   + 1) , 0);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_GPS_INTERVAL + 1) , 1);
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WIRELESSBTN_TIMEOUT + 1) , 30);		
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CROSSSTREET_TIMEOUT + 1) , 10);		
+		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_RS485_BITRATE + 1) , 0); //ADD 150129
+		
+	}
+
+
+	/*******************°§ÃÌº”ƒ¨»œ∑ΩœÚ”⁄œ‡Œª∂‘”¶≤Œ ˝*******************/
+	(CDbInstance::m_cGbtTscDb).QueryPhaseToDirec(tblPhaseToDirec);
+
+	if ( tblPhaseToDirec.GetCount() == 0 )
+	{
+		//ƒ¨»œÃÌº”32∏ˆ∑ΩœÚ∂‘”¶32∏ˆœ‡Œª∫Õ32∏ˆÕ®µ¿
+		//œ¬√Ê√ø≈≈ «“ª∏ˆ∑ΩœÚµƒ≥µµ¿∑ΩœÚID,∑÷± «
+		//◊Û,  ÷±, ”“, »À––, ∂˛¥Œπ˝Ω÷, µ˜Õ∑,∆‰À˚, Ãÿ ‚
+		Byte direcId[32] = {0x1,0x2,0x4,0x8,       //±±◊Û÷±”“»À––  
+						    0x41,0x42,0x44,0x48,   //∂´◊Û÷±”“»À––
+						    0x81,0x82,0x84,0x88,   //ƒœ◊Û÷±”“»À––
+						    0xc1,0xc2,0xc4,0xc8,   //Œ˜◊Û”“÷Æ»À––
+						    0x18,0x58,0x98,0xd8,   //±±∂´ƒœŒ˜∂˛¥Œπ˝Ω							
+							0x0,0x40,0x80,0xc0,    //±±∂´ƒœŒ˜µ˜Õ∑
+							0x7,0x47,0x87,0xc7,    //±±∂´ƒœŒ˜Ãÿ ‚, µº …œ∂‘”¶µƒ «±±∂´ƒœŒ˜µƒ◊Û÷±”“÷±––∑ΩœÚID
+							0x5,0x45,0x85,0xc5} ;   //±±∂´ƒœŒ˜∆‰À˚
+						
+		               
+		for (Byte i=0; i<MAX_PHASE; i++)
+		{
+			sPhaseToDirec.ucId    = direcId[i];
+			sPhaseToDirec.ucPhase = i + 1;
+			sPhaseToDirec.ucOverlapPhase = 0;
+			sPhaseToDirec.ucRoadCnt      = 1;
+			(CDbInstance::m_cGbtTscDb).AddPhaseToDirec(sPhaseToDirec.ucId,sPhaseToDirec);
+		}
+	}
+
+	/**************∏˙ÀÊœ‡Œª±Ì***********/
+	(CDbInstance::m_cGbtTscDb).QueryOverlapPhase(tblOverlapPhase);
+	ACE_OS::memset(&sOverlapPhase,0,sizeof(GBT_DB::OverlapPhase));
+	if ( 0 == tblOverlapPhase.GetCount() )
+	{
+		sOverlapPhase.ucOverlapPhaseId = 1;         
+		sOverlapPhase.ucIncldPhaseCnt  = 0;
+		sOverlapPhase.ucTailGreen      = 0;
+		sOverlapPhase.ucTailYellow     = 0;
+		sOverlapPhase.ucTailRed        = 0;
+		(sOverlapPhase.ucIncldPhase)[0] = 0; 
+		(sOverlapPhase.ucIncldPhase)[1] = 0;
+		(CDbInstance::m_cGbtTscDb).AddOverlapPhase(sOverlapPhase.ucOverlapPhaseId,sOverlapPhase);
+	}
+
+	/**************≥ÂÕªœ‡Œª±Ì***********/
+	(CDbInstance::m_cGbtTscDb).QueryCollision(tblCollision);
+	ACE_OS::memset(&sCollision , 0 , sizeof(GBT_DB::Collision) );
+	if ( 0 == tblCollision.GetCount() )
+	{
+		for(Byte index = 0 ;index<MAX_CONFLICT_PHASE;index++)
+		{
+			sCollision.ucPhaseId       = index+1;
+			sCollision.usCollisionFlag = 0x0;
+			(CDbInstance::m_cGbtTscDb).AddCollision(sCollision.ucPhaseId, sCollision);
+		}
+	}
+
+	/*******************ÃÌº”ƒ¨»œºÏ≤‚∆˜≤Œ ˝*******************/
+	(CDbInstance::m_cGbtTscDb).QueryDetector(tblDetector);
+	if ( tblDetector.GetCount() == 0 )
+	{			
+		sDetector.ucPhaseId = 1 ;
+		sDetector.ucDirect = 1 ;
+		sDetector.ucDetFlag = 129 ;
+	(CDbInstance::m_cGbtTscDb).AddDetector(1,sDetector); // ƒ¨»œÃÌº”“ª∏ˆºÏ≤‚∆˜
+		
+}
+   	/*******************ÃÌº”ƒ¨»œµπº∆ ±…Ë±∏±Ì*******************/
+	(CDbInstance::m_cGbtTscDb).QueryCntDownDev(tblCntdownDev);
+	if (tblCntdownDev.GetCount() == 0 )
+	{	
+		for(Byte index = 0 ;index< MAX_CNTDOWNDEV;index++)
+		{
+			sCntDownDev.ucDevId = index+1 ;
+			sCntDownDev.usPhase = index+1 ;
+			sCntDownDev.ucOverlapPhase = 0 ;
+			sCntDownDev.ucMode= 0x57 ;
+			(CDbInstance::m_cGbtTscDb).AddCntDownDev(sCntDownDev); // ƒ¨»œÃÌº”“ª∏ˆºÏ≤‚∆˜
+		}
+	
+	}
+	
+
+}
 
 /**************************************************************
 Function:       CGbtTscDb::Query
@@ -3017,11 +3520,13 @@ Return:         true -  ˝æ›∫œ∑®  false - ˝æ›∑«∑®
 ***************************************************************/
 bool CGbtTscDb::IsDetectorValid(Byte uDetectorId, Detector& sDetector)
 {
-    CHECK_ID(CONST_DETECTOR, uDetectorId, false);
-
-    if (sDetector.ucPhaseId != 0)
+     //CHECK_ID(CONST_DETECTOR, uDetectorId, false);
+    if(uDetectorId > MAX_DETECTOR)
+		return false ;
+    if (sDetector.ucPhaseId > MAX_PHASE)
     {
-        CHECK_ID(CONST_PHASE, sDetector.ucPhaseId, false);
+    	return false ;
+        //CHECK_ID(CONST_PHASE, sDetector.ucPhaseId, false);
     }
 
     if (sDetector.ucSaturationOccupy > 200)
@@ -4131,7 +4636,7 @@ bool CGbtTscDb::AddPattern(Byte uPatternId, Pattern& sPattern)
 				           Table_Desc[TBL_PATTERN].sFieldName[1], 
 				           Table_Desc[TBL_PATTERN].sFieldName[2],
 				           Table_Desc[TBL_PATTERN].sFieldName[3],
-				           Table_Desc[TBL_PATTERN].sFieldName[5],
+				           Table_Desc[TBL_PATTERN].sFieldName[4],
 				           uPatternId,
 				           sPattern.ucCycleTime,
 				           sPattern.ucOffset,
@@ -4304,7 +4809,7 @@ bool CGbtTscDb::QueryStagePattern(TblStagePattern& tblStagePattern)
     {
         pData[i].ucStagePatternId   = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum]);
         pData[i].ucStageNo          = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 1]);
-        pData[i].usAllowPhase       = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 2]);
+		pData[i].usAllowPhase       = ACE_OS::strtoll(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 2],NULL,10);		
         pData[i].ucGreenTime        = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 3]);
         pData[i].ucYellowTime       = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 4]);
         pData[i].ucRedTime          = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 5]);
@@ -4363,7 +4868,7 @@ bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, TblStagePattern& tblStag
     {
         pData[i].ucStagePatternId   = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum]);
         pData[i].ucStageNo          = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 1]);
-        pData[i].usAllowPhase       = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 2]);
+		pData[i].usAllowPhase		= ACE_OS::strtoll(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 2],NULL,10);
         pData[i].ucGreenTime        = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 3]);
         pData[i].ucYellowTime       = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 4]);
         pData[i].ucRedTime          = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 5]);
@@ -4412,7 +4917,7 @@ bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, Byte uStageNo, StagePatt
 
     sStagePattern.ucStagePatternId   = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum]);
     sStagePattern.ucStageNo          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 1]);
-    sStagePattern.usAllowPhase       = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 2]);
+	sStagePattern.usAllowPhase		 = ACE_OS::strtoll(qryRst.m_ppResult[qryRst.m_iColum + 2],NULL,10);
     sStagePattern.ucGreenTime        = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 3]);
     sStagePattern.ucYellowTime       = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 4]);
     sStagePattern.ucRedTime          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 5]);
@@ -5202,7 +5707,7 @@ bool CGbtTscDb::QueryEventLog(TblEventLog& tblLog)
 
     if (qryRst.m_iColum != Table_Desc[TBL_EVENTLOG].iFieldCount)
     {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\t%s colum number(%d)!= %d\n", SHORT_FILE, __LINE__, Table_Desc[TBL_EVENTLOG].sTblName, qryRst.m_iColum,Table_Desc[TBL_EVENTLOG].iFieldCount));
+        //ACE_DEBUG ((LM_DEBUG, "%s:%04d\t%s colum number(%d)!= %d\n", SHORT_FILE, __LINE__, Table_Desc[TBL_EVENTLOG].sTblName, qryRst.m_iColum,Table_Desc[TBL_EVENTLOG].iFieldCount));
         return false;
     }
 
@@ -6752,7 +7257,6 @@ Return:         Œﬁ
 void CGbtTscDb::AddDefault()
 {
     char   sSql[LARGE_BUF_SIZE];
-
     CSqliteRst  qryRst;
     ACE_OS::sprintf(sSql, "select * from %s", Table_Desc[TBL_SYSTEM].sTblName);
 
@@ -6760,7 +7264,6 @@ void CGbtTscDb::AddDefault()
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Query\n", SHORT_FILE, __LINE__));
     }
-
     if (qryRst.m_iRow > 0)
     {
         return;

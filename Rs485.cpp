@@ -63,7 +63,7 @@ static void     set_stopbit (const char *stopbit);
 static void     set_parity (char parity);
 
 #define RS485_OTHER  "/dev/ttyO5"    //485其它功能输出
-#define RS485    "/dev/ttyO4"   //用于倒计时输出
+#define RS485        "/dev/ttyO4"   //用于倒计时输出
 
 
 /**************************************************************
@@ -76,7 +76,12 @@ Return:         无
 CRs485::CRs485()
 {
 	m_iRs485Led = LED_RS485_OFF;
-	OpenComPort(4, 9600, 8, "1", 'N');
+	INT32 baudrate2Bxx = SetBaudrateType();	
+	OpenComPort(4, baudrate2Bxx, 8, "1", 'N');
+	
+	//OpenComPort(5, 9600, 8, "1", 'N');
+
+	
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init RS485 object ok !\n",__FILE__,__LINE__));
 }
 
@@ -183,9 +188,7 @@ Output:         无
 Return:         无
 ***************************************************************/
 INT32 CRs485::ReadComPort (Byte *data, INT32 datalength)
-{    
-
-	
+{  	
 	INT32           retval = 0;        
 	FD_ZERO (&fs_read);    
 	FD_SET (fd, &fs_read);    
@@ -196,7 +199,7 @@ INT32 CRs485::ReadComPort (Byte *data, INT32 datalength)
 	retval = select (fd + 1, &fs_read, NULL, NULL, &tv_timeout);    
 	if (retval > 0) 
 	{        
-		retval = read (fd, data, datalength);        
+		retval = read(fd, data, datalength);        
 		return (retval);    
 	}    
 	else 
@@ -384,7 +387,9 @@ static INT32 baudrate2Bxx (INT32 baudrate)
 		case 1200:      
 			return (B1200);  
 		case 2400:    
-			return (B2400);  
+			return (B2400); 
+		case 4800:
+			return (B4800);
 		case 9600:    
 			return (B9600);  
 		case 19200:    
@@ -433,6 +438,8 @@ static INT32 Bxx2baudrate (INT32 _baudrate)
 			return (1200);  
 		case B2400:    
 			return (2400);  
+		case B4800:    
+			return (4800);	
 		case B9600:    
 			return (9600); 
 		case B19200:    
@@ -618,6 +625,45 @@ int CRs485::SetOpt(int fd,int nSpeed,int nBits, char nEvent, int nStop)
 #endif
 
 	return 0;
+}
+
+/**************************************************************
+Function:       CRs485::SetBaudrateType
+Description:    设置485总线的波特率
+Input:          无              
+Output:        无
+Return:         波特率值
+Date:           20150-01-29
+***************************************************************/
+
+INT32 CRs485::SetBaudrateType()
+{
+	INT32 baudrate2Bxx = 9600 ;
+	Byte baudtype =  CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_RS485_BITRATE].ucValue ;
+	switch(baudtype)
+	{
+		case 0:
+			baudrate2Bxx = 9600 ;
+			break ;
+		case 1:
+			baudrate2Bxx = 2400 ;
+			break ;
+		case 2:
+			baudrate2Bxx = 4800 ;
+			break ;
+		case 3:
+			baudrate2Bxx = 19200 ;
+			break ;
+		case 4:
+			baudrate2Bxx = 38400 ;
+			break ;
+		default:
+			baudrate2Bxx = 9600 ;
+			break ;		
+		
+	}
+	return baudrate2Bxx ;
+
 }
 
 

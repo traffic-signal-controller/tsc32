@@ -45,7 +45,7 @@ Configure::Configure():impExp_(NULL)
 	}
     if(open("tsc.ini") == -1)
  	{
-		cout<<"open configure file error!\n";	
+		ACE_OS::printf("\r\n%s:%d ***Configure***Open tsc.ini configure file error!\r\n",__FILE__,__LINE__);
  	}  
 }
  /**************************************************************
@@ -146,11 +146,11 @@ bool Configure::InitConfig()
 		ACE_OS::fputs("\nWebSite       = http://www.aiton.com.cn	",fConfig);
 		
 		ACE_OS::fputs("\n[FUNCTION]",fConfig);
-		ACE_OS::fputs("\nBACKUP       = 1	",fConfig);
-		
+		ACE_OS::fputs("\nBACKUP       = 1	",fConfig);		
 		ACE_OS::fclose(fConfig);
 		return true ;
 	}
+	ACE_OS::fclose(fConfig);
 	return true ;
 }
  /**************************************************************
@@ -162,44 +162,43 @@ Return:         нч
 ***************************************************************/
 void Configure::ShowConfig()
 {
-	Configure *pMyconfig =  Configure::CreateInstance() ;
   ACE_TString vstring ;
-  if(pMyconfig->open("tsc.ini") == -1)
-  {
-	cout<<"open configure file error!\n";
-	return ;
-  }
- cout<<"#..................Show Tsc Configure....................# "<<endl ;
- pMyconfig->GetString("APPDESCRIP","application",vstring);
+  //if(open(ACE_TEXT("tsc.ini")) == -1)
+  //{
+	//ACE_OS::printf("\r\n%s:%d ***Configure***Open tsc.ini configure file error!\r\n\n",__FILE__,__LINE__);
+	//return ;
+//  }
+ cout<<endl<<"#..................Show Tsc Configure....................# "<<endl ;
+ GetString("APPDESCRIP","application",vstring);
 	cout<<"AppName :" <<vstring.c_str()<<endl ;
-  pMyconfig->GetString("APPDESCRIP","datebase",vstring);
+ GetString("APPDESCRIP","datebase",vstring);
 	cout<<"DataBaseName :" <<vstring.c_str()<<endl ;	
-   pMyconfig->GetString("APPDESCRIP","version",vstring);
+ GetString("APPDESCRIP","version",vstring);
 	cout<<"Version :" <<vstring.c_str()<<endl ;
-  pMyconfig->GetString("APPDESCRIP","description",vstring);
+ GetString("APPDESCRIP","description",vstring);
 	cout<<"Description :" <<vstring.c_str()<<endl ;
 
- pMyconfig->GetString("COMMUNICATION","standard",vstring);
+ GetString("COMMUNICATION","standard",vstring);
 	cout<<"Standard :" <<vstring.c_str()<<endl ;
-  pMyconfig->GetString("COMMUNICATION","protocol",vstring);
+ GetString("COMMUNICATION","protocol",vstring);
 	cout<<"Protocol :" <<vstring.c_str()<<endl ;	
-   pMyconfig->GetString("COMMUNICATION","port",vstring);
+ GetString("COMMUNICATION","port",vstring);
 	cout<<"Portnumber :" <<vstring.c_str()<<endl ;
 
-  pMyconfig->GetString("CONTACT","company",vstring);
+ GetString("CONTACT","company",vstring);
 	cout<<"Company :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","linkman",vstring);
+GetString("CONTACT","linkman",vstring);
 	cout<<"LinkMan :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","telephone",vstring);
+GetString("CONTACT","telephone",vstring);
 	cout<<"Telephone :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","address",vstring);
+GetString("CONTACT","address",vstring);
 	cout<<"Address :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","WebSite",vstring);
+GetString("CONTACT","WebSite",vstring);
 	cout<<"WebSite :" <<vstring.c_str()<<endl ;
 	
-pMyconfig->GetString("FUNCTION","BACKUP",vstring);
-	cout<<"WebSite :" <<vstring.c_str()<<endl ;
-cout<<"#................End Show Tsc Configure..................# "<<endl ;
+GetString("FUNCTION","BACKUP",vstring);
+	cout<<"FUNCTION :" <<vstring.c_str()<<endl ;
+cout<<"#................End Show Tsc Configure..................# "<<endl<<endl;
 }
 
  /**************************************************************

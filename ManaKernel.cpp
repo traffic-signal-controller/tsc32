@@ -6,14 +6,15 @@ Date:       2013-1-1
 Description:信号机核心业务处理类文件
 Version:    V1.0
 History:    201308010930  添加48个灯泡检测的配置数据库表和表处理
-			201309251030 修改相位冲突检测位置，从下一周期移到下一步处进行检测
-			201309251120 添加日志消息发送函数，将不同类日志消息统一到一个函数处理
-			201309251030 修改相位冲突检测位置，从下一周期移到下一步处进行检测
-			201309281025 Add "ComFunc.h" headfile
+		 201309251030 修改相位冲突检测位置，从下一周期移到下一步处进行检测
+		201309251120 添加日志消息发送函数，将不同类日志消息统一到一个函数处理
+		201309251030 修改相位冲突检测位置，从下一周期移到下一步处进行检测
+		201309281025 Add "ComFunc.h" headfile
+		201412091508.注释掉Manaker.cpp 131 132行原来的 插入默认数据函数。
+		                     去掉Manaker.cpp 中void MemeryConfigDataRun() 默认无数据库数据。
 ***********************************************************************************/
 #include <stdlib.h>
 #include "ace/Date_Time.h"
-#include "SignalDefaultData.h"
 #include "ManaKernel.h"
 #include "TscMsgQueue.h"
 #include "LampBoard.h"
@@ -30,7 +31,7 @@ History:    201308010930  添加48个灯泡检测的配置数据库表和表处理
 #include "ComFunc.h" 
 #include "MainBackup.h"
 #include "Configure.h"
-
+#include "BusPriority.h"
 #define CNTDOWN_TIME 8
 /*
 信号灯颜色类型枚举
@@ -57,7 +58,6 @@ CManaKernel::CManaKernel()
 	m_bRestart              = false;
 	m_bSpePhase             = false;
 	m_bWaitStandard         = false;
-	//m_bPhaseDetCfg          = false;
 	m_bSpeStatus            = false;
 	m_bSpeStatusTblSchedule = false;
 	m_bVirtualStandard      = false;
@@ -76,10 +76,10 @@ CManaKernel::CManaKernel()
 	//bChkManul = true ;  //ADD:201403311059
 	iCntFlashTime = 0 ;
 	bSecondPriority = false ; //ADD:201406191130
-	ACE_OS::memset(m_pTscConfig->sOverlapPhase,0,MAX_OVERLAP_PHASE*sizeof(SOverlapPhase));
+	//ACE_OS::memset(m_pTscConfig->sOverlapPhase,0,MAX_OVERLAP_PHASE*sizeof(SOverlapPhase));
 	ACE_OS::memset(m_pTscConfig , 0 , sizeof(STscConfig) );
 	ACE_OS::memset(m_pRunData , 0 , sizeof(STscRunData) );
-	ACE_DEBUG((LM_DEBUG,"%s:%d Init ManaKernel objetc ok!\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d★★★CManaKernel★★★ Init ManaKernel objetc ok!\r\n",__FILE__,__LINE__));
 }
 
 /**************************************************************
@@ -91,8 +91,6 @@ Return:         无
 ***************************************************************/
 CManaKernel::~CManaKernel()
 {
-	
-
 	if ( m_pTscConfig != NULL )
 	{
 		delete m_pTscConfig;
@@ -125,25 +123,25 @@ CManaKernel* CManaKernel::CreateInstance()
 /**************************************************************
 Function:       CManaKernel::InitWorkPara
 Description:    初始化CManaKernel核心类部分工作参数和数据库	
-Input:          无              
+Input:          无  ★★★★★★★★★★★
 Output:         无
 Return:         无
 ***************************************************************/
 void CManaKernel::InitWorkPara()
 {	
-	ACE_DEBUG((LM_DEBUG,"%s:%d 系统启动,开始初始化信号机核心参数! \n",__FILE__,__LINE__)); //ADD: 20130523 1053	
-	// 插入默认的数据
-	SignalDefaultData sdd;
-	sdd.InsertGbDefaultData();//插入默认值到数据库 如果数据库表为空
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d★★★InitWorkPara★★★ Booting TSC ,initializing kernel parameters! \r\n",__FILE__,__LINE__)); //ADD: 20130523 1053	
+	////插入默认值到数据库 如果数据库表为空
 	UpdateConfig();
 
 	m_pRunData->bNeedUpdate  = false;
 	m_pRunData->ucLockPhase  = 0;
 	m_pRunData->bOldLock     = false;
-	m_pRunData->uiCtrl       = CTRL_SCHEDULE;
-	m_pRunData->uiOldCtrl    = CTRL_SCHEDULE;
+	m_pRunData->uiCtrl       = CTRL_UNKNOWN;
+	m_pRunData->uiOldCtrl    = CTRL_UNKNOWN;
 	m_pRunData->uiWorkStatus = FLASH;
+	m_pRunData->uiOldWorkStatus = FLASH;
 	m_pRunData->bStartFlash  = true;
+	m_pRunData->ucWorkMode   = m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ;
 
 	//初始化灯泡检测数据，从数据库中取出
 	if(m_pTscConfig->sSpecFun[FUN_LIGHTCHECK].ucValue == 0)
@@ -161,7 +159,7 @@ void CManaKernel::InitWorkPara()
 		CMainBoardLed::CreateInstance()->DoAutoLed(true);
 	else		
 		CMainBoardLed::CreateInstance()->DoAutoLed(false);
-	if(m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue==MODE_TSC)
+	if(m_pRunData->ucWorkMode==MODE_TSC)
 		CMainBoardLed::CreateInstance()->DoTscPscLed(true);
 	else			
 		CMainBoardLed::CreateInstance()->DoTscPscLed(false);
@@ -184,7 +182,6 @@ void CManaKernel::SelectDataFromDb()
 	int iIndex             = 0;
 	int iBoardIndex        = 0;
 	int iDetId             = 0;
-	//bool bLampBoardExit[MAX_LAMP_BOARD] = {0};
 	GBT_DB::TblPlan         tblPlan;
 	GBT_DB::Plan*           pPlan = NULL;
 	GBT_DB::TblSchedule     tblSchedule;
@@ -262,17 +259,18 @@ void CManaKernel::SelectDataFromDb()
 
 
 	/*************一天的时段表获取****************/
-	ACE_Date_Time tvTime(GetCurTime());
+	ACE_Date_Time tvTime(ACE_OS::gettimeofday());	
+	ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb***Year=%d Mon=%d Day=%d WeekDay=%d !\n",__FILE__,__LINE__,tvTime.year(),(Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday()));
 	Byte ucCurScheduleId = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday()); 
 	
 	if(ucCurScheduleId == 0)
 	{
 		ucCurScheduleId = 1 ;
-		ACE_DEBUG((LM_DEBUG,"%s:%d Get CurScheduledId = %d ,Set default 1 !\n",__FILE__,__LINE__,ucCurScheduleId));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** Get CurScheduledId = %d ,Set default 1 !\n",__FILE__,__LINE__,ucCurScheduleId));
 	}
 	else
 	{
-		ACE_DEBUG((LM_DEBUG,"%s:%d Get CurScheduledId = %d from Tbl_plan !\n",__FILE__,__LINE__,ucCurScheduleId)); 
+		ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** Get CurScheduledId = %d from Tbl_plan !\n",__FILE__,__LINE__,ucCurScheduleId)); 
 	}
 	m_pRunData->ucScheduleId = ucCurScheduleId ; //ADD:20130917 1600
 	(CDbInstance::m_cGbtTscDb).QuerySchedule(ucCurScheduleId,tblSchedule);
@@ -403,12 +401,12 @@ void CManaKernel::SelectDataFromDb()
 	pDetector = tblDetector.GetData(ucCount);
 	iIndex = 0;
 	ACE_OS::memset(m_pTscConfig->sDetector , 0 , MAX_DETECTOR*sizeof(GBT_DB::Detector) );
-	ACE_DEBUG((LM_DEBUG,"%s : %d Get Detector num from DB = %d \n",__FILE__,__LINE__,ucCount));
+	ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** Get Detector num from DB = %d \n",__FILE__,__LINE__,ucCount));
 	while ( iIndex < ucCount )
 	{
-		if ( pDetector->ucDetectorId > 0 && pDetector->ucPhaseId > 0 )
+		if ( pDetector->ucDetectorId > 0 )
 		{
-			ACE_DEBUG((LM_DEBUG,"%s : %d pDetector->ucDetectorId = %d \n",__FILE__,__LINE__,pDetector->ucDetectorId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** pDetector->ucDetectorId = %d \n",__FILE__,__LINE__,pDetector->ucDetectorId));
 			ACE_OS::memcpy(m_pTscConfig->sDetector+(pDetector->ucDetectorId-1) , pDetector , sizeof(GBT_DB::Detector));
 			//CDetector::CreateInstance()->m_ucDetError[pDetector->ucDetectorId-1] = DET_NORMAL ; //当存在检测器时，默认工作状态正常
 		}
@@ -449,8 +447,9 @@ void CManaKernel::SelectDataFromDb()
 		{
 			sscanf(pModule->strDevNode.GetData(),"DET-%d-%d",&iBoardIndex,&iDetId);			
 			m_pTscConfig->iDetCfg[iBoardIndex] = iDetId;
-			ACE_DEBUG((LM_DEBUG,"%s : %d m_pTscConfig->iDetCfg[%d] = %d\n",__FILE__,__LINE__,iBoardIndex,iDetId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** m_pTscConfig->iDetCfg[%d] = %d\n",__FILE__,__LINE__,iBoardIndex,iDetId));
 		}
+		
 		pModule++;	
 		iIndex++;
 	}
@@ -480,15 +479,14 @@ void CManaKernel::SelectDataFromDb()
 	while(iIndex<ucCount)
 	{
 		ACE_OS::memcpy(m_pTscConfig->sCntDownDev+iIndex,pCntDownDev,sizeof(GBT_DB::CntDownDev));
-		ACE_DEBUG((LM_DEBUG,"%s:%d InitDb ucDevId =%d ucPhase =%d ucOverPhase=%d ,cnttime=%d \n",__FILE__,__LINE__,m_pTscConfig->sCntDownDev[iIndex].ucDevId,
-			m_pTscConfig->sCntDownDev[iIndex].usPhase ,m_pTscConfig->sCntDownDev[iIndex].ucOverlapPhase,(m_pTscConfig->sCntDownDev[iIndex].ucMode>>3)&0xf));
+		//ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** InitDb ucDevId =%d ucPhase =%d ucOverPhase=%d ,cnttime=%d \n",__FILE__,__LINE__,m_pTscConfig->sCntDownDev[iIndex].ucDevId,
+			//m_pTscConfig->sCntDownDev[iIndex].usPhase ,m_pTscConfig->sCntDownDev[iIndex].ucOverlapPhase,(m_pTscConfig->sCntDownDev[iIndex].ucMode>>3)&0xf));
 		pCntDownDev++;
 		iIndex++;
 	} 
-	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != 0 )  //倒计时设备参数
+	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_STUDY)  //倒计时设备参数
 	{
 		CGaCountDown::CreateInstance()->GaUpdateCntDownCfg();
-
 	}
 
 
@@ -526,19 +524,9 @@ void CManaKernel::SetDetectorPhase()
 		//bIsOverlap = ( m_pTscConfig->sDetector[iIndex].ucOptionFlag >> 6 ) & 1;
 		ucDetId    = m_pTscConfig->sDetector[iIndex].ucDetectorId;
 		ucPhaseId  = m_pTscConfig->sDetector[iIndex].ucPhaseId;
-
-		/*
-		if ( ( ucPhaseId > 0 ) 
-			&& ( m_pTscConfig->sDetector[iIndex].ucDetFlag>>6 ) )
-			*/
+	
 		if ( ucPhaseId > 0 )
-		{
-			/*
-			if ( !m_bPhaseDetCfg )
-			{
-				m_bPhaseDetCfg = true;
-			}
-			*/
+		{		
 
 			iRoadwayCnt = m_sPhaseDet[ucPhaseId-1].iRoadwayCnt;
 			m_sPhaseDet[ucPhaseId-1].iDetectorId[iRoadwayCnt] = ucDetId;
@@ -549,229 +537,6 @@ void CManaKernel::SetDetectorPhase()
 	}
 }
 
-
-/**************************************************************
-Function:       CManaKernel::MemeryConfigDataRun
-Description:    在没有数据库的情况下，模拟信号机的静态配置参数	
-Input:          无              
-Output:         无
-Return:         无
-***************************************************************/
-void CManaKernel::MemeryConfigDataRun()
-{
-	m_pTscConfig->sTimeGroup[0].ucId           = 1;
-	m_pTscConfig->sTimeGroup[0].usMonth        = 0xffff;
-	m_pTscConfig->sTimeGroup[0].ucDayWithWeek  = 0xff;
-	m_pTscConfig->sTimeGroup[0].uiDayWithMonth = 0xffffffff;
-	m_pTscConfig->sTimeGroup[0].ucScheduleId   = 1;
-	ACE_OS::memset(&(m_pTscConfig->sTimeGroup[1]),0,sizeof(SSchedule));
-
-	m_pTscConfig->sSchedule[0].ucId   = 1;
-	m_pTscConfig->sSchedule[0].ucHour = 6;
-	m_pTscConfig->sSchedule[0].ucMin  = 0;
-	m_pTscConfig->sSchedule[0].ucCtrl = CTRL_SCHEDULE;
-	m_pTscConfig->sSchedule[0].ucTimePatternId = 1;
-	m_pTscConfig->sSchedule[1].ucId   = 1;
-	m_pTscConfig->sSchedule[1].ucHour = 14;
-	m_pTscConfig->sSchedule[1].ucMin  = 0;
-	m_pTscConfig->sSchedule[1].ucCtrl = CTRL_SCHEDULE;
-	m_pTscConfig->sSchedule[1].ucTimePatternId = 1;
-	m_pTscConfig->sSchedule[2].ucId   = 1;
-	m_pTscConfig->sSchedule[2].ucHour = 17;
-	m_pTscConfig->sSchedule[2].ucMin  = 0;
-	m_pTscConfig->sSchedule[2].ucCtrl = CTRL_SCHEDULE;
-	m_pTscConfig->sSchedule[2].ucTimePatternId = 1;
-	ACE_OS::memset(&(m_pTscConfig->sSchedule[3]),0,sizeof(SSchedule));
-
-	m_pTscConfig->sTimePattern[0].ucId             = 1;
-	m_pTscConfig->sTimePattern[0].ucScheduleTimeId = 1;
-	m_pTscConfig->sTimePattern[0].ucPhaseOffset    = 99;
-	m_pTscConfig->sTimePattern[1].ucId             = 2;
-	m_pTscConfig->sTimePattern[1].ucScheduleTimeId = 2;	
-	m_pTscConfig->sTimePattern[1].ucPhaseOffset    = 99;
-	m_pTscConfig->sTimePattern[2].ucId             = 3;
-	m_pTscConfig->sTimePattern[2].ucScheduleTimeId = 3;
-	m_pTscConfig->sTimePattern[2].ucPhaseOffset    = 99;
-	ACE_OS::memset(&(m_pTscConfig->sTimePattern[3]),0,sizeof(STimePattern));
-
-	m_pTscConfig->sScheduleTime[0][0].ucId = 1;
-	m_pTscConfig->sScheduleTime[0][0].ucScheduleId = 1;
-	m_pTscConfig->sScheduleTime[0][0].usAllowPhase = 0x50;  //南北左转
-	m_pTscConfig->sScheduleTime[0][0].ucGreenTime  =  13;
-	m_pTscConfig->sScheduleTime[0][0].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[0][0].ucRedTime    = 3;
-	m_pTscConfig->sScheduleTime[0][1].ucId = 1;
-	m_pTscConfig->sScheduleTime[0][1].ucScheduleId = 2;
-	m_pTscConfig->sScheduleTime[0][1].usAllowPhase = 0x5; //南北直行(伴随南北右转，人行)
-	m_pTscConfig->sScheduleTime[0][1].ucGreenTime  =  17;
-	m_pTscConfig->sScheduleTime[0][1].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[0][1].ucRedTime    = 3;
-	
-	m_pTscConfig->sScheduleTime[0][2].ucId = 1;
-	m_pTscConfig->sScheduleTime[0][2].ucScheduleId = 3;
-	m_pTscConfig->sScheduleTime[0][2].usAllowPhase = 0xA0;  //东西左转
-	m_pTscConfig->sScheduleTime[0][2].ucGreenTime  =  13;
-	m_pTscConfig->sScheduleTime[0][2].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[0][2].ucRedTime    = 3;
-	m_pTscConfig->sScheduleTime[0][3].ucId = 1;
-	m_pTscConfig->sScheduleTime[0][3].ucScheduleId = 4;
-	m_pTscConfig->sScheduleTime[0][3].usAllowPhase = 0xA; //东西直行(伴随东西右转，人行)
-	m_pTscConfig->sScheduleTime[0][3].ucGreenTime  = 17;
-	m_pTscConfig->sScheduleTime[0][3].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[0][3].ucRedTime = 3;
-	ACE_OS::memset(&(m_pTscConfig->sScheduleTime[0][4]),0,sizeof(SScheduleTime));
-
-	m_pTscConfig->sScheduleTime[1][0].ucId = 2;
-	m_pTscConfig->sScheduleTime[1][0].ucScheduleId = 1;
-	m_pTscConfig->sScheduleTime[1][0].usAllowPhase = 0x30;
-	m_pTscConfig->sScheduleTime[1][0].ucGreenTime =  25;
-	m_pTscConfig->sScheduleTime[1][0].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[1][0].ucRedTime = 3;
-	m_pTscConfig->sScheduleTime[1][1].ucId = 2;
-	m_pTscConfig->sScheduleTime[1][1].ucScheduleId = 1;
-	m_pTscConfig->sScheduleTime[1][1].usAllowPhase = 0x0a;
-	m_pTscConfig->sScheduleTime[1][1].ucGreenTime =  25;
-	m_pTscConfig->sScheduleTime[1][1].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[1][1].ucRedTime = 3;
-	ACE_OS::memset(&(m_pTscConfig->sScheduleTime[1][2]),0,sizeof(SScheduleTime));
-
-	m_pTscConfig->sScheduleTime[2][0].ucId = 3;
-	m_pTscConfig->sScheduleTime[2][0].ucScheduleId = 1;
-	m_pTscConfig->sScheduleTime[2][0].usAllowPhase = 0x0a;
-	m_pTscConfig->sScheduleTime[2][0].ucGreenTime =  25;
-	m_pTscConfig->sScheduleTime[2][0].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[2][0].ucRedTime = 3;
-	m_pTscConfig->sScheduleTime[2][1].ucId = 3;
-	m_pTscConfig->sScheduleTime[2][1].ucScheduleId = 1;
-	m_pTscConfig->sScheduleTime[2][1].usAllowPhase = 0xc5;
-	m_pTscConfig->sScheduleTime[2][1].ucGreenTime =  25;
-	m_pTscConfig->sScheduleTime[2][1].ucYellowTime = 3;
-	m_pTscConfig->sScheduleTime[2][1].ucRedTime = 3;
-	ACE_OS::memset(&(m_pTscConfig->sScheduleTime[2][2]),0,sizeof(SScheduleTime));
-	ACE_OS::memset(&(m_pTscConfig->sScheduleTime[3][0]),0,sizeof(SScheduleTime));
-
-	m_pTscConfig->sPhase[0].ucId         = 1;  //北 直行
-	m_pTscConfig->sPhase[0].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[0].ucFixedGreen = 12;
-	m_pTscConfig->sPhase[0].ucType       = 0x80;
-	m_pTscConfig->sPhase[0].ucGreenFlash = 3;
-	
-	m_pTscConfig->sPhase[1].ucId = 2;  //东 直行
-	m_pTscConfig->sPhase[1].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[1].ucFixedGreen = 12;
-	m_pTscConfig->sPhase[1].ucType       = 0x80;
-	m_pTscConfig->sPhase[1].ucGreenFlash = 3;
-	
-	m_pTscConfig->sPhase[2].ucId = 3; //南 直行
-	m_pTscConfig->sPhase[2].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[2].ucFixedGreen = 10;
-	m_pTscConfig->sPhase[2].ucType       = 0x80;
-	m_pTscConfig->sPhase[2].ucGreenFlash = 3;
-
-	m_pTscConfig->sPhase[3].ucId = 4;  //西 直行
-	m_pTscConfig->sPhase[3].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[3].ucFixedGreen = 12;
-	m_pTscConfig->sPhase[3].ucType       = 0x80;
-	m_pTscConfig->sPhase[3].ucGreenFlash = 3;
-
-	m_pTscConfig->sPhase[4].ucId = 5;  //北 左转
-	m_pTscConfig->sPhase[4].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[4].ucFixedGreen = 12;
-	m_pTscConfig->sPhase[4].ucType       = 0x80;
-	m_pTscConfig->sPhase[4].ucGreenFlash = 3;
-
-	m_pTscConfig->sPhase[5].ucId = 6; //东 左转
-	m_pTscConfig->sPhase[5].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[5].ucFixedGreen = 12;
-	m_pTscConfig->sPhase[5].ucType       = 0x80;
-	m_pTscConfig->sPhase[5].ucGreenFlash = 3;
-
-	m_pTscConfig->sPhase[6].ucId = 7;  //南 左转
-	m_pTscConfig->sPhase[6].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[6].ucFixedGreen = 12;
-	m_pTscConfig->sPhase[6].ucType       = 0x80;
-	m_pTscConfig->sPhase[6].ucGreenFlash = 3;
-
-	m_pTscConfig->sPhase[7].ucId = 8;  //西 左转
-	m_pTscConfig->sPhase[7].ucPedestrianGreen  = 0;
-	m_pTscConfig->sPhase[7].ucFixedGreen = 12;
-	m_pTscConfig->sPhase[7].ucType       = 0x80;
-	m_pTscConfig->sPhase[7].ucGreenFlash = 3;
-
-	for (int i=0; i<4; i++)  //右转
-	{ 
-		m_pTscConfig->sPhase[8+i].ucId         = 9 + i;  
-		m_pTscConfig->sPhase[8+i].ucPedestrianGreen  = 0;
-		m_pTscConfig->sPhase[8+i].ucFixedGreen = 12;
-		m_pTscConfig->sPhase[8+i].ucType       = 0x80;
-		m_pTscConfig->sPhase[8+i].ucGreenFlash = 3;
-	}
-
-	for (int i=0; i<4; i++)  //人行
-	{ 
-		m_pTscConfig->sPhase[12+i].ucId         = 13 + i;  
-		m_pTscConfig->sPhase[12+i].ucPedestrianGreen  = 8;
-		m_pTscConfig->sPhase[12+i].ucFixedGreen = 12;
-		m_pTscConfig->sPhase[12+i].ucType       = 0x80;
-		m_pTscConfig->sPhase[12+i].ucGreenFlash = 3;
-	}
-	ACE_OS::memset(&(m_pTscConfig->sPhase[16]),0,sizeof(SPhase));
-
-	m_pTscConfig->sOverlapPhase[0].ucId = 1;
-	m_pTscConfig->sOverlapPhase[0].ucIncludePhaseLen = 4;
-	m_pTscConfig->sOverlapPhase[0].ucIncludePhase[0] = 9;
-	m_pTscConfig->sOverlapPhase[0].ucIncludePhase[1] = 10;
-	m_pTscConfig->sOverlapPhase[0].ucIncludePhase[2] = 13;
-	m_pTscConfig->sOverlapPhase[0].ucIncludePhase[3] = 14;
-
-	m_pTscConfig->sOverlapPhase[1].ucId = 2;
-	m_pTscConfig->sOverlapPhase[1].ucIncludePhaseLen = 4;
-	m_pTscConfig->sOverlapPhase[1].ucIncludePhase[0] = 11;
-	m_pTscConfig->sOverlapPhase[1].ucIncludePhase[1] = 12;
-	m_pTscConfig->sOverlapPhase[1].ucIncludePhase[2] = 15;
-	m_pTscConfig->sOverlapPhase[1].ucIncludePhase[3] = 16;
-
-	ACE_OS::memset(&(m_pTscConfig->sOverlapPhase[3]),0,sizeof(SOverlapPhase));
-
-	//冲突相位暂不定
-	//m_pTscConfig->sPhaseConfct[0].ucId = 0;
-	
-	m_pTscConfig->sChannel[0].ucId = 1;
-	m_pTscConfig->sChannel[0].ucSourcePhase = 1;
-	m_pTscConfig->sChannel[1].ucId = 2;
-	m_pTscConfig->sChannel[1].ucSourcePhase = 2;
-	m_pTscConfig->sChannel[2].ucId = 3;
-	m_pTscConfig->sChannel[2].ucSourcePhase = 3;
-	m_pTscConfig->sChannel[3].ucId = 4;
-	m_pTscConfig->sChannel[3].ucSourcePhase = 4;
-	m_pTscConfig->sChannel[4].ucId = 5;
-	m_pTscConfig->sChannel[4].ucSourcePhase = 5;
-	m_pTscConfig->sChannel[5].ucId = 6;
-	m_pTscConfig->sChannel[5].ucSourcePhase = 6;
-	m_pTscConfig->sChannel[6].ucId = 7;
-	m_pTscConfig->sChannel[6].ucSourcePhase = 7;
-	m_pTscConfig->sChannel[7].ucId = 8;
-	m_pTscConfig->sChannel[7].ucSourcePhase = 8;
-	m_pTscConfig->sChannel[8].ucId = 9;
-	m_pTscConfig->sChannel[8].ucSourcePhase = 11;
-	m_pTscConfig->sChannel[9].ucId = 10;
-	m_pTscConfig->sChannel[9].ucSourcePhase = 9;
-	m_pTscConfig->sChannel[10].ucId = 11;
-	m_pTscConfig->sChannel[10].ucSourcePhase = 12;
-	m_pTscConfig->sChannel[11].ucId = 12;
-	m_pTscConfig->sChannel[11].ucSourcePhase = 10;
-	m_pTscConfig->sChannel[12].ucId = 13;
-	m_pTscConfig->sChannel[12].ucSourcePhase = 13;
-	m_pTscConfig->sChannel[13].ucId = 14;
-	m_pTscConfig->sChannel[13].ucSourcePhase = 15;
-	m_pTscConfig->sChannel[14].ucId = 15;
-	m_pTscConfig->sChannel[14].ucSourcePhase = 14;
-	m_pTscConfig->sChannel[15].ucId = 16;
-	m_pTscConfig->sChannel[15].ucSourcePhase = 16;
-
-	m_pTscConfig->sUnit.ucStartFlashTime = 12;
-	m_pTscConfig->sUnit.ucStartAllRedTime = 6;
-}
 
 
 /**************************************************************
@@ -784,11 +549,9 @@ Return:         无
 ***************************************************************/
 void CManaKernel::UpdateConfig()
 {	
-#ifdef NO_DATABASE_OPERATE
-	MemeryConfigDataRun();
-#else
+	
+	ACE_DEBUG((LM_DEBUG,"%s:%d***UpdateConfig-> Reload database parameters !\n",__FILE__,__LINE__));
 	SelectDataFromDb();
-#endif
 }
 
 
@@ -823,7 +586,7 @@ void CManaKernel::DecTime()
 	//ACE_DEBUG((LM_DEBUG,"%s:%d ctrl:%d  ucElapseTime:%02d,ucStepTime:%02d m_iMinStepTime:%02d\n",
 		//	__FILE__,__LINE__,m_pRunData->uiCtrl , m_pRunData->ucElapseTime , m_pRunData->ucStepTime,m_iMinStepTime	));	
 	#ifdef  SPECIAL_CNTDOWN 
-	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != 0  && m_pTscConfig->sSpecFun[FUN_CNTTYPE].ucValue == 2)
+	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_STUDY&& m_pTscConfig->sSpecFun[FUN_CNTTYPE].ucValue == 2)
 	{	
 	if (m_iMinStepTime -7 ==  m_pRunData->ucElapseTime &&  m_pRunData->b8cndtown == false )
 	{
@@ -902,18 +665,7 @@ void CManaKernel::DecTime()
 		sMsg.ulType = TSC_MSG_NEXT_STEP;
 		sMsg.pDataBuf = NULL;
 		CTscMsgQueue::CreateInstance()->SendMessage(&sMsg,sizeof(sMsg));
-	}
-
-		if ( (SIGNALOFF == m_pRunData->uiWorkStatus)|| (ALLRED== m_pRunData->uiWorkStatus) 
-			|| (FLASH   == m_pRunData->uiWorkStatus)|| (CTRL_MANUAL == m_pRunData->uiCtrl) 
-			|| (CTRL_PANEL == m_pRunData->uiCtrl ))
-		{
-			return ;
-		}
-		else if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 )
-		{
-			CGaCountDown::CreateInstance()->GaGetDirecColorTime();
-		}
+	}	
 
 }
 
@@ -939,9 +691,10 @@ void CManaKernel::GoNextStep()
 	if ( InConflictPhase() )  //相位冲突表 出现同时亮的绿灯
 	{			
 		SndMsgLog(LOG_TYPE_GREEN_CONFIG,3,0,0,0); // 3表示相位冲突 ADD：201309251130
-		//DealGreenConflict(1);
+		DealGreenConflict(1);
 		//ACE_DEBUG((LM_DEBUG,"%s:%d InConflictPhase !\n",__FILE__,__LINE__));
-		CFlashMac::CreateInstance()->FlashForceStart(2) ; //绿冲突，强制黄闪烁		
+		//CFlashMac::CreateInstance()->FlashForceStart(2) ; //绿冲突，强制黄闪烁		
+
 		m_pRunData->flashType = CTRLBOARD_FLASH_PHASECONFLIC;
 		bDegrade = true ;
 		return ;
@@ -1048,7 +801,7 @@ void CManaKernel::GoNextStep()
 		ucLastStageNo  = m_pRunData->ucStageNo;
 	}
 	
-	CwpmGetCntDownSecStep();
+	//CwpmGetCntDownSecStep();
 }
 
 
@@ -1072,7 +825,7 @@ void CManaKernel::OverCycle()
 		UpdateConfig();
 	}
 	
-	//CDetector::CreateInstance()->GetAllWorkSts();     //一个周期检测一次检测器工作状态用于感应降级后再升级
+	 //一个周期检测一次检测器工作状态用于感应降级后再升级
 	CDetector::CreateInstance()->SearchAllStatus(false,true);
 	if ( FLASH == m_pRunData->uiWorkStatus )  //黄闪完 进入全红
 	{	
@@ -1081,18 +834,16 @@ void CManaKernel::OverCycle()
 			m_pRunData->uiOldWorkStatus = FLASH;
 			m_pRunData->uiWorkStatus    = STANDARD;
 			m_bVirtualStandard          = true;
+			
+			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** m_bSpeStatusTblSchedule 、 m_bVirtualStandard == true chaned from FLASH to STANDARD !\n",__FILE__,__LINE__));
 		}
 		else
-		{
-			//if(m_bFinishBoot == false)
-			//{
-			//	CDetector::CreateInstance()->SearchAllStatus(false,true);				
-				
-		//	}
+		{	
 			m_pRunData->uiWorkStatus = ALLRED;
+			
+			ACE_DEBUG((LM_DEBUG,"\n%s:%d***OverCycle*** m_bSpeStatusTblSchedule == false chaned from FLASH to RED !\n",__FILE__,__LINE__));
 		}
-		ResetRunData(0);
-		
+		ResetRunData(0);		
 	}
 	else
 	{
@@ -1101,6 +852,8 @@ void CManaKernel::OverCycle()
 			m_pRunData->uiOldWorkStatus = m_pRunData->uiWorkStatus;
 			m_pRunData->uiWorkStatus    = STANDARD;
 			m_bVirtualStandard         = true;
+			
+			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** m_bSpeStatusTblSchedule 、 m_bVirtualStandard == true chaned from %d to STANDARD !\n",__FILE__,__LINE__,m_pRunData->uiWorkStatus));
 		}
 
 
@@ -1110,7 +863,7 @@ void CManaKernel::OverCycle()
 			m_bWaitStandard             = false;
 			m_pRunData->uiWorkStatus    = STANDARD;
 			m_bFinishBoot               = true;
-			//CDetector::CreateInstance()->SearchAllStatus();
+			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** m_bFinishBoot == true chaned from ALLRED to STANDARD !\n",__FILE__,__LINE__,m_pRunData->uiWorkStatus));
 			Ulong mRestart = 0 ;
 		(CDbInstance::m_cGbtTscDb).GetSystemData("ucDownloadFlag",mRestart);
 
@@ -1143,7 +896,7 @@ void CManaKernel::OverCycle()
 			case CTRL_MANUAL:
 				break;
 			case CTRL_UTCS:
-				ACE_DEBUG((LM_DEBUG,"%s:%d UtcsHeartBeat= %d ucCycle =%d\n",__FILE__,__LINE__,m_pRunData->uiUtcsHeartBeat,m_pRunData->ucCycle));
+				ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** UtcsHeartBeat= %d ucCycle =%d\n",__FILE__,__LINE__,m_pRunData->uiUtcsHeartBeat,m_pRunData->ucCycle));
 				if ( (Byte)m_pRunData->uiUtcsHeartBeat >= m_pRunData->ucCycle )  //1个周期没有收到心跳联网指令
 				{					
 						bUTS = false ;
@@ -1156,7 +909,7 @@ void CManaKernel::OverCycle()
 							{
 								m_pRunData->uiCtrl    = CTRL_SCHEDULE;	
 								SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530													
-								ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl =%d\n"	,__FILE__,__LINE__,CTRL_UTCS,CTRL_SCHEDULE));
+								ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl =%d\n"	,__FILE__,__LINE__,CTRL_UTCS,CTRL_SCHEDULE));
 
 								
 								if(m_pTscConfig->DegradePattern>0)
@@ -1180,11 +933,11 @@ void CManaKernel::OverCycle()
 							m_pRunData->uiCtrl    = CTRL_SCHEDULE;
 							m_pRunData->bNeedUpdate = true;
 							SndMsgLog(LOG_TYPE_OTHER,1,CTRL_UTCS,CTRL_SCHEDULE,1); //日志记录控制方式切换 ADD?201311041530
-							ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl =%d \n"	,__FILE__,__LINE__,CTRL_UTCS,CTRL_SCHEDULE));
+							ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl =%d \n"	,__FILE__,__LINE__,CTRL_UTCS,CTRL_SCHEDULE));
 						}
 						CWirelessCoord::CreateInstance()->SetDegrade() ;   //降级清零设置  ADD：201311121430
 						CMainBoardLed::CreateInstance()->DoModeLed(true,true);
-						ACE_DEBUG((LM_DEBUG,"%s:%d too long no utcs command！\n"	,__FILE__,__LINE__));
+						ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** too long no utcs command！\n"	,__FILE__,__LINE__));
 				}
 				break;
 			case CTRL_VEHACTUATED:
@@ -1192,7 +945,7 @@ void CManaKernel::OverCycle()
 			case CTRL_SECOND_PRIORITY:
 				if ( !CDetector::CreateInstance()->HaveDetBoard() || CTRL_VEHACTUATED != m_pRunData->uiScheduleCtrl )/*|| !m_bPhaseDetCfg*/  /*不存在检测器板*/
 				{
-					ACE_DEBUG((LM_DEBUG,"%s:%d When change cycle,no DetBoard or uiCtrl != VEHACTUATED\n",__FILE__,__LINE__));
+					ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** When change cycle,no DetBoard or uiCtrl != VEHACTUATED\n",__FILE__,__LINE__));
 					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;					
 					m_pRunData->uiCtrl    = CTRL_SCHEDULE;
 					
@@ -1200,7 +953,7 @@ void CManaKernel::OverCycle()
 					bDegrade = true ;	
 					CMainBoardLed::CreateInstance()->DoModeLed(true,true);				
 					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
-					ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_VEHACTUATED,CTRL_SCHEDULE));
+					ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_VEHACTUATED,CTRL_SCHEDULE));
 					break;
 				}
 				break;
@@ -1215,24 +968,13 @@ void CManaKernel::OverCycle()
 				{
 					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
 					m_pRunData->uiCtrl    = CTRL_SCHEDULE;
-					ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_WIRELESS,CTRL_SCHEDULE));
+					ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_WIRELESS,CTRL_SCHEDULE));
 					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
 				}
 				break;
 			default:
 				iCurTimePatternId = m_pRunData->ucTimePatternId > 0 ? m_pRunData->ucTimePatternId : 1;
-				//if ( CDetector::CreateInstance()->HaveDetBoard() /*&& m_bPhaseDetCfg*/ 
-				//	&& CTRL_VEHACTUATED == m_pRunData->uiScheduleCtrl )  //存在检测器板且有配置检测器参数
-				//{
-				//	ACE_DEBUG((LM_DEBUG,"%s:%d  switch break ",__FILE__,__LINE__));
-				//	m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
-				//	m_pRunData->uiCtrl    = CTRL_VEHACTUATED;
-					
-				//	m_pRunData->bNeedUpdate = true;
-				//	ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,m_pRunData->uiCtrl, CTRL_VEHACTUATED));
-				//	SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
-				//	break;
-				//}
+			
 				if ( CTRL_WIRELESS == m_pRunData->uiScheduleCtrl && m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset < 99 
 					&& CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )  //设置相位差并且开启gps
 				{
@@ -1253,7 +995,7 @@ void CManaKernel::OverCycle()
 		if ( m_pRunData->bOldLock )
 		{
 			m_pRunData->bOldLock = false;
-			ACE_DEBUG((LM_DEBUG,"%s:%d  begin setcyclestepinfo\n",__FILE__,__LINE__));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** begin setcyclestepinfo\n",__FILE__,__LINE__));
 
 			SetCycleStepInfo(0); //单单构造整个周期的步伐信息即可
 		}
@@ -1375,8 +1117,8 @@ void CManaKernel::OverCycle()
 		SetUpdateBit();
 	}
 	
-	CwpmGetCntDownSecStep();
-
+	//CwpmGetCntDownSecStep();
+	
 	//这里在配置文件中定义 0 表示 不启用备份单片机，1表示 启用备份单片机>>>>>>>>>
 	int backuptruefalse;
 	Configure::CreateInstance()->GetInteger("FUNCTION","BACKUP",backuptruefalse);
@@ -1384,11 +1126,11 @@ void CManaKernel::OverCycle()
 	{
 	//lastUcTimePatternId 上一个配时号是否与当前的配时号一样  
 	//这里主要对同样的方案不进行步伐表备份到单片机。
-		//ACE_DEBUG((LM_DEBUG,"%s:%d ***************** lastUcTimePatternId =%d,m_pRunData->ucTimePatternId=%d\n",__FILE__,__LINE__,lastUcTimePatternId,m_pRunData->ucTimePatternId));
 		if(lastUcTimePatternId != m_pRunData->ucTimePatternId)
-		{
+		{			
+			ACE_DEBUG((LM_DEBUG,"%s:%d<<<<<OverCycle<<<<< SCM backup LastUcTimePatternId =%d,m_pRunData->ucTimePatternId=%d\n",__FILE__,__LINE__,lastUcTimePatternId,m_pRunData->ucTimePatternId));
 			MainBackup::CreateInstance()->DoSendStep(m_pRunData);
-			lastUcTimePatternId = m_pRunData->ucTimePatternId;
+			lastUcTimePatternId = m_pRunData->ucTimePatternId;			
 		}
 		
 		
@@ -1423,20 +1165,16 @@ Return:         无
 ***************************************************************/
 void CManaKernel::CwpmGetCntDownSecStep()
 {
-	if ( (SIGNALOFF     == m_pRunData->uiWorkStatus)
-
-		|| (ALLRED      == m_pRunData->uiWorkStatus) 
-		|| (FLASH       == m_pRunData->uiWorkStatus) 
-		|| (CTRL_MANUAL == m_pRunData->uiCtrl) 
+	if ( (SIGNALOFF     == m_pRunData->uiWorkStatus)|| (ALLRED      == m_pRunData->uiWorkStatus) 
+		|| (FLASH       == m_pRunData->uiWorkStatus)|| (CTRL_MANUAL == m_pRunData->uiCtrl) 
 		|| (CTRL_PANEL == m_pRunData->uiCtrl )) 
 	{
 		return ;
 	}
-	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 1 && MODE_TSC == m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue )
+	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_STUDY&& MODE_TSC == m_pRunData->ucWorkMode )
 	{
 		#ifdef GA_COUNT_DOWN		
 		CGaCountDown::CreateInstance()->GaSendStepPer();
-		//ACE_DEBUG((LM_DEBUG,"%s:%d 输出倒计时，CntDown StepNum= %d！\n" ,__FILE__,__LINE__,m_pRunData->ucStepNo));
 		#endif
 	}
 	
@@ -1446,7 +1184,7 @@ void CManaKernel::CwpmGetCntDownSecStep()
 /**************************************************************
 Function:       CManaKernel::ResetRunData
 Description:    重新设置信号机动态参数,正常一个周期一次,改变信号机
-				状态的时候也会调用
+			状态的时候也会调用
 Input:          ucTime :  黄闪或全红的时间           
 Output:         无
 Return:         无
@@ -1464,7 +1202,7 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		else if ( 0 == ucTime )
 		{
 			m_pRunData->ucStepTime = m_pTscConfig->sUnit.ucStartFlashTime;
-			//ACE_DEBUG((LM_DEBUG,"%s:%d 启动进入黄闪 12秒开始\n" ,__FILE__,__LINE__));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***ResetRunData*** When ucTime para is 0 ,YWFLASH 12 seconds!\n" ,__FILE__,__LINE__));
 		}
 		else
 		{
@@ -1499,8 +1237,7 @@ void CManaKernel::ResetRunData(Byte ucTime)
 			CLampBoard::CreateInstance()->SendLamp();
 			/******************* 黄闪之前，发送熄灯信号，避免黄闪不整齐**************************************/
 			m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;
-			SetLampColor(1);
-			
+			SetLampColor(1);			
 		}
 		
 		m_bSpeStatus = true;
@@ -1514,7 +1251,7 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		else if ( 0 == ucTime )
 		{
 			m_pRunData->ucStepTime = m_pTscConfig->sUnit.ucStartAllRedTime;
-		//	ACE_DEBUG((LM_DEBUG,"%s:%d 启动黄闪后进入全红 5秒开始\n" ,__FILE__,__LINE__));
+	        ACE_DEBUG((LM_DEBUG,"%s:%d***ResetRunData*** After YWFLASH , RedFLASH 6 seconds!\n" ,__FILE__,__LINE__));
 		}
 		else
 		{
@@ -1529,7 +1266,6 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		m_pRunData->ucStageCount = 1;
 		
 		ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );		
-		
 		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;		
 		SetLampColor(2);
 		m_bSpeStatus = true;
@@ -1546,50 +1282,22 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		}
 		m_pRunData->ucElapseTime = 0;
 		m_pRunData->ucStepNo     = 0;
-		m_pRunData->ucStepNum    = 1;
+		m_pRunData->ucStepNum    = 1;	
 		
-		//ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );
+		ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );
 		SetLampColor(0);
-		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;		
-	
+		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;	
 		m_bSpeStatus = true;
 	}
 	else if ( m_pRunData->uiWorkStatus == STANDARD )  //标准
 	{
-		/*******************m3352 的手控是备份单片机提供按钮状态，因此不用再记录每次手控按钮按下的状态**
-		if(bChkManul==true)
-		{			
-			Manual * pManual = Manual::CreateInstance();
-			bChkManul = false ;
-			if (m_pTscConfig->sSpecFun[FUN_COMMU_PARA].ucValue== MAC_CTRL_FLASH)
-			{
-				ACE_DEBUG((LM_DEBUG,"%s:%d 系统初始进入手控黄闪状态!\n" ,__FILE__,__LINE__));
-				SwitchCtrl(CTRL_PANEL);				
-				m_pRunData->uiWorkStatus = FLASH ;
-				pManual->SetPanelStaus(MAC_CTRL_FLASH);	
-				SetLampColor(1) ;
-				return ;
-			}
-			else if (m_pTscConfig->sSpecFun[FUN_COMMU_PARA].ucValue== MAC_CTRL_ALLRED)
-			{
-				ACE_DEBUG((LM_DEBUG,"%s:%d 系统初始进入手控全红状态!\n" ,__FILE__,__LINE__));
-				SwitchCtrl(CTRL_PANEL);					
-				m_pRunData->uiWorkStatus = ALLRED ;
-				pManual->SetPanelStaus(ALLRED);
-				SetLampColor(2) ;
-				return ;
-			}			
-		}
-		*********************************************************************************************/
-		ACE_DEBUG((LM_DEBUG,"%s:%d ResetRunDate 开始进入标准状态 构造动态数据,call GetRunDataStandard()\n" ,__FILE__,__LINE__));
+		ACE_DEBUG((LM_DEBUG,"\n%s:%d***ResetRunData*** When uiWorkStatus == STANDARD,call GetRunDataStandard()\n" ,__FILE__,__LINE__));
+		
 		GetRunDataStandard(); //正常地构造动态数据
 		m_bSpeStatus = false;
 		
 	}
 
-#ifdef CHECK_MEMERY
-	TestMem(__FILE__,__LINE__);
-#endif
 }
 
 
@@ -1605,9 +1313,9 @@ Return:         无
 void CManaKernel::GetRunDataStandard()
 {
 	bool bNewDay         = false;
-	Byte ucCurScheduleId = 0;
+	Byte ucCurScheduleId = m_pRunData->ucScheduleId ;
 	static Byte ucDay = 0 ;
-	ACE_Date_Time tvTime(GetCurTime());
+	ACE_Date_Time tvTime(ACE_OS::gettimeofday());
 	if(ucDay == 0)
 		ucDay = tvTime.day();
 	
@@ -1615,21 +1323,20 @@ void CManaKernel::GetRunDataStandard()
 	{
 		bNewDay = true;
 		if( m_pRunData->bNeedUpdate)
-			 ACE_DEBUG((LM_DEBUG,"%s:%d m_pRunData->bNeedUpdate== true!\n" ,__FILE__,__LINE__));
+			 ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** m_pRunData->bNeedUpdate== true!\n" ,__FILE__,__LINE__));
 		else 
-			{
-				ucDay = tvTime.day();
-				ACE_DEBUG((LM_DEBUG,"%s:%d 0==tvTime.hour()!\n" ,__FILE__,__LINE__));
-			}
+		{
+			ucDay = tvTime.day();
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** 0==tvTime.hour()!\n" ,__FILE__,__LINE__));
+		}
 	}
-
 
 	if ( bNewDay )
 	{
-		 // ACE_DEBUG((LM_DEBUG,"%s:%d it's be new day!\n" ,__FILE__,__LINE__));
-		ucCurScheduleId = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday());  //获取当前的时段表号  
+		//当数据库数据手动需要重新加载或者新的一天，重新获取时段表
+		ucCurScheduleId = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday());  
 		
-		if ( m_pRunData->bNeedUpdate || (ucCurScheduleId != m_pRunData->ucScheduleId) )
+		if (ucCurScheduleId != m_pRunData->ucScheduleId)
 		{
 			//重新从数据库加载1天时段表信息 
 			unsigned short usCount = 0;
@@ -1648,77 +1355,60 @@ void CManaKernel::GetRunDataStandard()
 				iIndex++;
 			}
 			ACE_OS::memset(m_pTscConfig->sSchedule+iIndex,0,sizeof(SSchedule));
+			
 		}
-	}
-	if(!bNewDay)
-		ucCurScheduleId = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday()); //从时基调度表获得当天的时段表号
+	}			
+		//根据时段信息重新获取配时方案号
+		Byte ucCurCtrl          = m_pRunData->uiCtrl;
+		Byte ucCurStatus        = m_pRunData->uiWorkStatus;
+		Byte ucCurTimePatternId = 0 ;
+		m_pRunData->ucScheduleId = ucCurScheduleId ;
+		// 函数根据当前时间分钟数获得配时方案号,控制方式,状态
+		ucCurTimePatternId = GetTimePatternId( ucCurScheduleId , &ucCurCtrl , &ucCurStatus );
+		//重新设置时段表控制方式参数
+		m_pRunData->uiScheduleCtrl  = ucCurCtrl;
+		if(m_pRunData->uiScheduleCtrl == CTRL_SCHEDULE && m_pRunData->uiCtrl ==CTRL_SCHEDULE&& bDegrade == true)
+		{
+			//ADD 20150120 降级后时段切换到多时段升级
+			ACE_OS::printf("%s:%d Now changed to CTRL_SCHEDULE ,bDegrade changed to false !\n",__FILE__,__LINE__);
+			bDegrade = false ;
+		}
+
+		//有设置特定方案
+		if(bTmpPattern == true  && m_iTimePatternId != 0)
+		{
+			ucCurTimePatternId = m_iTimePatternId;		
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Set m_iTimePatternId = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
+		}		  
+		 //控制方式改变
+		if ( ucCurCtrl != m_pRunData->uiCtrl ) 
+		{
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Schedule Table Control Mode Changed from %d to %d !\n" ,__FILE__,__LINE__,m_pRunData->uiCtrl,ucCurCtrl));
+			SwitchCtrl(ucCurCtrl); 	
+		}
 	
-	//根据时段信息重新获取配时方案号
-	Byte ucCurCtrl          = m_pRunData->uiCtrl;
-	Byte ucCurStatus        = m_pRunData->uiWorkStatus;
-	Byte ucCurTimePatternId = 0 ;
-	if(bTmpPattern == true  && m_iTimePatternId != 0)
-	{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d ((CTRL_PANEL == m_pRunData->uiCtrl ) || ( CTRL_UTCS == m_pRunData->uiCtrl ) )  && 			( m_iTimePatternId != 0 )\n",__FILE__,__LINE__));
-		ACE_DEBUG((LM_DEBUG,"%s:%d when m_iTimePatternId= %d >0 return !\n" ,__FILE__,__LINE__,m_iTimePatternId));
-		//if(m_iTimePatternId == 250)
-		//{
-			// CManaKernel::CreateInstance()->bNextDirec = true;
-		//}
-		ucCurTimePatternId = m_iTimePatternId;
-	}
-	else
-		ucCurTimePatternId = GetTimePatternId( ucCurScheduleId , &ucCurCtrl , &ucCurStatus );// 函数根据当前时间分钟数获得配时方案号
-
-	m_pRunData->ucScheduleId    = ucCurScheduleId; //时段表达控制方式和 参数表的控制变量不等
-	m_pRunData->uiScheduleCtrl  = ucCurCtrl;   //记录时段表的控制方式  感应控制方式需要设置感应控制
-	//ACE_DEBUG((LM_DEBUG,"%s:%d ucCurCtrl = %d m_pRunData->uiCtrl = %d\n" ,__FILE__,__LINE__,ucCurCtrl,m_pRunData->uiCtrl));	
-	if ( ucCurCtrl != m_pRunData->uiCtrl )  //控制方式改变
-	{
-		//if ( (CTRL_SCHEDULE == ucCurCtrl) 
-			//&& ( CTRL_WIRELESS == m_pRunData->uiCtrl || CTRL_VEHACTUATED == m_pRunData->uiCtrl 
-			//  || CTRL_MAIN_PRIORITY == m_pRunData->uiCtrl || CTRL_SECOND_PRIORITY == m_pRunData->uiCtrl 
-			//  || CTRL_UTCS == m_pRunData->uiCtrl ) )
-		//{
-			//ACE_DEBUG((LM_DEBUG,"%s:%d 从感应控制向多时段控制转变\n" ,__FILE__,__LINE__));
-		//}
-		//else
-		//{
-			
-			//if(!(ucCurCtrl ==CTRL_UTCS && bUTS == false) && m_pRunData->uiCtrl != CTRL_UTCS) //如果时段表中为CTRL_UTC
-
-			//{
-				ACE_DEBUG((LM_DEBUG,"%s:%d 时段表里的控制方式发生了改变\n" ,__FILE__,__LINE__));
-				SwitchCtrl(ucCurCtrl); //时段表里的控制方式发生了改变
-			//}
-			
-		//}
-	}
-	ACE_DEBUG((LM_DEBUG,"%s:%d m_iTimePatternId1 = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
 	//获取阶段配时表
-	//if ( m_pRunData->bNeedUpdate || (ucCurTimePatternId != m_pRunData->ucTimePatternId) || m_iTimePatternId == 251)//配时方案号不同或者为251特殊方案号
-	 if(m_pRunData->bNeedUpdate || ucCurTimePatternId != m_pRunData->ucTimePatternId )//|| m_iTimePatternId == 251 || m_iTimePatternId == 250)
-	{
-		Byte ucCurScheduleTimeId = GetScheduleTimeId(ucCurTimePatternId,m_ucUtcsComCycle,m_ucUtscOffset); //获取配时阶段表号
-		ACE_DEBUG((LM_DEBUG,"%s:%d m_iTimePatternId2 = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
+	 if(m_pRunData->bNeedUpdate || ucCurTimePatternId != m_pRunData->ucTimePatternId ||CBusPriority::CreateInstance()->GetBoolOpenBusPriority()==true)
+	 {		
 		m_pRunData->ucTimePatternId = ucCurTimePatternId;
+		
+		//获取配时阶段表号
+		Byte ucCurScheduleTimeId = GetScheduleTimeId(ucCurTimePatternId,m_ucUtcsComCycle,m_ucUtscOffset); 
 				
-		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId) ||m_iTimePatternId == 251 )
+		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId)|| CBusPriority::CreateInstance()->GetBoolOpenBusPriority()==true)
 		{
 			m_pRunData->ucScheduleTimeId = ucCurScheduleTimeId;
-
 			//重新加载动态数据的阶段配时信息sScheduleTime
 			if(!GetSonScheduleTime(ucCurScheduleTimeId))
 			{
 				bDegrade = true ;
 				CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_SYSTEMCONTROL,254);
-				ACE_DEBUG((LM_DEBUG,"%s:%d 阶段配时为空，降级到黄闪\n" ,__FILE__,__LINE__));	
+				ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** StageSchedulePatternID ==0 ,Degrade to YEFLASH!\n" ,__FILE__,__LINE__));	
 				CMainBoardLed::CreateInstance()->DoModeLed(true,true);
 				m_pRunData->flashType = CTRLBOARD_FLASH_NOPATTERN;
 				return ;	
 			}
-			ACE_DEBUG((LM_DEBUG,"%s:%d 构造整个周期各阶段步伐信息，条件是当前配时方案号阶段配时号不同或者数据库有更新\n" ,__FILE__,__LINE__));		
-			//重新构造整个周期的步伐信息
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** ReConstruct every step info,when manual update database or PatternId changed!\n" ,__FILE__,__LINE__));		
 			SetCycleStepInfo(0);
 			
 		}
@@ -1729,27 +1419,29 @@ void CManaKernel::GetRunDataStandard()
 
 		m_pRunData->ucTimePatternId = ucCurTimePatternId;
 		m_pRunData->ucScheduleTimeId = ucCurScheduleTimeId;
-
-		//重新加载动态数据的阶段配时信息sScheduleTime
-		GetSonScheduleTime(ucCurScheduleTimeId); // READ: 2013 0704 0915 获取当前子阶段总数 子阶段数据
-		
-		ACE_DEBUG((LM_DEBUG,"%s:%d 构造整个周期各阶段步伐信息，条件是特殊状态进入标准状态并且当前信号机工作状态是标准状态\n" ,__FILE__,__LINE__));
-		//重新构造整个周期的步伐信息
+		GetSonScheduleTime(ucCurScheduleTimeId);
 		SetCycleStepInfo(0);
-		
+		ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** ReConstruct every step info,when no manual update database and PatterId  not changed but from m_bSpeStatus changed to STANDARD!\n" ,__FILE__,__LINE__));
+				
 	}
-
 	if ( ucCurStatus != m_pRunData->uiWorkStatus && m_pRunData->uiCtrl != CTRL_UTCS)  //工作状态改变 联网控制时候不闪光
-	{
+	{		
+		ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Status changed from %d to %d !\n" ,__FILE__,__LINE__,m_pRunData->uiWorkStatus,ucCurStatus));
 		SwitchStatus(ucCurStatus);
 	}
-	else if ( m_bVirtualStandard && (STANDARD == ucCurStatus) )  //STANDARD(FLASH、ALLRED、SINGLEALL) --> STANDARD
+	else if ( m_bVirtualStandard && (STANDARD == ucCurStatus) ) 
 	{
+		//STANDARD(FLASH、ALLRED、SINGLEALL) --> STANDARD
+		
+		ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** m_bVirtualStandard ==true ,uiWorkStatus =%d uiOldWorkStatus=%d \n" ,__FILE__,__LINE__,m_pRunData->uiWorkStatus,m_pRunData->uiOldWorkStatus));
 		m_pRunData->uiWorkStatus = m_pRunData->uiOldWorkStatus;
 		m_bVirtualStandard      = false;
 		SwitchStatus(ucCurStatus);
-		ACE_DEBUG((LM_DEBUG,"%s:%d m_bVirtualStandard && (STANDARD == ucCurStatus\n" ,__FILE__,__LINE__));
 	}
+
+
+
+	
 
 }
 
@@ -1757,16 +1449,16 @@ void CManaKernel::GetRunDataStandard()
 /**************************************************************
 Function:       CManaKernel::GetScheduleId
 Description:    根据月、日、星期获取当前的时段表号
-Input:          ucWeek ： 字节位0不用，字节位1代表周一，依次类推，字节位7代表周日
-				ucMonth ：字节位0不用，字节位1表示1月，依次类推，字节位12代表12月 
-				ucDay   ：字节位0不用，字节位1表示1好，依次类推，字节位31代表31号      
+Input:            ucWeek ： 字节位0不用，字节位1代表周一，依次类推，字节位7代表周日
+			ucMonth ：字节位0不用，字节位1表示1月，依次类推，字节位12代表12月 
+			ucDay   ：字节位0不用，字节位1表示1好，依次类推，字节位31代表31号      
 Output:         无
-Return:         当日到时段表号，若没有查询到则返回0
+Return:         当日到时段表号，若没有查询到则返回1
 ***************************************************************/
 Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 {
 	//按日 节假日 特定月 + 特定日 + 周全选
-	ACE_DEBUG((LM_DEBUG,"%s:%d ucId= %d, ucScheduledId = %d,month = %d ,day = %u ,week = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[0].ucId,m_pTscConfig->sTimeGroup[0].ucScheduleId,m_pTscConfig->sTimeGroup[0].usMonth,m_pTscConfig->sTimeGroup[0].uiDayWithMonth,m_pTscConfig->sTimeGroup[0].ucDayWithWeek));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d***GetScheduleId*** ucId= %d, ucScheduledId = %d,month = %d ,day = %u ,week = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[0].ucId,m_pTscConfig->sTimeGroup[0].ucScheduleId,m_pTscConfig->sTimeGroup[0].usMonth,m_pTscConfig->sTimeGroup[0].uiDayWithMonth,m_pTscConfig->sTimeGroup[0].ucDayWithWeek));
 	
 	for (int i=0; i<MAX_TIMEGROUP; i++ )
 	{
@@ -1781,9 +1473,12 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 				{
 					if ( (m_pTscConfig->sTimeGroup[i].ucDayWithWeek & 0xfe) == 0xfe )
 					{
-						ACE_DEBUG((LM_DEBUG,"%s:%d  ucScheduleId = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[i].ucScheduleId));
+						//ACE_DEBUG((LM_DEBUG,"%s:%d***GetScheduleId***  ucScheduleId = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[i].ucScheduleId));
 						if (m_pTscConfig->sTimeGroup[i].ucScheduleId >0)
-							return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+							{
+							    m_pRunData->ucPlanId = m_pTscConfig->sTimeGroup[i].ucId ;
+								return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+							}
 					}
 				}
 			}
@@ -1809,9 +1504,12 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 					if ((((m_pTscConfig->sTimeGroup[i].ucDayWithWeek)>>ucWeek) & 0x1)
 						&& ( ( m_pTscConfig->sTimeGroup[i].ucDayWithWeek & 0xfe) != 0xfe ) )
 					{
-						ACE_DEBUG((LM_DEBUG,"%s:%d  ucScheduleId = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[i].ucScheduleId));
+						//ACE_DEBUG((LM_DEBUG,"%s:%d***GetScheduleId***  ucScheduleId = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[i].ucScheduleId));
 						if (m_pTscConfig->sTimeGroup[i].ucScheduleId >0)
-							return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+							{
+							    m_pRunData->ucPlanId = m_pTscConfig->sTimeGroup[i].ucId ;
+								return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+							}
 					}
 				}
 			}
@@ -1835,9 +1533,12 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 				{
 					if ( (m_pTscConfig->sTimeGroup[i].ucDayWithWeek & 0xfe) == 0xfe )
 					{
-						ACE_DEBUG((LM_DEBUG,"%s:%d  ucScheduleId = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[i].ucScheduleId));
+					//	ACE_DEBUG((LM_DEBUG,"%s:%d***GetScheduleId***  ucScheduleId = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[i].ucScheduleId));
 						if (m_pTscConfig->sTimeGroup[i].ucScheduleId >0)
-							return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+							{
+								m_pRunData->ucPlanId = m_pTscConfig->sTimeGroup[i].ucId ;
+								return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+							}
 					}
 				}
 			}
@@ -1861,8 +1562,11 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 				if ( ( (m_pTscConfig->sTimeGroup[i].ucDayWithWeek>>(ucWeek)) & 0x1 ) //b1：周日 b2：周1 
 					&& ( (m_pTscConfig->sTimeGroup[i].uiDayWithMonth>>ucDay) & 0x1 ) )  //b1:1号 b2
 				{
-					//ACE_DEBUG((LM_DEBUG,"%s:%d sTimeGroup[%d].ucId!=0\n",__FILE__,__LINE__,i));
-					return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+				//	ACE_DEBUG((LM_DEBUG,"%s:%d sTimeGroup[%d].ucId=%d\n",__FILE__,__LINE__,i,m_pTscConfig->sTimeGroup[i].ucId));
+						
+				   m_pRunData->ucPlanId = m_pTscConfig->sTimeGroup[i].ucId ;
+				   return m_pTscConfig->sTimeGroup[i].ucScheduleId;
+							
 				}
 			}
 		}
@@ -1871,7 +1575,9 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 			break;  //没有该天的时间方案
 		}
 	}
-	ACE_OS::printf("%s:%d Cant get ScheduleId from DB ,Default return 1!\n",__FILE__,__LINE__);
+	ACE_OS::printf("%s:%d***GetScheduleId*** Cant get ScheduleId from DB ,Default return 1!\n",__FILE__,__LINE__);
+	
+	m_pRunData->ucPlanId = 0 ;
 	return 1; //默认返回时段表1
 }
 
@@ -1882,19 +1588,17 @@ Function:       CManaKernel::GetTimePatternId
 Description:    根据月、日、星期获取当前的时段表号
 Input:          ucScheduleId ：时段表号       
 Output:         ucCtrl	 ： 当前控制模式
-			ucStatus ： 当前工作状态
-			ucCycle      - 周期    暂时未用
-		        ucOffSet     - 相位差  暂时未用
+			ucStatus ： 当前工作状
 Return:         配时方案号 
 ***************************************************************/
 Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucStatus )
 {	
-	ACE_DEBUG((LM_DEBUG,"%s:%d m_pRunData->uiCtrl= %d m_iTimePatternId= %d\n" ,__FILE__,__LINE__,m_pRunData->uiCtrl ,m_iTimePatternId));
+	ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** m_pRunData->uiCtrl= %d m_iTimePatternId= %d\n" ,__FILE__,__LINE__,m_pRunData->uiCtrl ,m_iTimePatternId));
 	bool bLastTem           = false;
 	int  iIndex             = 0;
 	Byte ucCurTimePatternId = 0;
 	Byte ucCtrlTmp          = 0;
-	ACE_Date_Time tvTime(GetCurTime());
+	ACE_Date_Time tvTime(ACE_OS::gettimeofday());
 	for ( ; iIndex<MAX_SCHEDULE_PER_DAY; iIndex++)
 	{		
 		if ( m_pTscConfig->sSchedule[iIndex].ucId != 0 && (m_pTscConfig->sSchedule[iIndex].ucEventId != 0 ) )
@@ -1909,14 +1613,15 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 					 )
 				{
 					ucCurTimePatternId = m_pTscConfig->sSchedule[iIndex].ucTimePatternId;
-					ucCtrlTmp          = m_pTscConfig->sSchedule[iIndex].ucCtrl;
+					ucCtrlTmp          = m_pTscConfig->sSchedule[iIndex].ucCtrl;	
 					
+					ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ucScheduleId=%d index=%d hour=%d min=%d ucCtrlTmp=%d !\n",__FILE__,__LINE__,ucScheduleId,iIndex,(Byte)tvTime.hour(),(Byte)tvTime.minute(),ucCtrlTmp));
 					break;
 				}
 			}
 		}
 		else //应该提前去
-		{
+		{	
 			bLastTem = true; //
 			break;           //
 		}
@@ -1927,8 +1632,9 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 		
 		ucCurTimePatternId =  m_pTscConfig->sSchedule[iIndex-1].ucTimePatternId;
 		ucCtrlTmp = m_pTscConfig->sSchedule[iIndex-1].ucCtrl;
-	}
-	
+		
+		ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ucScheduleId=%d index=%d hour=%d min=%d ucCtrlTmp=%d !\n",__FILE__,__LINE__,ucScheduleId,iIndex-1,(Byte)tvTime.hour(),(Byte)tvTime.minute(),ucCtrlTmp));
+	}	
 	m_bSpeStatusTblSchedule = false;	 
     
 	switch ( ucCtrlTmp )
@@ -1937,22 +1643,25 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 			*ucCtrl   = CTRL_SCHEDULE;
 			*ucStatus = STANDARD;
 			
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,controlmod:STRL_SCHEDULE!\n",__FILE__,__LINE__,ucScheduleId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,STRL_SCHEDULE!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		case 1:    //1:关灯
+			*ucCtrl   = CTRL_SCHEDULE_OFF;
 			*ucStatus = SIGNALOFF;
 			m_bSpeStatusTblSchedule = true;
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,controlmod:SIGNALOFF!\n",__FILE__,__LINE__,ucScheduleId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,SIGNALOFF!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		case 2:    //2:闪光
+			*ucCtrl   = CTRL_SCHEDULE_FLASH;
 			*ucStatus = FLASH;
 			m_bSpeStatusTblSchedule = true;
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,controlmod:FLASH!\n",__FILE__,__LINE__,ucScheduleId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,FLASH!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		case 3:    //3:全红
+			*ucCtrl   = CTRL_SCHEDULE_RED;
 			*ucStatus = ALLRED;
 			m_bSpeStatusTblSchedule = true;
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,controlmod:ALLRED!\n",__FILE__,__LINE__,ucScheduleId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,ALLRED!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		case 4:    //4：主线半感应
 			*ucCtrl   = CTRL_MAIN_PRIORITY;
@@ -1964,9 +1673,8 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 			break;
 		case 6:    //6:全感应
 			*ucCtrl   = CTRL_VEHACTUATED;
-			*ucStatus = STANDARD;
-		
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,controlmod:STRL_VEHACTUATED!\n",__FILE__,__LINE__,ucScheduleId));
+			*ucStatus = STANDARD;		
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,STRL_VEHACTUATED!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		case 7:    //7:无电线缆
 			*ucCtrl   = CTRL_WIRELESS;
@@ -1975,18 +1683,18 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 		case 8:    //8:自适应控制
 			*ucCtrl   = CTRL_ACTIVATE;
 			*ucStatus = STANDARD;
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,default controlmod:CTRL_ACTIVATE!\n",__FILE__,__LINE__,ucScheduleId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,CTRL_ACTIVATE!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		case 12:   //12:联网
 			*ucCtrl   = CTRL_UTCS;
 			*ucStatus = STANDARD;
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,default controlmod:CTRL_UTCS!\n",__FILE__,__LINE__,ucScheduleId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,CTRL_UTCS!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		
 		default:   //默认多时段
 			*ucCtrl   = CTRL_SCHEDULE;
 			*ucStatus = STANDARD;
-			ACE_DEBUG((LM_DEBUG,"%s:%d ScheduleId:%d ,default controlmod:CTRL_SCHEDULE!\n",__FILE__,__LINE__,ucScheduleId));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,default CTRL_SCHEDULE!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 	}	
 	return ucCurTimePatternId;
@@ -2153,12 +1861,10 @@ void CManaKernel::GetStageTime(Byte* pTotalTime,Byte* pElapseTime)
 	{
 		ucEndStepNo = m_pRunData->ucStepNum - 1;
 	}
-
 	for ( Byte ucStepNo=ucStartStepNo; ucStepNo<=ucEndStepNo && ucStepNo<m_pRunData->ucStepNum; ucStepNo++ )
 	{
 		ucTotalTime += m_pRunData->sStageStepInfo[ucStepNo].ucStepLen;
 	}
-
 	for ( Byte ucStepNo=ucStartStepNo; ucStepNo<ucCurStepNo && ucStepNo<m_pRunData->ucStepNum; ucStepNo++ )
 	{
 		ucElapseTime += m_pRunData->sStageStepInfo[ucStepNo].ucStepLen;
@@ -2237,12 +1943,12 @@ void CManaKernel::SetCycleStepInfo(Byte ucLockPhase)
 	m_pRunData->ucRunTime    = m_pRunData->ucStepTime;
 	m_pRunData->ucElapseTime = 0;
 
-	m_pRunData->ucCycle = 0;
-	for ( int i=0; i<MAX_STEP && i<m_pRunData->ucStepNum; i++ )
-	{
-		m_pRunData->ucCycle += m_pRunData->sStageStepInfo[i].ucStepLen;
-	}
-
+	//m_pRunData->ucCycle = 0;
+	//for ( int i=0; i<MAX_STEP && i<m_pRunData->ucStepNum; i++ )
+	//{
+		//m_pRunData->ucCycle += m_pRunData->sStageStepInfo[i].ucStepLen;
+	//}
+	RefreshCycle();
 	//ACE_DEBUG((LM_DEBUG,"%s:%d ucCycle= %d ucStepNum=%d ucStageCount=%d uc0StepTime= %d\n" ,__FILE__,__LINE__,m_pRunData->ucCycle ,m_pRunData->ucStepNum,m_pRunData->ucStageCount,m_pRunData->ucStepTime));
 }
 
@@ -2489,7 +2195,7 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 				
 			} //end for
 			
-			SetRedOtherLamp(m_pRunData->sStageStepInfo[*ucCurStepIndex].ucLampOn);
+			SetRedOtherLamp(m_pRunData->sStageStepInfo[*ucCurStepIndex].ucLampOn,m_pRunData->sStageStepInfo[*ucCurStepIndex].ucLampFlash);
 
 			ucMinStepLen = 200;
 			(*ucCurStepIndex)++;
@@ -2536,10 +2242,9 @@ Input:          无
 Output:         ucLampOn  - 信号灯亮灭数组指针
 Return:         无
 **********************************************************************************/
-void CManaKernel::SetRedOtherLamp(Byte* ucLampOn)
+void CManaKernel::SetRedOtherLamp(Byte* ucLampOn,Byte *ucLampFlash)
 {
 	bool bRed = false;
-
 	for ( int i=0; i<MAX_LAMP; i=i+3 )
 	{
 		bRed = true;
@@ -2553,7 +2258,15 @@ void CManaKernel::SetRedOtherLamp(Byte* ucLampOn)
 		}
 		if ( bRed && IsInChannel(i/3+1) )  //该灯组(通道)有被定义
 		{
-			ucLampOn[i] = 1;         	   //该灯组强制亮红灯
+			if(m_pTscConfig->sChannel[i/3].ucFlashAuto == 0x2) //通道强制黄闪,该通道相位没有阶段放行
+			{
+				ucLampOn[i+1] = 1;
+				ucLampFlash[i+1] = 1;
+			}
+			else
+			{
+				ucLampOn[i] = 1;         	   //该灯组强制亮红灯
+			}
 		}
 	}
 }
@@ -2818,7 +2531,7 @@ void CManaKernel::GetSignalGroupId(bool bIsAllowPhase , Byte ucPhaseId,Byte* pNu
 	*pNum = 0;
 	for (int i=0; i<MAX_CHANNEL; i++ )
 	{
-		if ( 0 == m_pTscConfig->sChannel[i].ucId )
+		if ( 0 == m_pTscConfig->sChannel[i].ucSourcePhase)
 		{
 			continue;
 		}
@@ -2855,28 +2568,30 @@ Return:         无
 void CManaKernel::SwitchStatus(unsigned int uiWorkStatus)
 {
 	ACE_DEBUG((LM_DEBUG,"%s:%d SwitchStatus new WorkStatus:%d,Old WorkStatus:%d\n",__FILE__,__LINE__,uiWorkStatus,m_pRunData->uiWorkStatus));
-
+	//m_pRunData->uiWorkStatus = m_pRunData->uiOldWorkStatus;
 	if ( uiWorkStatus == m_pRunData->uiWorkStatus )
 	{
 		return;
 	}
 	if ( ( SIGNALOFF == m_pRunData->uiWorkStatus ) && ( STANDARD == uiWorkStatus ) )  //关灯切换到标准 需要经过黄闪
 	{
+		m_pRunData->uiOldWorkStatus = SIGNALOFF ;
 		m_pRunData->uiWorkStatus = FLASH;
 	}
 	else if ( (FLASH == m_pRunData->uiWorkStatus) && ( STANDARD == uiWorkStatus ) )  //黄闪切换到标准 需要经过全红 
 	{
 		m_bWaitStandard          = true;
+		m_pRunData->uiOldWorkStatus = FLASH ;
 		m_pRunData->uiWorkStatus = ALLRED;
 	}
 	else
 	{
+		m_pRunData->uiOldWorkStatus = m_pRunData->uiWorkStatus ;
 		m_pRunData->uiWorkStatus = uiWorkStatus;
 	}
-
-	m_pRunData->bNeedUpdate = true;   /*去掉手动时需要重新加载通道信息等一系列信息*/
+	 /*去掉手动时需要重新加载通道信息等一系列信息*/
+	m_pRunData->bNeedUpdate = true;  
 	ResetRunData(0);  //正常的重新获取动态参数
-
 	CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn	,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
 }
 
@@ -2890,18 +2605,13 @@ Return:         无
 **********************************************************************************/
 void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 {
-
-	ACE_DEBUG((LM_DEBUG,"%s:%d SwitchCtrl: New Ctrl:%d,Old Ctrl:%d\n",__FILE__,__LINE__,uiCtrl,m_pRunData->uiCtrl));
-
-
 	if ( uiCtrl == m_pRunData->uiCtrl )
 	{
 		return;
 	}
-	//if ( CTRL_UTCS == uiCtrl )
-	//{
-		//m_pRunData->uiUtcsHeartBeat = 0;
-	//}
+	
+	ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** New Ctrl:%d,Old Ctrl:%d\n",__FILE__,__LINE__,uiCtrl,m_pRunData->uiCtrl));
+
 	if(uiCtrl == CTRL_SCHEDULE && m_pRunData->uiCtrl == CTRL_VEHACTUATED)
 	{
 		m_pRunData->bNeedUpdate = true;  //需要重读数据库加载绿步时间
@@ -2920,19 +2630,22 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 	if((CTRL_VEHACTUATED == uiCtrl) || (CTRL_MAIN_PRIORITY == uiCtrl) || (CTRL_SECOND_PRIORITY == uiCtrl) || (CTRL_ACTIVATE == uiCtrl)) 
 	{
 		if ( !CDetector::CreateInstance()->HaveDetBoard())   //MOD: 201309231450
-		{			
+		{	
+			
+			bDegrade = true ;
 			if(m_pRunData->uiCtrl == CTRL_SCHEDULE )         //防止重复写入控制方式更改日志
+			{			
 				return ;
+			}
 			else
 				uiCtrl    = CTRL_SCHEDULE;
-			bDegrade = true ;
 			CMainBoardLed::CreateInstance()->DoModeLed(true,true);								
-			ACE_DEBUG((LM_DEBUG,"%s:%d when no DecBoard ,new uiCtrl = %d \n" ,__FILE__,__LINE__,uiCtrl));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** when no DecBoard ,new uiCtrl = %d \n" ,__FILE__,__LINE__,uiCtrl));
 		}
 		else if ( CTRL_ACTIVATE != uiCtrl )
 		{
 			m_pRunData->bNeedUpdate = true;   //需要获取检测器信息
-			ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
 			if((m_pRunData->uiCtrl == CTRL_SCHEDULE) && bDegrade == true )
 			{
 				bDegrade = false ;
@@ -2947,27 +2660,27 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 		m_pRunData->uiCtrl      = m_pRunData->uiOldCtrl;
 		//m_pRunData->uiOldCtrl   = uiCtrlTmp;
 		m_pRunData->uiOldCtrl   = uiCtrlTmp;
-		ACE_DEBUG((LM_DEBUG,"%s:%d uiCtrl = %d ,old_ctrl =%d new_ctrl = %d \n" ,__FILE__,__LINE__,uiCtrl,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** uiCtrl = %d ,old_ctrl =%d new_ctrl = %d \n" ,__FILE__,__LINE__,uiCtrl,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
 	}
 	else
 	{
 		m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
 		m_pRunData->uiCtrl    = uiCtrl;
-		ACE_DEBUG((LM_DEBUG,"%s:%d m_pRunData->uiOldCtrl =%d m_pRunData->uiCtrl = %d \n" ,__FILE__,__LINE__,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** m_pRunData->uiOldCtrl =%d m_pRunData->uiCtrl = %d \n" ,__FILE__,__LINE__,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
 	}
 
 	if ( uiCtrl == CTRL_PANEL || uiCtrl == CTRL_MANUAL )               //如果是切换到手动或者面板控制则发送黑屏倒计时
 	{             
-		if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != 0  )
+		if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_STUDY && m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_FLASHOFF)
 			CGaCountDown::CreateInstance()->sendblack();
 	}
 	
 	if ( CTRL_PANEL == m_pRunData->uiOldCtrl && m_iTimePatternId != 0)  //MOD:20130928 将这个判断从上面移动到这里
 	{		
 		m_iTimePatternId = 0;
-		ACE_DEBUG((LM_DEBUG,"%s:%d After CTRL_PANEL to auto m_iTimePatternId = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** After CTRL_PANEL to auto m_iTimePatternId = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
 	}
-	ACE_DEBUG((LM_DEBUG,"%s:%d oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
+	ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
 	SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,0); //日志记录控制方式切换 ADD?201311041530
 }
 
@@ -3019,16 +2732,12 @@ void CManaKernel::LockStage(Byte ucStage)
 	{
 		return;
 	}
-
 	ACE_DEBUG((LM_DEBUG,"%s:%d ucStage:%d m_pRunData->ucStageNo:%d LongStep:%d\n" , __FILE__,__LINE__,ucStage , m_pRunData->ucStageNo , IsLongStep(m_pRunData->ucStepNo) ));
-
 	m_bSpePhase = false;
-
 	if ( ucStage == m_pRunData->ucStageNo && (IsLongStep(m_pRunData->ucStepNo)) )  //锁定阶段就是当前阶段，且阶段处于绿灯阶段
 	{
 		return;
 	}
-
 	//保证走完最小绿
 	if(m_iTimePatternId == 0)
 	{
@@ -3043,7 +2752,7 @@ void CManaKernel::LockStage(Byte ucStage)
 		}
 		
 		//过渡步
-		while ( true )
+		while (true)
 		{
 			m_pRunData->ucStepNo++;
 			if ( m_pRunData->ucStepNo >= m_pRunData->ucStepNum )
@@ -3060,10 +2769,19 @@ void CManaKernel::LockStage(Byte ucStage)
 				CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn
 					,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
 				ACE_OS::sleep(m_pRunData->ucStepTime);
+				//while ( m_pRunData->ucElapseTime < m_pRunData->ucStepTime )
+				//{
+					//ACE_OS::printf("%s:%d ucElapseTime=%d ucStepTime=%d \r\n",__FILE__,__LINE__,m_pRunData->ucElapseTime,m_pRunData->ucStepTime);
+					//ACE_OS::sleep(ACE_Time_Value(0,500));
+					//continue;
+					//ACE_OS::sleep(iMinGreen-m_pRunData->ucElapseTime);  //走完最小绿
+				//}
 
 			}
 			else
 			{
+				
+				ACE_OS::printf("%s:%d Go over guodubu \r\n",__FILE__,__LINE__);
 				break;
 			}
 
@@ -3244,7 +2962,7 @@ void CManaKernel::LockPhase(Byte PhaseId)
 		m_ucLampOn[ucLampIndex] = 1;
 		ucSignalGrpIndex++;
 	}
-	SetRedOtherLamp(m_ucLampOn);
+	SetRedOtherLamp(m_ucLampOn,m_ucLampFlash);
 	CLampBoard::CreateInstance()->SetLamp(m_ucLampOn,m_ucLampFlash);
 }
 
@@ -3435,14 +3153,14 @@ void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 	Byte ucStageElapseTime = 0;
 	Byte ucChanIndex       = 0;
 	Ulong ulChanOut[4]     = {0,0,0,0};
-	Byte* pLampOn          = NULL; 
-	Byte* pLampFlash       = NULL; 
+	Byte pLampOn[MAX_LAMP]    ={0}; 
+	Byte pLampFlash[MAX_LAMP] = {0}; 
 	SThreadMsg sGbtMsg;
 	sGbtMsg.ulType         = GBT_MSG_TSC_EXSTATUS;
 	sGbtMsg.ucMsgOpt       = ucDealDataIndex;
-	sGbtMsg.uiMsgDataLen   = 25;
-	sGbtMsg.pDataBuf       = ACE_OS::malloc(25);
-	ACE_OS::memset(sGbtMsg.pDataBuf,0,25);
+	sGbtMsg.uiMsgDataLen   = 26;
+	sGbtMsg.pDataBuf       = ACE_OS::malloc(26);
+	ACE_OS::memset(sGbtMsg.pDataBuf,0,26);
 
 	//((Byte*)sGbtMsg.pDataBuf)[0] = 1;
 
@@ -3458,19 +3176,22 @@ void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 	((Byte*)sGbtMsg.pDataBuf)[3] = m_pRunData->ucScheduleTimeId;
 	((Byte*)sGbtMsg.pDataBuf)[4] = m_pRunData->ucStageCount;
 	((Byte*)sGbtMsg.pDataBuf)[5] = m_pRunData->ucStageNo + 1;
-	GetStageTime(&ucStageTotalTime,&ucStageElapseTime);
+	 GetStageTime(&ucStageTotalTime,&ucStageElapseTime);
 	((Byte*)sGbtMsg.pDataBuf)[6] = ucStageTotalTime;   //阶段总时间
 	((Byte*)sGbtMsg.pDataBuf)[7] = ucStageElapseTime;  //阶段已经运行时间
 
 	if ( m_bSpePhase )  //指定相位
 	{
-		pLampOn    = m_ucLampOn;
-		pLampFlash = m_ucLampFlash;
+		//pLampOn    = m_ucLampOn;
+		//pLampFlash = m_ucLampFlash;
+		ACE_OS::memcpy(pLampOn,m_ucLampOn,MAX_LAMP);
+		ACE_OS::memcpy(pLampFlash,m_ucLampFlash,MAX_LAMP);
 	}
 	else
 	{
-		pLampOn    = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn;
-		pLampFlash = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash;
+	//	pLampOn    = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn;
+		//pLampFlash = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash;
+		CLampBoard::CreateInstance()->GetLamp(pLampOn,pLampFlash);
 	}
 
 	//打包通道状态
@@ -3506,7 +3227,8 @@ void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 
 	ACE_OS::memcpy((Byte*)(sGbtMsg.pDataBuf)+8 , ulChanOut , 16);
 	((Byte*)sGbtMsg.pDataBuf)[24] = m_pRunData->ucCycle;
-
+	((Byte*)sGbtMsg.pDataBuf)[25] = m_pRunData->ucPlanId;
+	//ACE_OS::printf("%s:%d m_pRunData->ucPlanId = %d \r\n",__FILE__,__LINE__,((Byte*)sGbtMsg.pDataBuf)[25]);
 	CGbtMsgQueue::CreateInstance()->SendGbtMsg(&sGbtMsg,sizeof(SThreadMsg));
 }
 
@@ -3960,13 +3682,12 @@ int CManaKernel::GetStageMinGreen(Ushort usAllowPhase)
 
 	for (Byte i=0; i<MAX_PHASE; i++ )
 	{
-		if ( (( usAllowPhase >> i ) & 0x1) && !((m_pTscConfig->sPhase[i].ucOption>>1) & 0x1))
+		if ((usAllowPhase >>i)& 0x1) 
 		{
 			iMinGreen = (iMinGreen < m_pTscConfig->sPhase[i].ucMinGreen) ?m_pTscConfig->sPhase[i].ucMinGreen:iMinGreen;
 
 		}
 	}
-
 	return iMinGreen;
 }
 
@@ -4081,19 +3802,21 @@ void CManaKernel::AddRunTime(int iAddTime,Byte ucPhaseIndex)
 	 {		
 		if(!((m_pRunData->ucElapseTime >= m_pRunData->ucStepTime-iStepUnitTime) && (m_pRunData->ucElapseTime <= m_pRunData->ucStepTime-1)))
 			return ; //感应时间不在时间区间范围内，不予增加时间
+		if(m_pRunData->ucStepTime == m_iMaxStepTime)
+		{
+			return ;
+		}
 	 }
 	
 	iCntFlashTime = iPhaseFlashTime ;    //   用于倒计时绿闪处理	
+	ACE_DEBUG((LM_DEBUG,"%s:%d:After ucElapseTime:%d,ucStepTime from %d to %d m_iMaxStepTime:%d\n\n",__FILE__,__LINE__	,m_pRunData->ucElapseTime,m_pRunData->ucStepTime,((m_pRunData->ucStepTime+iStepUnitTime)>=m_iMaxStepTime)?m_iMaxStepTime:(m_pRunData->ucStepTime+iStepUnitTime) ,m_iMaxStepTime));
 	m_pRunData->ucStepTime = m_pRunData->ucStepTime+iStepUnitTime ;  
 	m_ucAddTimeCnt         = m_pRunData->ucStepTime - m_iMinStepTime;   //该阶段增加的绿灯时长
 	//ACE_DEBUG((LM_DEBUG,"%s:%d Add steptime!\n",__FILE__,__LINE__));   	
 	if(m_pRunData->ucStepTime >m_iMaxStepTime)
 	{
 		m_pRunData->ucStepTime = m_iMaxStepTime ;
-	}		
-
-	ACE_DEBUG((LM_DEBUG,"%s:%d:After ucElapseTime:%d,ucStepTime:%d m_iMaxStepTime:%d\n\n",__FILE__,__LINE__
-						,m_pRunData->ucElapseTime,m_pRunData->ucStepTime,m_iMaxStepTime));
+	}	
 
 }
 
@@ -4887,8 +4610,8 @@ void CManaKernel::SetDirecChannelColor(Byte iDirecType)
 		ucIndex++;
 	}	
 	
-	SetRedOtherLamp(m_ucLampOn);
-	CLampBoard::CreateInstance()->SetLamp(m_ucLampOn,m_ucLampFlash);
+	 SetRedOtherLamp(m_ucLampOn,m_ucLampFlash);
+	 CLampBoard::CreateInstance()->SetLamp(m_ucLampOn,m_ucLampFlash);
 }
 
 /**************************************************************
@@ -4961,9 +4684,47 @@ void CManaKernel::SetWirelessBtnDirecCfg(Uint RecvBtnDirecData ,Byte Lampcolor)
 		}
 		
 	}	
-	SetRedOtherLamp(m_ucLampOn);
+	SetRedOtherLamp(m_ucLampOn,m_ucLampFlash);
 	CLampBoard::CreateInstance()->SetLamp(m_ucLampOn,m_ucLampFlash);
 	
 }
 
+/**************************************************************
+Function:        CManaKernel::GetPhaseStageNo
+Description:    根据相位号获取当前方案阶段号
+Input:        ucPhaseId 相位号			  
+Output:         无
+Return:         相位所属第一个阶段号
+Date:            2015-5-18 17:06
+***************************************************************/
+
+Byte CManaKernel::GetPhaseStageNo(Byte ucPhaseId)
+{
+	for(Byte index = 0 ;index<MAX_SON_SCHEDULE ;index++)
+	{
+		if((m_pRunData->sScheduleTime[index].usAllowPhase >>(ucPhaseId-1))&0x1)
+		{
+			return m_pRunData->sScheduleTime[index].ucScheduleId;
+		}
+	}
+	return 0xff ;
+}
+
+/**************************************************************
+Function:        CManaKernel::RefreshCycle
+Description:    刷新信号机周期时长信息
+Input:        	无	  
+Output:         无
+Return:         无
+Date:            2015-5-20 9:11
+***************************************************************/
+
+void CManaKernel::RefreshCycle() 
+{
+	m_pRunData->ucCycle = 0 ;
+	for ( Byte i=0; i<MAX_STEP && i<m_pRunData->ucStepNum; i++ )
+	{
+		m_pRunData->ucCycle += m_pRunData->sStageStepInfo[i].ucStepLen;
+	}
+}
 

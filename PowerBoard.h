@@ -28,6 +28,7 @@ public:
 	void RecvPowerCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp);
 	
 	int GetStongVoltage() ;//获取高电压ADD：201309281540
+	void GetPowerVer(Byte PowerBdindex); //获取电源板版本
 	static Byte iHeartBeat ;
 private:
 	CPowerBoard();
@@ -54,6 +55,7 @@ public:
 	Byte m_ucGetWeakHighVolPlan;   //弱电高压预案
 	Byte m_ucGetWeakLowVolPlan;    //弱电低压预案
 	Byte m_ucSetWatchCfg ;         //电源板看门狗设置 //ADD:201404021301
+	Byte m_ucPowerBoardVer[MAX_POWERBOARD][5];
 
 	ACE_Thread_Mutex  m_mutexVoltage;
 
