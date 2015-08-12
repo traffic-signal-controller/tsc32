@@ -91,9 +91,6 @@ public:
 	
 	bool ComputeColorCount( Byte ucDirIndex , Byte& ucColor , Byte& ucCountTime );
 
-	
-	void GetBusPhaseColourTime(Byte BusPhaseId,Byte& BusPhaseColour ,Byte& BusPhaseColoruTime);
-
 	bool m_bGaNeedCntDown[GA_MAX_DIRECT][GA_MAX_LANE]; //需要倒计时的方向
 	Byte m_ucGaRuntime[GA_MAX_DIRECT][GA_MAX_LANE];    //该灯色还需维持的时间
 	Byte m_ucGaColor[GA_MAX_DIRECT][GA_MAX_LANE];      //灯色
@@ -103,7 +100,7 @@ public:
 	Byte m_sGaSendBuf[GA_MAX_DIRECT][GA_MAX_SEND_BUF];   //发送缓存
 	Byte m_ucLampBoardFlashBreak[MAX_LAMP_BOARD]; //201407231400
 	Byte m_newsGaSendBuf[MAX_CNTDOWNDEV*2+4]; //新2014倒计时标准测试数据4+32*2 	
-	Byte m_newsGaSendBuf4D[12] ;              //新2014倒计时标准测试数据4方向
+	Byte m_newsGaSendBuf4D[12] ; ////新2014倒计时标准测试数据4方向
 	SNewGBCntDownTimeInfo m_newGbCntDownDevTime[MAX_CNTDOWNDEV] ;//新2014倒计时标准每个倒计时倒计时数
 private:
 };

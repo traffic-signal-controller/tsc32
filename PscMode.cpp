@@ -120,7 +120,8 @@ void CPscMode::DealButton()
 	Byte ucButton           = 0;
 	//CPowerBoard::CreateInstance()->m_ucCurFootBtn;	
 	time_t ucNow            = time(NULL);
-	static GBT_DB::SpecFun* pSpecFun = m_pWorkParaManager->m_pTscConfig->sSpecFun;
+	GBT_DB::SpecFun* pSpecFun = m_pWorkParaManager->m_pTscConfig->sSpecFun;
+	m_psc_intervaltime = pSpecFun[FUN_CROSSSTREET_TIMEOUT].ucValue ;;
 	m_ucBtnNum = CMacControl::CreateInstance()->m_ucPsc ;
 	while ( ucIndex < MAX_PUSHS )
 	{
@@ -149,18 +150,6 @@ void CPscMode::DealButton()
 	}
 	
 	ACE_DEBUG((LM_DEBUG,"%s:%d You have push button number is %d\n",__FILE__,__LINE__,m_ucBtnNum));
-	/*if ( iType > 3 )
-	{
-		return;
-	}
-	else
-	{
-		if ( 0 == iType || 1 == iType )
-		{
-			m_bBoxPush[PSC_LEFT_PUSH2]  = true;
-			m_bBoxPush[PSC_RIGHT_PUSH2] = true;
-		}
-	}*/
 
 	m_ucCurStep = m_pWorkParaManager->m_pRunData->ucStepNo;
 	if ( pSpecFun[FUN_STAND_STAGEID].ucValue > 0 )
@@ -280,31 +269,6 @@ void CPscMode::GoNextStep()
 	STscRunData* pRunData = m_pWorkParaManager->m_pRunData;
 
 	pRunData->ucStepNo++;
-/*	
-	if ( !m_bStep1ToStep2
-		&& MODE_PSC2 == m_pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue    
-		)
-	{
-		ucNextStage = m_pWorkParaManager->StepToStage(pRunData->ucStepNo,NULL); 
-		if ( ucNextStage != pRunData->ucStageNo )  
-		{
-			if ( PSC_WAIT_PG_STATUS == m_ucPscStatus )
-			{
-				pRunData->ucStepNo  = m_ucCrossStep2;
-			}
-			else if ( PSC_PG_ENABLE_STATUS == m_ucPscStatus )
-			{
-				pRunData->ucStepNo  = m_ucCrossStep1;
-			}
-			else if ( PSC_NEXT_PG_STATUS == m_ucPscStatus )
-			{
-				pRunData->ucStepNo  = m_ucStandStep;
-			}
-		}
-	}
-	else 
-	{
-*/
 		if ( pRunData->ucStepNo >= pRunData->ucStepNum )  //走完一个周期
 		{
 			pRunData->ucStepNo = m_ucStandStep;

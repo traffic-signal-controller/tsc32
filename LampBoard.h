@@ -38,6 +38,8 @@ public:
 	Byte GetLampBoardVer(Byte LampBoardIndex); //获取灯驱板程序版本ADD20150113
 	
 	void GetLamp(Byte* pLampOn,Byte* pLampFlash);//获取灯驱灯色ADD:20150313
+	
+	void SetLampChannelColor(Byte ColorType,Byte CountDownTime); //ADD:20150806
 private:
 	CLampBoard();
 	~CLampBoard();

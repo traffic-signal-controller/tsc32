@@ -31,7 +31,6 @@ History:    201308010930  添加48个灯泡检测的配置数据库表和表处理
 #include "ComFunc.h" 
 #include "MainBackup.h"
 #include "Configure.h"
-#include "BusPriority.h"
 #define CNTDOWN_TIME 8
 /*
 信号灯颜色类型枚举
@@ -449,7 +448,19 @@ void CManaKernel::SelectDataFromDb()
 			m_pTscConfig->iDetCfg[iBoardIndex] = iDetId;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** m_pTscConfig->iDetCfg[%d] = %d\n",__FILE__,__LINE__,iBoardIndex,iDetId));
 		}
-		
+		/*
+		if(pModule->ucModuleId>0)
+		{
+			if(ACE_OS::strcmp((pModule->strDevNode.GetData() ,"36")==0)			
+				m_pTscConfig->iDetCfg[0] = 1;
+			else if(ACE_OS::strcmp((pModule->strDevNode.GetData() ,"37")==0)				
+				m_pTscConfig->iDetCfg[1] = 17;
+			if(ACE_OS::strcmp((pModule->strDevNode.GetData() ,"41")==0)			
+				m_pTscConfig->iDetCfg[2] = 33;
+			else if(ACE_OS::strcmp((pModule->strDevNode.GetData() ,"42")==0)				
+				m_pTscConfig->iDetCfg[3] = 65;
+		}	
+		*/
 		pModule++;	
 		iIndex++;
 	}
@@ -617,12 +628,6 @@ void CManaKernel::DecTime()
 	#endif
 	m_pRunData->ucElapseTime++;
 
-	//if ( CTRL_UTCS == m_pRunData->uiCtrl )
-	//{
-	//	m_pRunData->uiUtcsHeartBeat++;
-	//	ACE_DEBUG((LM_DEBUG,"%s:%d uiUtcsHeartBeat = %d\n",__FILE__,__LINE__,++(m_pRunData->uiUtcsHeartBeat)));
-	//}
-
 	if ( m_bWaitStandard )  //信号机正处于黄闪-->全红  手动又进入
 	{
 		if ( CTRL_PANEL == m_pRunData->uiCtrl )  //面板手动控制
@@ -636,31 +641,37 @@ void CManaKernel::DecTime()
 		{
 			return;
 		}
-
 		if ( ( CTRL_PANEL == m_pRunData->uiCtrl ) && ( (SIGNALOFF == m_pRunData->uiWorkStatus ) || (ALLRED == m_pRunData->uiWorkStatus) 
 			|| (FLASH == m_pRunData->uiWorkStatus ) ) )  //面板关灯、全红、黄闪
 		{
 			return;
 		}
-
 		if ( (CTRL_PANEL == m_pRunData->uiCtrl) && (0 == m_iTimePatternId ))//|| (250 == m_iTimePatternId)))  //面板控制且非指定配时方案
 		{
 			//ACE_DEBUG((LM_DEBUG,"\n%s:%d CTRL_PANEL and m_iTimePatternId=0 or 250\n",__FILE__,__LINE__));
 			return;
 		}
+		if ( CTRL_SECOND_PRIORITY== m_pRunData->uiCtrl )  //次线半感应
+		{
+			if(CManaKernel::CreateInstance()->bSecondPriority == false && m_pRunData->ucElapseTime < m_pRunData->ucCycle*3)
+			{
+			// ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bSecondPriorty=%s ucElapseTime=%d\r\n",__FILE__,__LINE__,(CreateInstance()->bSecondPriority == false)?"false":"true",m_pRunData->ucElapseTime);
+			 return ;
+			}
+			else
+			{				
+				if(CManaKernel::CreateInstance()->bSecondPriority == false)
+					CManaKernel::CreateInstance()->bSecondPriority = true ; //3个周期超时后跑完这个周期灯色放行
+				
+				//ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bSecondPriorty=%s ucElapseTime=%d\r\n",__FILE__,__LINE__,(CreateInstance()->bSecondPriority == false)?"false":"true",m_pRunData->ucElapseTime);
+			}
+		}
+	
+		
 	}
 	
-	//ACE_DEBUG((LM_DEBUG,"%s:%d Current stepno=%d m_pRunData->ucStepTime = %d m_pRunData->ucElapseTime =%d \n",__FILE__,__LINE__,m_pRunData->ucStepNo,m_pRunData->ucStepTime,m_pRunData->ucElapseTime)); 
 	if ( m_pRunData->ucElapseTime >= m_pRunData->ucStepTime )
-	{
-		/*
-		if ( CTRL_ACTIVATE == m_pRunData->uiCtrl )
-		{
-			CAdaptive::CreateInstance()->RecordStageData();
-		}
-		*/
-		
-		
+	{			
 		SThreadMsg sMsg;
 		sMsg.ulType = TSC_MSG_NEXT_STEP;
 		sMsg.pDataBuf = NULL;
@@ -943,18 +954,21 @@ void CManaKernel::OverCycle()
 			case CTRL_VEHACTUATED:
 			case CTRL_MAIN_PRIORITY:   
 			case CTRL_SECOND_PRIORITY:
-				if ( !CDetector::CreateInstance()->HaveDetBoard() || CTRL_VEHACTUATED != m_pRunData->uiScheduleCtrl )/*|| !m_bPhaseDetCfg*/  /*不存在检测器板*/
 				{
-					ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** When change cycle,no DetBoard or uiCtrl != VEHACTUATED\n",__FILE__,__LINE__));
-					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;					
-					m_pRunData->uiCtrl    = CTRL_SCHEDULE;
+					bool bHaveDetectors = CDetector::CreateInstance()->HaveDetBoard();
+					if ( !bHaveDetectors|| (CTRL_VEHACTUATED != m_pRunData->uiScheduleCtrl&&CTRL_MAIN_PRIORITY!= m_pRunData->uiScheduleCtrl && CTRL_SECOND_PRIORITY!= m_pRunData->uiScheduleCtrl))/*|| !m_bPhaseDetCfg*/  /*不存在检测器板*/
+					{
+						ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** bHaveDetectors=%d , or uiCtrl != VEHACTUATED\n",__FILE__,__LINE__,bHaveDetectors));
+						m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;					
+						m_pRunData->uiCtrl    = CTRL_SCHEDULE;
 					
-					m_pRunData->bNeedUpdate = true;	
-					bDegrade = true ;	
-					CMainBoardLed::CreateInstance()->DoModeLed(true,true);				
-					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
-					ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_VEHACTUATED,CTRL_SCHEDULE));
-					break;
+						m_pRunData->bNeedUpdate = true;	
+						bDegrade = true ;	
+						CMainBoardLed::CreateInstance()->DoModeLed(true,true);				
+						SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //日志记录控制方式切换 ADD?201311041530
+						ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,m_pRunData->uiCtrl,CTRL_SCHEDULE));
+						break;
+					}
 				}
 				break;
 			case CTRL_ACTIVATE:
@@ -1105,16 +1119,16 @@ void CManaKernel::OverCycle()
 	}
 
 	CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn	,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
-	//ACE_DEBUG((LM_DEBUG,"%s:%d  ========= m_pRunData->ucStepNo =%d,m_pRunData->ucStepNum=%d\n",__FILE__,__LINE__,m_pRunData->ucStepNo,m_pRunData->ucStepNum));
 	if ( m_pRunData->bStartFlash ) 
 	{
 		m_pRunData->bStartFlash = false;
 	}
 	
-	if(m_pRunData->uiCtrl == CTRL_SECOND_PRIORITY && bSecondPriority) //每周期返回默认次线感应控制相位无车则时间为0 ADD:201406191430
+	if(m_pRunData->uiCtrl == CTRL_SECOND_PRIORITY || m_pRunData->uiCtrl == CTRL_MAIN_PRIORITY) //每周期返回默认次线感应控制相位无车则时间为0 ADD:201406191430
 	{
 		bSecondPriority = false ; 
-		SetUpdateBit();
+		//ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bSecondPriorty=%s steptime=%d\r\n",__FILE__,__LINE__,(CreateInstance()->bSecondPriority == false)?"false":"true",m_pRunData->ucStepTime);
+		//SetUpdateBit();
 	}
 	
 	//CwpmGetCntDownSecStep();
@@ -1381,21 +1395,21 @@ void CManaKernel::GetRunDataStandard()
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Set m_iTimePatternId = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
 		}		  
 		 //控制方式改变
-		if ( ucCurCtrl != m_pRunData->uiCtrl ) 
+		if ( ucCurCtrl != m_pRunData->uiCtrl) 
 		{
-			ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Schedule Table Control Mode Changed from %d to %d !\n" ,__FILE__,__LINE__,m_pRunData->uiCtrl,ucCurCtrl));
-			SwitchCtrl(ucCurCtrl); 	
+			SwitchCtrl(ucCurCtrl); 				
+		//	ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Schedule Table Control Mode Changed from %d to %d !\n" ,__FILE__,__LINE__,m_pRunData->uiCtrl,ucCurCtrl));
 		}
 	
 	//获取阶段配时表
-	 if(m_pRunData->bNeedUpdate || ucCurTimePatternId != m_pRunData->ucTimePatternId ||CBusPriority::CreateInstance()->GetBoolOpenBusPriority()==true)
+	 if(m_pRunData->bNeedUpdate || ucCurTimePatternId != m_pRunData->ucTimePatternId )
 	 {		
 		m_pRunData->ucTimePatternId = ucCurTimePatternId;
 		
 		//获取配时阶段表号
 		Byte ucCurScheduleTimeId = GetScheduleTimeId(ucCurTimePatternId,m_ucUtcsComCycle,m_ucUtscOffset); 
 				
-		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId)|| CBusPriority::CreateInstance()->GetBoolOpenBusPriority()==true)
+		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId))
 		{
 			m_pRunData->ucScheduleTimeId = ucCurScheduleTimeId;
 			//重新加载动态数据的阶段配时信息sScheduleTime
@@ -1755,12 +1769,12 @@ bool CManaKernel::GetSonScheduleTime(Byte ucScheduleTimeId)
 			if ( m_pTscConfig->sScheduleTime[i][j].ucId == ucScheduleTimeId )
 			{
 				ACE_OS::memcpy(&m_pRunData->sScheduleTime[ucIndex++], &m_pTscConfig->sScheduleTime[i][j] , sizeof(SScheduleTime));
-				if(m_pRunData->uiCtrl== CTRL_SECOND_PRIORITY && bSecondPriority == false && m_pRunData->sScheduleTime[ucIndex-1].ucScheduleId== 0x1)
-				{
-					m_pRunData->sScheduleTime[ucIndex-1].ucGreenTime = 0 ;
-					m_pRunData->sScheduleTime[ucIndex-1].ucYellowTime = 0 ;
-					m_pRunData->sScheduleTime[ucIndex-1].ucRedTime= 0 ;
-				}
+				//if(m_pRunData->uiCtrl== CTRL_SECOND_PRIORITY && bSecondPriority == false && m_pRunData->sScheduleTime[ucIndex-1].ucScheduleId== 0x1)
+				//{
+					//m_pRunData->sScheduleTime[ucIndex-1].ucGreenTime = 0 ;
+					//m_pRunData->sScheduleTime[ucIndex-1].ucYellowTime = 0 ;
+					//m_pRunData->sScheduleTime[ucIndex-1].ucRedTime= 0 ;
+				//}
 				m_pRunData->ucStageCount++;
 			}
 			else
@@ -1861,10 +1875,12 @@ void CManaKernel::GetStageTime(Byte* pTotalTime,Byte* pElapseTime)
 	{
 		ucEndStepNo = m_pRunData->ucStepNum - 1;
 	}
+
 	for ( Byte ucStepNo=ucStartStepNo; ucStepNo<=ucEndStepNo && ucStepNo<m_pRunData->ucStepNum; ucStepNo++ )
 	{
 		ucTotalTime += m_pRunData->sStageStepInfo[ucStepNo].ucStepLen;
 	}
+
 	for ( Byte ucStepNo=ucStartStepNo; ucStepNo<ucCurStepNo && ucStepNo<m_pRunData->ucStepNum; ucStepNo++ )
 	{
 		ucElapseTime += m_pRunData->sStageStepInfo[ucStepNo].ucStepLen;
@@ -1923,11 +1939,10 @@ void CManaKernel::SetCycleStepInfo(Byte ucLockPhase)
 	for (ucStageIndex=0; ucStageIndex<MAX_SON_SCHEDULE; ucStageIndex++ )//MAX_SON_SCHEDULE
 	{
  		if ( m_pRunData->ucScheduleTimeId == m_pRunData->sScheduleTime[ucStageIndex].ucId )  //ucScheduleTimeId  ucId阶段配时表号
- 			
-		{
+ 		{
 			//根据一个子阶段构造步伐号
 			SetStepInfoWithStage(ucStageIndex,&ucStepIndex,&(m_pRunData->sScheduleTime[ucStageIndex]));// ucStageIndex 子阶段号
-			 //ACE_DEBUG((LM_DEBUG,"%s:%d ucStageIncludeSteps= %d \n" ,__FILE__,__LINE__,m_pRunData->ucStageIncludeSteps[ucStageIndex]));
+			// ACE_DEBUG((LM_DEBUG,"%s:%d ucStageIncludeSteps= %d \n" ,__FILE__,__LINE__,m_pRunData->ucStageIncludeSteps[ucStageIndex]));
 		}
 		else
 		{
@@ -1943,12 +1958,12 @@ void CManaKernel::SetCycleStepInfo(Byte ucLockPhase)
 	m_pRunData->ucRunTime    = m_pRunData->ucStepTime;
 	m_pRunData->ucElapseTime = 0;
 
-	//m_pRunData->ucCycle = 0;
-	//for ( int i=0; i<MAX_STEP && i<m_pRunData->ucStepNum; i++ )
-	//{
-		//m_pRunData->ucCycle += m_pRunData->sStageStepInfo[i].ucStepLen;
-	//}
-	RefreshCycle();
+	m_pRunData->ucCycle = 0;
+	for ( int i=0; i<MAX_STEP && i<m_pRunData->ucStepNum; i++ )
+	{
+		m_pRunData->ucCycle += m_pRunData->sStageStepInfo[i].ucStepLen;
+	}
+
 	//ACE_DEBUG((LM_DEBUG,"%s:%d ucCycle= %d ucStepNum=%d ucStageCount=%d uc0StepTime= %d\n" ,__FILE__,__LINE__,m_pRunData->ucCycle ,m_pRunData->ucStepNum,m_pRunData->ucStageCount,m_pRunData->ucStepTime));
 }
 
@@ -2025,7 +2040,7 @@ Byte CManaKernel::OverlapPhaseToPhase(Uint uiCurAllowPhase,Byte ucOverlapPhaseIn
 Function:       CManaKernel::SetStepInfoWithStage
 Description:    根据一个子阶段设置步伐信息			
 Input:          ucStageIndex  : 当前的子阶段下标
-*      			ucCurStepIndex：当前累计设置的步伐数,即sStageStepInfo的下标
+*      	     ucCurStepIndex：当前累计设置的步伐数,即sStageStepInfo的下标
 *       		pScheduleTime : 子阶段信息的指针，为当前子阶段号对应阶段配时分配情况
 Output:         ucCurStepIndex: 当前累计设置的步伐数,即sStageStepInfo的下标
 Return:         无
@@ -2043,23 +2058,18 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 	Byte *pPhaseColor      = NULL;
 	Byte ucSignalGrp[MAX_CHANNEL]          = {0}; 
 	Byte ucOverlapPhase[MAX_OVERLAP_PHASE] = {0};
-	SPhaseStep sPhaseStep[MAX_PHASE+MAX_OVERLAP_PHASE];
-	
+	SPhaseStep sPhaseStep[MAX_PHASE+MAX_OVERLAP_PHASE];	
 	ACE_OS::memset(sPhaseStep,0,(MAX_PHASE+MAX_OVERLAP_PHASE)*sizeof(SPhaseStep));
-
 	for (Byte i=0; i<MAX_PHASE; i++ )
 	{
-		if ( ( pScheduleTime->usAllowPhase>>i ) & 0x1 )  //放行相位情况,获取该子阶段放行相位的绿黄红时间
+		if(( pScheduleTime->usAllowPhase>>i ) & 0x1 )  //放行相位情况,获取该子阶段放行相位的绿黄红时间
 		{
 			sPhaseStep[ucPhaseIndex].ucPhaseId     = i + 1;
 			sPhaseStep[ucPhaseIndex].bIsAllowPhase = true;
-			GetPhaseStepTime(i,pScheduleTime,sPhaseStep[ucPhaseIndex].ucStepTime); //获取该相位的 绿 绿删 黄 红时间  4个字节表示
+			GetPhaseStepTime(i,pScheduleTime,sPhaseStep[ucPhaseIndex].ucStepTime,ucCurStageIndex); //获取该相位的 绿 绿删 黄 红时间  4个字节表示
 			ucAllowPhaseIndex = ucPhaseIndex;
 			//ACE_DEBUG((LM_DEBUG,"%s:%d PhaseId=%d  sPhaseStep[%d] = %d,Green=%d,GF = %d Yellow = %d Red = %d\n" ,__FILE__,__LINE__,i+1,ucPhaseIndex,sPhaseStep[ucPhaseIndex].ucPhaseId,sPhaseStep[ucPhaseIndex].ucStepTime[0],sPhaseStep[ucPhaseIndex].ucStepTime[1],sPhaseStep[ucPhaseIndex].ucStepTime[2],sPhaseStep[ucPhaseIndex].ucStepTime[3])); // ADD: 20130708 测试感应控制下时间长?
-
-
-			ucPhaseIndex++;
-			
+			ucPhaseIndex++;			
 			//跟随相位情况   READ:20130703 1423
 			GetOverlapPhaseIndex(i+1 , &ucCnt , ucOverlapPhase);
 			if ( ucCnt > 0 )  //该普通相位为包含相位，遍历跟随相位
@@ -2078,11 +2088,10 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 							, pScheduleTime->ucYellowTime);
 						sPhaseStep[ucPhaseIndex].ucPhaseId = ucOverlapPhase[iIndex] + 1;
 						sPhaseStep[ucPhaseIndex].bIsAllowPhase = false;
-					   // ACE_DEBUG((LM_DEBUG,"%s:%d overPhaseId=%d  sPhaseStep[ucPhaseIndex] = %d,Green=%d,GF = %d Yellow = %d\n" ,__FILE__,__LINE__,ucOverlapPhase[iIndex] + 1,ucPhaseIndex,sPhaseStep[ucPhaseIndex].ucStepTime[0],sPhaseStep[ucPhaseIndex].ucStepTime[1],sPhaseStep[ucPhaseIndex].ucStepTime[2])); // ADD: 20130708 测试感应控制下时间长?
+					  //  ACE_DEBUG((LM_DEBUG,"%s:%d overPhaseId=%d  sPhaseStep[ucPhaseIndex] = %d,Green=%d,GF = %d Yellow = %d\n" ,__FILE__,__LINE__,ucOverlapPhase[iIndex] + 1,ucPhaseIndex,sPhaseStep[ucPhaseIndex].ucStepTime[0],sPhaseStep[ucPhaseIndex].ucStepTime[1],sPhaseStep[ucPhaseIndex].ucStepTime[2])); // ADD: 20130708 测试感应控制下时间长?
 
 						ucPhaseIndex++;
 					}
-
 					iIndex++;
 				}
 			}
@@ -2096,11 +2105,11 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 
 	for ( int i=0; i<ucPhaseIndex; i++ ) //ucPhaseIndex 为放行相位数
 	{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d i=%d \n" ,__FILE__,__LINE__,i)); 
+		//ACE_DEBUG((LM_DEBUG,"%s:%d i=%d sPhaseStep[%d].phase=%d \n" ,__FILE__,__LINE__,i,i,sPhaseStep[i].ucPhaseId)); 
 		if ( (ucTmpStepLen = GetPhaseStepLen(&sPhaseStep[i]) ) > 0 )
 		{
 			ucMinStepLen = (ucMinStepLen > ucTmpStepLen ? ucTmpStepLen : ucMinStepLen);
-			//ACE_DEBUG((LM_DEBUG,"%s:%d i=%d ucMinStepLen = %d\n" ,__FILE__,__LINE__,i,ucMinStepLen)); 
+			//ACE_DEBUG((LM_DEBUG,"%s:%d i=%d ucMinStepLen = %d sPhaseStep[%d].phase=%d\n" ,__FILE__,__LINE__,i,ucMinStepLen,i,sPhaseStep[i].ucPhaseId)); 
 		}
 	
 	   // ACE_DEBUG((LM_DEBUG,"%s:%d i=%d,ucMinStepLen= %d ucPhaseIndex=%d \n" ,__FILE__,__LINE__,i,ucMinStepLen,ucPhaseIndex));		
@@ -2109,7 +2118,7 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 		//	ACE_DEBUG((LM_DEBUG,"%s:%d 开始构造步伐数！ \n" ,__FILE__,__LINE__));
 			if ( 200 == ucMinStepLen )  //全部遍历完毕
 			{
-			//	 ACE_DEBUG((LM_DEBUG,"%s:%d ucStageIncludeSteps= %d \n" ,__FILE__,__LINE__,m_pRunData->ucStageIncludeSteps[ucCurStageIndex]));
+				// ACE_DEBUG((LM_DEBUG,"%s:%d ucStageIncludeSteps= %d \n" ,__FILE__,__LINE__,m_pRunData->ucStageIncludeSteps[ucCurStageIndex]));
 				return;
 			}
 
@@ -2302,16 +2311,17 @@ Input:          ucPhaseId:相位号  pScheduleTime:子阶段信息
 Output:         pTime:各个时间
 Return:         无
 **********************************************************************************/
-void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,Byte* pTime)
+void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,Byte* pTime,Byte ucCurStageIndex)
 {
-	pTime[2] = pScheduleTime->ucYellowTime;  //yellow
-	pTime[3] = pScheduleTime->ucRedTime;     //red
+	bool bExitNextStage             = false;   
+	Byte ucNextStageIndex           = ucCurStageIndex + 1;  //下一个阶段下标
+	Uint32 usNextAllowPhase = 0; 
+	pTime[2] = pScheduleTime->ucYellowTime;    //yellow
+	pTime[3] = pScheduleTime->ucRedTime;       //red        
 
-	if ( /*( (m_pTscConfig->sPhase[ucPhaseId].ucType>>5) & 0x1 )*/ 
+	if ( /*( (m_pTscConfig->sPhase[ucPhaseId].ucType>>5) & 0x1 )*/
 		ExitStageStretchPhase(pScheduleTime)
-		&& ( (CTRL_VEHACTUATED == m_pRunData->uiCtrl)
-		|| (CTRL_MAIN_PRIORITY == m_pRunData->uiCtrl ) 
-		|| (CTRL_SECOND_PRIORITY == m_pRunData->uiCtrl) ) 
+		&& ( (CTRL_VEHACTUATED == m_pRunData->uiCtrl)|| (CTRL_MAIN_PRIORITY == m_pRunData->uiCtrl )|| (CTRL_SECOND_PRIORITY == m_pRunData->uiCtrl) ) 
 		/*&& (m_sPhaseDet[ucPhaseId].iRoadwayCnt > 0)*/ )  //感应控制  阶段的相位组存在弹性相位 
 	{
 		//pTime[0] = m_pTscConfig->sPhase[ucPhaseId].ucMinGreen;  //min green
@@ -2336,15 +2346,24 @@ void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,B
 			pTime[0] = pScheduleTime->ucGreenTime;         //green
 		}
 	}
-	//if(m_iTimePatternId ==251 || m_iTimePatternId ==250) //特殊相位组合方案无绿闪
-	//{
-		//	pTime[1] = 0;  //green flash
-		//	pTime[0] = pScheduleTime->ucGreenTime;         //green
-	//}
 	if ( (m_pTscConfig->sPhase[ucPhaseId].ucOption>>1) & 0x1 )      //行人相位
 	{
 		pTime[2] = 0;    //行人相位没有黄灯
 	}
+	if ( ucNextStageIndex >= m_pRunData->ucStageCount )
+	{
+		ucNextStageIndex = 0;
+	}
+	usNextAllowPhase = m_pRunData->sScheduleTime[ucNextStageIndex].usAllowPhase;
+
+	if((usNextAllowPhase>>ucPhaseId)&0x1)
+	{
+		pTime[0] = pTime[0]+pTime[1]+pScheduleTime->ucYellowTime+pTime[3];
+		pTime[1]=0x0;
+		pTime[2]=0x0;
+		pTime[3]=0x0;
+	}
+	
 	//ACE_DEBUG((LM_DEBUG,"%s:%d ucPhaseId=%d  green time=%d,gf time = %d yellow time = %d\n" ,__FILE__,__LINE__,ucPhaseId+1,pTime[0],pTime[1],pTime[2]));
 }
 
@@ -2358,7 +2377,7 @@ Input:           ucCurStageIndex  - 当前阶段配时下标
 Output:         pTime - 绿、绿闪、黄、全红时间
 Return:         无
 **********************************************************************************/
-void CManaKernel::GetOverlapPhaseStepTime(  
+void CManaKernel::GetOverlapPhaseStepTime(
 											    Byte ucCurStageIndex
 											  , Byte ucOverlapPhaseId 
 											  , Byte* pIncludeTime
@@ -2369,7 +2388,7 @@ void CManaKernel::GetOverlapPhaseStepTime(
 	bool bExitNextStage             = false;                //包含相位存在下一个阶段里
 	Byte ucCnt                      = 0;
 	Byte ucNextStageIndex           = ucCurStageIndex + 1;  //下一个阶段下标
-	unsigned short usNextAllowPhase = 0;                    //下一个相位组
+	Uint32 usNextAllowPhase = 0;                    //下一个相位组
 	int  iIndex                     = 0;
 	int  jIndex                     = 0;
 	Byte ucOverlapPhase[MAX_OVERLAP_PHASE] = {0};
@@ -2410,7 +2429,6 @@ void CManaKernel::GetOverlapPhaseStepTime(
         iIndex++;
 	}
 
-
 	if ( bExitNextStage )   //跟随相位存在于下一个阶段
 	{
 		pOverlapTime[0] = pIncludeTime[0] + pIncludeTime[1] + pIncludeTime[2] + pIncludeTime[3];  //green
@@ -2419,10 +2437,12 @@ void CManaKernel::GetOverlapPhaseStepTime(
 		pOverlapTime[2] = 0;  //yellow
 		pOverlapTime[3] = 0;  //red
 
-		if ( (m_pTscConfig->sPhase[ucPhaseIndex].ucOption>>1) & 0x1 )      //行人相位
-		{
-			pOverlapTime[0] += ucStageYellow;  //行人相位 补上黄闪的时间
-		}
+		//if ( (m_pTscConfig->sPhase[ucPhaseIndex].ucOption>>1) & 0x1 )      //行人相位MOD:20150803 这里修改
+		// 跟随相位的母相位不能是人行相位，否则在普通相位设置为连续放行的
+		//时候，如果母相位是人行连续放行，则这里会多添加黄灯时间。
+	//	{
+		//pOverlapTime[0] += ucStageYellow;  //行人相位 补上黄闪的时间
+	//	}
 	}
 	else  //跟随相位在该阶段正常结束，即需要经过正常的过度步
 	{
@@ -2437,17 +2457,15 @@ void CManaKernel::GetOverlapPhaseStepTime(
 				ucTailYw =  m_pTscConfig->sOverlapPhase[iDex].ucTailYellow ;
 				ucTailRed = m_pTscConfig->sOverlapPhase[iDex].ucTailRed ;
 				//ACE_DEBUG((LM_DEBUG,"%s:%d ucTailGreen =%d ,ucTailYw = %d ,ucTailRed = %d  \n" ,__FILE__,__LINE__,ucTailGreen,ucTailYw,ucTailRed));
-				break ;
-				
+				break ;				
 			}
-
 		}
 		if(ucTailGreen != 0)
 		{
 			pOverlapTime[0] = pIncludeTime[0]+pIncludeTime[1]+ucTailGreen;  //green
-			pOverlapTime[1] = 0;  //green flash
-			pOverlapTime[2] = ucTailYw;  //yellow
-			pOverlapTime[3] = ucTailRed; //red
+			pOverlapTime[1] = 0;  //green flash green flash
+			pOverlapTime[2] = ucTailYw;  //yellow yellow
+			pOverlapTime[3] = ucTailRed; //red red
 		}
 		else
 		{
@@ -2610,6 +2628,7 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 		return;
 	}
 	
+	
 	ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** New Ctrl:%d,Old Ctrl:%d\n",__FILE__,__LINE__,uiCtrl,m_pRunData->uiCtrl));
 
 	if(uiCtrl == CTRL_SCHEDULE && m_pRunData->uiCtrl == CTRL_VEHACTUATED)
@@ -2653,6 +2672,10 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 			}
 			//ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
 		}
+	}
+	if(CTRL_UTCS== uiCtrl && bDegrade == true && bUTS == false)//如果已经从联网降级多时段表控制方式还是联网则不响应
+	{
+		return ;
 	}
 	if ( uiCtrl == CTRL_LAST_CTRL )  //上次控制方式
 	{		
@@ -3830,9 +3853,7 @@ Output:         无
 Return:         无
 **********************************************************************************/
 void CManaKernel::GetStageDetector(int iStageNo)
-{
-	//Byte ucDelPhase          = 0;
-	//Byte ucOverlapPhaseIndex = 0;
+{	
 	Byte ucPhaseIndex        = 0;
 	int iNextStage           = iStageNo + 1;
 	int iNextStep            = 0;
@@ -4494,7 +4515,7 @@ void CManaKernel::SetLampColor(Byte ColorType)
 						m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 1;
 					}
 					else
-					{
+					{						
 						m_pRunData->sStageStepInfo[0].ucLampOn[i*MAX_LAMP_NUM_PER_BOARD+j]    = 0;
 						m_pRunData->sStageStepInfo[0].ucLampFlash[i*MAX_LAMP_NUM_PER_BOARD+j] = 0;
 					}
@@ -4689,42 +4710,5 @@ void CManaKernel::SetWirelessBtnDirecCfg(Uint RecvBtnDirecData ,Byte Lampcolor)
 	
 }
 
-/**************************************************************
-Function:        CManaKernel::GetPhaseStageNo
-Description:    根据相位号获取当前方案阶段号
-Input:        ucPhaseId 相位号			  
-Output:         无
-Return:         相位所属第一个阶段号
-Date:            2015-5-18 17:06
-***************************************************************/
 
-Byte CManaKernel::GetPhaseStageNo(Byte ucPhaseId)
-{
-	for(Byte index = 0 ;index<MAX_SON_SCHEDULE ;index++)
-	{
-		if((m_pRunData->sScheduleTime[index].usAllowPhase >>(ucPhaseId-1))&0x1)
-		{
-			return m_pRunData->sScheduleTime[index].ucScheduleId;
-		}
-	}
-	return 0xff ;
-}
-
-/**************************************************************
-Function:        CManaKernel::RefreshCycle
-Description:    刷新信号机周期时长信息
-Input:        	无	  
-Output:         无
-Return:         无
-Date:            2015-5-20 9:11
-***************************************************************/
-
-void CManaKernel::RefreshCycle() 
-{
-	m_pRunData->ucCycle = 0 ;
-	for ( Byte i=0; i<MAX_STEP && i<m_pRunData->ucStepNum; i++ )
-	{
-		m_pRunData->ucCycle += m_pRunData->sStageStepInfo[i].ucStepLen;
-	}
-}
 

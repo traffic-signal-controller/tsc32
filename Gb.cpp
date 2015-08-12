@@ -27,7 +27,6 @@ History:
 #include "ComFunc.h"
 #include "Gsm.h"
 #include "WirelessButtons.h"
-#include "BusPriority.h"
 
 /**************************************************************
 Function:        main
@@ -157,7 +156,6 @@ static void *RunWirelessBtnHandle(void *arg)
 }
 
 
-
 /**************************************************************
 Function:        BroadCast
 Description:    广播线程函数，回送广播消息，包括IP地址，系统端口，
@@ -205,8 +203,8 @@ static void* BroadCast(void* arg)
 			ucSendCount += 4;
 			//信号机版本
 			(sBroadcastMessage+ucSendCount)[0] = 0x2;
-			(sBroadcastMessage+ucSendCount)[1] = 0xF5;
-			(sBroadcastMessage+ucSendCount)[2] = 0xD;
+			(sBroadcastMessage+ucSendCount)[1] = 0xF4;
+			(sBroadcastMessage+ucSendCount)[2] = 0xA;
 			 ucSendCount += 3;
 
 			udpBcast.send(sBroadcastMessage , ucSendCount , addrRemote);
@@ -379,18 +377,6 @@ void RunGb()
 			TscAceDebug((LM_DEBUG,"Error: MainBackup thread faild\n"));
 		}
 	
- 	if ( ACE_Thread::spawn((ACE_THR_FUNC)CBusPriority::RunRecevBusPriority, //公交优先处理线程
-								0,
-								THR_NEW_LWP | THR_JOINABLE,
-								&tThreadId[10],
-								&hThreadHandle[10],
-								ACE_DEFAULT_THREAD_PRIORITY,
-								0,
-								ACE_DEFAULT_THREAD_STACKSIZE,
-								0) == -1 )
-		{
-			TscAceDebug((LM_DEBUG,"Error: RunRecevBusPriority thread faild\n"));
-		}
 	ACE_Thread::join(hThreadHandle[0]);   //回收线程资源
 	ACE_Thread::join(hThreadHandle[1]);
 	ACE_Thread::join(hThreadHandle[2]);
@@ -399,7 +385,7 @@ void RunGb()
 	ACE_Thread::join(hThreadHandle[5]);
 	ACE_Thread::join(hThreadHandle[8]);
 	ACE_Thread::join(hThreadHandle[9]);
-	ACE_Thread::join(hThreadHandle[10]);
+
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
 	{
 		ACE_Thread::join(hThreadHandle[6]);

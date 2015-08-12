@@ -15,6 +15,7 @@ History:
 #include "DbInstance.h"
 #include "Can.h"
 #include "FlashMac.h"
+#include "GaCountDown.h"
 
 #ifndef WINDOWS
 #include <stdio.h>
@@ -377,6 +378,8 @@ Return:         нч
 ***************************************************************/
 void CLampBoard::CheckLight()
 {
+	//if(IsChkLight == false || pManakernel->m_pRunData->bIsChkLght == false )				
+	//	return ;		
 	 
 	for ( Byte iBdINdex=0; iBdINdex<MAX_LAMP_BOARD; iBdINdex++ )
 	{	
@@ -794,6 +797,27 @@ Byte CLampBoard::GetLampBoardVer(Byte LampBoardIndex)
 	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN , FRAME_MODE_P2P , ucLampBoardCanAddr , &(sSendFrameTmp.ulCanId));			
 	Can::CreateInstance()->Send(sSendFrameTmp);
 	
+}
+
+void CLampBoard::SetLampChannelColor(Byte ColorType,Byte CountDownTime)
+{
+	CManaKernel *pManakernel = CManaKernel::CreateInstance();
+	CGaCountDown *pGaCountDown = CGaCountDown::CreateInstance(); 
+	for(Byte LampIndex= 0 ;LampIndex< MAX_LAMP ;LampIndex++)
+	{
+		if(m_ucLampOn[LampIndex]==0x1 && ColorType == 0x3 && (LampIndex%0x3 ==0x0))
+		{
+			if( (pManakernel->m_pTscConfig->sChannel[LampIndex/0x3].ucFlashAuto == 0x4)&& (pGaCountDown->GaGetCntTime(LampIndex) ==CountDownTime))
+			{
+				
+				//ACE_OS::printf("%s:%d LampIndex=%d LampGroup =%d \r\n",__FILE__,__LINE__,LampIndex,LampIndex/0x3);
+				 m_ucLampFlash[LampIndex]=0x1 ;
+
+			}
+		
+		}
+	}
+	 
 }
 
 

@@ -13,7 +13,6 @@ History:
 #include "DbInstance.h"
 #include "ComFunc.h"
 #include "WirelessButtons.h"
-#include "BusPriority.h"
 
 /**************************************************************
 Function:        CTscMsgQueue::CTscMsgQueue
@@ -120,7 +119,6 @@ void CTscMsgQueue::DealData()
 
 	CManaKernel* pWorkParaManager = CManaKernel::CreateInstance();
 	CWirelessBtn* pWirelessBtn = CWirelessBtn::CreateInstance();
-	CBusPriority* PBusPriority = CBusPriority::CreateInstance();
 
 	for(;;)
 	{
@@ -193,9 +191,6 @@ void CTscMsgQueue::DealData()
 			break ;
 		case TSC_MSG_MANUALBUTTON_HANDLE:
 			pWirelessBtn->HandleSpecialDirec((Uint*)sMsg.pDataBuf);
-			break ;
-		case TSC_MSG_BUSPRIORITY_HANDLE:
-			PBusPriority->HandBusPriority((SBusPriorityData*)sMsg.pDataBuf);
 			break ;
 		default:
 			break;

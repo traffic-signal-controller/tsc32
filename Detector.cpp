@@ -1482,16 +1482,18 @@ void CDetector::IsVehileHaveCar()
 			else  if ( !bOtherWayCar ) //当前主相位 + 次车道在该步伐一直没有车
 			{
 				bOtherTmp = IsHaveCarPhaseGrp(uiNextPhase, ucPhaseIndex , sPhaseDet);   //当前次车道是否有车
+			//	ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bOtherTmp=%s\r\n",__FILE__,__LINE__,(bOtherTmp == false)?"false":"true",uiNextPhase);
 				if ( bOtherTmp )
 				{
-					bOtherWayCar = true;
+					bOtherWayCar = true; //次车道有车,次车道可以放行绿灯
+					if(CManaKernel::CreateInstance()->bSecondPriority ==false)
+						CManaKernel::CreateInstance()->bSecondPriority = true ;
 				}
-
-				if ( !bOtherWayCar && IsHaveCarPhaseGrp(uiCurPhase, ucPhaseIndex , sPhaseDet) )  //次车道在该步伐一直没有车 + 主车道有车 
+				//if ( !bOtherWayCar && IsHaveCarPhaseGrp(uiCurPhase, ucPhaseIndex , sPhaseDet) )  //次车道在该步伐一直没有车 + 主车道有车 
 					                    
-				{
-					bHaveCar = true;    
-				}
+			//	{
+					//bHaveCar = true;    
+				//}
 			}
 			break;
 		default:

@@ -612,31 +612,6 @@ struct SendCntDownNum
 	bool bUsed ;
 	ACE_INET_Addr addClient;  //客户端地址
 };
-/*
-*公交优先数据包结构
-*/
-struct SBusPriorityData 
-{
-	Byte RfId ; //射频设备ID号，莫惹和相位号一一对应.
-	Byte BusPhaseId ;
-	Uint ucTransTime ; //传输时间utc
-};
-
-/*
-*事前分析控制传递参数
-*/
-struct SPreAnalysisParaData 
-{
-	Byte DevId ; //设备号	
-	bool    IsUsed ;
-	bool    IsOffline ; //是否离线
-	Ushort CarLength ; //车辆排队长度
-	Ushort CarNumber ; //车辆数目
-	Byte   CarDirecLamp ; //车辆车道方向
-	Byte   PhaseId ;	
-};
-
-
 
 //#pragma pack(pop)
 #undef PACKED 

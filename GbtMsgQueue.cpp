@@ -832,19 +832,6 @@ void CGbtMsgQueue::PackExtendObject(Byte ucDealDataIndex)
 			SetSmsFunc(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex,iRecvBufLen); 
 		}
 		break;
-	case OBJECT_BUSPRIORITY_CFG:
-		if ( GBT_SEEK_REQ == ucRecvOptType )  
-		{
-			
-			Byte ucQueryType =( m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf)[iRecvIndex++] ;
-			GetBusPriorityCfg(m_sGbtDealData[ucDealDataIndex].sSendFrame.ucBuf,ucQueryType,&iSendIndex); 			
-		}
-		else if((GBT_SET_REQ == ucRecvOptType) || (GBT_SET_REQ_NOACK == ucRecvOptType)) //设置
-		{		 
-			ACE_OS::printf("%s:%d  Set Buspriority Parameters!",__FILE__,__LINE__);
-			SetBusPriorityCfg(m_sGbtDealData[ucDealDataIndex].sRecvFrame.ucBuf,iRecvIndex); 
-		}
-		break ;
 	default:
 		ACE_DEBUG((LM_DEBUG,"%s:%d,ObjectId error objectId:%d\n",__FILE__,__LINE__,ucObjId));
 		GotoMsgError(ucDealDataIndex,ucErrorSts,ucErrorIdx);
@@ -1133,7 +1120,6 @@ void CGbtMsgQueue::GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId)
 			ucTmp = pTscCfg->sSpecFun[FUN_FLASHCNTDOWN_TIME].ucValue;
 			pBuf[iSendIndex++] = ucTmp;
 		 	break ;
-		
 	   /*********************ADD 20150129*******************************/
 		default:
 			break;
@@ -1433,7 +1419,7 @@ void CGbtMsgQueue::SetCmuAndCtrl(Byte* pBuf,int& iRecvIndex , Byte ucSubId)
 			pTscCfg->sSpecFun[FUN_RS485_BITRATE].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_RS485_BITRATE+1 , ucTmp);
 		 	break;	
-	    case 17:
+		case 17:
 		 	ucTmp = pBuf[iRecvIndex++];
 			pTscCfg->sSpecFun[FUN_FLASHCNTDOWN_TIME].ucValue = ucTmp;
 			(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_FLASHCNTDOWN_TIME+1 , ucTmp);
@@ -1456,7 +1442,7 @@ void CGbtMsgQueue::GetWatchPara(Byte* pBuf,int *iSendIndex)
 	
 	CMacControl * pMacControl = CMacControl::CreateInstance() ;
 	CPowerBoard * pPowerBoard = CPowerBoard::CreateInstance();
-	pMacControl->GetEnvSts();
+	//pMacControl->GetEnvSts();
 	pPowerBoard->CheckVoltage();
 	ACE_OS::sleep(ACE_Time_Value(0, 100000));
 
@@ -1808,47 +1794,6 @@ void CGbtMsgQueue::SetButtonPhase(Byte* pBuf,int& iRecvIndex)
 }
 
 
-void CGbtMsgQueue::SetBusPriorityCfg(Byte* pBuf,int& iRecvIndex)
-{
-	try
-	{
-		Byte ucTmp = 0x0 ;		
-		STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;
-		ucTmp = pBuf[iRecvIndex++];
-		pTscCfg->sSpecFun[FUN_BUS_PRIORITY].ucValue  = ucTmp;		
-		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY+1 , ucTmp);
-		ucTmp = pBuf[iRecvIndex++];
-		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_EARLYRED].ucValue = ucTmp;		
-		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_EARLYRED+1, ucTmp);
-		ucTmp = pBuf[iRecvIndex++];
-		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_GREENDELAY].ucValue = ucTmp;		
-		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_GREENDELAY+1, ucTmp);
-		ucTmp = pBuf[iRecvIndex++];
-		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_DEFAULTTIME].ucValue = ucTmp;		
-		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_DEFAULTTIME+1 , ucTmp);
-		ucTmp = pBuf[iRecvIndex++];
-		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_NONBUSPHASEREDUCE].ucValue  = ucTmp;		
-		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_NONBUSPHASEREDUCE+1, ucTmp);
-		ucTmp = pBuf[iRecvIndex++];
-		pTscCfg->sSpecFun[FUN_BUS_PRIORITY_BUSPHASEID].ucValue = ucTmp;	
-		(CDbInstance::m_cGbtTscDb).ModSpecFun(FUN_BUS_PRIORITY_BUSPHASEID+1 , ucTmp);		
-		
-		
-	}
-	catch(...)
-	{
-		ACE_OS::printf("%s:%d BusPrioty Configure  error!\r\n",__FILE__,__LINE__);
-		return ;
-	}
-
-
-
-}
-
-
-
-
-
 /**************************************************************
 Function:       CGbtMsgQueue::SetCommandSignal
 Description:   接收上位机控制信号机信号指令包括下一相位方向等.
@@ -1936,11 +1881,10 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 {
 	CManaKernel *pManakernel = CManaKernel::CreateInstance();
 	Byte Tmp = pBuf[iRecvIndex++];	
-	//char SysEypSerial[32]={0};	
 	switch(Tmp)
 	{
 		case 0x01 :	
-			/*
+			
 			pManakernel->m_pRunData->uiUtcsHeartBeat = 0; //接收到心跳，累积置0
 			if(pManakernel->bUTS == false)
 			{
@@ -1958,7 +1902,7 @@ void CGbtMsgQueue::SetSysFunc(Byte* pBuf,int& iRecvIndex)
 					pManakernel->SwitchStatus(STANDARD);
 				CMainBoardLed::CreateInstance()->DoModeLed(false,true);  //MOD指示灯正常
 			}
-			*/
+			
 			break ;
 		case 0x02 :			
 			(CDbInstance::m_cGbtTscDb).SetEypSerial();
@@ -2082,51 +2026,6 @@ void CGbtMsgQueue::GetFlashCfg(Byte* pBuf,int *iSendIndex)
 	*iSendIndex += 1;
 
 }
-
-
-/**************************************************************
-Function:       CGbtMsgQueue::GetBusPriorityCfg
-Description:    获取公交优先参数设置	
-Input:         	iSendIndex     发送帧当前写地址
-Output:         pBuf   发送帧地址指针
-Return:         无
-Date:            20150615
-***************************************************************/
-void CGbtMsgQueue::GetBusPriorityCfg(Byte* pBuf,Byte ucQueryType, int *iSendIndex)
-{
-	try	{
-			if(ucQueryType==0x1)//查询参数
-			{
-				STscConfig* pTscCfg = CManaKernel::CreateInstance()->m_pTscConfig;		
-				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY].ucValue;	
-				*iSendIndex += 1;
-				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_EARLYRED].ucValue;
-				*iSendIndex += 1;
-		
-				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_GREENDELAY].ucValue;		
-				*iSendIndex += 1;
-				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_DEFAULTTIME].ucValue;		
-				*iSendIndex += 1;
-				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_NONBUSPHASEREDUCE].ucValue;		
-				*iSendIndex += 1;
-				pBuf[*iSendIndex] = pTscCfg->sSpecFun[FUN_BUS_PRIORITY_BUSPHASEID].ucValue;
-				*iSendIndex += 1;
-			}
-			else if(ucQueryType ==0x2) //查询状态
-			{
-				
-
-			}
-		}		
-	catch(...)
-	{
-		ACE_OS::printf("%s:%d Get BusPrioty Configure  error!\r\n",__FILE__,__LINE__);
-		return ;
-	}
-		
-
-}
-
 
 
 /**************************************************************
@@ -4820,7 +4719,6 @@ bool CGbtMsgQueue::IsExtendObject(Byte ucObjectFlag)
 		case OBJECT_GSM_CFG :            //配置GSM功能
 		case OBJECT_COMMAND_SIGNAL:      //上位机命令控制下一阶段相位和方向
 		case OBJECT_BUTTONPHASE_CFG:     //方向按键相位配置
-		case OBJECT_BUSPRIORITY_CFG:     //公交优先设置
 			return true;
 		default:
 			return false;

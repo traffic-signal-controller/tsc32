@@ -24,8 +24,6 @@ public:
 	void CorrectTime(Byte ucType,Byte* pValue);
 	void GetTscStatus(Byte ucDealDataIndex);
 	void GetTscExStatus(Byte ucDealDataIndex);
-//	unsigned int GetTscCtrl();
-//	unsigned int GetWorkStatus();
 
 	void SetRestart();
 	bool GetRestart();
@@ -57,12 +55,7 @@ public:
 	void ChangePatter(Byte iParama);	 //ADD: 201309181530
 	void SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte ucLogVau3,Byte ucLogVau4); //ADD:201309251100
 	void  SetWirelessBtnDirecCfg(Uint RecvBtnDirecData , Byte Lampcolor); //ADD:201410211700
-	
-	void CwpmGetCntDownSecStep();
-	Byte GetPhaseStageNo(Byte ucPhaseId) ;
-
-	void GetPhaseStatus(SPhaseSts* pPhaseSts);
-	void RefreshCycle(); //ADD 20150515
+	void CwpmGetCntDownSecStep();	
 
 	bool m_bFinishBoot;         //psc模式使用变量 开机完成过度步后进入可以进入psc模式
 	STscConfig* m_pTscConfig;   //信号机配置信息A
@@ -91,10 +84,11 @@ public:
 	bool GetSonScheduleTime(Byte ucScheduleTimeId);
 	void SetStepInfoWithStage(Byte ucCurStageIndex,Byte* ucCurStepIndex
 		                                        ,SScheduleTime* pScheduleTime);
-	void GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,Byte* pTime);
+	void GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,Byte* pTime,Byte ucCurStageIndex);
 	Byte GetPhaseStepLen( SPhaseStep* pPhaseStep );
 	Byte GetPhaseStepIndex( SPhaseStep* pPhaseStep );
 
+	void GetPhaseStatus(SPhaseSts* pPhaseSts);
 	void GetOverlapPhaseStatus(SOverlapPhaseSts* pOverlapPhaseSts);
 	void GetChannelStatus(SChannelSts* pChannelSts);
 	Byte GetPhaseIdWithChannel(Byte ucChannelNo);

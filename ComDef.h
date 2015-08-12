@@ -175,8 +175,7 @@ enum
 	CTRL_SCHEDULE_OFF    = 12 ,  //时段表关灯	
 	CTRL_SCHEDULE_FLASH  = 13 ,  //时段表黄闪	
 	CTRL_SCHEDULE_RED    = 14 ,  //时段表全红
-	CTRL_PREANALYSIS     = 15 ,
-	CTRL_LAST_CTRL       = 16    //上次的控制方式
+	CTRL_LAST_CTRL       = 15    //上次的控制方式
 };
 
 /*
@@ -216,8 +215,7 @@ enum
 	TSC_MSG_TIMEPATTERN      ,  //特定的时间方案
 	TSC_MSG_GREENCONFLICT    ,   //绿冲突
 	TSC_MSG_PATTER_RECOVER   ,    //特定方案切换
-	TSC_MSG_MANUALBUTTON_HANDLE ,  //无线手控按键处理ADD:201411051548
-	TSC_MSG_BUSPRIORITY_HANDLE     //公交优先处理
+	TSC_MSG_MANUALBUTTON_HANDLE   //无线手控按键处理ADD:201411051548
 };
 
 /*
@@ -362,13 +360,7 @@ enum
 	FUN_RS485_BITRATE       =24 , //485倒计时比特率 0-9600 1-2400-2-4800 3-38400   4-15200
 	
 	FUN_FLASHCNTDOWN_TIME   =25,  //闪断式倒计时闪断时间 0-0ms 1-50ms 2-100ms,以此类推. //ADD 20150605
-	FUN_BUS_PRIORITY        =26 , //公交优先启用
-	FUN_BUS_PRIORITY_EARLYRED = 27, //公交优先红灯早断类型 0-最小绿 1-设定值
-	FUN_BUS_PRIORITY_GREENDELAY = 28,//公交优先绿灯延长时间
-	FUN_BUS_PRIORITY_DEFAULTTIME = 29, //公交车从读卡器位置到通过路口默认时间
-	FUN_BUS_PRIORITY_NONBUSPHASEREDUCE = 30, //非公交相位缩短时间
-	FUN_BUS_PRIORITY_BUSPHASEID        = 31, //公交相位
-	FUN_COUNT                 = 32    // 总到特定功能数量值
+	FUN_COUNT          = 26      // 总到特定功能数量值
 };
 
 /*

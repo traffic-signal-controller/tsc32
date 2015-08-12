@@ -22,7 +22,7 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
           GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o 		\
           GbtMsgQueue.o  Gb.o            Can.o         	ComFunc.o		\
 	 	  MacControl.o	 MainBackup.o	 SerialCtrl.o	Configure.o	 Gsm.o \
-	 	  WirelessButtons.o BusPriority.o PreAnalysis.o
+	 	  WirelessButtons.o
 
 
 	$(CC) $(LIB) $(CFLAGS) \
@@ -35,7 +35,7 @@ Gb.aiton: GbtTimer.o      PowerBoard.o    IoOperate.o  	\
         GbtExchg.o     MainBoardLed.o  TimerManager.o  ManaKernel.o      \
         GbtMsgQueue.o  Gb.o         	Can.o 			ComFunc.o      \
 		MacControl.o 	MainBackup.o     SerialCtrl.o	Configure.o	 Gsm.o   \
-		WirelessButtons.o  BusPriority.o  PreAnalysis.o -o Gb.aiton 
+		WirelessButtons.o   -o Gb.aiton 
 
 
 release:

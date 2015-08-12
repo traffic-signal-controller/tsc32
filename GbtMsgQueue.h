@@ -126,14 +126,13 @@ enum
 	OBJECT_YWFLASH_CFG      = 0xe1,   //ª∆…¡∆˜≈‰÷√
 	OBJECT_DET_EXTCFG       = 0xe2,   //ºÏ≤‚∆˜¿©’π≈‰÷√
 	OBJECT_LAMPBOARD_CFG    = 0xe3,   //µ∆øÿ∞Âµ∆≈›ºÏ≤‚∫Õ∫Ï¬Ã≥ÂÕªºÏ≤‚≈‰÷√
-	OBJECT_PSCBTN_NUM 	    = 0xee,    //ƒ£ƒ‚8Œª––»À∞¥≈ • ‰»Î ADD:2013 0829 1540
+	OBJECT_PSCBTN_NUM 	    = 0xee,    //ƒ£ƒ‚8Œª––»À∞¥≈• ‰»Î ADD:2013 0829 1540
 	OBJECT_TMPPATTERN_CFG   = 0xef,    //12∑ΩœÚ¡Ÿ ±◊È∫œ∑Ω∞∏£¨ƒ¨»œ60√Î
 	OBJECT_SYSFUNC_CFG      = 0xe4,      //œµÕ≥∆‰À˚π¶ƒ‹…Ë÷√
 	OBJECT_SENDCLIENT_CNTDOWN = 0xe6 ,
 	OBJECT_POWERBOARD_CFG     = 0xe7,   //µÁ‘¥∞Â≈‰÷√
 	OBJECT_GSM_CFG            = 0xe8 ,  //GSM≈‰÷√
-	OBJECT_BUTTONPHASE_CFG    = 0xe9 ,   //ƒ£ƒ‚Œﬁœﬂ∞¥º¸∞¥≈•
-	OBJECT_BUSPRIORITY_CFG    = 0xea     //π´Ωª”≈œ»≈‰÷√
+	OBJECT_BUTTONPHASE_CFG    = 0xe9    //ƒ£ƒ‚Œﬁœﬂ∞¥º¸∞¥≈•
 };
 /*****************GBT–≠“È∂‘œÛ±Í÷æ¿‡–Õ∫Õ¿©≥‰–≠“È±Í÷æ¿‡–Õƒ«∏ˆ√∂æŸ********************/
 
@@ -222,8 +221,7 @@ private:
 	void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
 	void SetCommandSignal(Byte* pBuf,int& iRecvIndex) ;  //ADD 201409231002
 	void SetButtonPhase(Byte* pBuf,int& iRecvIndex);        //ADD 201410181052
-    void SetBusPriorityCfg(Byte* pBuf,int& iRecvIndex);  //ADD 20150615
-    void GetBusPriorityCfg(Byte* pBuf,int *iSendIndex) ;  //ADD: 2015 0615 10 30
+
 	//Byte m_ucAddrNum;
 	ACE_Message_Queue<ACE_MT_SYNCH>* m_pMsgQue;
       

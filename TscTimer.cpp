@@ -23,7 +23,6 @@ History:
 #include "GaCountDown.h"
 #include "MainBackup.h"
 #include "Can.h"
-#include "PreAnalysis.h"
 
 
 /************************ADD:201309231530***************************/
@@ -36,7 +35,6 @@ static MainBackup*        pMainBackup      = MainBackup::CreateInstance();      
 static CDetector*      pDetector    = CDetector::CreateInstance() ;  		 //ADD: 20130709 945	
 static CPscMode * pCPscMode = CPscMode::CreateInstance() ;	
 static CGaCountDown *pGaCountDown = CGaCountDown::CreateInstance();
-static CPreAnalysis *pPreAnalysis = CPreAnalysis::CreateInstance();
 static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
 /************************ADD:201309231530***************************/	
 
@@ -53,7 +51,6 @@ CTscTimer::CTscTimer(Byte ucMaxTick)
 	m_ucTick    = 0;
 	m_ucMaxTick = ucMaxTick;
 	m_bWatchdog = true;    		//开启看门狗
-   	//m_bWatchdog = false;      //临时关闭看门狗   //MOD:20130522 1135
 	if ( m_bWatchdog )
 	{
 		WatchDog::CreateInstance()->OpenWatchdog();
@@ -85,14 +82,14 @@ Return:         0
 ***************************************************************/
 int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /* = 0 */)
 {
-	//ACE_Date_Time tvTime(ACE_OS::gettimeofday());
-	//static int num = 0 ;
 	Byte ucModeType = pWorkParaManager->m_pRunData->ucWorkMode ; //ADD: 2013 0828 0931
+
 	//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 	//	pDetector->SearchAllStatus();  //ADD: 2013 0723 1620		
 	//手控按钮每100ms侦查一次  // ADD:0514 9:42
 	//pMainBackup->DoManual();
-	//pMainBackup->Recevie();	
+	//pMainBackup->Recevie();
+	
 	switch ( m_ucTick )
 	{
 	case 0: 
@@ -102,16 +99,19 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		ChooseDecTime();
 		pLamp->SendLamp();//4	////4个灯控板信息发送	
 		//pMainBoardLed->DoRunLed();  
-		
+		if(pRunData->uiCtrl==CTRL_UTCS)
+			pRunData->uiUtcsHeartBeat++;
 		break;
 	case 1:
-		//pMacControl->GetEnvSts(); 
+		pMacControl->GetEnvSts(); 
 		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28			
-		pMacControl->SndLcdShow() ; //ADD:201309281710		
+		pMacControl->SndLcdShow() ; //ADD:201309281710
+		
 		break;
 	case 2: 		
 		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-			pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620		
+			pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620
+		
 		//手控按钮每100ms侦查一次  // ADD:0514 9:42
 		pMainBackup->DoManual();
 		break;
@@ -123,6 +123,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 			pCPscMode->DealButton();
 		}
 		break;
+
 	case 4:	
 		CPowerBoard::iHeartBeat++;
 		if(CPowerBoard::iHeartBeat >2)
@@ -134,7 +135,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		pPower->CheckVoltage();
 		break;
 	case 5://500ms 执行一次
-	
+		
 		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_FLASHOFF) //这里2表示闪断式倒计时
 		{	
 			if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
@@ -153,21 +154,23 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 				    ucMode = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode ;
 					ucPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].usPhase ;
 					ucOverPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucOverlapPhase ;
-					if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0||ucOverPhaseId !=0 ) )
+					if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0 || ucOverPhaseId !=0 ) )
 					{					
 						Byte ucSignalGrpNum = 0;					
 						Byte ucSignalGrp[MAX_CHANNEL] = {0};
 						Byte nChannelIndex = 0 ;
-						
+				
 						pWorkParaManager->GetSignalGroupId(ucPhaseId?true:false,ucPhaseId?ucPhaseId:ucOverPhaseId,&ucSignalGrpNum,ucSignalGrp);
 						while(nChannelIndex<ucSignalGrpNum)
 						{
 							Byte ucChannelId = ucSignalGrp[nChannelIndex] ;
 							if(ucChannelId >0)
+								//pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|0x60);
 								pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|(pWorkParaManager->m_pTscConfig->sSpecFun[FUN_FLASHCNTDOWN_TIME].ucValue<<4));
 							nChannelIndex++ ;						
 						}
 						pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode &=0x7f ;
+						
 					}
 				}	
 				
@@ -184,9 +187,10 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		}
 		else
 		{
+			pLamp->SetLampChannelColor(0x3,0x3); //20150806 红色灯组剩3秒红灯闪
 			pLamp->SendLamp(); 
 		}
-			
+		
 		//pLamp->SendLamp();		//给所有灯控板发送灯色数据
 		//pMainBoardLed->DoRunLed();
 		//核心板发送心跳给，备份单片机。500ms   。另外 在case 1调用
@@ -210,8 +214,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		
 		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 			pDetector->IsVehileHaveCar(); //如果有车则增加长步放行相位的绿灯时间 最大为最大绿时间
-		if(ucModeType != MODE_TSC && pWorkParaManager->m_bFinishBoot)
-			pCPscMode->DealButton();
+		
 		break;
 	case 9:
 		
@@ -220,11 +223,6 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 			pLamp->CheckLight();// check Lampboard status and red&green conflict
 		if(pMainBackup->bSendStep)
 			pMainBackup->SendStep();
-		if(pRunData->uiCtrl == CTRL_PREANALYSIS) //事先分析控制
-		{
-			pPreAnalysis->QueryAccessDev();
-			pPreAnalysis->HandPreAnalysis();
-		}
 		break;
 	default:
 	
