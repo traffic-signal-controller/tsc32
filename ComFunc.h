@@ -1,4 +1,5 @@
 #include "ComDef.h"
+#include "Cdkey.h"
 #include "ace/High_Res_Timer.h"
 
 bool IsLeapYear(Uint ucYear);
@@ -13,3 +14,8 @@ bool CompareTime(Byte ucHour1,Byte ucMin1,Byte ucHour2,Byte ucMin2);
 int GetSysEnyDevId(char *SysEnyDevId);
 int GetStrHwAddr(char * strHwAddr);
 int GetEypChar(char *src ,char *dec);
+int GetMainBroadCdKey(char *CdKey);
+void RecordTscSN();
+
+void ReadTscSN(char *cdkey);
+bool VaildSN();

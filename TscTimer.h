@@ -1,7 +1,6 @@
 #ifndef _TSCTIMER_H_
 #define _TSCTIMER_H_
 
-//#include "ComStruct.h"
 #include "ace/Timer_Queue_Adapters.h"
 #include "ace/Timer_Heap.h"
 #include "Define.h"

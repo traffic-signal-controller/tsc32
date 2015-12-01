@@ -195,14 +195,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶ÎÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t不支持整表单字段设置\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓÐÒ»žöË÷Òý,ÎÞ·šÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\t只有一个索引,无法设置\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -222,7 +222,7 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓÐÒ»žöË÷Òý,ÎÞ·šÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\t只有一个索引,无法设置\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -239,14 +239,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶Î²éÑ¯\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t不支持整表单字段查询\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓÐÒ»žöË÷Òý,ÎÞ·š²éÑ¯\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\t只有一个索引,无法查询\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -266,7 +266,7 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓÐÒ»žöË÷Òý,ÎÞ·š²éÑ¯\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\t只有一个索引,无法查询\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -300,14 +300,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶ÎÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t不支持整表单字段设置\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tµÚÒ»žöË÷Òý±ØÐëÓÐÐ§\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\t第一个索引必须有效\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -349,14 +349,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶Î²éÑ¯\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t不支持整表单字段查询\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tµÚÒ»žöË÷Òý±ØÐëÓÐÐ§\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\t第一个索引必须有效\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -371,7 +371,7 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
 					uErrorSts = GBT_MSG_ERROR_OTHER;\
-					ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶Î²éÑ¯\n", SHORT_FILE, __LINE__));\
+					ACE_DEBUG ((LM_DEBUG, "%s:%04d\t不支持整表单字段查询\n", SHORT_FILE, __LINE__));\
 					return -1;\
                 }\
             }\
@@ -460,7 +460,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     int iPos = 0;
     int iPackSize;
     
-    /*Ä£¿é±íID*/
+    /*模块表ID*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -470,7 +470,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     sValueSeq[iPos++] = sModule.ucModuleId;
 
-    //Éè±žœÚµã
+    //设备节点
     iPackSize = Packet( sModule.strDevNode, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -481,7 +481,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    //ÖÆÔìÉÌ
+    //制造商
     iPackSize = Packet(sModule.strCompany, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -492,7 +492,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    //ÐÍºÅ
+    //型号
     iPackSize = Packet(sModule.strModel, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -503,7 +503,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    //°æ±Ÿ
+    //版本
     iPackSize = Packet(sModule.strVersion, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -514,7 +514,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    /*ÀàÐÍ*/
+    /*类型*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -530,7 +530,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     int iPos = 0;
     int iPackSize;
     
-    /*Ä£¿é±íID*/
+    /*模块表ID*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -540,7 +540,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     sModule.ucModuleId = sValueSeq[iPos++];
 
-    //Éè±žœÚµã
+    //设备节点
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strDevNode);
     if (iPackSize < 0)
     {
@@ -551,7 +551,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    //ÖÆÔìÉÌ
+    //制造商
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strCompany);
     if (iPackSize < 0)
     {
@@ -562,7 +562,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    //ÐÍºÅ
+    //型号
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strModel);
     if (iPackSize < 0)
     {
@@ -573,7 +573,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    //°æ±Ÿ
+    //版本
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strVersion);
     if (iPackSize < 0)
     {
@@ -584,7 +584,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    /*ÀàÐÍ*/
+    /*类型*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -2749,7 +2749,7 @@ int SetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uScheduleId,
 #endif
         return -1;
     }
-    /*ÉŸ³ý*/
+    /*删除*/
     if (0 == uEvtCount)
     {
         pTscDb->DelSchedule(uScheduleId);
@@ -2813,7 +2813,7 @@ int SetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
     uScheduleCount = pData[iPos++];
     uEvtCount      = pData[iPos++];
 
-    /*ÉŸ³ý*/
+    /*删除*/
    /*
    if (0 == uEvtCount || 0 == uScheduleCount)
    {
@@ -3530,7 +3530,8 @@ int GetEventLog(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
         {
             uErrorSts = GBT_MSG_SIZE_SHORT;
             ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Packet EventLog(%d)\n", SHORT_FILE, __LINE__, pEventLog[i].ucEventId));   
-            return -1;
+			continue;	//在实际应用过程中，有发现一条数据出现太短，其它都没有。所以这里不进行返回并不加入
+            //return -1;
         }
         iPos += iPackSize;
     }
@@ -5424,7 +5425,7 @@ int SetDetDelicacy(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapP
 }
 
 /*
-*ÈíŒþ²ÎÊýÕû±í»ñÈ¡
+*软件参数表
 */
 int GetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5506,7 +5507,7 @@ int GetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte ucFunType, By
 }
 
 /*
-*ÈíŒþ²ÎÊý±í
+*软件参数表
 */
 int SetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5603,7 +5604,7 @@ int SetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPhase
 }
 
 /*
-*Œì²âÆ÷À©Õ¹±í
+*检测器扩展表
 */
 int GetDetExtend(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5655,7 +5656,7 @@ int GetDetExtend(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPha
 }
 
 /*
-*Œì²âÆ÷À©Õ¹Õû±íÉèÖÃ
+*检测器扩展整表设置
 */
 int SetDetExtend(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5811,7 +5812,7 @@ int SetAdaptPara(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPha
 }
 
 /*
-*µ¹ŒÆÊ±Éè±ž±í
+*倒计时设备表
 */
 int GetCntDownDev(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5915,7 +5916,7 @@ int SetCntDownDev(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPh
 }
 
 /*
-*×ÔÊÊÓŠ¿ØÖÆœ×¶ÎÊ±Œä
+*自适应控制阶段时间
 */
 int GetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5967,7 +5968,7 @@ int GetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPh
 }
 
 /*
-*ÉèÖÃ×ÔÊÊÓŠœ×¶Î±í
+*设置自适应阶段表
 */
 int SetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -6022,7 +6023,7 @@ int SetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPh
 }
 
 /*
-*·œÏòÓëÏàÎ»¶ÔÓŠ±íÕû±í»ñÈ¡
+*方向与相位对应表整表获取
 */
 int GetPhaseToDirec(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -6116,7 +6117,7 @@ int SetPhaseToDirec(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
 		{
 			uErrorSts = GBT_MSG_ERROR_OTHER;
 			uErrorIdx = 0;
-//			ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModDetDelicacy(%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
+			//ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModDetDelicacy(%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
 			return -1;
 		}
 	}
@@ -6365,7 +6366,7 @@ int SetOverlapPhase(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
         {
             uErrorSts = GBT_MSG_ERROR_OTHER;
             uErrorIdx = 0;
-            ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModOverlapPhase(%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
+            ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModOverlapPhase(OverlapPhaseId =%d)\n", SHORT_FILE, __LINE__, sOverlapPhase.ucOverlapPhaseId));   
             return -1;
         }
     }

@@ -18,133 +18,180 @@ History:
 #include "Can.h"
 #include "FlashMac.h"
 #include "Gps.h"
+#include "MainBackup.h"
 
-#define MAIN_BOARD_LED "/dev/leds" 
-CMainBoardLed::CMainBoardLed()
+#define DEV_PATH "/sys/class/gpio/"
+
+enum
 {
-	m_iLedFd = -1;
-	STscConfig* pSTscConfig = NULL ;
-	pSTscConfig =  CManaKernel::CreateInstance()->m_pTscConfig ;
+	LED_BOARD_SHOW  = 0x2 ,
+	LED_BOARD_VER   =0xff
+
+};
+
+
+/**************************************************************
+Function:       CMainBoardLed
+Description:    CMainBoardLed 构造函数
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
+CMainBoardLed::CMainBoardLed()
+{	
+	for(Byte LedIndex = 0 ; LedIndex < MAXLED ;LedIndex++)
+		LedBoardStaus[LedIndex] = LED_STATUS_OFF;
 	
-	for(int iNumFun = 0 ; iNumFun < 12 ;iNumFun++)
-		LedBoardStaus[iNumFun] = 0x1 ;
-	if ( 0 !=pSTscConfig->sSpecFun[FUN_GPS].ucValue )
-		LedBoardStaus[8] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_3G].ucValue )
-		LedBoardStaus[4] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue )
-		LedBoardStaus[5] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_CAM].ucValue )
-		LedBoardStaus[6] = 0x2;
-	if ( 0 != pSTscConfig->sSpecFun[FUN_WLAN].ucValue )
-		LedBoardStaus[7] = 0x2;
-	LedBoardStaus[9] = 0x2;//黄闪器
+	LedBoardStaus[LED_YWFLASH] = LED_STATUS_ON;//黄闪器作为基本模块默认点亮
+	can1Bool = true;
+	can0Bool = true;
+
+	system("echo 112 >"DEV_PATH"export");
+	system("echo out >"DEV_PATH"gpio112/direction");
 	
-	
-	OpenDev();
+	system("echo 116 >"DEV_PATH"export");
+	system("echo out >"DEV_PATH"gpio116/direction");
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
-
+/**************************************************************
+Function:       ~CMainBoardLed
+Description:    CMainBoardLed 析构函数
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 CMainBoardLed::~CMainBoardLed()
 {
-	CloseDev();
+	system("echo 112 >"DEV_PATH"unexport");
+	system("echo 116 >"DEV_PATH"unexport");
 	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct MainBoardLed object ok !\n",__FILE__,__LINE__));
 }
-
+/**************************************************************
+Function:       CreateInstance
+Description:    CMainBoardLed 创建单例对象
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 CMainBoardLed* CMainBoardLed::CreateInstance()
 {
 	static CMainBoardLed cMainBoardLed;
 	return &cMainBoardLed;
 }
 
-/****************Žò¿ªµÆ¿ØÉè±ž**********************************/
-void CMainBoardLed::OpenDev()
-{
-#ifndef WINDOWS
-	m_iLedFd = ::open(MAIN_BOARD_LED, O_RDONLY); 
-	 
-#endif
-
-	if ( m_iLedFd < 0 )
-	{
-		ACE_DEBUG((LM_DEBUG,"open device (%s) failed.\n", MAIN_BOARD_LED));
-	}
-}
 
 
-
-/***************************************************************
-			关闭LED设备文件
-***************************************************************/
-void CMainBoardLed::CloseDev()
-{
-	if( m_iLedFd >= 0 )
-	{
-#ifndef WINDOWS
-		close(m_iLedFd);
-#endif
-		m_iLedFd = -1;
-	}
-}
-
-/*****************设置MODE指示灯显示状态, 使用NLED3  NLED4 IO口 
-		修正:	  绿：正常     0 1
-                  黄：降级黄闪 1 1
+/****************
+*设置MODE指示灯显示状态, 使用MainBackup 类中的方法
+		修正:	  绿：正常     0 0
+                  黄：降级黄闪 0 1
                   红：无法工作 1 0
 ***************************************************************/
 void CMainBoardLed::DoModeLed(bool bLed3Value,bool bLed4Value)
 {
-#ifndef WINDOWS
-	ioctl(m_iLedFd, bLed3Value, 2);
-	ioctl(m_iLedFd, bLed4Value, 3);
-#endif
+	if(bLed3Value == false && bLed4Value == false)
+	{
+		MainBackup::CreateInstance()->DoWriteLED(LED_MODE_GREEN);
+	}
+	else if(bLed3Value == false && bLed4Value == true)
+	{
+		MainBackup::CreateInstance()->DoWriteLED(LED_MODE_YELLOW);
+	}
+ 	else if(bLed3Value == true && bLed4Value == false)
+	{
+		MainBackup::CreateInstance()->DoWriteLED(LED_MODE_RED);
+	}
 }
 
-/************设置TSC/PSC指示灯显示状态, 使用GPK0 IO口***********/
-void CMainBoardLed::DoTscPscLed(bool btsc)
+/***********
+*设置TSC/PSC指示灯显示状态,  
+*使用MainBackup 类中的方法
+***********/
+void CMainBoardLed::DoTscPscLed(bool bValue)
 {
-	
-	//static bool bValue = true; 
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, btsc, 4);
-	#endif
-	//bValue = !bValue;
+	if(bValue)
+		MainBackup::CreateInstance()->DoWriteLED(MODE_TSC);
+	else
+		MainBackup::CreateInstance()->DoWriteLED(MODE_PSC1);
 }
 
-/************设置Auto指示灯显示状态, 使用GPK2 IO口**************/
+/***********
+*设置Auto指示灯显示状态,  
+*使用MainBackup 类中的方法
+**************/
 void CMainBoardLed::DoAutoLed(bool bValue)
 {
-	//Žý²¹  ÊÖ¶¯ÃðµÆ
-	//static bool bValue = true; 
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 5);
-	#endif
-	//bValue = !bValue;
+	if(bValue)
+		MainBackup::CreateInstance()->DoWriteLED(CTRL_SCHEDULE);
+	else
+		MainBackup::CreateInstance()->DoWriteLED(CTRL_PANEL);
 }
 
-/*****设置Run指示灯显示状态, 1s内量灭各一次,使用NLED1 IO口******/
+/*****
+*	系统自动运行
+*	linux 系统运行
+******/
 void CMainBoardLed::DoRunLed()
 {
-	static bool bValue = true;
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 0);
-	#endif
-	bValue = !bValue;
+
 }
 
 
-/*****设置Can指示灯显示状态, CAN总线收发时亮,使用NLED2 IO口******/
-
-void CMainBoardLed::DoCanLed()
+/**************************************************************
+Function:       DoCan1Led
+Description:    CMainBoardLed 设置Can指示灯显示状态, CAN总线收发时亮,使用NLED2 IO口
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
+void CMainBoardLed::DoCan0Led()
 {
-	static bool bValue = true; 
-	#ifndef WINDOWS
-	ioctl(m_iLedFd, bValue, 1);
-	#endif
-	bValue = !bValue;
+	if(can0Bool)
+	{
+		can0Bool = false;
+		system("echo 1 >> "DEV_PATH"gpio112/value");
+		//ACE_DEBUG((LM_DEBUG,"%s:%d gpio112   :false \n",__FILE__,__LINE__));
+	}
+	else
+	{
+		system("echo 0 >> "DEV_PATH"gpio112/value");
+		can0Bool = true;
+		//ACE_DEBUG((LM_DEBUG,"%s:%d gpio112   :true \n",__FILE__,__LINE__));
+	}
+
+	
 }
+/**************************************************************
+Function:       DoCan1Led
+Description:    CMainBoardLed can1 指示灯
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
+void CMainBoardLed::DoCan1Led()
+{
+	
 
+	if(can1Bool)
+		{
+		system("echo 1 >> "DEV_PATH"gpio116/value");
+		can1Bool = false;
+		}
+	else
+		{
+		system("echo 0 >> "DEV_PATH"gpio116/value");
+		can1Bool = true;
+		}
 
+	
+}
+/**************************************************************
+Function:       IsEthLinkUp
+Description:    CMainBoardLed 网口灯亮
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 bool CMainBoardLed::IsEthLinkUp()
 {
 	Byte rusult = 0 ;
@@ -155,38 +202,44 @@ bool CMainBoardLed::IsEthLinkUp()
 	fpsys = NULL;
 	if(rusult ==(Byte)'1')
 	{
-		//printf("\nEth0 link up!\n");
-		//LedBoardStaus[3] = 0x2 ;
 		return true ;
 	}
 	else
 	
 	{
-		//printf("\nEth0 link down!\n");
-		//LedBoardStaus[3] = 0x1 ;
 		return false ;
 	}
 	
 
 }
-
+/**************************************************************
+Function:       DoLedBoardShow
+Description:    CMainBoardLed  LED面板灯亮
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void CMainBoardLed::DoLedBoardShow()
 {
 	if(IsEthLinkUp())
-		LedBoardStaus[3] = 0x2 ;
+		LedBoardStaus[LED_NETWORK] = LED_STATUS_ON;
 	else
-		LedBoardStaus[3] = 0x1 ;
+		LedBoardStaus[LED_NETWORK] = LED_STATUS_OFF;	
 	if(CFlashMac::CreateInstance()->GetHardwareFlash())
-		LedBoardStaus[9] = 0x3 ;
-	else		
-		LedBoardStaus[9] = 0x2 ;
-	if(CGps::CreateInstance()->m_bGpsTime)
-		LedBoardStaus[8] = 0x3 ;
+		LedBoardStaus[LED_YWFLASH] = LED_STATUS_FLASH ;
+	else
+		LedBoardStaus[LED_YWFLASH] = LED_STATUS_ON ;
 	SetLedBoardShow();
 }
 
 
-
+/**************************************************************
+Function:       SetLedBoardShow
+Description:    CMainBoardLed 设置led面板灯亮
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void CMainBoardLed::SetLedBoardShow()
 {		
 		SCanFrame sSendFrameTmp;
@@ -194,25 +247,84 @@ void CMainBoardLed::SetLedBoardShow()
 		//Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , BOARD_ADDR_LED  , &(sSendFrameTmp.ulCanId));
 		//ACE_DEBUG((LM_DEBUG,"%s:%d LEDCANID:%x \n",__FILE__,__LINE__,sSendFrameTmp.ulCanId));
 		sSendFrameTmp.ulCanId = 0x91032ff0 ;
-		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND<< 6) | LED_BOARD_SHOW;				
-		sSendFrameTmp.pCanData[1] = LedBoardStaus[0]&0x3 ;
-		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[1]&0x3)<<2 ;
-		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[2]&0x3)<<4 ;
-		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[3]&0x3)<<6 ;
+		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6) | LED_BOARD_SHOW;				
+		sSendFrameTmp.pCanData[1] = LedBoardStaus[LED_RADIATOR]&0x3 ;
+		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_HEATER]&0x3)<<2 ;
+		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_ILLUMINATOR]&0x3)<<4 ;
+		sSendFrameTmp.pCanData[1] |= (LedBoardStaus[LED_NETWORK]&0x3)<<6 ;
 
-		sSendFrameTmp.pCanData[2] = LedBoardStaus[4]&0x3 ;
-		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[5]&0x3)<<2 ;
-		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[6]&0x3)<<4 ;
-		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[7]&0x3)<<6 ;
+		sSendFrameTmp.pCanData[2] = LedBoardStaus[LED_3G]&0x3 ;
+		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[LED_MSG]&0x3)<<2 ;
+		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[LED_CAM]&0x3)<<4 ;
+		sSendFrameTmp.pCanData[2] |= (LedBoardStaus[LED_WIRELESSBUTTON]&0x3)<<6 ;
 
-		
-		sSendFrameTmp.pCanData[3] = LedBoardStaus[8]&0x3 ;
-		sSendFrameTmp.pCanData[3] |= (LedBoardStaus[9]&0x3)<<2 ;		
-
+		sSendFrameTmp.pCanData[3] =  LedBoardStaus[LED_GPS]&0x3 ;
+		sSendFrameTmp.pCanData[3] |= (LedBoardStaus[LED_YWFLASH]&0x3)<<2 ;		
 		sSendFrameTmp.ucCanDataLen = 4;	
-
 		Can::CreateInstance()->Send(sSendFrameTmp);
 		//ACE_DEBUG((LM_DEBUG,"%s:%d pCanData[1]= %02x , pCanData[2]= %02x ,pCanData[3]= %02x \n ",__FILE__,__LINE__,sSendFrameTmp.pCanData[1],sSendFrameTmp.pCanData[2],sSendFrameTmp.pCanData[3]));
+
+}
+
+/**************************************************************
+Function:       SetSignalLed
+Description:   设置单独的显示灯板LED灯状态
+Input:           LedIndex - 模块LED灯索引
+			LedStatus - 指定LED灯状态
+Output:         无
+Return:         无
+Date:           20141106
+***************************************************************/
+
+void CMainBoardLed::SetSignalLed(Byte LedIndex ,Byte LedStatus)
+{
+	if(LedIndex>(MAXLED-1) && LedIndex<0)
+		return ;
+	LedBoardStaus[LedIndex] = LedStatus ;
+}
+
+
+/****************************************************************
+*
+Function:       CMainBoardLed::RecvMainBdLedCan
+Description:    对从灯条CAN数据进行处理
+Input:            Can总线接收到的灯条数据帧
+Output:         无
+Return:         无
+Date:           20141023
+*****************************************************************/
+void CMainBoardLed::RecvMainBdLedCan(SCanFrame sRecvCanTmp)
+{	
+	Byte RecvType = 0x0;
+	if(sRecvCanTmp.pCanData[0] == 0xff)
+		RecvType = 0xff ;
+	else		
+		RecvType = sRecvCanTmp.pCanData[0] & 0x3F ;
+
+//	ACE_OS::printf("%s:%d MainBdLedver,type =%d \n",__FILE__,__LINE__,RecvType);
+	if(RecvType == 0xff)
+	{
+		m_ucMBLedVer[0]=sRecvCanTmp.pCanData[1];
+		m_ucMBLedVer[1]=sRecvCanTmp.pCanData[2];
+		m_ucMBLedVer[2]=sRecvCanTmp.pCanData[3];
+		m_ucMBLedVer[3]=sRecvCanTmp.pCanData[4];
+		m_ucMBLedVer[4]=sRecvCanTmp.pCanData[5];
+		//ACE_OS::printf("%s:%d MainBdLedver:%d %d %d %d %d \n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],
+		//sRecvCanTmp.pCanData[2],sRecvCanTmp.pCanData[3],sRecvCanTmp.pCanData[4],sRecvCanTmp.pCanData[5]);
+		
+	}
+	return ;
+}
+
+void CMainBoardLed::GetMBLedVer()
+{
+	SCanFrame sSendFrameTmp;
+	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));	
+	//Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN	, FRAME_MODE_P2P  , BOARD_ADDR_LED, &(sSendFrameTmp.ulCanId));
+	sSendFrameTmp.ulCanId = 0x91032ff0 ;
+	sSendFrameTmp.pCanData[0] = 0xff; 
+	sSendFrameTmp.ucCanDataLen = 1;
+	Can::CreateInstance()->Send(sSendFrameTmp);
 
 }
 

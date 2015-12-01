@@ -3,7 +3,7 @@ Copyright(c) 2014  AITON. All rights reserved.
 Author:     AITON
 FileName:   Gsm.cpp
 Date:       2014-5-1
-Description:ä¿¡å·æœºGSM/GPRS å¤„ç†ç±»
+Description:ĞÅºÅ»úGSM/GPRS ´¦ÀíÀà
 Version:    V1.0
 History:
 ***************************************************************/
@@ -20,18 +20,18 @@ char tmpstr[500]={0};
 
 /**************************************************************
 Function:        CGsm::CGsm
-Description:     CGsmç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»			
-Input:          æ—            
-Output:         æ— 
-Return:         æ— 
+Description:     CGsmÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà			
+Input:          ÎŞ           
+Output:         ÎŞ
+Return:         ÎŞ
 ***************************************************************/
 CGsm::CGsm()
 {
 	
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init Gsm Object!\n",__FILE__,__LINE__));
 	bgsm = true ;
-	pGsmSerial = CSerialCtrl::CreateInstance() ;	
-	m_iGsmFd = pGsmSerial->GetSerialFd(1);
+	//pGsmSerial = CSerialCtrl::CreateInstance() ;	
+	//m_iGsmFd = pGsmSerial->GetSerialFd(1);
 	bInit = false ;
 	iInitCount = 0 ;
 	ACE_OS::memset(&Msg,0x0,sizeof(SMS_T));
@@ -41,10 +41,10 @@ CGsm::CGsm()
 
 /**************************************************************
 Function:       CGsm::~CGsm
-Description:    CGsmç±»ææ„å‡½æ•°		
-Input:          æ—               
-Output:         æ— 
-Return:         æ— 
+Description:    CGsmÀàÎö¹¹º¯Êı		
+Input:          ÎŞ              
+Output:         ÎŞ
+Return:         ÎŞ
 ***************************************************************/
 CGsm::~CGsm()
 {
@@ -53,10 +53,10 @@ CGsm::~CGsm()
 
 /**************************************************************
 Function:       CGsm::CGsm
-Description:    åˆ›å»ºCGsmç±»é™æ€å¯¹è±¡		
-Input:          æ—               
-Output:         æ— 
-Return:         CGsmé™æ€å¯¹è±¡æŒ‡é’ˆ
+Description:    ´´½¨CGsmÀà¾²Ì¬¶ÔÏó		
+Input:          ÎŞ              
+Output:         ÎŞ
+Return:         CGsm¾²Ì¬¶ÔÏóÖ¸Õë
 ***************************************************************/
 CGsm* CGsm::CreateInstance()
 {
@@ -66,9 +66,9 @@ CGsm* CGsm::CreateInstance()
 
 /**************************************************************
 Function:       CGsm::RunGpsData
-Description:    GSMä¸»å‡½æ•°	
-Input:          iTime  æ¯”è¾ƒæ—¶é—´æŒ‡é’ˆ        
-Output:         æ— 
+Description:    GSMÖ÷º¯Êı	
+Input:          iTime  ±È½ÏÊ±¼äÖ¸Õë        
+Output:         ÎŞ
 Return:         0
 ***************************************************************/
 void CGsm::RunGsmData()
@@ -93,11 +93,6 @@ void CGsm::RunGsmData()
 		else
 			bInit = true ;
 	}
-		
-	Byte iGps = 0 ;	
-	CRs485::CreateInstance()->CtrolGPPIo(0,10) ; //Open Gps io gpp10
-	
-	//pGsmSerial->set_speed(m_iGsmFd, 9600);   
 	  
 	  	if(GetString(m_iGsmFd ,charMsg))
 		{				
@@ -118,10 +113,10 @@ void CGsm::RunGsmData()
 					return ;
 				//ACE_OS::printf("%s:%d comecall number: %s\n",__FILE__,__LINE__,tmpTelNum);	
 				ACE_OS::strcpy(incomecall,tmpTelNum);
-				ACE_OS::sprintf(incallmsg,"echo æ¥ç”µå·ç :%s æ¥ç”µæ—¶é—´: $(date) >>Msg.txt",tmpTelNum);	
+				ACE_OS::sprintf(incallmsg,"echo À´µçºÅÂë:%s À´µçÊ±¼ä: $(date) >>Msg.txt",tmpTelNum);	
 				ACE_OS::system(incallmsg);
 				//ACE_OS::printf("\n%s:%d %s",__FILE__,__LINE__,incallmsg);	
-				//SendSms(incomecall,"æœ¬å·ç æš‚æ—¶ç”¨äºå…¶ä»–ç”¨é€”,å¯è”ç³»13375926324! -æœ¬æ¡æ¶ˆæ¯å±äºè¯¥å·ç çš„è‡ªåŠ¨å›å¤");
+				//SendSms(incomecall,"±¾ºÅÂëÔİÊ±ÓÃÓÚÆäËûÓÃÍ¾,¿ÉÁªÏµ13375926324! -±¾ÌõÏûÏ¢ÊôÓÚ¸ÃºÅÂëµÄ×Ô¶¯»Ø¸´");
 				//ACE_OS::printf("\n%s:%d replay for %s \n",__FILE__,__LINE__,incomecall);	
 			}
 		}
@@ -131,15 +126,15 @@ void CGsm::RunGsmData()
 	
 /**************************************************************
 Function:       CGsm::GsmInit
-Description:    GSMè®¾å¤‡å‚æ•°åˆå§‹åŒ–
-Input:          iTime  æ¯”è¾ƒæ—¶é—´æŒ‡é’ˆ        
+Description:    GSMÉè±¸²ÎÊı³õÊ¼»¯
+Input:          iTime  ±È½ÏÊ±¼äÖ¸Õë        
 
-Output:         æ— 
+Output:         ÎŞ
 Return:         0
 ***************************************************************/
 	bool CGsm::GsmInit()
 	{		
-		CRs485::CreateInstance()->CtrolGPPIo(0,10) ; //Open Gps io gpp10
+		//CRs485::CreateInstance()->CtrolGPPIo(0,10) ; //Open Gps io gpp10
 		//pGsmSerial->set_speed(m_iGsmFd, 9600);
 		char initsgsm[6][50]={"AT\r\n","ATE0\r\n","AT+CLIP=1\r\n","AT+CNMI=2,2,0,0,1\r\n","AT+CMGF=0\r\n","AT+CPMS=\"SM\",\"SM\",\"SM\"\r\n"};
 		static bool initok[6]={false};
@@ -147,7 +142,7 @@ Return:         0
 		{
 			if(initok[i])
 				continue ;
-			pGsmSerial->serialWrite(initsgsm[i],m_iGsmFd);		
+			//pGsmSerial->serialWrite(initsgsm[i],m_iGsmFd);		
 			if(GetString(m_iGsmFd ,charMsg))
 			{
 				ACE_DEBUG((LM_DEBUG,"%s:%d Init_Func =%s!\n",__FILE__,__LINE__,initsgsm[i]));
@@ -166,10 +161,10 @@ Return:         0
 	
 /**************************************************************
 Function:       CGsm::GetString
-Description:    GSMæ¥æ”¶GSMä¸²å£ä¿¡æ¯
-Input:          fd  GSMä¸²å£æ–‡ä»¶å¥æŸ„       
+Description:    GSM½ÓÊÕGSM´®¿ÚĞÅÏ¢
+Input:          fd  GSM´®¿ÚÎÄ¼ş¾ä±ú       
 			
-Output:         gsmstring  è¾“å‡ºä¸²å£ä¿¡æ¯
+Output:         gsmstring  Êä³ö´®¿ÚĞÅÏ¢
 Return:         0
 ***************************************************************/
 bool CGsm::GetString(int fd ,char *gsmstring)
@@ -228,10 +223,10 @@ bool CGsm::GetString(int fd ,char *gsmstring)
 
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šDoCmt
-åŠŸèƒ½æè¿°ï¼šæ¥æ”¶çŸ­ä¿¡å¤„ç†å‡½æ•°
-å‚æ•°è¯´æ˜ï¼š smsmsg -PDUçŸ­ä¿¡å­—ç¬¦ä¸²
-è¿”å›å€¼ï¼š  æ— 
+º¯ÊıÃû³Æ£ºDoCmt
+¹¦ÄÜÃèÊö£º½ÓÊÕ¶ÌĞÅ´¦Àíº¯Êı
+²ÎÊıËµÃ÷£º smsmsg -PDU¶ÌĞÅ×Ö·û´®
+·µ»ØÖµ£º  ÎŞ
 *******************************************************************/
 void CGsm::DoCmt(char* smsmsg)
 {
@@ -270,15 +265,15 @@ void CGsm::DoCmt(char* smsmsg)
 	ACE_OS::sprintf(tmpstr,"echo %s  %s  %s >>Msg.txt",Msg.acPhone,Msg.acTime,Msg.Message);
 	ACE_OS::system(tmpstr);
 	ACE_OS::sleep(1);
-	pGsmSerial->serialWrite((char *)"AT+CMGD=1, 4\r\n",m_iGsmFd);
+	//pGsmSerial->serialWrite((char *)"AT+CMGD=1, 4\r\n",m_iGsmFd);
 }
 
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šPhoneNumFormat
-åŠŸèƒ½æè¿°ï¼š æ‰‹æœºå·æ ¼å¼å¤„ç†
-å‚æ•°è¯´æ˜ï¼š char*buff, const char *tel_num, int flag
-è¿”å›å€¼ï¼š  æ— 
+º¯ÊıÃû³Æ£ºPhoneNumFormat
+¹¦ÄÜÃèÊö£º ÊÖ»úºÅ¸ñÊ½´¦Àí
+²ÎÊıËµÃ÷£º char*buff, const char *tel_num, int flag
+·µ»ØÖµ£º  ÎŞ
 *******************************************************************/
 void CGsm::PhoneNumFormat(char*buff, const char *tel_num, int flag)
 {
@@ -313,11 +308,11 @@ void CGsm::PhoneNumFormat(char*buff, const char *tel_num, int flag)
 
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼š GetSmsRecvTime
-åŠŸèƒ½æè¿°ï¼š è½¬æ¢PDUä¸²ä¸­çš„æ—¶é—´æ ¼å¼
-å‚æ•°è¯´æ˜ï¼š smstime - è½¬æ¢æ ¼å¼åæ—¶é—´å­—ç¬¦ä¸²		
-		   codetype - è½¬ç ç±»å‹ 
-è¿”å›å€¼ï¼š  æ— 
+º¯ÊıÃû³Æ£º GetSmsRecvTime
+¹¦ÄÜÃèÊö£º ×ª»»PDU´®ÖĞµÄÊ±¼ä¸ñÊ½
+²ÎÊıËµÃ÷£º smstime - ×ª»»¸ñÊ½ºóÊ±¼ä×Ö·û´®		
+		   codetype - ×ªÂëÀàĞÍ 
+·µ»ØÖµ£º  ÎŞ
 *******************************************************************/
 void CGsm::GetSmsRecvTime(char *smstime ,char *recvstr)
 {
@@ -338,13 +333,13 @@ void CGsm::GetSmsRecvTime(char *smstime ,char *recvstr)
 
 /*******************************************************************
 
-å‡½æ•°åç§°ï¼šUCStoUTF
-åŠŸèƒ½æè¿°ï¼š USCç¼–ç è½¬æ¢ä¸ºUTF-8ç¼–ç 
-å‚æ•°è¯´æ˜ï¼š cunicode - å¾…è½¬ç¼–ç 
-		   utf -è½¬æ¢åUTF8ç¼–ç 
-		   codetype - è½¬ç ç±»å‹ 
+º¯ÊıÃû³Æ£ºUCStoUTF
+¹¦ÄÜÃèÊö£º USC±àÂë×ª»»ÎªUTF-8±àÂë
+²ÎÊıËµÃ÷£º cunicode - ´ı×ª±àÂë
+		   utf -×ª»»ºóUTF8±àÂë
+		   codetype - ×ªÂëÀàĞÍ 
 
-è¿”å›å€¼ï¼š  int -è½¬ç å­—èŠ‚æ•°
+·µ»ØÖµ£º  int -×ªÂë×Ö½ÚÊı
 *******************************************************************/
 int CGsm::UCStoUTF(char *unicode , char *utf, Uint codetype)
 {
@@ -368,7 +363,7 @@ int CGsm::UCStoUTF(char *unicode , char *utf, Uint codetype)
 	}
 	if(codetype == ucs2 )
 	{
-		//ACE_OS::printf("\nå¼€å§‹ä¸­æ–‡çŸ­ä¿¡è§£ç \n");
+		//ACE_OS::printf("\n¿ªÊ¼ÖĞÎÄ¶ÌĞÅ½âÂë\n");
 		result = iconv(iconv_handle,&unicode_p,(size_t *)&in_len,&utf_p,(size_t *)&out_len);
 		
 	}
@@ -379,17 +374,17 @@ int CGsm::UCStoUTF(char *unicode , char *utf, Uint codetype)
 		 
 	}
 	ACE_OS::strncpy(utf , utf_buffer,ACE_OS::strlen(utf_buffer));
-	//ACE_OS::printf("è§£ç åçŸ­ä¿¡æ¶ˆæ¯: %s \n",utf_buffer);
+	//ACE_OS::printf("½âÂëºó¶ÌĞÅÏûÏ¢: %s \n",utf_buffer);
 	//ACE_OS::printf("%s:%d GetMsg=%d : %s \n",__FILE__,__LINE__,strlen(utf),utf);
 	iconv_close(iconv_handle);
 	return 1;
 }
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šUTFtoUCS
-åŠŸèƒ½æè¿°ï¼š UTF8ç¼–ç è½¬æ¢ä¸ºUSC
-å‚æ•°è¯´æ˜ï¼š const char *utf , char *unicode
-è¿”å›å€¼ï¼š  æ— 
+º¯ÊıÃû³Æ£ºUTFtoUCS
+¹¦ÄÜÃèÊö£º UTF8±àÂë×ª»»ÎªUSC
+²ÎÊıËµÃ÷£º const char *utf , char *unicode
+·µ»ØÖµ£º  ÎŞ
 *******************************************************************/
 int CGsm::UTFtoUCS(const char *utf , char *unicode)
 {
@@ -419,11 +414,11 @@ int CGsm::UTFtoUCS(const char *utf , char *unicode)
 }
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šSendSms
-åŠŸèƒ½æè¿°ï¼š å‘é€çŸ­ä¿¡åŠŸèƒ½
-å‚æ•°è¯´æ˜ï¼š sendTelNum --å¾…æ¥æ”¶çŸ­ä¿¡å·ç 
-		  sendMsgText --å‘é€çŸ­ä¿¡å†…å®¹
-è¿”å›å€¼ï¼š  æ— 
+º¯ÊıÃû³Æ£ºSendSms
+¹¦ÄÜÃèÊö£º ·¢ËÍ¶ÌĞÅ¹¦ÄÜ
+²ÎÊıËµÃ÷£º sendTelNum --´ı½ÓÊÕ¶ÌĞÅºÅÂë
+		  sendMsgText --·¢ËÍ¶ÌĞÅÄÚÈİ
+·µ»ØÖµ£º  ÎŞ
 *******************************************************************/
 void CGsm::SendSms( char* sendTelNum ,  char *sendMsgText)
 {
@@ -435,14 +430,14 @@ void CGsm::SendSms( char* sendTelNum ,  char *sendMsgText)
 	//char sendnum[13]={"13375926324"};
 	char atSmsCmd[20] ={0};
 	//char smscontent[300] ={0};	
-	//ACE_OS::strcpy(smscontent,"ä½ åƒè¿‡äº†å—?");		
+	//ACE_OS::strcpy(smscontent,"Äã³Ô¹ıÁËÂğ?");		
 	EncodeSMS(sendTelNum,sendMsgText,encodedPduNum,smdbuffer);	
-	//ACE_OS::printf("%s:%d Sendï¼š %s \n",__FILE__,__LINE__,smscontent);
+	//ACE_OS::printf("%s:%d Send£º %s \n",__FILE__,__LINE__,smscontent);
 	ACE_OS::sprintf(atSmsCmd,"AT+CMGS=%d\r",encodedPduNum);	
 	ACE_OS::printf("%s:%d  %s \n",__FILE__,__LINE__,atSmsCmd);
-	pGsmSerial->serialWrite(atSmsCmd,m_iGsmFd);	
+	//pGsmSerial->serialWrite(atSmsCmd,m_iGsmFd);	
 	ACE_OS::sleep(1);
-	pGsmSerial->serialWrite(smdbuffer,m_iGsmFd);	
+	//pGsmSerial->serialWrite(smdbuffer,m_iGsmFd);	
 	//ACE_OS::printf("%s:%d Send sms-serial bytes = %d \n",__FILE__,__LINE__,iNum);
 
    }
@@ -450,11 +445,11 @@ void CGsm::SendSms( char* sendTelNum ,  char *sendMsgText)
 
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šGetBit
-åŠŸèƒ½æè¿°ï¼š åˆ¤æ–­æ˜¯å¦æ˜¯å‡ ä½ç¼–ç 
-å‚æ•°è¯´æ˜ï¼šbitnum --ç¼–ç ä½ , 
-		 data   --å¾…åˆ¤æ–­æ•°æ®
-è¿”å›å€¼ï¼š  int
+º¯ÊıÃû³Æ£ºGetBit
+¹¦ÄÜÃèÊö£º ÅĞ¶ÏÊÇ·ñÊÇ¼¸Î»±àÂë
+²ÎÊıËµÃ÷£ºbitnum --±àÂëÎ» , 
+		 data   --´ıÅĞ¶ÏÊı¾İ
+·µ»ØÖµ£º  int
 *******************************************************************/
 bool CGsm::GetBit(Byte bitnum,Byte data)   
 {   
@@ -493,11 +488,11 @@ bool CGsm::GetBit(Byte bitnum,Byte data)
 }   
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šSetBit
-åŠŸèƒ½æè¿°ï¼š æŒ‰å­—èŠ‚å¤„ç†ä½ç¼–ç 
-å‚æ•°è¯´æ˜ï¼šbitnum --ç¼–ç ä½ , 
-		 data   --å¾…ç¼–ç å­—èŠ‚æ•°æ®
-è¿”å›å€¼ï¼š  Byte   --å¤„ç†åå­—èŠ‚æ•°æ®
+º¯ÊıÃû³Æ£ºSetBit
+¹¦ÄÜÃèÊö£º °´×Ö½Ú´¦ÀíÎ»±àÂë
+²ÎÊıËµÃ÷£ºbitnum --±àÂëÎ» , 
+		 data   --´ı±àÂë×Ö½ÚÊı¾İ
+·µ»ØÖµ£º  Byte   --´¦Àíºó×Ö½ÚÊı¾İ
 *******************************************************************/
 Byte CGsm::SetBit(Byte bitnum,Byte data,bool bit)   
 {   
@@ -538,12 +533,12 @@ Byte CGsm::SetBit(Byte bitnum,Byte data,bool bit)
 }
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šEncode7bitPDU
-åŠŸèƒ½æè¿°ï¼š æŒ‰7bitè¿›è¡ŒPDUç¼–ç 
+º¯ÊıÃû³Æ£ºEncode7bitPDU
+¹¦ÄÜÃèÊö£º °´7bit½øĞĞPDU±àÂë
 
-å‚æ•°è¯´æ˜ï¼šsrc --å¾…ç¼–ç æºç  , 
+²ÎÊıËµÃ÷£ºsrc --´ı±àÂëÔ´Âë , 
 		 
-è¿”å›å€¼ï¼š  int --ç¼–ç é•¿åº¦
+·µ»ØÖµ£º  int --±àÂë³¤¶È
 *******************************************************************/
 int CGsm::Encode7bitPDU(char *src, char *output)   
 {   
@@ -575,11 +570,11 @@ int CGsm::Encode7bitPDU(char *src, char *output)
    
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šIfUnicode
-åŠŸèƒ½æè¿°ï¼š åˆ¤æ–­æ˜¯å¦æ˜¯ä¸­æ–‡ç¼–ç 
-å‚æ•°è¯´æ˜ï¼šText --ç¼–ç ä½ , 
+º¯ÊıÃû³Æ£ºIfUnicode
+¹¦ÄÜÃèÊö£º ÅĞ¶ÏÊÇ·ñÊÇÖĞÎÄ±àÂë
+²ÎÊıËµÃ÷£ºText --±àÂëÎ» , 
 		 
-è¿”å›å€¼ï¼š  bool  true-ä¸­æ–‡  false-éä¸­æ–‡
+·µ»ØÖµ£º  bool  true-ÖĞÎÄ  false-·ÇÖĞÎÄ
 *******************************************************************/
 bool CGsm::IfUnicode(const char *Text)   
 {   
@@ -597,14 +592,14 @@ bool CGsm::IfUnicode(const char *Text)
 
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šuEncodeSMS
-åŠŸèƒ½æè¿°ï¼š çŸ­ä¿¡å‘é€ç¼–ç å¤„ç†
-å‚æ•°è¯´æ˜ï¼šs_number  -å¾…å‘é€çŸ­ä¿¡å·ç 
-		 s_sms_text -å¾…å‘é€çŸ­ä¿¡å†…å®¹
-		 sndPduNum -PDUä¸²å‘é€é•¿åº¦
-		s_out_pdu  -PDUä¸²ç¼–ç åå†…å®¹				
+º¯ÊıÃû³Æ£ºuEncodeSMS
+¹¦ÄÜÃèÊö£º ¶ÌĞÅ·¢ËÍ±àÂë´¦Àí
+²ÎÊıËµÃ÷£ºs_number  -´ı·¢ËÍ¶ÌĞÅºÅÂë
+		 s_sms_text -´ı·¢ËÍ¶ÌĞÅÄÚÈİ
+		 sndPduNum -PDU´®·¢ËÍ³¤¶È
+		s_out_pdu  -PDU´®±àÂëºóÄÚÈİ				
 				
-è¿”å›å€¼ï¼š æ— 
+·µ»ØÖµ£º ÎŞ
 *******************************************************************/
 void  CGsm::EncodeSMS(char * s_number,char * s_sms_text,int& sndPduNum,char * s_out_pdu)
 {	
@@ -651,18 +646,18 @@ void  CGsm::EncodeSMS(char * s_number,char * s_sms_text,int& sndPduNum,char * s_
 }
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼šDeCode7Bit
-åŠŸèƒ½æè¿°ï¼š çŸ­ä¿¡7ä½ç¼–ç è§£ç å¤„ç†é‡Œ
-å‚æ•°è¯´æ˜ï¼špSrc  -å¾…è§£ç å­—èŠ‚
-		 pDst - è§£ç åçŸ­ä¿¡å­—èŠ‚
-		nSrcLength -å¾…è§£ç ä¸²é•¿åº¦	
-è¿”å›å€¼ï¼š int  è§£ç é•¿åº¦
+º¯ÊıÃû³Æ£ºDeCode7Bit
+¹¦ÄÜÃèÊö£º ¶ÌĞÅ7Î»±àÂë½âÂë´¦ÀíÀï
+²ÎÊıËµÃ÷£ºpSrc  -´ı½âÂë×Ö½Ú
+		 pDst - ½âÂëºó¶ÌĞÅ×Ö½Ú
+		nSrcLength -´ı½âÂë´®³¤¶È	
+·µ»ØÖµ£º int  ½âÂë³¤¶È
 *******************************************************************/
 int CGsm::DeCode7Bit( char* pSrc, char* pDst, int nSrcLength)
 {
-    int nSrc; // æºå­—ç¬¦ä¸²çš„è®¡æ•°å€¼
-    int nDst; // ç›®æ ‡è§£ç ä¸²çš„è®¡æ•°å€¼
-    int nByte; // å½“å‰æ­£åœ¨å¤„ç†çš„ç»„å†…å­—èŠ‚çš„åºå·ï¼ŒèŒƒå›´æ˜¯0-6
+    int nSrc; // Ô´×Ö·û´®µÄ¼ÆÊıÖµ
+    int nDst; // Ä¿±ê½âÂë´®µÄ¼ÆÊıÖµ
+    int nByte; // µ±Ç°ÕıÔÚ´¦ÀíµÄ×éÄÚ×Ö½ÚµÄĞòºÅ£¬·¶Î§ÊÇ0-6
     unsigned char nLeft; 
 	
     nSrc = 0;
@@ -670,17 +665,17 @@ int CGsm::DeCode7Bit( char* pSrc, char* pDst, int nSrcLength)
     
     nByte = 0;
     nLeft = 0;   
-	//ACE_OS::printf("%s:%d 7bitså¾…è§£ç é•¿åº¦=%d \n",__FILE__,__LINE__,nSrcLength);
+	//ACE_OS::printf("%s:%d 7bits´ı½âÂë³¤¶È=%d \n",__FILE__,__LINE__,nSrcLength);
     while (nSrc < nSrcLength)
     {
-            // å°†æºå­—èŠ‚å³è¾¹éƒ¨åˆ†ä¸æ®‹ä½™æ•°æ®ç›¸åŠ ï¼Œå»æ‰æœ€é«˜ä½ï¼Œå¾—åˆ°ä¸€ä¸ªç›®æ ‡è§£ç å­—èŠ‚
+            // ½«Ô´×Ö½ÚÓÒ±ß²¿·ÖÓë²ĞÓàÊı¾İÏà¼Ó£¬È¥µô×î¸ßÎ»£¬µÃµ½Ò»¸öÄ¿±ê½âÂë×Ö½Ú
             *pDst = ((*pSrc << nByte) | nLeft) & 0x7f;  
 			//printf("%c",*pDst);         
             nLeft = *pSrc >> (7 - nByte);            
             pDst++;
             nDst++;            
             nByte++;
-            // åˆ°äº†ä¸€ç»„çš„æœ€åä¸€ä¸ªå­—èŠ‚
+            // µ½ÁËÒ»×éµÄ×îºóÒ»¸ö×Ö½Ú
             if (nByte == 7)
             {                   
                 *pDst = nLeft;
@@ -700,11 +695,11 @@ int CGsm::DeCode7Bit( char* pSrc, char* pDst, int nSrcLength)
 
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼š OpenTcpConnec
-åŠŸèƒ½æè¿°ï¼š å»ºç«‹GPRS TCPè¿æ¥
-å‚æ•°è¯´æ˜ï¼šIP  -è¦è¿æ¥çš„IPåœ°å€
-		 port - è¦è¿æ¥çš„ç«¯å£		
-è¿”å›å€¼ï¼š æ— 
+º¯ÊıÃû³Æ£º OpenTcpConnec
+¹¦ÄÜÃèÊö£º ½¨Á¢GPRS TCPÁ¬½Ó
+²ÎÊıËµÃ÷£ºIP  -ÒªÁ¬½ÓµÄIPµØÖ·
+		 port - ÒªÁ¬½ÓµÄ¶Ë¿Ú		
+·µ»ØÖµ£º ÎŞ
 *******************************************************************/
 void CGsm::OpenTcpConnec(char * IP ,char * port)
 {
@@ -712,16 +707,16 @@ void CGsm::OpenTcpConnec(char * IP ,char * port)
 		return ;
 	char conncetstr[50]={0};
 	ACE_OS::sprintf(conncetstr,"AT^CIPSTART=TCP,%s,%s\r\n",IP,port);
-	pGsmSerial->serialWrite(conncetstr,m_iGsmFd);	
+	//pGsmSerial->serialWrite(conncetstr,m_iGsmFd);	
 
 }
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼š SendTcpData
-åŠŸèƒ½æè¿°ï¼š å‘é€TCPæ•°æ®
-å‚æ•°è¯´æ˜ï¼š senddata  -å¾…å‘é€æ•°æ®
-		  sendtype - å‘é€æ•°æ®ç±»å‹ ASCII æˆ–è€…16è¿›åˆ¶æ•°æ®		
-è¿”å›å€¼ï¼š æ— 
+º¯ÊıÃû³Æ£º SendTcpData
+¹¦ÄÜÃèÊö£º ·¢ËÍTCPÊı¾İ
+²ÎÊıËµÃ÷£º senddata  -´ı·¢ËÍÊı¾İ
+		  sendtype - ·¢ËÍÊı¾İÀàĞÍ ASCII »òÕß16½øÖÆÊı¾İ		
+·µ»ØÖµ£º ÎŞ
 *******************************************************************/
 void CGsm::SendTcpData(char * senddata,Byte sendtype)
 {
@@ -732,28 +727,28 @@ void CGsm::SendTcpData(char * senddata,Byte sendtype)
 		ACE_OS::sprintf(conncetstr,"AT^CIPSEND=%s\r\n",senddata);
 	else if(sendtype = 2)
 		ACE_OS::sprintf(conncetstr,"AT^CIPSENDHEX=%s\r\n",senddata);
-	pGsmSerial->serialWrite(conncetstr,m_iGsmFd);	
+	//pGsmSerial->serialWrite(conncetstr,m_iGsmFd);	
 
 }
 
 /*******************************************************************
-å‡½æ•°åç§°ï¼š OPerateGprs
-åŠŸèƒ½æè¿°ï¼š ç®€å•çš„GPRSæ“ä½œæˆ–è€…æŸ¥è¯¢å‘½ä»¤
-å‚æ•°è¯´æ˜ï¼š æ— 
-è¿”å›å€¼ï¼š æ— 
+º¯ÊıÃû³Æ£º OPerateGprs
+¹¦ÄÜÃèÊö£º ¼òµ¥µÄGPRS²Ù×÷»òÕß²éÑ¯ÃüÁî
+²ÎÊıËµÃ÷£º ÎŞ
+·µ»ØÖµ£º ÎŞ
 *******************************************************************/
 void CGsm::OPerateGprs(Byte dotype)	
 {	
 	switch(dotype)
 	{
 		case 1:
-			pGsmSerial->serialWrite((char*)"AT^CIPCLOSE\r\n",m_iGsmFd);
+			//pGsmSerial->serialWrite((char*)"AT^CIPCLOSE\r\n",m_iGsmFd);
 		break;
 		case 2:
-			pGsmSerial->serialWrite((char*)"AT^CIPSTATUS\r\n",m_iGsmFd);
+			//pGsmSerial->serialWrite((char*)"AT^CIPSTATUS\r\n",m_iGsmFd);
 		break;
 		case 3:
-			pGsmSerial->serialWrite((char*)"AT^CIFSR\r\n",m_iGsmFd);
+			//pGsmSerial->serialWrite((char*)"AT^CIFSR\r\n",m_iGsmFd);
 		break;
 		default:
 		break ;
@@ -761,4 +756,5 @@ void CGsm::OPerateGprs(Byte dotype)
 	}
 	
 }
+
 

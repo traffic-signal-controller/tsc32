@@ -8,9 +8,8 @@ Description:通用处理函数
 Version:    V1.0
 History:    201310081456  yiodng testmem()
 ***************************************************************/
-#include<sys/ioctl.h>
+#include <sys/ioctl.h>
 #include <fcntl.h>
-
 #include "ComFunc.h"
 #include "ManaKernel.h"
 #include "DbInstance.h"
@@ -238,10 +237,11 @@ Return:         无
 void RecordTscStartTime()
 {
 #ifdef LINUX
-	ACE_OS::system("echo :$(date) tsc restart !>> TscRun.log");
+	ACE_OS::system("echo At $(date) tsc restart !>> TscRun.log");
 #endif
+	//unsigned long mRestart = 0 ;
+	//(CDbInstance::m_cGbtTscDb).GetSystemData("ucDownloadFlag",mRestart);
 	CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_REBOOT,0,0,0,0);	
-	
 }
 
 /**************************************************************
@@ -403,6 +403,117 @@ int GetSysEnyDevId(char *SysEnyDevId)
       
      return 0;
 }
+/**************************************************************
+Function:       GetMainBroadCdKey
+Description:    保存设置设备ID加密存储
+Input:          CdKey ：系统加密ID指针 
+Output:         无
+Return:         -1 - 产生加密设备ID失败 0 -产生加密设备ID成功
+***************************************************************/
+int GetMainBroadCdKey(char *CdKey)
+{
 
+	char CCdkey[8] = {0};
+	if(!Cdkey::GetCdkey(CCdkey))
+	{
+		return -1;
+	}
+     ACE_OS::strcpy(CdKey,CCdkey); 
+     ACE_DEBUG((LM_DEBUG,"%s:%d***GetMainBroadCdKey*** CdKey : %X !\n",__FILE__,__LINE__,&CdKey));
+     return 0;
+}
+/**************************************************************
+Function:      VaildSN
+Description:    对核心板的序列号与系统的序列号进行对比
+Input:          无 
+Output:         无
+Return:         1 - 合法 0 -非法
+***************************************************************/
+bool VaildSN()
+{
+	char fileSN[8] = {0};
+	char deviceSN[8] = {0};
+	int i,bol;
+	ReadTscSN(fileSN);
+	GetMainBroadCdKey(deviceSN);
+	
+	bol = ACE_OS::strcmp(fileSN,deviceSN);
+	if(bol == 0)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d***VaildSN*** SN VAILD !\n",__FILE__,__LINE__));
+		return true;
+	}
+	else
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d***VaildSN*** SN INVALID !\n",__FILE__,__LINE__));
+		return false;
+	}
+}
+/**************************************************************
+Function:      ReadTscSN
+Description:    读取系统的序列号
+Input:          无 
+Output:         将8个字节的序列号保存到cdkey 指针 中
+Return:         无
+***************************************************************/
+void ReadTscSN(char *cdkey)
+{
+	
+	char tmp[8];
+	FILE *infile;
+	int rc;
+	infile = fopen("sn.dat", "rb");
+	if(infile == NULL)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d read File error !\n",__FILE__,__LINE__));
+		return ;
+	}
+	rc = fread(tmp,sizeof(char), 8,infile);
+	if(rc ==0)
+	{
+		ACE_DEBUG((LM_DEBUG,"%s:%d read File error !\n",__FILE__,__LINE__));
+		return ;
+	}
+	ACE_OS::strcpy(cdkey,tmp); 
+	fclose(infile);
+}
+
+/**************************************************************
+Function:       RecordTscStartTime
+Description:    记录系统开始运行时间，并写入日志			
+Input:          无        
+Output:         无
+Return:         无
+***************************************************************/
+void RecordTscSN()
+{
+#ifdef LINUX
+	
+	char tmp[8] = {0};
+	int i;
+	FILE *outfile, *infile;
+	infile = fopen("sn.dat","rb");
+	if(infile != NULL)
+	{
+		ACE_DEBUG((LM_DEBUG,"\n%s:%d***RecordTscSN*** SN file is exsit !\n",__FILE__,__LINE__));
+		fclose(infile);
+		return ;
+	}
+	outfile = ACE_OS::fopen("sn.dat", "wb" );
+	GetMainBroadCdKey(tmp);
+	if( outfile == NULL)
+    {
+        ACE_DEBUG((LM_DEBUG,"%s:%d  open file error !\n",__FILE__,__LINE__));
+        return;
+    }   
+	//for(i=0; i<8; i++) 
+	//{	
+		//fwrite( tmp, sizeof(char), 8, outfile );
+		//ACE_DEBUG((LM_DEBUG,"%s:%d  0x%x !\n",__FILE__,__LINE__,tmp[i]));	
+	//}
+	ACE_OS::fwrite( tmp, sizeof(char), 8, outfile );
+	ACE_OS::fclose(outfile);
+#endif	
+}
 
 

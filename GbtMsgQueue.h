@@ -114,24 +114,25 @@ enum
 	OBJECT_SET_REPORTSELF   = 0xf7,   //定制主动上报
 	OBJECT_EXT_TSC_STATUS   = 0xf8,   //状态类型表参数
 	OBJECT_MODULE_STATUS    = 0xf9 ,   //模块状态
-	OBJECT_CNTDOWN_DEV     = 0xf1,   //倒计时设备表    ADD:2013071 1034
-	OBJECT_PHASETODIRECT   = 0xfa,   //相位与方向对应表
-	OBJECT_ADAPTPARA       = 0xfb,   //自适应参数值
-	OBJECT_DET_EXTENTED    = 0xfc,   //检测器扩展表
-	OBJECT_ADAPT_STAGE     = 0xfd,
-	OBJECT_CONNECT_DEV     = 0xf0,   //外界设备数第一个字节表示倒计时设备数，取值为0-32，0表示没有倒计时设备。第二个字节表示可变标志设备数，取值为0-16，0表示没有可变标志设表示外接检测器数，取值为0-48，0表示没有外接检测器
-	OBJECT_CNTDOWN_STATS   = 0xf2,   //倒计时状态表
-	OBJECT_CHANNEL_CHK     = 0xff,   //通道灯泡检测配置表 ADD?20130801 1121
-	OBJECT_YWFLASH_CFG     = 0xe1,   //黄闪器配置
-	OBJECT_DET_EXTCFG      = 0xe2,   //检测器扩展配置
-	OBJECT_LAMPBOARD_CFG   = 0xe3,   //灯控板灯泡检测和红绿冲突检测配置
-	OBJECT_PSCBTN_NUM 	   = 0xee,    //模拟8位行人按钮输入 ADD:2013 0829 1540
-	OBJECT_TMPPATTERN_CFG  = 0xe6,    //12方向临时组合方案，默认60秒
-	OBJECT_SYSFUNC_CFG     = 0xe4,      //系统其他功能设置
+	OBJECT_CNTDOWN_DEV      = 0xf1,   //倒计时设备表    ADD:2013071 1034
+	OBJECT_PHASETODIRECT    = 0xfa,   //相位与方向对应表
+	OBJECT_ADAPTPARA        = 0xfb,   //自适应参数值
+	OBJECT_DET_EXTENTED     = 0xfc,   //检测器扩展表
+	OBJECT_ADAPT_STAGE      = 0xfd,
+	OBJECT_CONNECT_DEV      = 0xf0,   //外界设备数第一个字节表示倒计时设备数，取值为0-32，0表示没有倒计时设备。第二个字节表示可变标志设备数，取值为0-16，0表示没有可变标志设表示外接检测器数，取值为0-48，0表示没有外接检测器
+	//OBJECT_CNTDOWN_STATS   = 0xf2,   //倒计时状态表
+	OBJECT_COMMAND_SIGNAL   = 0xf2 ,    //上位机指令控制相位阶段切换和方向
+	OBJECT_CHANNEL_CHK      = 0xff,   //通道灯泡检测配置表 ADD?20130801 1121
+	OBJECT_YWFLASH_CFG      = 0xe1,   //黄闪器配置
+	OBJECT_DET_EXTCFG       = 0xe2,   //检测器扩展配置
+	OBJECT_LAMPBOARD_CFG    = 0xe3,   //灯控板灯泡检测和红绿冲突检测配置
+	OBJECT_PSCBTN_NUM 	    = 0xee,    //模拟8位行人按钮输入 ADD:2013 0829 1540
+	OBJECT_TMPPATTERN_CFG   = 0xef,    //12方向临时组合方案，默认60秒
+	OBJECT_SYSFUNC_CFG      = 0xe4,      //系统其他功能设置
 	OBJECT_SENDCLIENT_CNTDOWN = 0xe6 ,
-	OBJECT_POWERBOARD_CFG     = 0xe7 ,  //电源板配置
-	OBJECT_GSM_CFG            = 0xe8   //GSM配置
-
+	OBJECT_POWERBOARD_CFG     = 0xe7,   //电源板配置
+	OBJECT_GSM_CFG            = 0xe8 ,  //GSM配置
+	OBJECT_BUTTONPHASE_CFG    = 0xe9    //模拟无线按键按钮
 };
 /*****************GBT协议对象标志类型和扩充协议标志类型那个枚举********************/
 
@@ -140,11 +141,8 @@ class CGbtMsgQueue
 public:
 	static CGbtMsgQueue* CreateInstance();
 	static void* RunGbtRecv(void* arg);	
-
-
 	int  SendGbtMsg(SThreadMsg* pMsg,int iLen);
-	void DealData();
-	//void CheckTimeOut();
+	void DealData();	
 #ifdef GBT_TCP
 	SGbtDealData* GetGbtDealDataPoint();
 	Byte GetDealDataIndex(bool bReportSelf , ACE_SOCK_Stream& sockStreamRemote);
@@ -157,10 +155,11 @@ public:
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex);
 	void GetCmuAndCtrl(Byte* pBuf,int& iSendIndex , Byte ucSubId);
 	void ReworkNetPara(Byte* cIp ,Byte* cMask,Byte* cGateWay);
-	void RecordNetPara(Byte* pIp , Byte* pMask , Byte* pGateWay);
-	void GetNetPara(Byte* pHwEther , Byte* pIp , Byte* pMask , Byte* pGateway);
+	void GetNetPara(Byte* pIp , Byte* pMask , Byte* pGateway);
 	void InterceptStr(char* pBuf, char* pstr , Byte* pData , Byte ucCnt);
-
+	void GetNetParaByAce(Byte* pip,char* phost_name);  //add 2014 03 20   lurenhua 通过ACE来取得IP地址，可以取得多个
+	
+	bool GetSystemShellRst(const char* shellcmd , char * cshellrst ,Byte datasize); //ADD:201411041430
 public:
 	ACE_INET_Addr m_addrLocal;
 #ifdef GBT_TCP
@@ -168,7 +167,7 @@ public:
 #else
 	ACE_SOCK_Dgram m_sockLocal;  //udp
 #endif
-	Uint iPort   ;               //MOD:201309250830
+	int iPort   ;               //MOD:201309250830
 private:
 	CGbtMsgQueue();
 	~CGbtMsgQueue();
@@ -198,14 +197,13 @@ private:
 	int GetManualCtrlStatus(unsigned int uiWorkStatus,unsigned int uiCtrl);
 
 	void TscCopyFile(char* fpSrc, char* fpDest);
-	void ReworkIp(Byte ucIp1,Byte ucIp2,Byte ucIp3,Byte ucIp4);
+	void UpdateNetPara(Byte* pIp);  //add: 2014 03 20   lurenhua zlg m3352核心板IP地址修改函数
 	
-	void GetWatchPara(Byte* pBuf,int *iSendIndex);
-	void GetModuleStatus(Byte* pBuf,int *iSendIndex);
+	void GetWatchPara(Byte* pBuf,int *iSendIndex);	
+	void GetModuleStatus(Byte* pBuf,int *iSendIndex ,Byte subId,Byte ucQueryType,Byte ucBdindex);
 	void PackTscExStatus(Byte ucDealDataIndex,void* pValue);
 	void GetFlashCfg(Byte* pBuf,int *iSendIndex) ;  //ADD: 2013 0808 10 30
 	void SetFlashCtrl(Byte* pBuf,int& iRecvIndex); //ADD 2013 0808 1430
-
 	void  GetPowerCfg(Byte* pBuf,int *iSendIndex ,Byte ucQueryType); //ADD:201404021520	
 	void  SetPowerCfg(Byte* pBuf,int& iRecvIndex) ;//ADD:201404021520
 
@@ -215,12 +213,14 @@ private:
 	void SetPscNum(Byte* pBuf,int& iRecvIndex);  //ADD 20130829 1600
 	void SetTmpPattern(Byte* pBuf,int& iRecvIndex) ; //ADD 20131016 1700
 	void SetSysFunc(Byte* pBuf,int& iRecvIndex); //ADD 20131019 1400
-	void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
 	void PrintIpList();
 
 	void GotoMsgError(Byte ucDealDataIndex,Byte ucErrorSts,Byte ucErrorIdx);
 	void GotoSendToHost(Byte ucDealDataIndex);
 	void GotoDealRecvbuf(Byte ucDealDataIndex);
+	void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
+	void SetCommandSignal(Byte* pBuf,int& iRecvIndex) ;  //ADD 201409231002
+	void SetButtonPhase(Byte* pBuf,int& iRecvIndex);        //ADD 201410181052
 
 	//Byte m_ucAddrNum;
 	ACE_Message_Queue<ACE_MT_SYNCH>* m_pMsgQue;
@@ -228,9 +228,7 @@ private:
 	ACE_Thread_Mutex  m_sMutex;
 	//ACE_INET_Addr m_AddrArr[MAX_CLIENT_NUM];
 	SGbtDealData  m_sGbtDealData[MAX_CLIENT_NUM];
-	
 
-	/*??????±????·??????????*/
 	int m_iManualCtrlNo;
 	int m_iSystemCtrlNo;
 };

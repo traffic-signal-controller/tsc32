@@ -1,3 +1,6 @@
+#ifndef _GBTDB_H_
+#define _GBTDB_H_
+
 #pragma once
 
 #include <ace/Thread_Mutex.h>
@@ -440,8 +443,8 @@ typedef struct
 {
 	Ulong       ulId;                       /*编号*/
 	Byte       ucDetId;                    /*检测器id*/
-	Ulong       ulCarTotal;                 /*车辆总流量*/
-	Byte       ucOccupancy;               /*占有率*/
+	Ulong       ulCarTotal;                 /*车辆总流量排队长度*/
+	Byte       ucOccupancy;                /*占有率*/
 	Ulong       ulAddtime;                 /*记录添加的时间*/
 }PACKED VehicleStat;
 typedef DbArray<VehicleStat, Ulong>    TblVehicleStat;  //定义车辆统计类
@@ -848,6 +851,8 @@ public:
     bool InitDb(const char* pDbPath);
     /*关闭数据库*/
     void CloseDb();
+    /*插入默认数据*/
+	void InitDefaultData(); //ADD:20141209
 /***********************模块表处理函数***************************/
     /*查询全部*/
     bool QueryModule(TblModule& tblModule);
@@ -1407,5 +1412,5 @@ ucValue = sValueSeq[0]
         UNPACKET_UCHAR(SEQ, DATA);\
     }
 }
-
+#endif
 

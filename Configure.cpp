@@ -3,67 +3,103 @@
  *     功能: 提供类和方法,实现从配置文件读取参数值 
  *     作者: 鲁仁华 
  *     联系: renhualu@live.com 
- * 最近修改: 2014-4-25 
+ * 最近修改: 2013-4-15 
  *     版本: v1.0.2 
   ==================================================================================================*/  
   
-#include <sys/timeb.h>   
+#include <sys/timeb.h>  
 #include <string>  
 #include <iostream>  
-#include <map>    
-#include <ace/OS.h>    
-#include "Configure.h"  
+#include <map>  
+#include <ace/OS.h>  
+#include "Configure.h"
 #include <iostream>
 using namespace std;
 
+/**************************************************************
+Function:       CreateInstance
+Description:    单例模式创建对象
+Input:          无           
+Output:         无
+Return:         Configure对象
+***************************************************************/
 Configure* Configure::CreateInstance()
 {
 	static Configure con;
 	return &con;
 }
+/**************************************************************
+Function:       Configure
+Description:    构造函数，创建配置文件对象及配置文件
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 Configure::Configure():impExp_(NULL)
 {
-  bool binitfile = InitConfig() ;
+    bool binitfile = InitConfig() ;
  	if(!binitfile)
 	{
 		ACE_DEBUG((LM_DEBUG,"%s:%d Init configure file fail !\n",__FILE__,__LINE__));
 			 
 	}
-     if(open("tsc.ini") == -1)
-  	{
-		cout<<"open configure file error!\n";
-	
- 	 }      
+    if(open("tsc.ini") == -1)
+ 	{
+		ACE_OS::printf("\r\n%s:%d ***Configure***Open tsc.ini configure file error!\r\n",__FILE__,__LINE__);
+ 	}  
 }
- 
+ /**************************************************************
+Function:       ~Configure
+Description:    析构函数，删除配置文件对象。
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 Configure::~Configure()
 {
        if (impExp_)
               delete impExp_;
        impExp_ = NULL;
 }
- 
+/**************************************************************
+Function:       open
+Description:    打开配置文件
+Input:           filename 配置文件名称          
+Output:         无
+Return:         IO
+***************************************************************/
 int Configure::open(const ACE_TCHAR * filename)
 {
        if (this->config.open() == -1)
-	   {
-		return -1 ;
-       }
+              return -1;
+      
        this->impExp_=new ACE_Ini_ImpExp(config);
-	
-      return this->impExp_->import_config(filename);
-		
-	
-}
  
+       return this->impExp_->import_config(filename);
+}
+/**************************************************************
+Function:       GetString
+Description:    从配置文件读取字符串类型的值
+Input:          szSection 	区域 [xxxx]
+				szKey		key字符串
+Output:         strValue	相对key 值的    内容 
+Return:         1 成功	0 失败
+***************************************************************/
 int Configure::GetString(const char *szSection, const char *szKey, ACE_TString &strValue)
 {
        if (config.open_section(config.root_section(),ACE_TEXT(szSection),0,this->root_key_)==-1)
               return -1;
        return config.get_string_value(this->root_key_,szKey,strValue);
 }
- 
-int Configure::GetInteger(const char* szSection,const char* szKey,Uint& nValue)
+/**************************************************************
+Function:       GetInteger
+Description:    从配置文件读取数字类型的值
+Input:          szSection 	区域 [xxxx]
+				szKey		key字符串
+Output:         nValue		相对key 值的    内容 
+Return:         1 成功	0 失败
+***************************************************************/
+int Configure::GetInteger(const char* szSection,const char* szKey,int& nValue)
 {
        ACE_TString strValue;
        if (config.open_section(config.root_section(),ACE_TEXT(szSection),0,this->root_key_)==-1)
@@ -76,7 +112,13 @@ int Configure::GetInteger(const char* szSection,const char* szKey,Uint& nValue)
               return -1;
        return nValue;
 }
-
+/**************************************************************
+Function:       InitConfig
+Description:    对配置文件进行初始化
+Input:          无
+Output:         无
+Return:         1 成功	0 失败
+***************************************************************/
 bool Configure::InitConfig()
 {
 	FILE* fConfig = NULL ;
@@ -88,8 +130,8 @@ bool Configure::InitConfig()
 		ACE_OS::fputs("\n[APPDESCRIP]",fConfig);
 		ACE_OS::fputs("\napplication   =Gb.aiton",fConfig);
 		ACE_OS::fputs("\ndatebase      =GbAitonTsc.db",fConfig);
-		ACE_OS::fputs("\nversion       =1.0.1",fConfig);
-		ACE_OS::fputs("\ndescription   =32 Phase Traffic Singal Controner",fConfig);
+		ACE_OS::fputs("\nversion       = 1.0.1",fConfig);
+		ACE_OS::fputs("\ndescription   = 32 Phase Traffic Singal Controner",fConfig);
 		
 		ACE_OS::fputs("\n[COMMUNICATION]",fConfig);
 		ACE_OS::fputs("\nstandard      =GBT20999",fConfig);
@@ -99,55 +141,73 @@ bool Configure::InitConfig()
 		ACE_OS::fputs("\n[CONTACT]",fConfig);
 		ACE_OS::fputs("\ncompany       =XiaMenAiTon",fConfig);
 		ACE_OS::fputs("\nlinkman       =Chen",fConfig);
-		ACE_OS::fputs("\ntelephone     =0592-5212811",fConfig);
-		ACE_OS::fputs("\naddress       =No151,BanMei,HuLi,XiaMen,FuJian,China",fConfig);
-		ACE_OS::fputs("\nWebSite       =http://www.aiton.com.cn	",fConfig);
+		ACE_OS::fputs("\ntelephone     = 0592-5212811",fConfig);
+		ACE_OS::fputs("\naddress       = No151,BanMei,HuLi,XiaMen,FuJian,China",fConfig);
+		ACE_OS::fputs("\nWebSite       = http://www.aiton.com.cn	",fConfig);
+		
+		ACE_OS::fputs("\n[FUNCTION]",fConfig);
+		ACE_OS::fputs("\nBACKUP       = 1	",fConfig);		
 		ACE_OS::fclose(fConfig);
 		return true ;
 	}
+	ACE_OS::fclose(fConfig);
 	return true ;
 }
+ /**************************************************************
+Function:       ShowConfig
+Description:    显示配置文件中的内容
+Input:          无
+Output:         无
+Return:         无
+***************************************************************/
 void Configure::ShowConfig()
 {
-	Configure *pMyconfig =  Configure::CreateInstance() ;
   ACE_TString vstring ;
-  if(pMyconfig->open("tsc.ini") == -1)
-  {
-	cout<<"open configure file error!\n";
-	return ;
-  }
- cout<<"#..................Show Tsc Configure....................# "<<endl ;
- pMyconfig->GetString("APPDESCRIP","application",vstring);
+  //if(open(ACE_TEXT("tsc.ini")) == -1)
+  //{
+	//ACE_OS::printf("\r\n%s:%d ***Configure***Open tsc.ini configure file error!\r\n\n",__FILE__,__LINE__);
+	//return ;
+//  }
+ cout<<endl<<"#..................Show Tsc Configure....................# "<<endl ;
+ GetString("APPDESCRIP","application",vstring);
 	cout<<"AppName :" <<vstring.c_str()<<endl ;
-  pMyconfig->GetString("APPDESCRIP","datebase",vstring);
+ GetString("APPDESCRIP","datebase",vstring);
 	cout<<"DataBaseName :" <<vstring.c_str()<<endl ;	
-   pMyconfig->GetString("APPDESCRIP","version",vstring);
+ GetString("APPDESCRIP","version",vstring);
 	cout<<"Version :" <<vstring.c_str()<<endl ;
-  pMyconfig->GetString("APPDESCRIP","description",vstring);
+ GetString("APPDESCRIP","description",vstring);
 	cout<<"Description :" <<vstring.c_str()<<endl ;
 
- pMyconfig->GetString("COMMUNICATION","standard",vstring);
+ GetString("COMMUNICATION","standard",vstring);
 	cout<<"Standard :" <<vstring.c_str()<<endl ;
-  pMyconfig->GetString("COMMUNICATION","protocol",vstring);
+ GetString("COMMUNICATION","protocol",vstring);
 	cout<<"Protocol :" <<vstring.c_str()<<endl ;	
-   pMyconfig->GetString("COMMUNICATION","port",vstring);
+ GetString("COMMUNICATION","port",vstring);
 	cout<<"Portnumber :" <<vstring.c_str()<<endl ;
 
-  pMyconfig->GetString("CONTACT","company",vstring);
+ GetString("CONTACT","company",vstring);
 	cout<<"Company :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","linkman",vstring);
+GetString("CONTACT","linkman",vstring);
 	cout<<"LinkMan :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","telephone",vstring);
+GetString("CONTACT","telephone",vstring);
 	cout<<"Telephone :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","address",vstring);
+GetString("CONTACT","address",vstring);
 	cout<<"Address :" <<vstring.c_str()<<endl ;
-pMyconfig->GetString("CONTACT","WebSite",vstring);
+GetString("CONTACT","WebSite",vstring);
 	cout<<"WebSite :" <<vstring.c_str()<<endl ;
-
-cout<<"#................End Show Tsc Configure..................# "<<endl ;
+	
+GetString("FUNCTION","BACKUP",vstring);
+	cout<<"FUNCTION :" <<vstring.c_str()<<endl ;
+cout<<"#................End Show Tsc Configure..................# "<<endl<<endl;
 }
 
-
+ /**************************************************************
+Function:       close
+Description:    关闭文件
+Input:          无
+Output:         无
+Return:         1 成功	0 失败
+***************************************************************/
 int Configure::close()
 {
        if (impExp_)

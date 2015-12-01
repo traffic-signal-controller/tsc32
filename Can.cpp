@@ -15,6 +15,8 @@ History:
 #include "MacControl.h"
 #include <ace/Guard_T.h>
 #include "ComFunc.h" //ADD:201309281040
+#include "WirelessButtons.h"
+#include "MainBackup.h"
 
 #ifndef WINDOWS
 #include <sys/time.h>
@@ -118,55 +120,24 @@ bool Can::Send(SCanFrame& sendFrame)
 	ACE_Guard<ACE_Thread_Mutex>  guard(m_mutexCan);
 	int ulBytes = 0;
 
-#ifdef LINUX
 	m_frameCan.can_id = sendFrame.ulCanId;
 	ACE_OS::memcpy(m_frameCan.data,sendFrame.pCanData,sendFrame.ucCanDataLen);
 	m_frameCan.can_dlc = sendFrame.ucCanDataLen;
-
-	ulBytes	= sendto(m_socketHandle , &m_frameCan , sizeof(struct can_frame), 0	,(struct sockaddr*)&m_addrCan,sizeof(m_addrCan));
-
+	ulBytes	= sendto(m_socketHandle , &m_frameCan , sizeof(struct can_frame), 0	,(struct sockaddr*)&m_addrCan,sizeof(m_addrCan));	
 	if(ulBytes == -1)
 	{
-		int erronum = errno ;
-		switch(erronum)
-		{
-			case EBADF :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d can socket ŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-				break ;
-			case EFAULT :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ÄÚŽæ¶ÁÈ¡ŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-				break ;
-			case ENOTSOCK :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d can socketŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-				break ;
-			case EINTR :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ÐÅºÅÖÐ¶ÏŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-				break ;
-			case EAGAIN :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d EAGAINŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-				break ;
-			case ENOBUFS :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ÏµÍ³ÄÚŽæ²»×ã!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-				break ;
-			case EINVAL :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d ²ÎÊýŽ«µÝŽíÎó!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-				break ;
-			default :
-				//ACE_DEBUG((LM_DEBUG,"%s:%d errno = %d!\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
-				break ;
-			
-			return false ;
-
-		}
-
+		int erronum = errno ;		
+		//ACE_DEBUG((LM_DEBUG,"%s:%d erronum=%d !\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
+		return false ;
 	}
-
-	if ( ulBytes == sizeof(struct can_frame) )
+	
+	if ( ulBytes == sizeof(struct can_frame))
 	{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d ¿ªÆôCANÖžÊŸµÆ!\n",__FILE__,__LINE__));//MODå:20130523 14 25
-		pMainBoardLed->DoCanLed();
+		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN 的帧与ulBytes大小不相等!\n",__FILE__,__LINE__));//MODå:20130523 14 25
+		//这里影响到的can数据的发送
+		pMainBoardLed->DoCan0Led();
 	}
-#endif	
+
 		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
 	return true;
 }
@@ -192,12 +163,6 @@ bool Can::Recv(SCanFrame& recvFrame)
 	ACE_OS::memcpy(recvFrame.pCanData,m_frameCan.data,m_frameCan.can_dlc);
 	recvFrame.ucCanDataLen = m_frameCan.can_dlc;
 #endif
-
-	if ( ulBytes == sizeof(recvFrame) )
-	{
-		pMainBoardLed->DoCanLed();
-	}
-
 	return true;
 }
 
@@ -221,7 +186,7 @@ void Can::BuildCanId(Ulong u1CanMsgType
 	Ulong ulCanIdTmp = 0;
 
 	ulCanIdTmp = ulCanIdTmp | B2B_PROTOCOL_V00;  
-	ulCanIdTmp = ulCanIdTmp | (0xff << 4);   //±£ÁôÎ»  err	
+	ulCanIdTmp = ulCanIdTmp | (0xff << 4);   //保留部分  err	
 	ulCanIdTmp = ulCanIdTmp | (u1RemodeAddr << 12);
 	ulCanIdTmp = ulCanIdTmp | (u1FrameMode  << 18);
 	ulCanIdTmp = ulCanIdTmp | (u1ModuleAddr << 20);
@@ -347,11 +312,12 @@ void * Can::RunCanRecv(void *arg)
 	else
 	{
 		Can::CreateInstance()->Recv(sRecvFrameTmp);
+		
 		ACE_Message_Block *mb = new ACE_Message_Block(iLenCanFrame); //构造消息块
 		mb->copy((char*)&sRecvFrameTmp, iLenCanFrame); // 将数据拷贝进消息块
 
 		//ACE_Time_Value nowait(GetCurTime()+ACE_Time_Value(1));
-		ACE_Time_Value nowait(GetCurTime()) ;
+		ACE_Time_Value nowait(getCurrTime()) ;
 		if( -1 == (pCan->m_CanMsgQue)->enqueue_tail(mb, &nowait))			//向 CAN ACE_Message_Queue中添加新数据块
 		{
 			mb->release();
@@ -389,20 +355,21 @@ void * Can::DealCanData(void* arg)
 	SCanFrame sRecvFrameTmp;
 	//int iLenCanFrame = sizeof(sRecvFrameTmp) ;
 	Can* pCan = Can::CreateInstance();
-	CDetector * pDector  = CDetector::CreateInstance();
-	CLampBoard *pLampBoard = CLampBoard::CreateInstance();
-	CFlashMac *pFlash = CFlashMac::CreateInstance();
-	CPowerBoard *pPower = CPowerBoard::CreateInstance(); //ADD :2013 0712 17 54
-	CMacControl *pMacControl = CMacControl::CreateInstance(); //ADD: 2013 0815 0920
-
+	CDetector    *pDector  = CDetector::CreateInstance();
+	CLampBoard   *pLampBoard = CLampBoard::CreateInstance();
+	CFlashMac    *pFlash = CFlashMac::CreateInstance();
+	CPowerBoard  *pPower = CPowerBoard::CreateInstance(); //ADD :2013 0712 17 54
+	CMacControl  *pMacControl = CMacControl::CreateInstance(); //ADD: 2013 0815 0920
+	CWirelessBtn *pWirelessBtn = CWirelessBtn::CreateInstance();  //ADD: 20141022 1123
+	CMainBoardLed*pMaiBdLed = CMainBoardLed::CreateInstance(); //ADD:201501013	ACE_Time_Value nowait(getCurrTime());	
+	MainBackup *pMainBack = MainBackup::CreateInstance(); //ADD:20150310
 	ACE_Time_Value nowait(GetCurTime());	
-	
 	while ( pCan->m_CanMsgQue != NULL )
 	{		
 		if((pCan->m_CanMsgQue)->dequeue_head(mb, &nowait) != -1) 
 		{ 
 			iLen = (int)mb->length();
-			memcpy((char*)&sRecvFrameTmp, mb->base(), iLen);  
+			ACE_OS::memcpy((char*)&sRecvFrameTmp, mb->base(), iLen);  //MOD: add ACE_OS::
 			mb->release();			
 		}
 		else
@@ -424,12 +391,25 @@ void * Can::DealCanData(void* arg)
 				break;
 			case BOARD_ADDR_LAMP4:
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP4, sRecvFrameTmp);
-				break;
+				break;			
 			case BOARD_ADDR_LAMP5:
 				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP5, sRecvFrameTmp);
 				break;
+			case BOARD_ADDR_LAMP6:
+				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP6, sRecvFrameTmp);
+				break;
+			case BOARD_ADDR_LAMP7:
+				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP7, sRecvFrameTmp);
+				break;
+			case BOARD_ADDR_LAMP8:
+				pLampBoard->RecvLampCan(BOARD_ADDR_LAMP8, sRecvFrameTmp);
+				break;
+				
 			case BOARD_ADDR_POWER:
 				pPower->RecvPowerCan(BOARD_ADDR_POWER,sRecvFrameTmp);
+				break;
+			case BOARD_ADDR_POWER2:
+				pPower->RecvPowerCan(BOARD_ADDR_POWER2,sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_DETECTOR1:
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR1, sRecvFrameTmp);// ADD: 2013 0710 1039	
@@ -438,8 +418,9 @@ void * Can::DealCanData(void* arg)
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR2, sRecvFrameTmp);// ADD: 2013 0710 1039	
 				break;
 			case BOARD_ADDR_INTEDET1 :
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET1\n"));
-				 pDector->RecvDetCan(BOARD_ADDR_INTEDET1, sRecvFrameTmp);// ADD: 2014 0504 1039					
+				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET1\n"));				
+				//PrintCurTime("Get intedet1 ");
+				pDector->RecvDetCan(BOARD_ADDR_INTEDET1, sRecvFrameTmp);// ADD: 2014 0504 1039					
 				break;
 			case BOARD_ADDR_INTEDET2 :
 				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET2\n"));	
@@ -452,15 +433,34 @@ void * Can::DealCanData(void* arg)
 				pMacControl->RecvMacCan(sRecvFrameTmp);
 				break;
 			case BOARD_ADDR_LED :
+				pMaiBdLed->RecvMainBdLedCan(sRecvFrameTmp);
 				break ;
+			case BOARD_ADDR_WIRELESS_BTNCTRLA:
+				pWirelessBtn->RecvMacCan(sRecvFrameTmp); //ADD: 20141022 1125				
+				break ;
+			case BOARD_ADDR_MAINBACK:
+				pMainBack->RecvMainBackCan(sRecvFrameTmp);//ADD: 2010310 1048	
+				break ;
+			case BOARD_ADDR_MAIN: //ADD:20141024 Get Can date from mainboard
+			{
+				Byte icandatelength = sRecvFrameTmp.ucCanDataLen ;
+				ACE_OS::printf("%s:%d ",__FILE__,__LINE__);				
+				for(Byte idex = 0 ; idex<icandatelength;idex++)
+				{
+					ACE_OS::printf(" %2X ",sRecvFrameTmp.pCanData[idex]);
+				}
+				ACE_OS::printf("\r\n");
+				break ;
+			}
 			default:
-				ACE_DEBUG((LM_DEBUG,"\nRecv from UNKNOW ADDR :%2X !\n",u1ModuleAddr));
+				ACE_DEBUG((LM_DEBUG,"\n%s:%d Recv from unknow Module address :%2X !\n",u1ModuleAddr));
 				break ;
 		}
 	}
 
 	return 0 ;
 }
+
 
 	
 

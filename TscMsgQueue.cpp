@@ -12,6 +12,7 @@ History:
 #include "ManaKernel.h"
 #include "DbInstance.h"
 #include "ComFunc.h"
+#include "WirelessButtons.h"
 
 /**************************************************************
 Function:        CTscMsgQueue::CTscMsgQueue
@@ -87,7 +88,7 @@ int CTscMsgQueue::SendMessage(SThreadMsg* pMsg,int iLen)
 	ACE_Message_Block *mb = new ACE_Message_Block(iLen); //构造消息块
 	mb->copy((char*)pMsg, iLen); // 将数据拷贝进消息块
 
-	ACE_Time_Value nowait(GetCurTime()+ACE_Time_Value(1));
+	ACE_Time_Value nowait(getCurrTime()+ACE_Time_Value(1));
 	m_pMsgQue->enqueue_tail(mb, &nowait);    //向 ACE_Message_Queue中添加新数据块
 
 #ifdef CHECK_MEMERY
@@ -111,12 +112,13 @@ void CTscMsgQueue::DealData()
 	timeval tTmp;
 	ACE_Message_Block *mb = NULL;
 	SThreadMsg sMsg; 
-	ACE_Time_Value nowait(GetCurTime());
+	ACE_Time_Value nowait(getCurrTime());
 
 	tTmp.tv_sec  = 0;
 	tTmp.tv_usec = 10000;
 
 	CManaKernel* pWorkParaManager = CManaKernel::CreateInstance();
+	CWirelessBtn* pWirelessBtn = CWirelessBtn::CreateInstance();
 
 	for(;;)
 	{
@@ -186,6 +188,10 @@ void CTscMsgQueue::DealData()
 			break;
 		case TSC_MSG_PATTER_RECOVER:
 			pWorkParaManager->ChangePatter(sMsg.ucMsgOpt);
+			break ;
+		case TSC_MSG_MANUALBUTTON_HANDLE:
+			pWirelessBtn->HandleSpecialDirec((Uint*)sMsg.pDataBuf);
+			break ;
 		default:
 			break;
 		}

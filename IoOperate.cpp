@@ -1,15 +1,33 @@
 #include "IoOperate.h"
-
+/**************************************************************
+Function:        CIoOprate
+Description:     CIoOprate类构造函数，初始化类			
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 CIoOprate::CIoOprate()
 {
 	ACE_DEBUG((LM_DEBUG,"create CIoOprate\n"));
 }
-
+/**************************************************************
+Function:        ~CIoOprate
+Description:     CIoOprate类构造函数，初始化类			
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 CIoOprate::~CIoOprate()
 {
 	ACE_DEBUG((LM_DEBUG,"delete CIoOprate\n"));
 }
-
+/**************************************************************
+Function:        TscWrite
+Description:     CIoOprate  io 操作写操作，目前已经不再使用			
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 bool CIoOprate::TscWrite(int iDevFd , Byte* pWriteData , int iWriteCnt)
 {
 	int iReWriteCnt     = 0;    //重复写的次数
@@ -18,9 +36,9 @@ bool CIoOprate::TscWrite(int iDevFd , Byte* pWriteData , int iWriteCnt)
 
 	while ( iHaveWriteCnt < iWriteCnt )
 	{
-#ifdef LINUX
+
 		iWriteCntOnePer = write(iDevFd, pWriteData+iHaveWriteCnt ,iWriteCnt-iHaveWriteCnt);
-#endif
+
 		if ( iWriteCntOnePer > 0 )
 		{
 			iHaveWriteCnt += iWriteCntOnePer;
@@ -33,15 +51,21 @@ bool CIoOprate::TscWrite(int iDevFd , Byte* pWriteData , int iWriteCnt)
 					__FILE__, __LINE__,iWriteCnt,iHaveWriteCnt));
 				return false;
 			}
-#ifdef LINUX
+
 			usleep(USLEEP_TIME);
-#endif
+
 		}
 	}
 
 	return true;
 }
-
+/**************************************************************
+Function:        TscRead
+Description:     CIoOprate  io 读取操作。目前已经不再使用		
+Input:          无           
+Output:         无
+Return:         无
+***************************************************************/
 bool CIoOprate::TscRead(int iDevFd , Byte* pReadData , int iReadCnt )
 {
 	int iReReadCnt   = 0;    //重复读取的次数

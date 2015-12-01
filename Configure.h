@@ -2,14 +2,13 @@
 #define _CONFIGURE_H_
 #include "ace/Configuration.h"
 #include "ace/Configuration_Import_Export.h"
-#include "Define.h"
 
 
 class Configure 
 {
 public:
        int GetString(const char* szSection,const char* szKey,ACE_TString& strValue);
-       int GetInteger(const char* szSection,const char* szKey,Uint& nValue);
+       int GetInteger(const char* szSection,const char* szKey,int& nValue);
        int open(const ACE_TCHAR * filename);
        int close();
 	   static Configure* CreateInstance();

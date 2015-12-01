@@ -32,6 +32,7 @@ enum
 	 FLASH_HEAD_CFGSET = 0x03 ,	  //ÉèÖÃ»ÆÉÁÆ÷ÅäÖÃÊý¾Ý
 	 FLASH_HEAD_ENTRY  = 0x04 ,   //Ç¿ÖÆ»ÆÉÁ
 	 FLASH_HEAD_EXIT   = 0x05 ,   //ÍË³ö»ÆÉÁÆ÷Ç¿ÖÆ»ÆÉÁ×´Ì¬
+	 FLASH_HEAD_VER    =0xff       //»ÆÉÁÆ÷°æ±¾
 
 };
 
@@ -207,6 +208,15 @@ void CFlashMac::FlashForceEnd()	//ÍË³öÇ¿ÖÆ»ÆÉÁ	ADD:0605 11 40
 
 }
 
+void CFlashMac::FlashGetVer()
+{
+	SCanFrame sSendFrameTmp;							
+	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));			
+	Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN	, FRAME_MODE_P2P , BOARD_ADDR_FLASH  , &(sSendFrameTmp.ulCanId));
+	sSendFrameTmp.pCanData[0] = FLASH_HEAD_VER;				
+	sSendFrameTmp.ucCanDataLen = 1; 		
+	Can::CreateInstance()->Send(sSendFrameTmp); 
+}
 
 		
 /**************************************************************
@@ -585,8 +595,11 @@ Return:         ÎÞ
 ***************************************************************/
 void CFlashMac::RecvFlashCan(SCanFrame sRecvCanTmp)
 {
-	Byte ucType = sRecvCanTmp.pCanData[0] & 0x3F ;
-
+	Byte ucType = 0x0;
+	if(sRecvCanTmp.pCanData[0] == 0xff)
+		ucType = 0xff ;
+	else		
+		ucType = sRecvCanTmp.pCanData[0] & 0x3F ;
 	switch(ucType)
 	{
 		case FLASH_HEAD_CFGSET:
@@ -602,6 +615,16 @@ void CFlashMac::RecvFlashCan(SCanFrame sRecvCanTmp)
 			m_ucFlashStatus  = sRecvCanTmp.pCanData[3] &0xf;
 			
 			break ;
+		case FLASH_HEAD_VER:
+			m_ucFlashVer[0]=sRecvCanTmp.pCanData[1];			
+			m_ucFlashVer[1]=sRecvCanTmp.pCanData[2];
+			m_ucFlashVer[2]=sRecvCanTmp.pCanData[3];
+			m_ucFlashVer[3]=sRecvCanTmp.pCanData[4];
+			m_ucFlashVer[4]=sRecvCanTmp.pCanData[5];			
+			//ACE_OS::printf("%s:%d FlashBdver:%d %d %d %d %d \n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],
+			//	sRecvCanTmp.pCanData[2],sRecvCanTmp.pCanData[3],sRecvCanTmp.pCanData[4],sRecvCanTmp.pCanData[5]);
+			break ;
+			
 		default :
 			return ;
 			break ;

@@ -21,9 +21,7 @@ History:
 #include <sys/time.h>
 #endif
 
-const int MAX_PLUS_SCALE   = 30;  //一个周期增加的最大比例 
-const int MAX_MINU_SCALE   = 20;  //每个周期减少的最大比例
-const int PLUS_LINE        = 50;  //增加的界线
+
 /**************************************************************
 Function:        CWirelessCoord::IsMasterMachine
 Description:     判断是否是无线协调主机		
@@ -68,7 +66,7 @@ CWirelessCoord::CWirelessCoord()
 	m_iOffset     = 0;         
 	m_iAdjustCnt  = 0;     
 
-	ACE_DEBUG((LM_DEBUG,"%s:%d Init CWirelessCoord object !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d Init CWirelessCoord object!\n",__FILE__,__LINE__));
 
 }
 
@@ -81,7 +79,7 @@ Return:         无
 ***************************************************************/
 CWirelessCoord::~CWirelessCoord()
 {
-	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct CWirelessCoord object!\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct  CWirelessCoord object!\n",__FILE__,__LINE__));
 }
 
 
@@ -145,7 +143,7 @@ void CWirelessCoord::SetStepInfo(bool bCenter
 		m_iOffset  = iOffset;
 	}
 
-	ACE_DEBUG((LM_DEBUG,"%s,%d m_iUtsCycle:%d m_iUtscOffset:%d\n",__FILE__,__LINE__,m_iUtsCycle,m_iUtscOffset));
+	//ACE_DEBUG((LM_DEBUG,"%s,%d m_iUtsCycle:%d m_iUtscOffset:%d\n",__FILE__,__LINE__,m_iUtsCycle,m_iUtscOffset));
 
 }
 
@@ -162,11 +160,9 @@ void CWirelessCoord::GetDeflection()
 	int iDeflection = 0;
 	int iCycle      = 0;
 	int iOffset     = 0;
-
 	if ( m_bUtcs )
 	{
 		iCycle  = m_iUtsCycle;
-		//iCycle  = m_iCycle;  //debug
 		iOffset = m_iUtscOffset;
 	}
 	else
@@ -180,12 +176,7 @@ void CWirelessCoord::GetDeflection()
 	time_t tTi, tTi0;
 	struct tm *tNow;
 	
-	tTi  = time(NULL);
-
-	//static time_t tTmp = 0;
-	//ACE_DEBUG((LM_DEBUG,"%s:%d take time per cycle:%d\n",__FILE__,__LINE__,(int)(tTi - tTmp)));
-	//tTmp = tTi;
-	
+	tTi  = time(NULL);	
 	tNow = localtime(&tTi);
 
 	tNow->tm_hour = 0;
@@ -201,24 +192,14 @@ void CWirelessCoord::GetDeflection()
 
 	iDeflection = (tTi - iOffset - tTi0) % iCycle;
 	
-	//ACE_DEBUG((LM_DEBUG, "********************************************************\n"));
-	ACE_DEBUG((LM_DEBUG, "%s:%d iDeflection:%d iCycle:%d iOffset:%d tTi:%ld  tTi0:%ld \n"
-			, __FILE__ , __LINE__  , iDeflection , iCycle , iOffset , (long)tTi , (long)tTi0 ));
-	//ACE_DEBUG((LM_DEBUG, "********************************************************\n"));
+	//ACE_DEBUG((LM_DEBUG, "%s:%d iDeflection:%d iCycle:%d iOffset:%d tTi:%d  tTi0:%d \n"
+		//	, __FILE__ , __LINE__  , iDeflection , iCycle , iOffset , (long)tTi , (long)tTi0 ));
 
 	if ( 0 == iDeflection )
 	{
-		//m_tLastTi = time(NULL);
 		m_iAdjustCnt = 0;
 		return;
 	}
-	/*
-	else if ( ( tTi - m_tLastTi ) < ( 12 * 60 * 60 ) ) //12小时协调一次
-	{
-		m_iAdjustCnt = 0;
-		return;
-	}
-	*/
 	
 #else
 
@@ -237,8 +218,8 @@ void CWirelessCoord::GetDeflection()
 	{
 		m_bPlus      = true;
 	}
-
 	
+	//ACE_DEBUG((LM_DEBUG,"%s:%d This cycle m_iAdjustCnt:%d m_bPlus:%d\n" , __FILE__ , __LINE__ , m_iAdjustCnt , m_bPlus));
 }
 
 
@@ -270,11 +251,11 @@ void CWirelessCoord::GetAdjust()
 		iCycle = m_iCycle;
 	}
 
-	//for ( i = 0; i < MAX_STEP; i++ )
-	//{
-		//m_iAdjustSecond[i] = 0;
-	//}
-	ACE_OS::memset(m_iAdjustSecond,0,MAX_STEP);
+	for ( i = 0; i < MAX_STEP; i++ )
+	{
+		m_iAdjustSecond[i] = 0;
+	}
+
 	if ( m_bPlus )
 	{
 		iMaxAdjustCnt = iCycle * MAX_PLUS_SCALE / 100;   //每个周期最大的增加的调整数
@@ -295,7 +276,7 @@ void CWirelessCoord::GetAdjust()
 		{
 			continue;
 		}
-		m_iAdjustSecond[i] = iMaxAdjustCnt / ucStageCnt;  //初步确定的调整
+		m_iAdjustSecond[i] = iMaxAdjustCnt / ucStageCnt;  //初步确定的调整8
 	}
 	iMaxAdjustCnt = iMaxAdjustCnt - ( iMaxAdjustCnt / ucStageCnt ) * ucStageCnt;
 
@@ -312,11 +293,11 @@ void CWirelessCoord::GetAdjust()
 
 		if ( m_bPlus )
 		{
-			iAdjustPerStep = iMaxGreen - m_iStepLen[i];	
+			iAdjustPerStep = iMaxGreen - m_iStepLen[i];	//32
 		}
 		else
 		{
-			iAdjustPerStep = m_iStepLen[i] - iMinGreen;
+			iAdjustPerStep = m_iStepLen[i] - iMinGreen; //28
 		}
 
 		if ( iAdjustPerStep < 0 )  //预防最小绿或最大绿的设置错误
@@ -331,7 +312,7 @@ void CWirelessCoord::GetAdjust()
 		}
 		else
 		{
-			iAdjustPerStep = iAdjustPerStep - m_iAdjustSecond[i];
+			iAdjustPerStep = iAdjustPerStep - m_iAdjustSecond[i];//20
 		}
 
 		if ( iAdjustPerStep > iMaxAdjustCnt )  //调整完毕
@@ -342,7 +323,7 @@ void CWirelessCoord::GetAdjust()
 		m_iAdjustSecond[i]  = m_iAdjustSecond[i] + iAdjustPerStep;
 		iMaxAdjustCnt       = iMaxAdjustCnt - iAdjustPerStep;
 
-		ACE_DEBUG((LM_DEBUG,"%s:%d m_iAdjustSecond[%d]:%d \n",__FILE__,__LINE__,i,m_iAdjustSecond[i]));
+		//ACE_DEBUG((LM_DEBUG,"%s:%d m_iAdjustSecond[%d]:%d \n",__FILE__,__LINE__,i,m_iAdjustSecond[i]));
 	}
 }
 
@@ -354,19 +335,12 @@ Input:          无
 Output:         无
 Return:         无
 ***************************************************************/
-void CWirelessCoord::OverCycle(/*SStepInfo* pRunStepInfo*/)
+void CWirelessCoord::OverCycle()
 {
 	GetDeflection();
-
-	ACE_DEBUG((LM_DEBUG,"%s:%d m_iAdjustCnt:%d m_bPlus:%d\n" , __FILE__ , __LINE__ , m_iAdjustCnt , m_bPlus));
-
 	if ( 0 == m_iAdjustCnt ) 
-	{
-		//for (int i = 0; i < MAX_STEP; i++)
-		//{
-			//m_iAdjustSecond[i] = 0;
-		//}
-		ACE_OS::memset(m_iAdjustSecond,0,MAX_STEP);
+	{		
+		ACE_OS::memset(m_iAdjustSecond,0x0,MAX_STEP);
 		return;
 	}
 	else
@@ -387,13 +361,11 @@ Return:         返回当前步伐的长度 -1:错误
 int CWirelessCoord::GetStepLength(int iCurStepNo)
 {
 	int iCurSetpTime = 0;
-
 	if ( iCurStepNo > m_iStepNum )  /*异常情况*/
 	{
 		ACE_DEBUG((LM_DEBUG,"%s:%d,iCurStepNo:%d m_iStepNum:%d \n",__FILE__,__LINE__,iCurStepNo,m_iStepNum));
 		return m_iStepLen[0];
 	}
-
 	m_iAdjustCnt -= m_iAdjustSecond[iCurStepNo];
 
 	if ( m_bPlus )
@@ -404,7 +376,8 @@ int CWirelessCoord::GetStepLength(int iCurStepNo)
 	{
 		iCurSetpTime = m_iStepLen[iCurStepNo] - m_iAdjustSecond[iCurStepNo];
 	}
-
+	
+	//ACE_DEBUG((LM_DEBUG,"%s:%d  StepNo =%d StepTime =%d !\n",__FILE__,__LINE__,iCurStepNo,iCurSetpTime ));
 	return iCurSetpTime;
 }
 

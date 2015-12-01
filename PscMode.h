@@ -5,6 +5,7 @@
 #include "ManaKernel.h"
 #include "ComDef.h"
 #include "time.h"
+
 #define CPSCMODE_FILE "CPscMode.cpp"
 
 const int MAX_PUSHS = 8;   //最大的行人按钮数

@@ -19,20 +19,24 @@ History:
 #include "PscMode.h"
 #include "LampBoard.h"
 #include "MacControl.h"
-#include "Manual.h"
+#include "WirelessButtons.h"
 #include "GaCountDown.h"
-//#include "ComStruct.h"
+#include "MainBackup.h"
+#include "Can.h"
+#include "PreAnalysis.h"
+
 /************************ADD:201309231530***************************/
 static CMainBoardLed* pMainBoardLed = CMainBoardLed::CreateInstance();
 static CLampBoard*    pLamp   = CLampBoard::CreateInstance(); 
 static CPowerBoard*   pPower = CPowerBoard::CreateInstance();
 static CManaKernel*   pWorkParaManager = CManaKernel::CreateInstance();
 static CMacControl*   pMacControl      = CMacControl::CreateInstance();  	 // MOD:0514 9:41
-static Manual*        pManual      = Manual::CreateInstance();               // ADD:0514 9:42	
+static MainBackup*        pMainBackup      = MainBackup::CreateInstance();               // ADD:0514 9:42	
 static CDetector*      pDetector    = CDetector::CreateInstance() ;  		 //ADD: 20130709 945	
 static CPscMode * pCPscMode = CPscMode::CreateInstance() ;	
-static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
 static CGaCountDown *pGaCountDown = CGaCountDown::CreateInstance();
+static CPreAnalysis *pPreAnalysis = CPreAnalysis::CreateInstance();
+static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
 /************************ADD:201309231530***************************/	
 
 	
@@ -48,12 +52,11 @@ CTscTimer::CTscTimer(Byte ucMaxTick)
 	m_ucTick    = 0;
 	m_ucMaxTick = ucMaxTick;
 	m_bWatchdog = true;    		//¿ªÆô¿´ÃÅ¹·
-   	//m_bWatchdog = false;      //ÁÙÊ±¹Ø±Õ¿´ÃÅ¹·   //MOD:20130522 1135
 	if ( m_bWatchdog )
 	{
 		WatchDog::CreateInstance()->OpenWatchdog();
 	}
-	ACE_DEBUG((LM_DEBUG,"%s:%d Init TscTimer object ok !\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%d Init TscTimer object ok !\n",__FILE__,__LINE__));
 
 }
 
@@ -80,50 +83,66 @@ Return:         0
 ***************************************************************/
 int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /* = 0 */)
 {
+	Byte ucModeType = pWorkParaManager->m_pRunData->ucWorkMode ; //ADD: 2013 0828 0931
+
+	//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+	//	pDetector->SearchAllStatus();  //ADD: 2013 0723 1620		
+	//ÊÖ¿Ø°´Å¥Ã¿100msÕì²éÒ»´Î  // ADD:0514 9:42
+	//pMainBackup->DoManual();
+	//pMainBackup->Recevie();
 	
-	Byte ucModeType = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ; //ADD: 2013 0828 0931
-	
-	pManual->DoManual() ;     // ADD:0514 9:42	
 	switch ( m_ucTick )
 	{
-	case 0: 		
-		ChooseDecTime();		
-		pLamp->SendLamp();
-		pMainBoardLed->DoRunLed();  
+	case 0: 
+		//ºËÐÄ°å·¢ËÍÐÄÌø¸ø£¬±¸·Ýµ¥Æ¬»ú¡£500ms   ¡£ÁíÍâ ÔÚcase 5µ÷ÓÃ
+		//ACE_OS::printf("%s:%d num =%d \n",__FILE__,__LINE__,num++);
+		pMainBackup->HeartBeat();
+		ChooseDecTime();
+		pLamp->SendLamp();//4	////4¸öµÆ¿Ø°åÐÅÏ¢·¢ËÍ	
+		//pMainBoardLed->DoRunLed();  
+		if(pRunData->uiCtrl==CTRL_UTCS)
+			pRunData->uiUtcsHeartBeat++;
 		break;
 	case 1:
-		//pMacControl->GetEnvSts(); 
-		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28		
-		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-			pDetector->SearchAllStatus();  //ADD: 2013 0723 1620
+		pMacControl->GetEnvSts(); 
+		//pFlashMac->FlashHeartBeat(); //ADD: 0604 17 28			
 		pMacControl->SndLcdShow() ; //ADD:201309281710
+		if((CTRL_PREANALYSIS == pRunData->uiCtrl ||pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620
 		break;
-	case 2: 		
+	case 2:		
+		
+		//ÊÖ¿Ø°´Å¥Ã¿100msÕì²éÒ»´Î  // ADD:0514 9:42
+		pMainBackup->DoManual();
+		
+		break;
+	case 3:		
+		if(ucModeType != MODE_TSC &&  pWorkParaManager->m_bFinishBoot)
+		{
+			pCPscMode->DealButton();
+		}
+		
+		if((CTRL_PREANALYSIS == pRunData->uiCtrl||pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			{
+				pDetector->IsVehileHaveCar(); //Èç¹ûÓÐ³µÔòÔö¼Ó³¤²½·ÅÐÐÏàÎ»µÄÂÌµÆÊ±¼ä ×î´óÎª×î´óÂÌÊ±¼ä
+				pDetector->GetOccupy(); //»ñÈ¡Õ¼ÓÐÂÊºÍ³µÁ÷Á¿
+			}
+		break;
 
+	case 4:	
+		CPowerBoard::iHeartBeat++;
+		if(CPowerBoard::iHeartBeat >2)
+		{		
+			ACE_OS::system("/sbin/ip link set can0 up type can restart");
+			CPowerBoard::iHeartBeat = 0;	
+			pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);			
+		} 
+		
 		pPower->CheckVoltage();
 		break;
-
-	case 3:
+	case 5://500ms Ö´ÐÐÒ»´Î
 		
-		if(ucModeType != MODE_TSC &&  pWorkParaManager->m_bFinishBoot)
-		{			
-			pCPscMode->DealButton();
-			pMacControl->GetEnvSts();			
-			
-		}
-		break;
-
-	case 4:
-		//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-		//	pDetector->GetOccupy();  //
-		if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-		{
-			pDetector->IsVehileHaveCar(); //å¦‚æžœæœ‰è½¦åˆ™å¢žåŠ é•¿æ­¥æ”¾è¡Œç›¸ä½çš„ç»¿ç¯æ—¶é—´ æœ€å¤§ä¸ºæœ€å¤§ç»¿æ—¶é—´
-		}
-		break;
-
-	case 5://500ms Ö´ÐÐÒ»´		
-	    if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == 2 )
+		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_FLASHOFF) //ÕâÀï2±íÊ¾ÉÁ¶ÏÊ½µ¹¼ÆÊ±
 		{	
 			if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
 			|| (FLASH   == pRunData->uiWorkStatus)|| (CTRL_MANUAL == pRunData->uiCtrl) 
@@ -133,82 +152,92 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 			}
 			else
 			{
-			Byte ucMode = 0 ;
-			Byte ucPhaseId = 0 ;
-			Byte ucOverPhaseId = 0 ;
-			for(Byte nIndex = 0 ; nIndex< MAX_CNTDOWNDEV;nIndex++)
-			{	
-			    ucMode = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode ;
-				ucPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].usPhase ;
-				ucOverPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucOverlapPhase ;
-				if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0 || ucOverPhaseId !=0 ) )
-				{					
-					Byte ucSignalGrpNum = 0;					
-					Byte ucSignalGrp[MAX_CHANNEL] = {0};
-					Byte nChannelIndex = 0 ;
-			
-					pWorkParaManager->GetSignalGroupId(ucPhaseId?true:false,ucPhaseId?ucPhaseId:ucOverPhaseId,&ucSignalGrpNum,ucSignalGrp);
-					while(nChannelIndex<ucSignalGrpNum)
-					{
-						Byte ucChannelId = ucSignalGrp[nChannelIndex] ;
-						if(ucChannelId >0)
-							pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|0x60);
-						nChannelIndex++ ;						
+				Byte ucMode = 0 ;
+				Byte ucPhaseId = 0 ;
+				Byte ucOverPhaseId = 0 ;
+				for(Byte nIndex = 0 ; nIndex< MAX_CNTDOWNDEV;nIndex++)
+				{	
+				    ucMode = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode ;
+					ucPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].usPhase ;
+					ucOverPhaseId = pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucOverlapPhase ;
+					if(((ucMode>>7)&0x1) ==0x1 &&(ucPhaseId != 0 || ucOverPhaseId !=0 ) )
+					{					
+						Byte ucSignalGrpNum = 0;					
+						Byte ucSignalGrp[MAX_CHANNEL] = {0};
+						Byte nChannelIndex = 0 ;
+				
+						pWorkParaManager->GetSignalGroupId(ucPhaseId?true:false,ucPhaseId?ucPhaseId:ucOverPhaseId,&ucSignalGrpNum,ucSignalGrp);
+						while(nChannelIndex<ucSignalGrpNum)
+						{
+							Byte ucChannelId = ucSignalGrp[nChannelIndex] ;
+							if(ucChannelId >0)
+								//pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|0x60);
+								pGaCountDown->m_ucLampBoardFlashBreak[(ucChannelId-1)/MAX_LAMPGROUP_PER_BOARD]|= ((1<<((ucChannelId-1)%MAX_LAMPGROUP_PER_BOARD))|(pWorkParaManager->m_pTscConfig->sSpecFun[FUN_FLASHCNTDOWN_TIME].ucValue<<4));
+							nChannelIndex++ ;						
+						}
+						pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode &=0x7f ;
+						
 					}
-					pWorkParaManager->m_pTscConfig->sCntDownDev[nIndex].ucMode &=0x7f ;
+				}	
+				
+				for(Byte index = 0 ;index < MAX_LAMP_BOARD ;index++)
+				{				
+					pLamp->SendSingleLamp(index,pGaCountDown->m_ucLampBoardFlashBreak[index]);
+					if(pGaCountDown->m_ucLampBoardFlashBreak[index] != 0x0)
+					{
+						pGaCountDown->m_ucLampBoardFlashBreak[index] = 0x0 ;
+					}	
 					
 				}
-			}	
-			
-			for(Byte index = 0 ;index < MAX_LAMP_BOARD-3 ;index++)
-			{				
-				pLamp->SendSingleLamp(index,pGaCountDown->m_ucLampBoardFlashBreak[index]);
-				if(pGaCountDown->m_ucLampBoardFlashBreak[index] != 0x0)
-				{
-					pGaCountDown->m_ucLampBoardFlashBreak[index] = 0x0 ;
-				}					
-				
 			}
-		}
-			
 		}
 		else
 		{
+			if(pWorkParaManager->m_pRunData->uiWorkStatus == STANDARD)
+				pLamp->SetLampChannelColor(0x3,0x3); //20150806 ºìÉ«µÆ×éÊ£3ÃëºìµÆÉÁ
 			pLamp->SendLamp(); 
 		}
-			
-		pMainBoardLed->DoRunLed();	
+		
+		//pLamp->SendLamp();		//¸øËùÓÐµÆ¿Ø°å·¢ËÍµÆÉ«Êý¾Ý
+		//pMainBoardLed->DoRunLed();
+		//ºËÐÄ°å·¢ËÍÐÄÌø¸ø£¬±¸·Ýµ¥Æ¬»ú¡£500ms   ¡£ÁíÍâ ÔÚcase 1µ÷ÓÃ
+		pMainBackup->HeartBeat();
 		break;
 	case 6:
+		//pFlashMac->FlashHeartBeat() ;
 		pMainBoardLed->DoLedBoardShow();   //ADD :2013 0809 1600
-		
+		//if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+			//pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620
 		break;
-	case 7://700??????????¨¬????????????????????can¡Á??????
-	
-		pPower->HeartBeat();  //????????		
+	case 7://700ms ·¢ËÍÐÄÌøÊý¾Ý¸øµçÔ´°å
+		
+		
+		pPower->HeartBeat();
+		//ÊÖ¿Ø°´Å¥Ã¿100msÕì²éÒ»´Î  // ADD:0514 9:42
+		pMainBackup->DoManual();
 		break;
 
 	case 8:	
 		
-		if(ucModeType != MODE_TSC && pWorkParaManager->m_bFinishBoot)
-		{
-			pCPscMode->DealButton();
-			pMacControl->GetEnvSts();
-		}	
-		break;
-
-	case 9:
-		if(pWorkParaManager->m_pRunData->bIsChkLght == true )
-			pLamp->CheckLight();// check Lampboard status and red&green conflict
+		//if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
+		//	pDetector->IsVehileHaveCar(); //Èç¹ûÓÐ³µÔòÔö¼Ó³¤²½·ÅÐÐÏàÎ»µÄÂÌµÆÊ±¼ä ×î´óÎª×î´óÂÌÊ±¼ä
 		
 		break;
-
+	case 9:
+		
+		pWorkParaManager->CwpmGetCntDownSecStep();		
+		if(pWorkParaManager->m_pRunData->bIsChkLght == true )
+			pLamp->CheckLight();// check Lampboard status and red&green conflict
+		if(pMainBackup->bSendStep)
+			pMainBackup->SendStep();
+	
+		break;
 	default:
 	
 		break;
 	}
 	m_ucTick++;
-	if ( m_ucTick >= m_ucMaxTick )  //100??????????????¡À??¡Â,10????1????
+	if ( m_ucTick >= m_ucMaxTick )  ////100ºÁÃë¶¨Ê±Æ÷,10´Î1Ãë
 	{
 		if ( m_bWatchdog )
 		{
@@ -232,6 +261,7 @@ Return:         ÎÞ
 ***************************************************************/
 void CTscTimer::ChooseDecTime()
 {
+	//static CManaKernel* pWorkParaManager = CManaKernel::CreateInstance(); DEL:201309231530
 	static bool bPsc = true;
 	if ( CTRL_MANUAL == pWorkParaManager->m_pRunData->uiCtrl 
 	  || CTRL_PANEL  == pWorkParaManager->m_pRunData->uiCtrl 
@@ -245,53 +275,33 @@ void CTscTimer::ChooseDecTime()
 			bPsc = false;
 		}
 		pWorkParaManager->DecTime();
-		if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)
-			pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 		
 	}
-	else if ( pWorkParaManager->m_bFinishBoot 	&& pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue != MODE_TSC	)
+	else if ( pWorkParaManager->m_bFinishBoot 	&& pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC	)
 	{
-	if ((MODE_PSC1 == pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue &&2 != pWorkParaManager->m_pRunData->ucStageCount)
-	  ||(MODE_PSC2 == pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue &&3 != pWorkParaManager->m_pRunData->ucStageCount))
+	if ((MODE_PSC1 == pWorkParaManager->m_pRunData->ucWorkMode &&2 != pWorkParaManager->m_pRunData->ucStageCount)
+	  ||(MODE_PSC2 == pWorkParaManager->m_pRunData->ucWorkMode &&3 != pWorkParaManager->m_pRunData->ucStageCount))
 		{
 			//ACE_DEBUG((LM_DEBUG,"\n%s:%d SpecFun[FUN_CROSS_TYPE]=%d ,m_pRunData->ucStageCount = %d \n",__FILE__,__LINE__,pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue, pWorkParaManager->m_pRunData->ucStageCount));
 			pWorkParaManager->DecTime();
-			if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)				
-				pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 		}
 		else if ( pWorkParaManager->m_bCycleBit || bPsc )
 		{
-			/*
-			if(bPsc)
-				ACE_DEBUG((LM_DEBUG,"\n%s:%d bPsc == true!\n",__FILE__,__LINE__));
-			else
-				ACE_DEBUG((LM_DEBUG,"\n%s:%d bPsc == false!\n",__FILE__,__LINE__));
-			if(pWorkParaManager->m_bCycleBit)
-				ACE_DEBUG((LM_DEBUG,"\n%s:%d m_bCycleBit == true!\n",__FILE__,__LINE__));
-			else
-				ACE_DEBUG((LM_DEBUG,"\n%s:%d m_bCycleBit == false!\n",__FILE__,__LINE__));
-			*/
 			if ( !bPsc ) //ÊÖ¶¯Íêºó ÔÙ×ßÍêµ½ÏÂÒ»¸öÖÜÆÚ ÖØÐÂPSC
 			{
 				CPscMode::CreateInstance()->InitPara();
 				bPsc = true;
 			}
 			CPscMode::CreateInstance()->DecTime();
-			if(pWorkParaManager->m_pRunData->ucWorkMode == MODE_TSC)
-				pWorkParaManager->m_pRunData->ucWorkMode = pWorkParaManager->m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ;
 		}
 		else
 		{
 			pWorkParaManager->DecTime();
-			if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)
-				pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 		}
 	} 
 	else
 	{
 		pWorkParaManager->DecTime();
-		if(pWorkParaManager->m_pRunData->ucWorkMode != MODE_TSC)
-			pWorkParaManager->m_pRunData->ucWorkMode = MODE_TSC;
 	}
 }
 

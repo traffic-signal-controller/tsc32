@@ -24,8 +24,6 @@ public:
 	void CorrectTime(Byte ucType,Byte* pValue);
 	void GetTscStatus(Byte ucDealDataIndex);
 	void GetTscExStatus(Byte ucDealDataIndex);
-//	unsigned int GetTscCtrl();
-//	unsigned int GetWorkStatus();
 
 	void SetRestart();
 	bool GetRestart();
@@ -54,35 +52,35 @@ public:
 	void SetCycleBit(bool bSetCycle);
 
 	bool IsVehile(); 		 //ADD: 201307241020
-	void ChangePatter(Byte iParama);	 //ADD: 201406141530
+	void ChangePatter(Byte iParama);	 //ADD: 201309181530
 	void SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte ucLogVau3,Byte ucLogVau4); //ADD:201309251100
-
-	/***********ç”¨äºè®¾ç½®32ç›¸ä½åŒ—ä¸œå—è¥¿é¥æ§å™¨æŒ‰é”®*******************/
-	bool GaGetDirLane(Byte ucTableId , Byte  ucDir );   //ADD:201406141130 è·å–æ–¹å‘å€¼æ˜¯å¦å±äºæŸä¸ªæ–¹å‘
-	void SetDirecChannelColor(Byte iDirecType);         //DD:201406141130è®¾ç½®æŸä¸ªæ–¹å‘çš„ç›¸ä½é€šé“æ”¾è¡Œç»¿ç¯ï¼Œå…¶ä»–æ–¹å‘å…¨çº¢
-    void SetPhaseColor(bool bOverPhase,Byte iPhaseId) ; //ADD:201406141130 è®¾ç½®ç›¸ä½æ‰€å±é€šé“ç»¿ç¯äº®
-	/***********ç”¨äºè®¾ç½®16ç›¸ä½åŒ—ä¸œå—è¥¿é¥æ§å™¨æŒ‰é”®*******************/
-
-	bool m_bFinishBoot;         //pscæ¨¡å¼ä½¿ç”¨å˜é‡ å¼€æœºå®Œæˆè¿‡åº¦æ­¥åè¿›å…¥å¯ä»¥è¿›å…¥pscæ¨¡å¼
-	STscConfig* m_pTscConfig;   //ä¿¡å·æœºé…ç½®ä¿¡æ¯
-	STscRunData* m_pRunData;    //ä¿¡å·æœºåŠ¨æ€å‚æ•°ä¿¡æ¯
-
+	void  SetWirelessBtnDirecCfg(Uint RecvBtnDirecData , Byte Lampcolor); //ADD:201410211700
+	void CwpmGetCntDownSecStep();	
+	Byte GetStageMaxDetectorCars(Uint32 StageAllowPhases); //»ñÈ¡½×¶ÎÏàÎ»¼ì²âÆ÷µÄÅÅÅÅ¶Ó³¤¶ÈADD 201508171514
 	
-	/*************æŒ‰ç…§ç‰¹å®šé…æ—¶æ–¹æ¡ˆå·æ‰§è¡Œ*************/
-	int m_iTimePatternId;    //æŒ‡å®šçš„é…æ—¶æ–¹æ¡ˆå·  åˆæ³•å€¼1-32 0æ²¡æœ‰æŒ‡å®š
+	Byte GetMaxGreen2(int iStepNo); //»ñÈ¡²½·¥×î´óÂÌ2
+
+
+
+	bool m_bFinishBoot;         //pscÄ£Ê½Ê¹ÓÃ±äÁ¿ ¿ª»úÍê³É¹ı¶È²½ºó½øÈë¿ÉÒÔ½øÈëpscÄ£Ê½
+	STscConfig* m_pTscConfig;   //ĞÅºÅ»úÅäÖÃĞÅÏ¢A
+	STscRunData* m_pRunData;    //ĞÅºÅ»ú¶¯Ì¬²ÎÊıĞÅÏ¢
+	/*************°´ÕÕÌØ¶¨ÅäÊ±·½°¸ºÅÖ´ĞĞ*************/
+	int m_iTimePatternId;    //Ö¸¶¨µÄÅäÊ±·½°¸ºÅ  ºÏ·¨Öµ1-32 0Ã»ÓĞÖ¸¶¨
 	
-	bool bNextDirec ;
-	bool bTmpPattern ;     //æ˜¯å¦å¤„äºç‰¹æ®Šæ–¹æ¡ˆå·ä¸­
-	bool bUTS ;            //æ˜¯å¦å­˜åœ¨ä¸­å¿ƒ
-	bool bDegrade ;        //æ˜¯å¦å¤„äºé™çº§çŠ¶æ€
-	bool bChkManul ;       //ç”¨äºåˆ¤æ–­ç³»ç»Ÿå¯åŠ¨åˆå§‹æ‰‹æ§çŠ¶æ€
-	bool bSecondPriority ; //ç”¨äºæ¬¡çº¿åŠæ„Ÿåº”æ§åˆ¶é€»è¾‘åˆ¤æ–­  ADDï¼š20140618
-private:
+	bool bNextDirec ;      //ÏÂÒ»·½Ïò
+	bool bTmpPattern ;     //ÁÙÊ±·½°¸
+	bool bUTS ;            //ÖĞĞÄÆ½Ì¨ÁªÍø¿ØÖÆ
+	bool bDegrade ;        //ÊÇ·ñ½µ¼¶
+	//bool bChkManul ;       //ÓÃÓÚÅĞ¶ÏÏµÍ³Æô¶¯³õÊ¼ÊÖ¿Ø×´Ì¬NEW:µ¥Æ¬»ú´úÌæ
+	bool bSecondPriority ; //ÓÃÓÚ´ÎÏß°ë¸ĞÓ¦¿ØÖÆÂß¼­ÅĞ¶Ï  ADD£º20140618
+	private:
 	CManaKernel();
 	~CManaKernel();
-
-	void MemeryConfigDataRun();
-
+	void SetPhaseColor(bool bOverPhase,Byte iPhaseId);
+	void SetLampColor(Byte ColorType);
+	void SetDirecChannelColor(Byte iDirecType);
+	bool GaGetDirLane(Byte ucTableId , Byte  ucDir );
 	void SelectDataFromDb();
 	void ResetRunData(Byte ucTime);
 	Byte GetScheduleId(Byte ucMonth,Byte ucDay,Byte ucWeek);
@@ -91,7 +89,7 @@ private:
 	bool GetSonScheduleTime(Byte ucScheduleTimeId);
 	void SetStepInfoWithStage(Byte ucCurStageIndex,Byte* ucCurStepIndex
 		                                        ,SScheduleTime* pScheduleTime);
-	void GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,Byte* pTime);
+	void GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,Byte* pTime,Byte ucCurStageIndex);
 	Byte GetPhaseStepLen( SPhaseStep* pPhaseStep );
 	Byte GetPhaseStepIndex( SPhaseStep* pPhaseStep );
 
@@ -114,8 +112,7 @@ private:
 	
 	bool InConflictPhase();
 	void AllotActiveTime();
-	void CwpmGetCntDownSecStep();
-	void SetRedOtherLamp(Byte* ucLampOn);
+	void SetRedOtherLamp(Byte* ucLampOn,Byte* ucLampFlash);
 	void UtcsAdjustCycle();
 
 	void GetOverlapPhaseStepTime( 
@@ -129,60 +126,61 @@ private:
 	void GetUseLampBoard(bool* bUseLampBoard);
 	bool GetUseLampBoard(int iLampBoard);
 	Byte OverlapPhaseToPhase(Uint uiCurAllowPhase,Byte ucOverlapPhaseIndex);
-	int GetStageMinGreen(Ushort usAllowPhase);
+	int  GetStageMinGreen(Ushort usAllowPhase);
 	bool ExitOvelapPhase(Byte ucOverlapPhaseId,Byte ucPhaseCnt,SPhaseStep* pPhaseStep);
 	bool ExitStageStretchPhase(SScheduleTime* pScheduleTime);
 
 	void ValidSoftWare() ;  //ADD 201310221450
-	void SetLampColor(Byte ColorType); //ADD 201403251519	
-	
-	bool m_bRestart;        //æ˜¯å¦é‡å¯ gbtåè®®æµ‹è¯•éƒ¨åˆ†
-
-	bool m_bWaitStandard;   //ç­‰å¾…ç”±å››é¢çº¢è¿›å…¥æ ‡å‡†
-
-	bool m_bSpeStatusTblSchedule;  //æ—¶æ®µè¡¨é‡Œå®šä¹‰çš„ç‰¹æ®Šå·¥ä½œçŠ¶æ€
-	bool m_bVirtualStandard;       //éçœŸæ­£è¿›å…¥æ ‡å‡†çŠ¶æ€
-
-	bool m_bSpeStatus;             //æ ‡ç¤ºç‰¹æ®ŠçŠ¶æ€ ç”¨äºç‰¹æ®ŠçŠ¶æ€-->STANDARDé‡æ–°åˆ·æ–°å‚æ•°
-
 	
 	
+	bool m_bRestart;        //ÊÇ·ñÖØÆô gbtĞ­Òé²âÊÔ²¿·Ö
+	bool m_bWaitStandard;   //µÈ´ıÓÉËÄÃæºì½øÈë±ê×¼
+	bool m_bSpeStatusTblSchedule;  //Ê±¶Î±íÀï¶¨ÒåµÄÌØÊâ¹¤×÷×´Ì¬
+	bool m_bVirtualStandard;      //·ÇÕæÕı½øÈë±ê×¼×´Ì¬
+	bool m_bSpeStatus;            //±êÊ¾ÌØÊâ×´Ì¬ ÓÃÓÚÌØÊâ×´Ì¬-->STANDARDÖØĞÂË¢ĞÂ²ÎÊı
 
 	
 
-	/**************ç‰¹å®šç›¸ä½æ§åˆ¶*****************/
-	bool m_bSpePhase;          //ç‰¹å®šç›¸ä½æ§åˆ¶
-	Byte m_ucLampOn[MAX_LAMP]; //ä¸ç‰©ç†ç«¯å­å¯¹åº” äº®ï¼š1 ç­ï¼š0
+		/**************ÌØ¶¨ÏàÎ»¿ØÖÆ*****************/
+	bool m_bSpePhase;           //ÌØ¶¨ÏàÎ»¿ØÖÆ
+	Byte m_ucLampOn[MAX_LAMP]; //ÓëÎïÀí¶Ë×Ó¶ÔÓ¦ ÁÁ£º1 Ãğ£º0
 	Byte m_ucLampFlash[MAX_LAMP]; 
 
-	/************************æ„Ÿåº”æ§åˆ¶å‚æ•°***************************/
-	//bool m_bPhaseDetCfg;  //æ˜¯å¦æœ‰ç›¸ä½ä¸æ£€æµ‹å™¨çš„å¯¹åº”é…ç½®
-	bool m_bAddTimeCount; //æ„Ÿåº”æ§åˆ¶å¢åŠ æ—¶é—´æ˜¯å¦å€’è®¡æ—¶
-	bool m_bVehile;       //æ˜¯å¦æ„Ÿåº”æ§åˆ¶
-	Byte m_ucAddTimeCnt;  //ä¸€ä¸ªé˜¶æ®µå¢åŠ çš„æ—¶é—´æ€»å’Œ
-	int  m_iAdjustTime;   //è°ƒæ•´æ—¶é—´ å•ä½ç»¿ç¯å»¶é•¿æ—¶é—´
-	int  m_iMinStepTime;  //æ­¥ä¼æœ€å°ç»¿
-	int  m_iMaxStepTime;  //æ­¥ä¼æœ€å¤§ç»¿
+	/************************¸ĞÓ¦¿ØÖÆ²ÎÊı***************************/
+	//bool m_bPhaseDetCfg;  //ÊÇ·ñÓĞÏàÎ»Óë¼ì²âÆ÷µÄ¶ÔÓ¦ÅäÖÃ
+	bool m_bAddTimeCount; //¸ĞÓ¦¿ØÖÆÔö¼ÓÊ±¼äÊÇ·ñµ¹¼ÆÊ±
+	bool m_bVehile;        //ÊÇ·ñ¸ĞÓ¦¿ØÖÆ
+	Byte m_ucAddTimeCnt;  //Ò»¸ö½×¶ÎÔö¼ÓµÄÊ±¼ä×ÜºÍ
+	int  m_iAdjustTime;   //µ÷ÕûÊ±¼ä µ¥Î»ÂÌµÆÑÓ³¤Ê±¼ä
+	int  m_iMinStepTime;  //²½·¥×îĞ¡ÂÌ
+	int  m_iMaxStepTime;  //²½·¥×î´óÂÌ
 
 	bool bValidSoftWare ;
 
 	Byte iCntFlashTime ;
 
 public:
-	Uint m_uiStagePhase[MAX_SON_SCHEDULE];  //æ¯ä¸ªé˜¶æ®µå¯¹åº”çš„ç›¸ä½      æ™®é€šç›¸ä½0-15
-	SPhaseDetector m_sPhaseDet[MAX_PHASE]; //ç›¸ä½ä¸æ£€æµ‹å™¨å…³ç³» æ™®é€šç›¸ä½0-15
+	Uint m_uiStagePhase[MAX_SON_SCHEDULE];  //Ã¿¸ö½×¶Î¶ÔÓ¦µÄÏàÎ»      ÆÕÍ¨ÏàÎ»0-15
+	SPhaseDetector m_sPhaseDet[MAX_PHASE]; //ÏàÎ»Óë¼ì²âÆ÷¹ØÏµ ÆÕÍ¨ÏàÎ»0-15
 
-	bool m_bCycleBit;              //å·²èµ°å®Œä¸€ä¸ªå‘¨æœŸç½®ä½  pscä½¿ç”¨
+	bool m_bCycleBit;              //ÒÑ×ßÍêÒ»¸öÖÜÆÚÖÃÎ»  pscÊ¹ÓÃ
 	bool m_bNextPhase ;
-	/*************ç¾¤ç»¿æ³¢æ§åˆ¶********************/
-	Byte m_ucUtcsComCycle;    //ä¸­å¿ƒå…¬å…±å‘¨æœŸæ—¶é•¿
-	Byte m_ucUtscOffset;      //ä¸­å¿ƒåè°ƒç›¸ä½å·®
+	/*************ÈºÂÌ²¨¿ØÖÆ********************/
+	Byte m_ucUtcsComCycle;    //ÖĞĞÄ¹«¹²ÖÜÆÚÊ±³¤
+	Byte m_ucUtscOffset;      //ÖĞĞÄĞ­µ÷ÏàÎ»²î
+
+	/*****************************************/
+	int m_ucStageDynamicMinGreen[MAX_SON_SCHEDULE] ; //¶¯Ì¬Ô¤·ÖÎö¿ØÖÆ½×¶Î¶¯Ì¬×îĞ¡ÂÌ
+	int m_ucStageDynamicMaxGreen[MAX_SON_SCHEDULE] ; //¶¯Ì¬Ô¤·ÖÎö¿ØÖÆ½×¶Î¶¯Ì¬×î´óÂÌ
+	int m_ucStageDynamicAddGreen[MAX_SON_SCHEDULE] ;
+	/*****************************************/
 	
 	//ACE_Thread_Mutex m_mutexSetCycle;
-
+	//lastUcTimePatternId ÉÏÒ»¸öÖÜÆÚµÄÅäÖÃ ·½°¸Óëµ±Ç°ÊÇ·ñÒ»ÖÂ¡£
+	Byte lastUcTimePatternId;
 	ACE_Thread_Mutex  m_mutexRunData;
 
-	//CWirelessCoord m_cableless;     //ÃÃÂµÃ§ÃÃŸÃ€Ã‚Â¿Ã˜Ã–Ã†
+	//CWirelessCoord m_cableless;     //ÎŞµçÏßÀÂ¿ØÖÆ
 }; 
 
 #endif  //_MANAKERNEL_H_
