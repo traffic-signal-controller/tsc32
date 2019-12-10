@@ -825,6 +825,69 @@ void CGaCountDown::SetClinetCntDown(ACE_INET_Addr& addremote, Uint uBufCnt , Byt
 
 }
 	
+	void CGaCountDown::GetBusPhaseColourTime(Byte BusPhaseId,Byte& BusPhaseColour ,Byte& BusPhaseColoruTime)
+	{
+		try
+		{
+			CManaKernel* pCWorkParaManager	 = CManaKernel::CreateInstance();
+			STscRunData* pRunData	= pCWorkParaManager->m_pRunData;
+			SStepInfo*pStepInfo 	= pRunData->sStageStepInfo +pRunData->ucStepNo;
+		
+			bool bIsAllowPhase	= false;
+			Byte ucSignalGrpNum = 0;
+			Byte ucLightLamp	= 0;
+		
+			Byte ucSignalGrp[MAX_CHANNEL] = {0};
+	
+			for (Byte ucDirIndex=0; ucDirIndex<GA_MAX_DIRECT-4; ucDirIndex++ )
+			{
+				for (Byte  ucLaneIndex=0; ucLaneIndex<GA_MAX_LANE; ucLaneIndex++ )
+				{
+			
+					if ( m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucPhase == BusPhaseId )
+					{
+						bIsAllowPhase = true;
+					}
+					else if ( m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucOverlapPhase ==BusPhaseId )
+					{
+						bIsAllowPhase = false;
+					}
+						
+					//相位类型+相位id-->通道信息(ryg)
+					ucSignalGrpNum = 0;
+					pCWorkParaManager->GetSignalGroupId(bIsAllowPhase ,BusPhaseId,&ucSignalGrpNum,ucSignalGrp);
+					
+					ACE_OS::printf("%s:%d BusPhaseId=%d ucSignalGrpNum=%d \r\n",__FILE__,__LINE__,BusPhaseId,ucSignalGrpNum);
+					if ( ucSignalGrpNum > 0 ) //相位对应通道个数大于0
+					{
+						ucLightLamp = (ucSignalGrp[0] - 1) * 3;  //ucLightLamp 通道组号，下面判断当前通道组号亮什么灯。
+						if ( 1 == pStepInfo->ucLampOn[ucLightLamp] )
+						{
+							BusPhaseColour = GANEW_COLOR_RED;
+						}
+						else if ( 1 == pStepInfo->ucLampOn[ucLightLamp+1] )
+						{
+							BusPhaseColour = GANEW_COLOR_YELLOW;
+							ucLightLamp = ucLightLamp + 1;
+						}
+						else if ( 1 == pStepInfo->ucLampOn[ucLightLamp+2] )
+						{
+							BusPhaseColour = GANEW_COLOR_GREEN;
+							ucLightLamp = ucLightLamp + 2;
+						}
+						BusPhaseColoruTime	= GaGetCntTime(ucLightLamp); //获取剩余时间
+						return ;
+					}
+				}
+			}
+		}
+		catch(...)
+		{
+			ACE_OS::printf("%s:%d Get BusPhaseId time except!",__FILE__,__LINE__);
+			return ;
+		}
+				
+	}
 
 
 

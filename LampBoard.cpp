@@ -206,7 +206,6 @@ Return:         无
 void CLampBoard::SetLamp(Byte* pLampOn,Byte* pLampFlash)
 {
 	ACE_Guard<ACE_Thread_Mutex>  guard(m_mutexLamp);
-
 	if ( NULL == pLampOn || NULL == pLampFlash )
 	{
 		ACE_DEBUG((LM_DEBUG,"%s:%d SetLamp info error\n",__FILE__,__LINE__));
@@ -618,8 +617,15 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 									{						
 										m_bLampErrFlag[iLamp] = false ;
 										ACE_DEBUG((LM_DEBUG,"%s:%d LampBoard: %d Lamp:%d status:%d \n",__FILE__,__LINE__,ucLampBoardId+1,iLamp+1,m_ucLampStas[iLamp]));												
-										CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_LAMP,iLamp+1,m_ucLampStas[iLamp],ucLampBoardId+1,0);			
 										isFlash =1 ; // 1 表示灯泡故障
+										if((iLamp+1)==30)
+										{
+											isFlash = 3;
+											(CDbInstance::m_cGbtTscDb).SetSystemData("ucDownloadFlag",0x3);											
+											CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_GREEN_CONFIG,0x3,ucLampBoardId+1,(iLamp+1)/3,0); //ADD：201309251130						
+										}
+										else											
+										   CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_LAMP,iLamp+1,m_ucLampStas[iLamp],ucLampBoardId+1,0);			
 									}								
 								}							
 							}						
@@ -630,11 +636,10 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 				if(m_ucLampConflic[ucLampBoardId][iLampGrp] != 0 && m_ucLampConflic[ucLampBoardId][iLampGrp] != 3)
 				{
 					ACE_DEBUG((LM_DEBUG,"%s:%d ucLampBoardI: %d  Lampgrp %d conflict:%d\n",__FILE__,__LINE__,ucLampBoardId+1,iLampGrp+1,m_ucLampConflic[ucLampBoardId][iLampGrp] ));
-					//CManaKernel::CreateInstance()->DealGreenConflict(1); //					
-						
+					//CManaKernel::CreateInstance()->DealGreenConflict(1); //						
 					CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_GREEN_CONFIG,m_ucLampConflic[ucLampBoardId][iLampGrp],ucLampBoardId+1,iLampGrp+1,0); //ADD：201309251130						
 					isFlash = 3 ; // 3 表示红绿冲突，由灯控板判断返回，包括硬件冲突和软冲突
-							
+					
 				}
 			}
 

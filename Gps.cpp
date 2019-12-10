@@ -89,12 +89,12 @@ void CGps::RunGpsData()
 			 ACE_DEBUG((LM_DEBUG,"\n%s:%d Cant read gps info than 300 times!\n",__FILE__,__LINE__));
 			 ierrorcount = 0 ;
 			 //return ; TODO  这里读取1000次都没有读取到GPS信息，因此记录数据库日志中。
-			 CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_FLASH); //ADD:20141106 无GPS接收数据则闪烁
+			 //CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_FLASH); //ADD:20141106 无GPS接收数据则闪烁
 			 ACE_OS::sleep(60);
 			}
 			continue;
 		}
-		//ACE_OS::printf("%c",*pBuf);
+		ACE_OS::printf("%c",*pBuf);
 		if ( '$' == *pBuf )
 		{
 			pBuf++;
@@ -108,18 +108,18 @@ void CGps::RunGpsData()
 				if ( 0 == ACE_OS::strncmp(GPRMC, m_cBuf, ACE_OS::strlen(GPRMC)) )
 				{
 					//$GPRMC,023543.00,A,2308.28715,N,11322.09875,E,0.195,,240213,,,A*78
-					//ACE_DEBUG((LM_DEBUG,"\n%s,%d gps_read %s \n", __FILE__, __LINE__, m_cBuf));					
+					ACE_DEBUG((LM_DEBUG,"\n%s,%d gps_read %s \n", __FILE__, __LINE__, m_cBuf));					
 					if ( CheckSum(m_cBuf) )
 					{
 						Byte result = Extract();
 						if(result == 1)
 						{							
-							CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_ON); //ADD:20141106 接收正常并解析则亮
+							//CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_ON); //ADD:20141106 接收正常并解析则亮
 							//day表示几天，也就是线程休眠几天。1表示每天进行校时，2表示第两天进行校时......
 							Byte day = CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS_INTERVAL].ucValue;
 							m_bGpsTime = false ;
 							Uint m_iIntervalSec = day*3600*24 ;
-							//m_iIntervalSec = 3*3600; //测试默认3小时校时一次
+							m_iIntervalSec = 3600; //测试默认3小时校时一次
 							while(m_iIntervalSec/60 >0) //采取一分钟休眠一次，判断是否唤醒
 							{
 								if(m_tLastTi == 0)  //强制校时

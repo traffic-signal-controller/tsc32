@@ -2221,7 +2221,12 @@ int SetPlan(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte
         return -1;
     }
     ucCount = pData[iPos++];
-
+    if(uDataSize != ucCount*0x9+0x1)
+    {
+	  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+	  uErrorIdx = 0;
+       	 return -1;
+   }
 	if (!pTscDb->DelPlan())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
@@ -2796,11 +2801,11 @@ int SetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uScheduleId,
 
 int SetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
-    int iPos = 0;
-    int iPackSize = 0;
-    Byte i, j, uScheduleCount, uEvtCount;
+    int iPos = 0x0;
+    int iPackSize = 0x0;
+    Ushort  j , uScheduleCount ;
     Schedule sSchedule = {0};
-
+ 
     if (uDataSize < 2)
     {
         uErrorSts = GBT_MSG_SIZE_SHORT;
@@ -2809,77 +2814,43 @@ int SetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
 #endif
         return -1;
     }
-    
-    uScheduleCount = pData[iPos++];
-    uEvtCount      = pData[iPos++];
+    	Byte Hbit = pData[iPos++] ;
+   	Byte  Lbit = pData[iPos++] ; 
+   	 uScheduleCount = (Ushort)((Hbit<<0x8) + Lbit);  //时段表行数
 
-    /*删除*/
-   /*
-   if (0 == uEvtCount || 0 == uScheduleCount)
-   {
-       pTscDb->DelSchedule();
-       return iPos;
+       if(uScheduleCount >= 0x300)
+	   	uScheduleCount =( (uDataSize-iPos)/0x8) ; //兼容原来的时段表数处理
+	   	
+  //ACE_OS::printf("\r\n\n%s:%d StagePatterns count=%d uDataSize=%d !\r\n",__FILE__,__LINE__,uScheduleCount,uDataSize);
+    if(uDataSize != uScheduleCount*0x8+0x2)
+    {
+	  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+	  uErrorIdx = 0;
+       	 return -1;
    }
-   */
-	if ( !pTscDb->DelSchedule() )
+	//pTscDb->DelSchedule();  //先执行删除操作一遍
+	if (!pTscDb->DelSchedule())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
 		uErrorIdx = 0;
 		return -1;
 	}
-
-    for (i = 0; i < uScheduleCount; i++) 
-    {
-        for (j = 0; j < uEvtCount; j++)
+        for (j = 0; j < uScheduleCount; j++)
         {
-            iPackSize = Unpacket(pData+iPos, uDataSize-iPos, sSchedule);
+            iPackSize = Unpacket(pData+iPos, uDataSize-iPos, sSchedule);			
             if (iPackSize < 0)
             {
-                uErrorSts = GBT_MSG_SIZE_SHORT;
-#ifdef TSC_DEBUG
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Unpacket Plan\n", SHORT_FILE, __LINE__));
-#endif
+                uErrorSts = GBT_MSG_SIZE_SHORT;					
                 return -1;
-            }
-            iPos += iPackSize;
-
-			/*
-            if (0 == uEvtCount)
-            {
-                pTscDb->DelSchedule(i+1, j+1);
-                continue;
-            }
-			*/
-
-			/*
-            if (sSchedule.ucScheduleId != (i+1)
-                || sSchedule.ucEvtId != (j+1))
-            {
-                uErrorSts = GBT_MSG_ERROR_OTHER;
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tsSchedule.ucScheduleId(%d)!=%d || sSchedule.ucEvtId(%d)!=%d\n", SHORT_FILE, __LINE__, sSchedule.ucScheduleId, i+1, sSchedule.ucEvtId, j+1));
-                return -1;
-            }
-
-            if (!pTscDb->ModSchedule(i+1, j+1, sSchedule))
-            {
-                uErrorSts = GBT_MSG_ERROR_OTHER;
-                uErrorIdx = 0;
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModSchedule(%d, %d)\n", SHORT_FILE, __LINE__, i+1, j+1));   
-                return -1;
-            }
-			*/
-			if (!pTscDb->AddSchedule(sSchedule.ucScheduleId, sSchedule.ucEvtId, sSchedule))
-			{
-				uErrorSts = GBT_MSG_ERROR_OTHER;
-				uErrorIdx = 0;
-#ifdef TSC_DEBUG
-				ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModSchedule(%d, %d)\n", SHORT_FILE, __LINE__, i+1, j+1));  
-#endif
-				return -1;
-			}
-        }
-    }
-
+            }           
+	if (!pTscDb->AddSchedule(sSchedule.ucScheduleId, sSchedule.ucEvtId, sSchedule))
+	{		
+		uErrorSts = GBT_MSG_ERROR_OTHER;
+		uErrorIdx = 0;
+		return -1;
+	}
+	 iPos += iPackSize;
+      }  
     return iPos;
 }
 int GetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uScheduleId, Byte uEvtId, Byte& uErrorSts, Byte& uErrorIdx)
@@ -2906,13 +2877,13 @@ int GetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uScheduleId,
         return iPos;
     }
 
-    pData[iPos++] = 1;
-    pData[iPos++] = 1;
+    pData[iPos++] = 0x0;
+    pData[iPos++] = 0x1;
 
     iPackSize = Packet(sSchedule, pData+iPos, uDataSize-iPos);
 
     if (iPackSize < 0)
-    {
+    {    
         uErrorSts = GBT_MSG_SIZE_SHORT;
 #ifdef TSC_DEBUG
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Packet schedule(%d, %d)\n", SHORT_FILE, __LINE__, uScheduleId, uEvtId));  
@@ -3064,10 +3035,8 @@ int GetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uScheduleId,
 
     pSchedule = tblSchedule.GetData(usCount);
 
-    pData[iPos++] = 1;
+    pData[iPos++] = 0x0;
     pData[iPos++] = (Byte)usCount;
-
-    pSchedule = tblSchedule.GetData(usCount);
     for (i = 0; i < usCount; i++)
     {
         iPackSize = Packet(pSchedule[i], pData+iPos, uDataSize-iPos);
@@ -3081,7 +3050,6 @@ int GetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uScheduleId,
         }
         iPos += iPackSize;
     }
-
     return iPos;
 }
 
@@ -3089,25 +3057,26 @@ int GetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
 {
     int iPos = 0;
     int iPackSize;
-    Ulong ulTemp;
-    Ushort i,j,k,uCount;
-    Byte uMaxSchedule = 16;
-    Byte uMaxScheduleEvt = 48;
+  //  Ulong ulTemp;
+    Ushort k,uCount;
+    //Byte uMaxSchedule = 16;
+    //Byte uMaxScheduleEvt = 48;
 
     TblSchedule  tblSchedule;
     Schedule*    pSchedule;
-    Schedule     sSchedule;
-
+  //  Schedule     sSchedule;
+/*
     if (pTscDb->GetFieldData(m_gTableDesc[TBL_CONSTANT].sTblName, "ucMaxSchedule", ulTemp))
     {
         uMaxSchedule = (Byte)ulTemp;
+	
     }
 
     if (pTscDb->GetFieldData(m_gTableDesc[TBL_CONSTANT].sTblName, "ucMaxScheduleEvt", ulTemp))
     {
         uMaxScheduleEvt = (Byte)ulTemp;
     }
-
+*/
     if (uDataSize < 2)
     {
         uErrorSts = GBT_MSG_SIZE_SHORT;
@@ -3125,43 +3094,15 @@ int GetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to QuerySchedule\n", SHORT_FILE, __LINE__)); 
 #endif
         return iPos;
-    }
+    }	   
 
-    pData[iPos++] = uMaxSchedule;
-    pData[iPos++] = uMaxScheduleEvt;
+        pSchedule = tblSchedule.GetData(uCount);
+	pData[iPos++] =(Byte)( (uCount>>0x8) &0xff) ;      //存储时段表条数的高8位
+ 	pData[iPos++] =(Byte)( uCount &0xff);                     //存储是时段表条数低8位
 
-    pSchedule = tblSchedule.GetData(uCount);
-
-    k = 0;
-    for ( i = 0; i < uMaxSchedule; i++ )
-    {
-        for (j = 0; j < uMaxScheduleEvt; j++)
-        {
-			if (k < uCount
-				&& pSchedule[k].ucScheduleId == (i+1)
-                && pSchedule[k].ucEvtId == (j+1)
-				)
-            {
-                sSchedule = pSchedule[k];
-                k    += 1;
-            }
-			/*
-			if ( i * uMaxScheduleEvt + j < uCount
-				&& pSchedule[i*uMaxScheduleEvt+j].ucScheduleId < uMaxSchedule
-				&& pSchedule[i*uMaxScheduleEvt+j].ucScheduleId != 0
-				&& pSchedule[i*uMaxScheduleEvt+j].ucEvtId != 0 
-				&& pSchedule[i*uMaxScheduleEvt+j].ucEvtId < uMaxScheduleEvt )
-			{
-				sSchedule = pSchedule[i*uMaxScheduleEvt+j];
-			}*/
-            else
-            {
-                ACE_OS::memset(&sSchedule, 0, sizeof(Schedule));
-                sSchedule.ucScheduleId = i+1;
-                sSchedule.ucEvtId = 0;
-            }
-
-            iPackSize = Packet(sSchedule, pData+iPos, uDataSize-iPos);
+for(k = 0; k< uCount ;k++)
+{
+	  iPackSize = Packet(pSchedule[k], pData+iPos, uDataSize-iPos);
             if (iPackSize < 0)
             {
                 uErrorSts = GBT_MSG_SIZE_SHORT;
@@ -3170,10 +3111,8 @@ int GetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
 #endif
                 return -1;
             }
-            iPos += iPackSize;
-        }
-    }
-    return iPos;
+            iPos += iPackSize;}
+    	  return iPos;
 }
 
 int SetEventType(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
@@ -3199,7 +3138,6 @@ int SetEventType(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts,
         pTscDb->DelEventType();
         return iPos;
     }
-
     for (i =0; i < uEvtCount; i++)
     {
         iPackSize = Unpacket(pData+iPos, uDataSize-iPos, sEventType);
@@ -3268,7 +3206,6 @@ int SetEventType(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uEventId, B
         return -1;
     }
 	iPos += iPackSize;
-
     if (0 == sEventType.ucEvtTypeId)
     {
         pTscDb->DelEventType(uEventId);
@@ -3426,9 +3363,9 @@ int GetEventType(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uEventId, B
         return -1;
     }
     iPos += iPackSize;
-
     return iPos;
 }
+
 int GetEventType(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uEventId, Byte uSubId, Byte& uErrorSts, Byte& uErrorIdx)
 {
     Ushort uCount;
@@ -3955,7 +3892,12 @@ int SetPhase(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byt
         return -1;
     }
     ucCount = pData[iPos++];
-
+    if(uDataSize != ucCount*0xc+0x1)
+    {
+	  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+	  uErrorIdx = 0;
+       	 return -1;
+   }
 	if (!pTscDb->DelPhase())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
@@ -4616,7 +4558,13 @@ int SetDetector(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
         return -1;
     }
     ucCount = pData[iPos++];
-
+   // ACE_OS::printf("\n\n\n%s:%d ucCount=%d uDataSize=%d\r\n\n\n\n",__FILE__,__LINE__,ucCount,uDataSize);
+     if(uDataSize != ucCount*0x9+0x1)
+    {
+	  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+	  uErrorIdx = 0;
+       	 return -1;
+    }
 	if (!pTscDb->DelDetector())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
@@ -4954,14 +4902,19 @@ int SetChannel(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, B
         return -1;
     }
     ucCount = pData[iPos++];
-
-	if (!pTscDb->DelChannel())
-	{
-		uErrorSts = GBT_MSG_ERROR_OTHER;
-		uErrorIdx = 0;
-		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModChannel(%d)\n", SHORT_FILE, __LINE__, sChannel.ucChannelId));   
-		return -1;
-	}
+    if(uDataSize != ucCount*0x4+0x1)
+    {
+	  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+	  uErrorIdx = 0;
+       	 return -1;
+    }
+if (!pTscDb->DelChannel())
+{
+	uErrorSts = GBT_MSG_ERROR_OTHER;
+	uErrorIdx = 0;
+	//ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ModChannel(%d)\n", SHORT_FILE, __LINE__, sChannel.ucChannelId));   
+	return -1;
+}
 
     for (i = 0; i < ucCount; i++)
     {
@@ -5258,7 +5211,12 @@ int SetPattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, B
         return -1;
     }
     ucCount = pData[iPos++];
-
+      if(uDataSize != ucCount*0x5+0x1)
+    {
+	  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+	  uErrorIdx = 0;
+       	 return -1;
+    }
 	if (!pTscDb->DelPattern())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
@@ -6090,7 +6048,13 @@ int SetPhaseToDirec(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
 		return -1;
 	}
 	ucCount = pData[iPos++];
-
+          if(uDataSize != ucCount*0x4+0x1)
+  	 {
+		  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+		  uErrorIdx = 0;
+		//  SndMsgLog(LOG_TYPE_GREEN_CONFIG,3,0,0,0); 
+       		 return -1;
+  	 }
 	if (!pTscDb->DelPhaseToDirec())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
@@ -6338,7 +6302,11 @@ int SetOverlapPhase(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
         return -1;
     }
     ucCount = pData[iPos++];
-
+     if(uDataSize != ucCount*0x47+0x1)
+  	 {
+		  uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+       		 return -1;
+  	 }
 	if (!pTscDb->DelOverlapPhase())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
@@ -6566,15 +6534,14 @@ int GetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
 {
     int iPos = 0;
     int iPackSize;
-    Ulong ulTemp;
-    Ushort i,j,k,uCount;
-    Byte uMaxStage = 16;
-    Byte uMaxStagePattern = 16;
-
+ //   Ulong ulTemp;
+    Ushort k,uCount;
+   // Byte uMaxStage = 16;
+    //Byte uMaxStagePattern = 16;
     TblStagePattern  tblStagePat;
     StagePattern* pStagePattern;
-    StagePattern  sPattern;
-
+    //StagePattern  sPattern;
+/*
     if (pTscDb->GetFieldData(m_gTableDesc[TBL_CONSTANT].sTblName, "ucMaxStage", ulTemp))
     {
         uMaxStage = (Byte)ulTemp;
@@ -6584,7 +6551,7 @@ int GetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
     {
         uMaxStagePattern = (Byte)ulTemp;
     }
-
+*/
     if ((iPos+2) > uDataSize)
     {
         uErrorSts = GBT_MSG_SIZE_SHORT;
@@ -6598,41 +6565,29 @@ int GetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
         pData[iPos++] = 0;
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to QueryStagePattern\n", SHORT_FILE, __LINE__));   
         return iPos;
-    }
-
-    pData[iPos++] = uMaxStagePattern;
-    pData[iPos++] = uMaxStage;
+    } 
     pStagePattern = tblStagePat.GetData(uCount);
-
-    k = 0;
-    for (i = 0; i < uMaxStagePattern; i++)
-    {
-        for (j = 0; j < uMaxStage; j++)
-        {
-            if (k < uCount
-                && pStagePattern[k].ucStagePatternId == (i+1)
-                && pStagePattern[k].ucStageNo == (j+1))
-            {
-                sPattern = pStagePattern[k];
-                k    += 1;
-            }
-            else
-            {
-                ACE_OS::memset(&sPattern, 0, sizeof(sPattern));
-                sPattern.ucStagePatternId = i+1;
-                sPattern.ucStageNo = 0;
-            }
-
-            iPackSize = Packet(sPattern, pData+iPos, uDataSize-iPos);
-            if (iPackSize < 0)
-            {
-                uErrorSts = GBT_MSG_SIZE_SHORT;
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tbufer is no enough\n", SHORT_FILE, __LINE__));   
-                return -1;
-            }
-            iPos += iPackSize;
-        }
-    }
+    
+    //ACE_DEBUG ((LM_DEBUG, "%s:%d Get StagePatterns count =%d \n", SHORT_FILE, __LINE__,uCount));   
+    pData[iPos++] = (Byte)((uCount>>0x8)&0xff) ;	  //存储时段表条数的高8位
+    pData[iPos++] = (Byte)(uCount &0xff);			//存储是时段表条数低8位
+     //ACE_DEBUG ((LM_DEBUG, "%s:%04d\t StagePattern count =%d  %d  %d \n", SHORT_FILE, __LINE__,uCount,(Byte)((uCount>>0x8)&0xff),(Byte)(uCount &0xff)));   
+	 //  k= 0x0 ;
+	for(k = 0; k< uCount ;k++)
+	{
+		// sSchedule = pSchedule[k];
+		  iPackSize = Packet(pStagePattern[k], pData+iPos, uDataSize-iPos);
+				if (iPackSize < 0)
+				{
+					uErrorSts = GBT_MSG_SIZE_SHORT;
+#ifdef TSC_DEBUG
+					ACE_DEBUG ((LM_DEBUG, "%s:%04d\tbufer is no enough\n", SHORT_FILE, __LINE__));	 
+#endif
+					return -1;
+				}
+				iPos += iPackSize;
+	}
+	
     return iPos;
 }
 
@@ -6826,11 +6781,12 @@ int SetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
 {
     int iPos = 0;
     int iPackSize;
-    Ushort i,j;
-    Byte uMaxStage = 16;
-    Byte uMaxStagePattern = 16;
+    Ushort j;
+    //Byte uMaxStage = 16;
+    //Byte uMaxStagePattern = 16;
+    Ushort  uScheduleCount =0x0 ;
     StagePattern  sPattern;
-
+    StagePattern  sTempPattern;
     if ((iPos+2) > uDataSize)
     {
         uErrorSts = GBT_MSG_SIZE_SHORT;
@@ -6838,38 +6794,37 @@ int SetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
         return -1;
     }
 
-    uMaxStagePattern = pData[iPos++];
-    uMaxStage        = pData[iPos++];
-
+    //uMaxStagePattern = pData[iPos++];
+    //uMaxStage        = pData[iPos++];
+    	Byte Hbit = pData[iPos++] ;
+   	Byte  Lbit = pData[iPos++] ; 
+   	 uScheduleCount = (Ushort)((Hbit<<0x8) + Lbit);  //阶段配时表行数
+      
+       if(uScheduleCount >= 0xfe)  //254 兼容原来上位机
+	   	uScheduleCount =0xff ;//( (uDataSize-iPos)/0xA) ; //兼容原来的时段表数处理	
+	/// ACE_OS::printf("\r\n\n%s:%d StagePatterns count=%d uDataSize=%d !\r\n",__FILE__,__LINE__,uScheduleCount,uDataSize);
+	  if(uDataSize != uScheduleCount*0xa+0x2)
+   	 {
+	 	 uErrorSts = GBT_MSG_ERROR_OTHER;  //字节数不正确
+	 	 uErrorIdx = 0;
+       	 	return -1;
+   	 }
 	if (!pTscDb->DelStagePattern())
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
 		uErrorIdx = 0;
 		return -1;
 	}
-
-    for (i = 0; i < uMaxStagePattern; i++)
-    {
-        for (j = 0; j < uMaxStage; j++)
+	
+        for (j = 0; j < uScheduleCount; j++)
         {
-            iPackSize = Unpacket(pData+iPos, uDataSize-iPos, sPattern);
+            iPackSize = Unpacket(pData+iPos, uDataSize-iPos, sPattern);			
             if (iPackSize < 0)
             {
-                uErrorSts = GBT_MSG_SIZE_SHORT;
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tbufer is no enough\n", SHORT_FILE, __LINE__));   
+                uErrorSts = GBT_MSG_SIZE_SHORT;					
                 return -1;
-            }
-
-            /*
-			if (0 == sPattern.ucStagePatternId || 0 == sPattern.ucStageNo)
-            {
-                pTscDb->DelStagePattern(i+1, j+1);
-                iPos += iPackSize;
-                continue;
-            }
-			*/
-
-            if (!pTscDb->AddStagePattern(sPattern.ucStagePatternId, sPattern.ucStageNo, sPattern))
+            }   
+	if (!pTscDb->AddStagePattern(sPattern.ucStagePatternId, sPattern.ucStageNo, sPattern))
             {
                 uErrorSts = GBT_MSG_ERROR_OTHER;
                 uErrorIdx = 0;
@@ -6877,9 +6832,9 @@ int SetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorS
                 return -1;
             }
             iPos += iPackSize;
-        }
-    }
-    return iPos;
+      }  
+//      ACE_DEBUG ((LM_DEBUG, "%s:%d Set stagepatterns %d\n", SHORT_FILE, __LINE__,uScheduleCount));	
+     return iPos;
 }
 
 int SetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uStagePatId, Byte& uErrorSts, Byte& uErrorIdx)
@@ -6892,7 +6847,7 @@ int SetStagePattern(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uStagePa
     StagePattern  sPattern;
 
     if ((iPos+2) > uDataSize)
-    {
+    { 
         uErrorSts = GBT_MSG_SIZE_SHORT;
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tbufer is no enough\n", SHORT_FILE, __LINE__));   
         return -1;

@@ -90,6 +90,7 @@ public:
 	bool ComputeColorCountNewGB();
 	
 	bool ComputeColorCount( Byte ucDirIndex , Byte& ucColor , Byte& ucCountTime );
+	void GetBusPhaseColourTime(Byte BusPhaseId,Byte& BusPhaseColour ,Byte& BusPhaseColoruTime);
 
 	bool m_bGaNeedCntDown[GA_MAX_DIRECT][GA_MAX_LANE]; //需要倒计时的方向
 	Byte m_ucGaRuntime[GA_MAX_DIRECT][GA_MAX_LANE];    //该灯色还需维持的时间

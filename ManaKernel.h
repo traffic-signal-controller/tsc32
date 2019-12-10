@@ -59,6 +59,9 @@ public:
 	Byte GetStageMaxDetectorCars(Uint32 StageAllowPhases); //获取阶段相位检测器的排排队长度ADD 201508171514
 	
 	Byte GetMaxGreen2(int iStepNo); //获取步伐最大绿2
+	void RefreshCycle(); //ADD 20150515
+	Byte GetPhaseStageNo(Byte ucPhaseId) ;
+    void SetPeoplePhaseColor(); //ADD 2018083
 
 
 
@@ -131,7 +134,9 @@ public:
 	bool ExitStageStretchPhase(SScheduleTime* pScheduleTime);
 
 	void ValidSoftWare() ;  //ADD 201310221450
-	
+	void DealPSC();          //ADD 20160923   
+    bool IsGreenFlashStep(int iStepNo); //ADD 20180830
+    void SetPeoplePhaseLamp(Byte iPhaseId); //add 20180830
 	
 	bool m_bRestart;        //是否重启 gbt协议测试部分
 	bool m_bWaitStandard;   //等待由四面红进入标准

@@ -49,6 +49,6 @@ typedef unsigned int Uint32;
 
 #define GA_COUNT_DOWN   //国标倒计时协议
 
-//#define SPECIAL_CNTDOWN 
+#define SPECIAL_CNTDOWN 
 #endif  //__DEFINE__H__
 

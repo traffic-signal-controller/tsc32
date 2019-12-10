@@ -35,6 +35,7 @@ History:
 #include <string.h>
 #include <ace/Date_Time.h>
 
+
 #endif
 
 /*
@@ -65,17 +66,20 @@ CDetector::CDetector()
 
 	m_iTotalDistance =300;    //5min
 	m_iChkType = 0 ;
-	ACE_OS::memset(m_iBoardErr  , 0xB , 4);
+	ACE_OS::memset(m_iBoardErr  , DEV_IS_CONNECTED , MAX_DET_BOARD);
 		
-	ACE_OS::memset(m_iDetStatus       , 0 , sizeof(int)  * MAX_DETECTOR);
-	ACE_OS::memset(m_ucDetError       , 0 , sizeof(Byte) * MAX_DETECTOR);
+	ACE_OS::memset(m_iDetStatus     , 0 , sizeof(int)  * MAX_DETECTOR);
+	ACE_OS::memset(m_ucDetError    , 0 , sizeof(Byte) * MAX_DETECTOR);
 	ACE_OS::memset(m_ucLastDetError   , 0 , sizeof(Byte) * MAX_DETECTOR);
 	ACE_OS::memset(m_ucDetErrTime     , 0 , sizeof(Byte) * MAX_DETECTOR);
 	ACE_OS::memset(m_iDetTimeLen      , 0 , sizeof(int)  * MAX_DETECTOR);
 	ACE_OS::memset(m_iDetOccupy       , 0 , sizeof(int)  * MAX_DETECTOR);
 	ACE_OS::memset(m_ucTotalStat      , 0 , sizeof(Byte) * MAX_DETECTOR);
 	ACE_OS::memset(m_iAdapDetTimeLen  , 0 , sizeof(int)  * MAX_DETECTOR);
-	ACE_OS::memset(m_iAdapTotalStat   , 0 , sizeof(int)  * MAX_DETECTOR);
+	ACE_OS::memset(m_iAdapTotalStat   , 0 , sizeof(int)  * MAX_DETECTOR);	
+	
+	ACE_OS::memset(m_iAdapOccupty   , 0 , sizeof(Byte)  * MAX_DETECTOR);
+	
 	ACE_OS::memset(m_iLastDetSts      , 0 , sizeof(int)  * MAX_DETECTOR);
 	ACE_OS::memset(m_ucRoadSpeed      , 0 , sizeof(Byte) * MAX_DET_BOARD * 8);
 	ACE_OS::memset(m_ucSetRoadDis     , 0 , sizeof(Byte) * MAX_DET_BOARD * 8);
@@ -632,7 +636,7 @@ Return:         ÎÞ
 			if(bchkdetstatus)
 		 	{
 				GetAllVehSts(DET_HEAD_STS,ucIndex);    //²éÑ¯¼ì²âÆ÷Í¨µÀ×´Ì¬  ¿ªÂ· Õý³£ ¶ÌÂ·µÈÇé¿ö¡£
-				GetDecVars(ucIndex,0xff);              //²éÑ¯Ã¿¿é¼ì²âÆ÷°å½Ó¿Ú°åÁ¬½Ó×´Ì¬ ADD 2015-02-02
+				GetDecVars(ucIndex,0xff);                         //²éÑ¯Ã¿¿é¼ì²âÆ÷°å½Ó¿Ú°åÁ¬½Ó×´Ì¬ ADD 2015-02-02
 		    }
 			if(bchkcar) //ADD:2013 0724 1010
 			{	
@@ -1013,45 +1017,54 @@ Input:          ÎÞ
 Output:         ÎÞ
 Return:         ÎÞ
 ***************************************************************/
-void CDetector::GetOccupy()
+void CDetector::GetOccupy(Byte Type)
 {
 	static int iTick = 0;
 	Ushort iIndex       = 0;
 	CManaKernel *pManaKernel = CManaKernel::CreateInstance();
 	iTick++;
-	//ACE_DEBUG((LM_DEBUG,"%s:%d ******iTick =%d m_iTotalDistance=%d \n",__FILE__,__LINE__,iTick,m_iTotalDistance));
-	if ( iTick <pManaKernel->m_pRunData->ucCycle-1)// m_iTotalDistance )  //5min 5*60
+	//int a = rand()%7+31;
+	//m_iDetTimeLen[a] += 1;
+	//m_ucTotalStat[a]+=1 ;
+	Byte iCycleRecord = 0x0 ;
+	if(Type ==0x1)
 	{
-		
-		ACE_DEBUG((LM_DEBUG,"%s:%d ******iTick =%d cycle=%d \n",__FILE__,__LINE__,iTick,pManaKernel->m_pRunData->ucCycle));
-		return;
+		iCycleRecord = pManaKernel->m_pRunData->ucCycle-1 ;
 	}
-  
+	else
+	{
+		iCycleRecord = 300 ; //5·ÖÖÓ
+	}
+	//ACE_DEBUG((LM_DEBUG,"%s:%d ******iTick =%d m_iTotalDistance=%d \n",__FILE__,__LINE__,iTick,m_iTotalDistance));
+	if ( iTick <iCycleRecord)// m_iTotalDistance )  //5min 5*60
+	{		
+	//	ACE_DEBUG((LM_DEBUG,"%s:%d ******iTick =%d cycle=%d \n",__FILE__,__LINE__,iTick,pManaKernel->m_pRunData->ucCycle));
+		return;
+	}  	
 	iTick = 0;
-
 	//ACE_Guard<ACE_Thread_Mutex> guard(m_sMutex);
 	//ACE_OS::memcpy( m_iLastDetTimeLen , m_iDetTimeLen , sizeof(int)*MAX_DETECTOR );
-
-	iIndex = MAX_DETECTOR;	
-	
+	iIndex = MAX_DETECTOR;		
 	while ( iIndex-- >0)
 	{
 		if(pManaKernel->m_pTscConfig->sDetector[iIndex].ucPhaseId>0)
 		{	
-			//ACE_DEBUG((LM_DEBUG,"%s:%d ******DetecId =%d ucPhaseId=%d cars=%d m_iDetTimeLen=%d\n",__FILE__,__LINE__,iIndex+1,pManaKernel->m_pTscConfig->sDetector[iIndex].ucPhaseId,m_ucTotalStat[iIndex],m_iDetTimeLen[iIndex]));
-		
-			m_iDetOccupy[iIndex] = (m_iDetTimeLen[iIndex]*1.0*100/ (pManaKernel->m_pRunData->ucCycle)) ; 
+		//	ACE_DEBUG((LM_DEBUG,"%s:%d ******DetecId =%d ucPhaseId=%d cars=%d m_iDetTimeLen=%d\n",__FILE__,__LINE__,iIndex+1,pManaKernel->m_pTscConfig->sDetector[iIndex].ucPhaseId,m_ucTotalStat[iIndex],m_iDetTimeLen[iIndex]));
+			m_iDetOccupy[iIndex] = (m_iDetTimeLen[iIndex]*1.0*100/(iCycleRecord)) ; 
 			pManaKernel->m_pTscConfig->sDetector[iIndex].ucSaturationOccupy = m_iDetOccupy[iIndex] ;
 			
 			pManaKernel->m_pTscConfig->sDetector[iIndex].usSaturationFlow = m_ucTotalStat[iIndex] ;
-			 (CDbInstance::m_cGbtTscDb).ModDetector(pManaKernel->m_pTscConfig->sDetector[iIndex].ucDetectorId,pManaKernel->m_pTscConfig->sDetector[iIndex] );
-			(CDbInstance::m_cGbtTscDb).AddVehicleStat(iIndex+1 , m_ucTotalStat[iIndex] ,  m_iDetOccupy[iIndex]);
+			if(Type == 0x1)
+				 (CDbInstance::m_cGbtTscDb).ModDetector(pManaKernel->m_pTscConfig->sDetector[iIndex].ucDetectorId,pManaKernel->m_pTscConfig->sDetector[iIndex] );
+			else
+				 (CDbInstance::m_cGbtTscDb).AddVehicleStat(iIndex+1 , m_ucTotalStat[iIndex] ,  m_iDetOccupy[iIndex]);
 		}
-	}
-	
+	}	
 	ACE_OS::memset(m_iDetTimeLen , 0 , sizeof(int)*MAX_DETECTOR);
 	ACE_OS::memset(m_ucTotalStat  , 0 , sizeof(Byte)*MAX_DETECTOR);
 }
+
+
 
 
 /**************************************************************
@@ -1200,10 +1213,8 @@ void CDetector::GetDetData(SDetectorData* pDetData)
 		
 		//ÉÏÒ»¸öÖÜÆÚµÄÕ¼ÓÐÂÊ
 		(pDetData+iIndex)->ucOccupancy = m_iDetOccupy[iDetId] * 2; //µ¥Î»0.5
-
 		//µ±Ç°µÄÕ¼ÓÐÂÊ
-		//(pDetData+iIndex)->ucOccupancy   = m_iDetTimeLen[iDetId] * 100 * 2 / ( m_iTotalDistance * 10 ) ; //µ¥Î»0.5
-		
+		//(pDetData+iIndex)->ucOccupancy   = m_iDetTimeLen[iDetId] * 100 * 2 / ( m_iTotalDistance * 10 ) ; //µ¥Î»0.5		
 		//(pDetData+iIndex)->ucVelocity  = m_iDetSpeedAvg[iDetId];
 		(pDetData+iIndex)->ucVehLen      = 0;
 		iIndex++;
@@ -1247,7 +1258,6 @@ void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 		(pDetAlarm+iIndex)->ucId = iIndex + 1;
 		iIndex++;
 	}
-
 	iIndex = 0;
 	while ( iIndex < 32 ) 
 	{
@@ -1285,7 +1295,6 @@ void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 			default:
 				break;
 		}
-
 		iIndex++;
 	}
 
@@ -1362,7 +1371,6 @@ bool CDetector::HaveDetBoard()
 	/*ÅÐ¶Ïµ±Ç°ÊÇ·ñÓÐÅäÖÃ¼ì²âÆ÷°å*/
 	for ( Byte iBoardIndex=0x0; iBoardIndex<MAX_DET_BOARD; iBoardIndex++ )
 	{		
-		
 		//ACE_DEBUG((LM_DEBUG,"%s:%d m_iBoardErr[%d] = %02X \n",__FILE__,__LINE__,iBoardIndex,m_iBoardErr[iBoardIndex]));
 			if(DEV_IS_CONNECTED == m_iBoardErr[iBoardIndex] )
 			{
@@ -1379,19 +1387,17 @@ bool CDetector::HaveDetBoard()
 				
 				while(iDetId <= iMaxDetId)
 				{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d iBoardIndex =%d sDetector[%d].ucPhaseId=%d \n",__FILE__,__LINE__,iBoardIndex,iDetId,pTscConfig->sDetector[iDetId].ucPhaseId));
+					//ACE_DEBUG((LM_DEBUG,"%s:%d iBoardIndex =%d sDetector[%d].ucPhaseId=%d \n",__FILE__,__LINE__,iBoardIndex,iDetId,pTscConfig->sDetector[iDetId].ucPhaseId));
 					if(pTscConfig->sDetector[iDetId].ucPhaseId != 0)
 					{
 						//ACE_DEBUG((LM_DEBUG,"%s:%d iBoardIndex =%d sDetector[%d].ucPhaseId=%d \n",__FILE__,__LINE__,iBoardIndex,iDetId,pTscConfig->sDetector[iDetId].ucPhaseId));
 						if((iBoardIndex <2) && (DET_NORMAL == m_ucDetError[iDetId]))
-						{
-							
-						//	m_iBoardErr[iBoardIndex] = DEV_IS_DISCONNECTED ; //·ÀÖ¹²»ÄÜ½µ¼¶
+						{							
+							//m_iBoardErr[iBoardIndex] = DEV_IS_DISCONNECTED ; //·ÀÖ¹²»ÄÜ½µ¼¶
 							return true ;
 						}
 						else if(iBoardIndex >=2) //½Ó¿Ú°å²»ÓÃÅÐ¶ÏÍ¨µÀºÃ»µ
-						{
-							
+						{							
 							//m_iBoardErr[iBoardIndex] = DEV_IS_DISCONNECTED ; //·ÀÖ¹²»ÄÜ½µ¼¶
 							return true ;
 						}						
@@ -1402,7 +1408,7 @@ bool CDetector::HaveDetBoard()
 			}		
 			
 		}					
-		
+	//ACE_OS::printf("\r\n%s:%d No active detector found!!!\r\n",__FILE__,__LINE__);
 	return false;
 }
 
@@ -1436,7 +1442,7 @@ void CDetector::IsVehileHaveCar()
 	//ACE_Date_Time tvTime(ACE_OS::gettimeofday());		
 	//ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_PreAnalysis %d:%d:%d:%d!\n",__FILE__,__LINE__,tvTime.hour(),tvTime.minute(),tvTime.second(),tvTime.microsec()));
 			
-	if ( !bVehile && uiTscCtrl != CTRL_PREANALYSIS) //Èç¹û²»ÊÇ½×¶Î³õÊ¼²½²¢ÇÒÊÇÂÌ³¤²½£¬ÔòÖ±½Ó·µ»Ø ²»»áÔö¼ÓÂÌ²½³¤
+	if ( !bVehile && uiTscCtrl != CTRL_PREANALYSIS ) //Èç¹û²»ÊÇ½×¶Î³õÊ¼²½²¢ÇÒÊÇÂÌ³¤²½£¬ÔòÖ±½Ó·µ»Ø ²»»áÔö¼ÓÂÌ²½³¤
 	{
 		return;
 	}
@@ -1505,7 +1511,6 @@ void CDetector::IsVehileHaveCar()
 				}			
 			}
 			break;
-		case  CTRL_ACTIVATE:
 		case CTRL_PREANALYSIS:
 		{										
 			Byte iIndex =0x0 ;
@@ -1552,7 +1557,7 @@ void CDetector::IsVehileHaveCar()
 			break;
 	}
 
-	if ( bHaveCar )
+	if ( bHaveCar)
 	{
 		//ACE_DEBUG((LM_DEBUG,"\n\n%s:%d now add green time!\n\n",__FILE__,__LINE__));
 		CManaKernel::CreateInstance()->AddRunTime(iAdjustTime,ucPhaseIndex);
@@ -1681,7 +1686,7 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 	ucDetBoardIndex = GetDecBoardIndex(ucBoardAddr) ; //ADD :20150202
 	if ( DET_HEAD_VEHSTS ==RecvType )
 		{				
-			//ACE_DEBUG((LM_DEBUG,"%s:%d Get car info %2x:%2x !Time %d:%d\n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],sRecvCanTmp.pCanData[2],tvTime.minute(),tvTime.second()));
+		//	ACE_DEBUG((LM_DEBUG,"%s:%d Get car info %2x:%2x !Time %ld:%ld\n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],sRecvCanTmp.pCanData[2],tvTime.minute(),tvTime.second()));
 				//Êý¾Ý×Ö½ÚÖ»Ê¹ÓÃµ½Á½¸ö×Ö½Ú
 			for ( int i=1; i<sRecvCanTmp.ucCanDataLen; i++ )
 			{				
@@ -1697,11 +1702,12 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 					m_iDetStatus[iDetId] = (ucValueTmp >> j) & 0x01;
 					if((ucValueTmp >> j) & 0x1)
 					{
-						m_iDetTimeLen[iDetId] += 1;    //¼ÆËãÕ¼ÓÐÂÊ
+						m_iDetTimeLen[iDetId] += 1;    //¼ÆËãÕ¼ÓÐÂ
+						//m_ucTotalStat[iDetId]+= 1;
 						m_iDetStatus[iDetId]  = 1;     //³µµÀÉÏÓÐ³µ
-
 						m_iAdapDetTimeLen[iDetId] += 1;
-						
+						////ACE_OS::printf("\r\n%s:%d Idet =%d cars=%d \r\n" ,__FILE__,__LINE__,iDetId+1,m_iAdapDetTimeLen[iDetId]);
+						//m_iAdapTotalStat[iDetId]+= 1;
 						if ( 0 == m_iLastDetSts[iDetId] )
 						{
 							//ACE_Date_Time tvTime(ACE_OS::gettimeofday());       
@@ -1709,7 +1715,6 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 							//if(m_ucTotalStat[iDetId]==0xff)
 								//m_ucTotalStat[iDetId]=0;
 							m_ucTotalStat[iDetId] += 1;   //¼ÆËã³µÁ÷Á¿ ÉÏ´ÎÎÞ³µ´Ë´ÎÓÐ³µ²ÅÎªÓÐ³µ 
-							
 							m_iAdapTotalStat[iDetId] += 1; 
 						}
 					}
@@ -1727,8 +1732,7 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Get det status %2x:%2x !Time %d:%d\n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],sRecvCanTmp.pCanData[2],tvTime.minute(),tvTime.second()));
 			for ( int i=1; i<sRecvCanTmp.ucCanDataLen; i++ )
 			{
-				ucValueTmp = sRecvCanTmp.pCanData[i];
-			
+				ucValueTmp = sRecvCanTmp.pCanData[i];			
 				for ( int j=0; j<8; j++ )
 				{
 					if(j%2 == 0)
@@ -1743,10 +1747,9 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 						m_ucLastDetError[ucDecId] = m_ucDetError[ucDecId] ;
 						//ACE_DEBUG((LM_DEBUG,"%s:%d m_ucDetError[%d] = %d!\n",__FILE__,__LINE__,ucDecId,m_ucDetError[ucDecId]));
 						if((ucValueTmp >> j) & 0x3)
-						{
-							
+						{							
 							CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_DETECTOR, ucDecId+1,m_ucDetError[ucDecId],0,0);			
-						//	ACE_DEBUG((LM_DEBUG,"%s:%d m_ucDetError[%d] bad:%d!\n",__FILE__,__LINE__,ucDecId,(ucValueTmp >> j) & 0x3));
+							//ACE_DEBUG((LM_DEBUG,"%s:%d m_ucDetError[%d] bad:%d!\n",__FILE__,__LINE__,ucDecId,(ucValueTmp >> j) & 0x3));
 						}
 					}
 				}
@@ -1995,5 +1998,49 @@ Byte CDetector::GetDecBoardIndex(Byte DecBoardHexAddr)
     }
 
 }
+
+/**************************************************************
+Function:        CDetector::IsHaveCarPhase
+Description:    ÅÐ¶ÏÄ³¸öÏàÎ»×éÊÇ·ñÓÐ³µ
+Input:          uiPhase-ÏàÎ»×é  pPhaseDet-µ¥¸öÏàÎ»Óë¼ì²âÆ÷µÄ¹ØÏµ
+Output:         ucPhaseIndex - ÓÐ³µµÄÏàÎ» 0 - 15
+Return:         true-ÓÐ³µ   false-ÎÞ³µ
+***************************************************************/
+bool CDetector::IsHaveCarPhase(Byte uiPhase)
+{
+	//bool bHaveCar  = false;
+	int  iDetCnt   = 0;
+	int  iDetIndex = 0;
+	int  iDetId    = 0;
+	Byte ucPhaseIndex = 0x0;
+    CManaKernel * pManaKernel = CManaKernel::CreateInstance();
+	
+	ucPhaseIndex = uiPhase -0x1;  //·ÅÐÐÏàÎ»
+	iDetCnt      = pManaKernel->m_sPhaseDet[ucPhaseIndex].iRoadwayCnt;//ÅÐ¶Ï¸ÃÏàÎ»ÓÐ¼¸¸ö¼ì²âÆ÷
+	iDetIndex = 0;
+	while ( iDetIndex < iDetCnt )//¸ÃÏàÎ»ËùÓÐµÄ¼ì²âÆ÷Ñ­»·Ò»±é
+	{
+		iDetId =pManaKernel->m_sPhaseDet[ucPhaseIndex].iDetectorId[iDetIndex] - 1; //¼ì²âÆ÷Êý×éÏÂ±ê
+				
+		if(0x1==m_iDetStatus[iDetId])
+		{
+			 if( iDetId/MAX_INTERFACE_PER_BOARD ==0x0 && DET_NORMAL==m_ucDetError[iDetId])
+			{
+				  return true;
+					//	ACE_DEBUG((LM_DEBUG,"\n%s:%d  phaseid=%d Dector No.:%d\n\n",__FILE__,__LINE__,iIndex+1,iDetId+1));
+			}
+			 else if(iDetId/MAX_INTERFACE_PER_BOARD >=0x1) 
+			 {
+				  return true;
+						//ACE_DEBUG((LM_DEBUG,"\n%s:%d Dector No.:%d\n\n",__FILE__,__LINE__,iDetId+1));			  }				    
+		      }
+		}
+
+		iDetIndex++;
+	}
+		
+	return false;
+}
+
 
 

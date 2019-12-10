@@ -44,16 +44,14 @@ enum
 	DET_HEAD_SENDATA0814_SET = 0x16 ,         //表示主控板设置检测器发送8-14级的灵敏度数值
 	DET_HEAD_SENDATA1516_SET = 0x17 ,         //表示主控板设置检测器发送15-16级的灵敏度数值
 
-	DET_HEAD_FRENCY_GET = 0x18 , 		 	  //表示主控板请求检测器发送16个通道的震荡频率设置
+	DET_HEAD_FRENCY_GET = 0x18 , 		    //表示主控板请求检测器发送16个通道的震荡频率设置
 	DET_HEAD_FRENCY_SET = 0x19 , 		      //表示主控板发送给检测器16个通道的震荡频率设置。
 
-	DET_HEAD_WORK_SET = 0x1a , 		 		 //表示主控板设置检测器工作方式。
-	DET_HEAD_VER      =0xff  ,                //表示检测器版本 ADD:20141201
-	DET_HEAD_ID       =0x0                    //表示检测器的ID号
+	DET_HEAD_WORK_SET = 0x1a , 		    //表示主控板设置检测器工作方式。
+	DET_HEAD_VER      =0xff  ,             		   //表示检测器版本 ADD:20141201
+	DET_HEAD_ID       =0x0                  		  //表示检测器的ID号
 	  
 };
-
-
 
 class CDetector
 {
@@ -65,7 +63,7 @@ public:
 	bool SelectBrekonCardStatus(Byte ucBoardIndex, Byte ucAddress);
 	void SearchAllStatus(bool chkcar,bool chkdecstatus);
 	void SearchSpeed(Byte ucBoardIndex, Byte ucAddress, Byte ucRecAddress);
-	void GetOccupy();
+	void GetOccupy(Byte Type );
 	int GetActiveDetSum();
 	void GetDetStatus(SDetectorSts* pDetStatus);
 	void GetDetData(SDetectorData* pDetData);
@@ -134,6 +132,8 @@ public:
 
 	int m_iAdapDetTimeLen[MAX_DETECTOR];    //有车时间的统计  100ms/单位 用于自适应控制
 	int m_iAdapTotalStat[MAX_DETECTOR];     //车辆统计   /次 用于自适应控制
+    	Byte m_iAdapOccupty[MAX_DETECTOR] ;
+
 
 	Byte m_ucRoadSpeed[MAX_DET_BOARD][8];     //车道的平均速度 
 
@@ -153,8 +153,8 @@ public:
 	Byte m_ucGetSensibility[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD] ; //ADD 2013 0816 1530
 	Byte m_ucDecBoardVer[MAX_DET_BOARD][5]; //ADD:20141201  检测器板卡 的程序版本
 	Byte m_ucDecBoardId[MAX_DET_BOARD][4]; //ADD 20150112 检测器板卡ID
-	VehicleStat m_ucDecCarsAnaly[MAX_DETECTOR];
-	
+	VehicleStat m_ucDecCarsAnaly[MAX_DETECTOR];	
+	bool IsHaveCarPhase(Byte uiPhase);
 private:
 	CDetector();
 	~CDetector();
@@ -168,7 +168,7 @@ private:
 	int m_iTotalDistance;             //统计间隔 	
 	
 	int m_iDetCfg[MAX_DET_BOARD];      // 0-不启用 1-第一个检测器 17-第17个检测器
-	int m_iBoardErr[MAX_DET_BOARD];    //true:好 false:坏掉
+	Byte m_iBoardErr[MAX_DET_BOARD];    //true:好 false:坏掉
 	int m_iLastDetSts[MAX_DETECTOR];  //上次车的状态
 	int m_iDetStatus[MAX_DETECTOR];/* //1:有车 0:无车  0 - 15:第1块检测器接口板 16 - 31:第2块检测器接口板*/
 	int m_iDetTimeLen[MAX_DETECTOR];  //有车时间的统计  100ms/单位

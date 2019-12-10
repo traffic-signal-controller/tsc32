@@ -2,14 +2,15 @@
 /***************************************************************
 Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
-FileName:   WirelessCoord.cpp
-Date:       2013-1-1
-Description:信号机无线协调模式处理类文件，用于处理信号机无线协调控制
+FileName:   CAdaptive.cpp
+Date:       2017-10-17
+Description:信号机自适应控制
 Version:    V1.0
 History:
 ***************************************************************/
-#include "Coordinate.h"
+#include "Adaptive.h"
 #include "ManaKernel.h"
+#include "ace/OS.h"
 
 #ifndef WINDOWS
 #include <stdio.h>
@@ -23,83 +24,85 @@ History:
 
 
 /**************************************************************
-Function:        CWirelessCoord::IsMasterMachine
+Function:        CAdaptive::IsMasterMachine
 Description:     判断是否是无线协调主机		
 Input:          无           
 Output:         无
 Return:         0
 ***************************************************************/
-Uint CWirelessCoord::IsMasterMachine()
+Uint CAdaptive::IsMasterMachine()
 {
 	return 0;
 }
 
 /**************************************************************
-Function:        CWirelessCoord::SyncSubMachine
+Function:        CAdaptive::SyncSubMachine
 Description:     判断是否是无线协调子机		
 Input:          无           
 Output:         无
 Return:         0
 ***************************************************************/
-void CWirelessCoord::SyncSubMachine()
+void CAdaptive::SyncSubMachine()
 {
 	return ;
 }
 
 
 /**************************************************************
-Function:        CWirelessCoord::CWirelessCoord
+Function:        CAdaptive::CWirelessCoord
 Description:     无线协调类构造函数，初始化类变量			
 Input:          无           
 Output:         无
 Return:         无
 ***************************************************************/
-CWirelessCoord::CWirelessCoord()
+CAdaptive::CAdaptive()
 {
 	//m_bForceAssort = false;
 	m_bPlus       = true;            
-	m_bMaster = false;
+	m_bMaster     = false;
 	m_iUtsCycle   = 0;      
 	m_iUtscOffset = 0;    
 	m_tLastTi     = 0;
 	m_iCycle      = 0;                              
 	m_iOffset     = 0;         
 	m_iAdjustCnt  = 0;     
+	ACE_OS::memset(m_iCycleStageLongSetp,0x0,MAX_SON_SCHEDULE);	
+	ACE_OS::memset(m_iNextCycleStageLongSetp,0x0,MAX_SON_SCHEDULE);
 
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init CWirelessCoord object!\n",__FILE__,__LINE__));
 
 }
 
 /**************************************************************
-Function:        CWirelessCoord::~CWirelessCoord
+Function:        CAdaptive::~CWirelessCoord
 Description:     无线协调类析构函数		
 Input:          无           
 Output:         无
 Return:         无
 ***************************************************************/
-CWirelessCoord::~CWirelessCoord()
+CAdaptive::~CAdaptive()
 {
 	ACE_DEBUG((LM_DEBUG,"%s:%d Destruct  CWirelessCoord object!\n",__FILE__,__LINE__));
 }
 
 
 /**************************************************************
-Function:        CWirelessCoord::CreateInstance
+Function:        CAdaptive::CreateInstance
 Description:     创建CWirelessCoord检测器静态对象		
 Input:          无           
 Output:         无
 Return:         静态对象指针
 ***************************************************************/
-CWirelessCoord* CWirelessCoord::CreateInstance()
+CAdaptive* CAdaptive::CreateInstance()
 {
-	static CWirelessCoord cCableless;
+	static CAdaptive cCableless;
 
 	return &cCableless;
 }
 
 
 /**************************************************************
-Function:        CWirelessCoord::SetStepInfo
+Function:        CAdaptive::SetStepInfo
 Description:     设置无线协调控制模式信息		
 Input:          bCenter - 是否为中心协调
 *        		iStepNum  - 步伐总数
@@ -110,7 +113,7 @@ Input:          bCenter - 是否为中心协调
 Output:         无
 Return:         无
 ***************************************************************/
-void CWirelessCoord::SetStepInfo(bool bCenter
+void CAdaptive::SetStepInfo(bool bCenter
 							 , int iStepNum 
 							 , int iCycle 
 							 , int iOffset 
@@ -143,19 +146,19 @@ void CWirelessCoord::SetStepInfo(bool bCenter
 		m_iOffset  = iOffset;
 	}
 
-	ACE_DEBUG((LM_DEBUG,"%s,%d m_iUtsCycle:%d m_iUtscOffset:%d\n",__FILE__,__LINE__,m_iUtsCycle,m_iUtscOffset));
+	//ACE_DEBUG((LM_DEBUG,"%s,%d m_iUtsCycle:%d m_iUtscOffset:%d\n",__FILE__,__LINE__,m_iUtsCycle,m_iUtscOffset));
 
 }
 
 
 /**************************************************************
-Function:        CWirelessCoord::GetDeflection
+Function:        CAdaptive::GetDeflection
 Description:     获取总调整时间		
 Input:          无  
 Output:         无
 Return:         无
 ***************************************************************/
-void CWirelessCoord::GetDeflection()
+void CAdaptive::GetDeflection()
 {
 	int iDeflection = 0;
 	int iCycle      = 0;
@@ -192,8 +195,8 @@ void CWirelessCoord::GetDeflection()
 
 	iDeflection = (tTi - iOffset - tTi0) % iCycle;
 	
-	ACE_DEBUG((LM_DEBUG, "%s:%d iDeflection:%d iCycle:%d iOffset:%d tTi:%d  tTi0:%d \n"
-			, __FILE__ , __LINE__  , iDeflection , iCycle , iOffset , (long)tTi , (long)tTi0 ));
+	//ACE_DEBUG((LM_DEBUG, "%s:%d iDeflection:%d iCycle:%d iOffset:%d tTi:%d  tTi0:%d \n"
+		//	, __FILE__ , __LINE__  , iDeflection , iCycle , iOffset , (long)tTi , (long)tTi0 ));
 
 	if ( 0 == iDeflection )
 	{
@@ -219,18 +222,18 @@ void CWirelessCoord::GetDeflection()
 		m_bPlus      = true;
 	}
 	
-	ACE_DEBUG((LM_DEBUG,"%s:%d This cycle m_iAdjustCnt:%d m_bPlus:%d\n" , __FILE__ , __LINE__ , m_iAdjustCnt , m_bPlus));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d This cycle m_iAdjustCnt:%d m_bPlus:%d\n" , __FILE__ , __LINE__ , m_iAdjustCnt , m_bPlus));
 }
 
 
 /**************************************************************
-Function:        CWirelessCoord::GetAdjust
+Function:        CAdaptive::GetAdjust
 Description:     获取所有步伐的调整时间		
 Input:          无  
 Output:         无
 Return:         无
 ***************************************************************/
-void CWirelessCoord::GetAdjust()
+void CAdaptive::GetAdjust()
 {
 	int i              = 0;
 	int iCycle         = 0;
@@ -323,7 +326,7 @@ void CWirelessCoord::GetAdjust()
 		m_iAdjustSecond[i]  = m_iAdjustSecond[i] + iAdjustPerStep;
 		iMaxAdjustCnt       = iMaxAdjustCnt - iAdjustPerStep;
 
-		ACE_DEBUG((LM_DEBUG,"%s:%d m_iAdjustSecond[%d]:%d \n",__FILE__,__LINE__,i,m_iAdjustSecond[i]));
+		//ACE_DEBUG((LM_DEBUG,"%s:%d m_iAdjustSecond[%d]:%d \n",__FILE__,__LINE__,i,m_iAdjustSecond[i]));
 	}
 }
 
@@ -335,7 +338,7 @@ Input:          无
 Output:         无
 Return:         无
 ***************************************************************/
-void CWirelessCoord::OverCycle()
+void CAdaptive::OverCycle()
 {
 	GetDeflection();
 	if ( 0 == m_iAdjustCnt ) 
@@ -358,7 +361,7 @@ Input:          iCurStepNo:当前的步伐号
 Output:         无
 Return:         返回当前步伐的长度 -1:错误
 ***************************************************************/
-int CWirelessCoord::GetStepLength(int iCurStepNo)
+int CAdaptive::GetStepLength(int iCurStepNo)
 {
 	int iCurSetpTime = 0;
 	if ( iCurStepNo > m_iStepNum )  /*异常情况*/
@@ -377,7 +380,7 @@ int CWirelessCoord::GetStepLength(int iCurStepNo)
 		iCurSetpTime = m_iStepLen[iCurStepNo] - m_iAdjustSecond[iCurStepNo];
 	}
 	
-	ACE_DEBUG((LM_DEBUG,"%s:%d  StepNo =%d StepTime =%d !\n",__FILE__,__LINE__,iCurStepNo,iCurSetpTime ));
+	//ACE_DEBUG((LM_DEBUG,"%s:%d  StepNo =%d StepTime =%d !\n",__FILE__,__LINE__,iCurStepNo,iCurSetpTime ));
 	return iCurSetpTime;
 }
 
@@ -389,7 +392,7 @@ Input:          iCurStepNo:当前的步伐号
 Output:         无
 Return:         无
 ***************************************************************/
-void CWirelessCoord::ForceAssort()
+void CAdaptive::ForceAssort()
 {
 	m_tLastTi = 0;
 }
@@ -401,7 +404,7 @@ Input:          无
 Output:         无
 Return:         无
 ***************************************************************/
- void CWirelessCoord::SetDegrade()
+ void CAdaptive::SetDegrade()
 {
 	 m_iStepNum = 0 ;                //步伐总数
 	 memset(m_iStepLen,0,MAX_STEP);      //各步长

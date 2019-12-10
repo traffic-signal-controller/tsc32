@@ -139,11 +139,12 @@ bool Configure::InitConfig()
 		ACE_OS::fputs("\nport          =5435 ",fConfig);
 
 		ACE_OS::fputs("\n[CONTACT]",fConfig);
-		ACE_OS::fputs("\ncompany       =XiaMenAiTon",fConfig);
-		ACE_OS::fputs("\nlinkman       =Chen",fConfig);
-		ACE_OS::fputs("\ntelephone     = 0592-5212811",fConfig);
-		ACE_OS::fputs("\naddress       = No151,BanMei,HuLi,XiaMen,FuJian,China",fConfig);
-		ACE_OS::fputs("\nWebSite       = http://www.aiton.com.cn	",fConfig);
+		ACE_OS::fputs("\ncompany       =JiAn",fConfig);
+		ACE_OS::fputs("\nlinkman       =Mr Wu",fConfig);
+		ACE_OS::fputs("\ntelephone     = 00000000000",fConfig);
+		ACE_OS::fputs("\naddress       = China",fConfig);
+		ACE_OS::fputs("\nWebSite       = http:	",fConfig);
+		ACE_OS::fputs("\nServerIp       = 192.168.16.16",fConfig);
 		
 		ACE_OS::fputs("\n[FUNCTION]",fConfig);
 		ACE_OS::fputs("\nBACKUP       = 1	",fConfig);		
@@ -163,11 +164,6 @@ Return:         нч
 void Configure::ShowConfig()
 {
   ACE_TString vstring ;
-  //if(open(ACE_TEXT("tsc.ini")) == -1)
-  //{
-	//ACE_OS::printf("\r\n%s:%d ***Configure***Open tsc.ini configure file error!\r\n\n",__FILE__,__LINE__);
-	//return ;
-//  }
  cout<<endl<<"#..................Show Tsc Configure....................# "<<endl ;
  GetString("APPDESCRIP","application",vstring);
 	cout<<"AppName :" <<vstring.c_str()<<endl ;

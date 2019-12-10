@@ -176,7 +176,7 @@ void CFlashMac::FlashForceStart(Byte ucType)  //开始强制黄闪 ADD:0605 11 30
 	sSendFrameTmp.ucCanDataLen = 2;		
 	Can::CreateInstance()->Send(sSendFrameTmp);
 	//ACE_DEBUG((LM_DEBUG,"%s:%d Begin force flashing !\n",__FILE__,__LINE__));
-	CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,254);
+ CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,254);
 	
 	CLampBoard::CreateInstance()->SetSeriousFlash(true);
 	SetHardwareFlash(true);			

@@ -27,7 +27,6 @@ CTimerManager::CTimerManager()
 CTimerManager::~CTimerManager()
 {
 	CloseAllTimer();
-
 	if ( m_pTscTimer != NULL )
 	{
 		ACE_OS::free(m_pTscTimer);
@@ -39,7 +38,6 @@ CTimerManager::~CTimerManager()
 CTimerManager* CTimerManager::CreateInstance()
 {
 	static CTimerManager tTimerManager;
-
 	return &tTimerManager;   //×Ô¶¯Îö¹¹
 }
 
@@ -48,7 +46,6 @@ CTimerManager* CTimerManager::CreateInstance()
 */
 void CTimerManager::CreateAllTimer()
 {
-
 	ACE_DEBUG((LM_DEBUG,"%s:%d***CreateAllTimer*** Delay 3 seconds to boot all timers!\n",__FILE__,__LINE__));
 	
     const ACE_Time_Value curr_tv = getCurrTime();

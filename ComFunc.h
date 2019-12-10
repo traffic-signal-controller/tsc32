@@ -19,3 +19,4 @@ void RecordTscSN();
 
 void ReadTscSN(char *cdkey);
 bool VaildSN();
+void TscBeep();

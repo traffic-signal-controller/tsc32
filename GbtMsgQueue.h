@@ -109,30 +109,33 @@ enum
 	OBJECT_OVERLAPPHASE_STATUS    ,  //跟随相位状态表
 
 	//扩充对象标志
-    OBJECT_WATCH_PARA       = 0xf5,   //监控类型参数 温度 电压 门
-	OBJECT_IP               = 0xf6,   //信号机的ip
-	OBJECT_SET_REPORTSELF   = 0xf7,   //定制主动上报
-	OBJECT_EXT_TSC_STATUS   = 0xf8,   //状态类型表参数
-	OBJECT_MODULE_STATUS    = 0xf9 ,   //模块状态
-	OBJECT_CNTDOWN_DEV      = 0xf1,   //倒计时设备表    ADD:2013071 1034
-	OBJECT_PHASETODIRECT    = 0xfa,   //相位与方向对应表
-	OBJECT_ADAPTPARA        = 0xfb,   //自适应参数值
-	OBJECT_DET_EXTENTED     = 0xfc,   //检测器扩展表
-	OBJECT_ADAPT_STAGE      = 0xfd,
-	OBJECT_CONNECT_DEV      = 0xf0,   //外界设备数第一个字节表示倒计时设备数，取值为0-32，0表示没有倒计时设备。第二个字节表示可变标志设备数，取值为0-16，0表示没有可变标志设表示外接检测器数，取值为0-48，0表示没有外接检测器
-	//OBJECT_CNTDOWN_STATS   = 0xf2,   //倒计时状态表
-	OBJECT_COMMAND_SIGNAL   = 0xf2 ,    //上位机指令控制相位阶段切换和方向
-	OBJECT_CHANNEL_CHK      = 0xff,   //通道灯泡检测配置表 ADD?20130801 1121
-	OBJECT_YWFLASH_CFG      = 0xe1,   //黄闪器配置
-	OBJECT_DET_EXTCFG       = 0xe2,   //检测器扩展配置
-	OBJECT_LAMPBOARD_CFG    = 0xe3,   //灯控板灯泡检测和红绿冲突检测配置
-	OBJECT_PSCBTN_NUM 	    = 0xee,    //模拟8位行人按钮输入 ADD:2013 0829 1540
-	OBJECT_TMPPATTERN_CFG   = 0xef,    //12方向临时组合方案，默认60秒
-	OBJECT_SYSFUNC_CFG      = 0xe4,      //系统其他功能设置
-	OBJECT_SENDCLIENT_CNTDOWN = 0xe6 ,
-	OBJECT_POWERBOARD_CFG     = 0xe7,   //电源板配置
-	OBJECT_GSM_CFG            = 0xe8 ,  //GSM配置
-	OBJECT_BUTTONPHASE_CFG    = 0xe9    //模拟无线按键按钮
+         OBJECT_WATCH_PARA      		 = 0xf5,   //监控类型参数 温度 电压 门
+	OBJECT_IP              				 = 0xf6,   //信号机的ip
+	OBJECT_SET_REPORTSELF  				 = 0xf7,   //定制主动上报
+	OBJECT_EXT_TSC_STATUS   			 = 0xf8,   //状态类型表参数
+	OBJECT_MODULE_STATUS  			     = 0xf9 ,   //模块状态
+	OBJECT_CNTDOWN_DEV     				 = 0xf1,   //倒计时设备表    ADD:2013071 1034
+	OBJECT_PHASETODIRECT				        = 0xfa,   //相位与方向对应表
+	OBJECT_ADAPTPARA       					 = 0xfb,   //自适应参数值
+	OBJECT_DET_EXTENTED     				 = 0xfc,   //检测器扩展表
+	OBJECT_ADAPT_STAGE      				 = 0xfd,
+	OBJECT_CONNECT_DEV     				 = 0xf0,   //外界设备数第一个字节表示倒计时设备数，取值为0-32，0表示没有倒计时设备。第二个字节表示可变标志设备数，取值为0-16，0表示没有可变标志设表示外接检测器数，取值为0-48，0表示没有外接检测器
+	//OBJECT_CNTDOWN_STATS  			 = 0xf2,   	//倒计时状态表
+	OBJECT_COMMAND_SIGNAL  			          = 0xf2 ,    //上位机指令控制相位阶段切换和方向
+	OBJECT_CHANNEL_CHK    			          = 0xff,   //通道灯泡检测配置表 ADD?20130801 1121
+	OBJECT_YWFLASH_CFG   				          = 0xe1,   //黄闪器配置
+	OBJECT_DET_EXTCFG       					 = 0xe2,   //检测器扩展配置
+	OBJECT_LAMPBOARD_CFG    				 = 0xe3,   //灯控板灯泡检测和红绿冲突检测配置
+	OBJECT_PSCBTN_NUM 	    				 = 0xee,    //模拟8位行人按钮输入 ADD:2013 0829 1540
+	OBJECT_TMPPATTERN_CFG   				 = 0xef,    //12方向临时组合方案，默认60秒
+	OBJECT_SYSFUNC_CFG    			          = 0xe4,      //系统其他功能设置
+	OBJECT_SENDCLIENT_CNTDOWN			 = 0xe6 ,
+	OBJECT_POWERBOARD_CFG    			 = 0xe7,   //电源板配置
+	OBJECT_GSM_CFG           					 = 0xe8 ,  //GSM配置
+	OBJECT_BUTTONPHASE_CFG 			          = 0xe9  ,  //模拟无线按键按钮
+	
+	OBJECT_BUSPRIORITY_CFG    = 0xea  ,   //公交优先配置
+	OBJECT_ADAPTIVE_CFG       =0xeb        //自适应控制参数
 };
 /*****************GBT协议对象标志类型和扩充协议标志类型那个枚举********************/
 
@@ -221,6 +224,13 @@ private:
 	void SetSmsFunc(Byte* pBuf,int& iRecvIndex ,int iRecvBufLen); //ADD 201406041030
 	void SetCommandSignal(Byte* pBuf,int& iRecvIndex) ;  //ADD 201409231002
 	void SetButtonPhase(Byte* pBuf,int& iRecvIndex);        //ADD 201410181052
+	
+    void SetBusPriorityCfg(Byte* pBuf,int& iRecvIndex);  //ADD 20150615
+    void GetBusPriorityCfg(Byte* pBuf,Byte ucQueryType, int *iSendIndex) ;  //ADD: 2015 0615 10 30
+	void GetSysFuncCfg(Byte* pBuf,Byte ucQueryType,int *iSendIndex) ; //ADD 201601141650
+
+    void SetAdaptiveCfg(Byte* pBuf,int& iRecvIndex);  //ADD 20171031
+    void GetAdaptiveCfg(Byte* pBuf,Byte ucQueryType, int *iSendIndex) ;  //ADD: 20171031
 
 	//Byte m_ucAddrNum;
 	ACE_Message_Queue<ACE_MT_SYNCH>* m_pMsgQue;

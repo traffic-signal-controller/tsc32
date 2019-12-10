@@ -18,6 +18,7 @@ History:
 #include "ComFunc.h"
 #include "Dbinstance.h"
 
+
 #ifndef SHORT_FILE
 #define SHORT_FILE "GbtDb.cpp" //MOD: 201309231000ÕûÀíË³Ðò
 #endif
@@ -506,9 +507,9 @@ ExchangeFunGrp gGroupExchange[] =
 	{0xf1, ExchangeCntDownDev},    //µ¹¼ÆÊ±Éè±¸±í
 	{0xfa, ExchangePhaseToDirec},  //ÏàÎ»Óë·½Ïò¶ÔÓ¦±í
 	{0xfb, ExchangeAdaptPara},     //×ÔÊÊÓ¦²ÎÊýÖµ
-	{0xfc, ExchangeDetExtend},     //¼ì²âÆ÷À©Õ¹±í
+	{0xfc, ExchangeDetExtend},      //¼ì²âÆ÷À©Õ¹±í
 	{0xfd, ExchangeAdaptStage},     //×ÔÊÊÓ¦×ÔÑ§Ï°Éú³ÉµÄ½×¶ÎÊ±¼ä
-    {0xff, ExchangeChannelChk}      //Í¨µÀµÆÅÝ¼ì²âÅäÖÃ
+    {0xff, ExchangeChannelChk}          //Í¨µÀµÆÅÝ¼ì²âÅäÖÃ
 };
 /****************¶¨ÒåGBT±íÊý¾Ý½»»»º¯ÊýÖ¸Õë£¬Êý¾Ý±íº¯Êý******************/
 
@@ -604,8 +605,7 @@ int ExchangeData(int iOprType,
         {
             return gGroupExchange[i].pExchgFun(iOprType, uIdxFst, uIdxSnd, uSubId, pData, uDataSize, uErrorSts, uErrorIdx);
         }
-    }
-  
+    }  
     uErrorIdx = 0;
     uErrorSts = 3 ; //GBT_MSG_OBJ_ERROR;
     return -1;
@@ -897,8 +897,7 @@ void CGbtTscDb::InitDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
 		sPattern.ucPatternId = 16;
 		sPattern.ucStagePatternId = 16;		
-		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
-		
+		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);	
 	
 	}
 
@@ -1167,12 +1166,12 @@ void CGbtTscDb::InitDefaultData()
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CAM          + 1) , 0);
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_3G            + 1) , 0);
 	   (CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WIRELESSBTN   + 1) , 0);
-		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);
-		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_LIGHTCHECK   + 1) , 0);
-		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_GPS_INTERVAL + 1) , 1);
-		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WIRELESSBTN_TIMEOUT + 1) , 30);		
-		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CROSSSTREET_TIMEOUT + 1) , 10);		
-		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_RS485_BITRATE + 1) , 0); //ADD 150129
+	(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);
+	(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_LIGHTCHECK   + 1) , 0);
+	(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_GPS_INTERVAL + 1) , 1);
+	(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_WIRELESSBTN_TIMEOUT + 1) , 30);		
+	(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CROSSSTREET_TIMEOUT + 1) , 10);		
+	(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_RS485_BITRATE + 1) , 0); //ADD 150129
 		
 	}
 
@@ -1186,13 +1185,13 @@ void CGbtTscDb::InitDefaultData()
 		//ÏÂÃæÃ¿ÅÅÊÇÒ»¸ö·½ÏòµÄ³µµÀ·½ÏòID,·Ö±ðÊÇ
 		//×ó,  Ö±, ÓÒ, ÈËÐÐ, ¶þ´Î¹ý½Ö, µ÷Í·,ÆäËû, ÌØÊâ
 		Byte direcId[32] = {0x1,0x2,0x4,0x8,       //±±×óÖ±ÓÒÈËÐÐ  
-						    0x41,0x42,0x44,0x48,   //¶«×óÖ±ÓÒÈËÐÐ
-						    0x81,0x82,0x84,0x88,   //ÄÏ×óÖ±ÓÒÈËÐÐ
-						    0xc1,0xc2,0xc4,0xc8,   //Î÷×óÓÒÖ®ÈËÐÐ
-						    0x18,0x58,0x98,0xd8,   //±±¶«ÄÏÎ÷¶þ´Î¹ý½							
-							0x0,0x40,0x80,0xc0,    //±±¶«ÄÏÎ÷µ÷Í·
-							0x7,0x47,0x87,0xc7,    //±±¶«ÄÏÎ÷ÌØÊâ,Êµ¼ÊÉÏ¶ÔÓ¦µÄÊÇ±±¶«ÄÏÎ÷µÄ×óÖ±ÓÒÖ±ÐÐ·½ÏòID
-							0x5,0x45,0x85,0xc5} ;   //±±¶«ÄÏÎ÷ÆäËû
+					      0x41,0x42,0x44,0x48,   //¶«×óÖ±ÓÒÈËÐÐ
+				               0x81,0x82,0x84,0x88,   //ÄÏ×óÖ±ÓÒÈËÐÐ
+					      0xc1,0xc2,0xc4,0xc8,   //Î÷×óÓÒÖ®ÈËÐÐ
+					      0x18,0x58,0x98,0xd8,   //±±¶«ÄÏÎ÷¶þ´Î¹ý½							
+					      0x0,0x40,0x80,0xc0,    //±±¶«ÄÏÎ÷µ÷Í·
+					      0x7,0x47,0x87,0xc7,    //±±¶«ÄÏÎ÷ÌØÊâ,Êµ¼ÊÉÏ¶ÔÓ¦µÄÊÇ±±¶«ÄÏÎ÷µÄ×óÖ±ÓÒÖ±ÐÐ·½ÏòID
+					      0x5,0x45,0x85,0xc5} ;   //±±¶«ÄÏÎ÷ÆäËû
 						
 		               
 		for (Byte i=0; i<MAX_PHASE; i++)
@@ -1257,7 +1256,6 @@ void CGbtTscDb::InitDefaultData()
 		}
 	
 	}
-	
 
 }
 
@@ -1317,7 +1315,6 @@ bool CGbtTscDb::ExecuteCmd(const char *sSql)
         }
         return false;
     }
-
 	if (NULL != sErrMsg)
 	{
 		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFree sErrMsg\n", SHORT_FILE, __LINE__));
@@ -1439,8 +1436,8 @@ bool CGbtTscDb::AddPlan(Byte ucPlanId, Plan& sPlan)
     
     if (!IsPlanValid(ucPlanId, sPlan))
     {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tInvalid Plan\n", SHORT_FILE, __LINE__));
-        return false;
+     //   ACE_DEBUG ((LM_DEBUG, "%s:%04d\tInvalid Plan\n", SHORT_FILE, __LINE__));
+        return true;
     }
 
     ACE_OS::sprintf(sSql, "insert into %s(%s,%s,%s,%s,%s)values(%u,%u,%u,%lu,%u)",
@@ -1458,8 +1455,8 @@ bool CGbtTscDb::AddPlan(Byte ucPlanId, Plan& sPlan)
 
     if (!ExecuteCmd(sSql))
     {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+      //  ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
+        return true;
     }
 
     return true;
@@ -1480,13 +1477,11 @@ bool CGbtTscDb::DelPlan(Byte ucPlanId)
     ACE_OS::sprintf(sSql, "delete from %s where %s=%u",
                   		 Table_Desc[TBL_PLAN].sTblName,
                   		 Table_Desc[TBL_PLAN].sFieldName[0], ucPlanId);
-
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
         return false;
     }
-
     return true;
 }
 
@@ -1509,7 +1504,6 @@ bool CGbtTscDb::DelPlan()
 		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
 		return false;
 	}
-
 	return true;
 }
 
@@ -1649,7 +1643,7 @@ bool CGbtTscDb::QuerySchedule(Byte uScheduleId, TblSchedule& tblSchedule)
                			 Table_Desc[TBL_SCHEDULE].sFieldName[0],
                			 uScheduleId,
                			 Table_Desc[TBL_SCHEDULE].sFieldName[2],
-						 Table_Desc[TBL_SCHEDULE].sFieldName[3]);
+				 Table_Desc[TBL_SCHEDULE].sFieldName[3]);
 
     if (!Query(sSql, qryRst))
     {
@@ -1728,14 +1722,14 @@ bool CGbtTscDb::QuerySchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule
         return false;
     }
     
-    sSchedule.ucScheduleId = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum]);
-    sSchedule.ucEvtId      = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 1]);
-    sSchedule.ucBgnHour    = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 2]);
-    sSchedule.ucBgnMinute  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 3]);
-    sSchedule.ucCtrlMode   = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 4]);
-    sSchedule.ucPatternNo  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 5]);
-    sSchedule.ucAuxOut     = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 6]);
-    sSchedule.ucSpecialOut = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 7]);
+    sSchedule.ucScheduleId 	  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum]);
+    sSchedule.ucEvtId      		  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 1]);
+    sSchedule.ucBgnHour  		  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 2]);
+    sSchedule.ucBgnMinute 	  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 3]);
+    sSchedule.ucCtrlMode   	  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 4]);
+    sSchedule.ucPatternNo 	  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 5]);
+    sSchedule.ucAuxOut     		  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 6]);
+    sSchedule.ucSpecialOut 	  = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 7]);
 
     return true;
 }
@@ -1757,13 +1751,15 @@ bool CGbtTscDb::AddSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
     if (!IsScheduleValid(uScheduleId, uEvtId, sSchedule))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tSchedule invalid\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;  //ºöÂÔÕâÌõ
     }
-	if ( 0 == uEvtId ) //ÊÂ¼þidÎª0²»´¦Àí
-	{
+	/*
+	if ( 0 == uEvtId  || uEvtId >0x30) //ÊÂ¼þidÎª0²»´¦Àí
+	{		
+		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to AddSchedule(%d, %d)\n", SHORT_FILE, __LINE__, sSchedule.ucScheduleId, sSchedule.ucEvtId));  
 		return true;
 	}
-
+       */
     ACE_OS::sprintf(sSql, "insert into %s(%s,%s,%s,%s,%s,%s,%s,%s)values(%u,%u,%u,%u,%u,%u,%u,%u)",
                   		   Table_Desc[TBL_SCHEDULE].sTblName,
                   		   Table_Desc[TBL_SCHEDULE].sFieldName[0],
@@ -1782,9 +1778,8 @@ bool CGbtTscDb::AddSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+        return true; //ºöÂÔÕâÌõ
     }
-
     return true;
 }
 
@@ -1821,7 +1816,7 @@ bool CGbtTscDb::ModSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
 
     ACE_OS::sprintf(sSql, "update %s set %s=%u,%s=%u,%s=%u,%s=%u,%s=%u,%s=%u where %s=%u and %s=%u",
                    			Table_Desc[TBL_SCHEDULE].sTblName,
-                  		    Table_Desc[TBL_SCHEDULE].sFieldName[2], sSchedule.ucBgnHour,
+                  		         Table_Desc[TBL_SCHEDULE].sFieldName[2], sSchedule.ucBgnHour,
                    			Table_Desc[TBL_SCHEDULE].sFieldName[3], sSchedule.ucBgnMinute,
                   			Table_Desc[TBL_SCHEDULE].sFieldName[4], sSchedule.ucCtrlMode,
                   			Table_Desc[TBL_SCHEDULE].sFieldName[5], sSchedule.ucPatternNo,
@@ -1856,7 +1851,6 @@ bool CGbtTscDb::DelSchedule(Byte uScheduleId, Byte uEvtId)
                   		   Table_Desc[TBL_SCHEDULE].sTblName,
                    		   Table_Desc[TBL_SCHEDULE].sFieldName[0], uScheduleId,
                    		   Table_Desc[TBL_SCHEDULE].sFieldName[1], uEvtId);
-
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
@@ -1909,7 +1903,6 @@ bool CGbtTscDb::DelSchedule()
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
         return false;
     }
-
     return true;
 }
 
@@ -2450,7 +2443,7 @@ bool CGbtTscDb::AddStageFactTime(StageFactTime& sStageFactTime)
 	//ÅÐ¶Ï×îÐ¡µÄÈÕÆÚ ´æ´¢µÄ×î³¤1¸öÔÂ
 	ACE_OS::sprintf(sSql, "select MIN(%s) from %s", 
 						  Table_Desc[TBL_STAGE_FACTTIME].sFieldName[0],
-					      Table_Desc[TBL_STAGE_FACTTIME].sTblName);
+					           Table_Desc[TBL_STAGE_FACTTIME].sTblName);
 
 	if (!Query(sSql, qryRst))
 	{
@@ -2513,7 +2506,6 @@ bool CGbtTscDb::DeleteStageFactTime(Ulong ulAddTime)
 		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
 		return false;
 	}
-
 	return true;
 }
 
@@ -2711,12 +2703,11 @@ bool CGbtTscDb::QueryAdaptStageTime(Byte ucId, AdaptStageTime& sAdaptStageTime)
 	{
 		return false;
 	}
-
-	sAdaptStageTime.ucId       = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum]);
-	sAdaptStageTime.ucWeekType = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 1]);
-	sAdaptStageTime.ucHour     = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 2]);
-	sAdaptStageTime.ucMin      = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 3]);
-	sAdaptStageTime.ucStageCnt = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 4]);
+	sAdaptStageTime.ucId       		= ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum]);
+	sAdaptStageTime.ucWeekType          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 1]);
+	sAdaptStageTime.ucHour                   = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 2]);
+	sAdaptStageTime.ucMin                     = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 3]);
+	sAdaptStageTime.ucStageCnt            = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 4]);
 
 	if ( !sAdaptStageTime.sStageGreenTime.SetString(qryRst.m_ppResult[qryRst.m_iColum + 5]) )
 	{
@@ -2913,8 +2904,8 @@ bool CGbtTscDb::AddPhase(Byte uPhaseId, Phase& sPhase)
     char   sSql[LARGE_BUF_SIZE];
     if (!IsPhaseValid(uPhaseId, sPhase))
     {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tsPhase invalid\n", SHORT_FILE, __LINE__));
-        return false;
+     //   ACE_DEBUG ((LM_DEBUG, "%s:%04d\tsPhase invalid\n", SHORT_FILE, __LINE__));
+        return true;
     }
     ACE_OS::sprintf(sSql, "insert into %s(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)values(%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u)",
 				           Table_Desc[TBL_PHASE].sTblName,
@@ -2945,8 +2936,8 @@ bool CGbtTscDb::AddPhase(Byte uPhaseId, Phase& sPhase)
 
     if (!ExecuteCmd(sSql))
     {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+       // ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
+        return true;
     }
     return true;
 }
@@ -3051,7 +3042,6 @@ Return:         true - Êý¾ÝºÏ·¨ false -Êý¾Ý·Ç·¨
 bool CGbtTscDb::IsPhaseValid(Byte uPhaseId, Phase& sPhase)
 {
     CHECK_ID(CONST_PHASE, uPhaseId, false);
-
     return true;
 }
 
@@ -3391,7 +3381,7 @@ bool CGbtTscDb::AddDetector(Byte uDetectorId, Detector& sDetector)
     if (!IsDetectorValid(uDetectorId, sDetector))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tDetector invalid\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
     ACE_OS::sprintf(sSql, "insert into %s(%s, %s, %s, %s, %s, %s, %s ,%s)values(%u,%u,%u,%u,%u,%d,%u,%u)",
 				           Table_Desc[TBL_DETECTOR].sTblName,
@@ -3415,7 +3405,7 @@ bool CGbtTscDb::AddDetector(Byte uDetectorId, Detector& sDetector)
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
     return true;
 }
@@ -3520,19 +3510,13 @@ Return:         true - Êý¾ÝºÏ·¨  false -Êý¾Ý·Ç·¨
 ***************************************************************/
 bool CGbtTscDb::IsDetectorValid(Byte uDetectorId, Detector& sDetector)
 {
-     //CHECK_ID(CONST_DETECTOR, uDetectorId, false);
-    if(uDetectorId > MAX_DETECTOR)
-		return false ;
-    if (sDetector.ucPhaseId > MAX_PHASE)
+   //  CHECK_ID(CONST_DETECTOR, uDetectorId, false);
+    if(uDetectorId > MAX_DETECTOR ||uDetectorId ==0x0 )
+	return false ;
+    if (sDetector.ucPhaseId > MAX_PHASE || sDetector.ucSaturationOccupy > 200)
     {
     	return false ;
         //CHECK_ID(CONST_PHASE, sDetector.ucPhaseId, false);
-    }
-
-    if (sDetector.ucSaturationOccupy > 200)
-    {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tucSaturationOccupy = %d, invalid\n", SHORT_FILE, __LINE__, sDetector.ucSaturationOccupy));
-        return false;
     }
     return true;
 }
@@ -4386,7 +4370,7 @@ bool CGbtTscDb::AddChannel(Byte uChannelId, Channel& sChannel)
     if (!IsChannelValid(uChannelId, sChannel))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tChannel invalid\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
     ACE_OS::sprintf(sSql, "insert into %s(%s, %s, %s, %s)values(%u,%u,%u,%u)",
 				           Table_Desc[TBL_CHANNEL].sTblName,
@@ -4402,7 +4386,7 @@ bool CGbtTscDb::AddChannel(Byte uChannelId, Channel& sChannel)
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
     return true;
 }
@@ -4502,19 +4486,11 @@ bool CGbtTscDb::IsChannelValid(Byte uChannelId, Channel& sChannel)
 {
     CHECK_ID(CONST_CHANNEL, uChannelId, false);
 
-    if (sChannel.ucCtrlSrc > MAX_CHANNEL)
+    if (sChannel.ucCtrlSrc > MAX_CHANNEL||sChannel.ucCtrlType > 0x4)
     {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tucCtrlSrc=%d,invalid\n", SHORT_FILE, __LINE__, sChannel.ucCtrlSrc));
+     //   ACE_DEBUG ((LM_DEBUG, "%s:%04d\tucCtrlSrc=%d,invalid\n", SHORT_FILE, __LINE__, sChannel.ucCtrlSrc));
         return false;
     }
-
-   // if (sChannel.ucCtrlType > 4 || 0 == sChannel.ucCtrlType) MOD:201311131500
-	if (sChannel.ucCtrlType > 4)
-    {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tucCtrlType=%d,invalid\n", SHORT_FILE, __LINE__, sChannel.ucCtrlType));
-        return false;
-    }
-
     return true;
 }
 
@@ -4777,15 +4753,16 @@ bool CGbtTscDb::QueryStagePattern(TblStagePattern& tblStagePattern)
     StagePattern*  pData = NULL;
 
     ACE_OS::sprintf(sSql, "select * from %s order by %s, %s", 
-						    Table_Desc[TBL_STAGEPATTERN].sTblName,
-						    Table_Desc[TBL_STAGEPATTERN].sFieldName[0],
-						    Table_Desc[TBL_STAGEPATTERN].sFieldName[1]);
+						    					Table_Desc[TBL_STAGEPATTERN].sTblName,
+						   				         Table_Desc[TBL_STAGEPATTERN].sFieldName[0],
+						 				         Table_Desc[TBL_STAGEPATTERN].sFieldName[1]);
 
     if (!Query(sSql, qryRst))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Query\n", SHORT_FILE, __LINE__));
         return false;
     }
+    //ACE_DEBUG ((LM_DEBUG, "%s:%d Get StagePatterns count =%d \n", __FILE__, __LINE__,uCount));   
 
     if (qryRst.m_iColum != Table_Desc[TBL_STAGEPATTERN].iFieldCount)
     {
@@ -4798,18 +4775,20 @@ bool CGbtTscDb::QueryStagePattern(TblStagePattern& tblStagePattern)
         return false;
     }
 
-    uCount = (Byte)qryRst.m_iRow;
+    uCount = (Ushort)(qryRst.m_iRow);   //Mod:20151224 Byte->Ushort    
+	//ACE_DEBUG ((LM_DEBUG, "%s:%04d\t StagePattern count =%d \n", SHORT_FILE, __LINE__,uCount));   
     if (!tblStagePattern.AllocData(uCount))
     {
         return false;
     }
-
+  
+  //ACE_DEBUG ((LM_DEBUG, "%s:%d Get StagePatterns count =%d \n", __FILE__, __LINE__,uCount));   
     pData = tblStagePattern.GetData(uCount);
     for (i = 0; i < qryRst.m_iRow; i++)
     {
         pData[i].ucStagePatternId   = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum]);
-        pData[i].ucStageNo          = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 1]);
-		pData[i].usAllowPhase       = ACE_OS::strtoll(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 2],NULL,10);		
+        pData[i].ucStageNo          = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 1]);		
+       pData[i].usAllowPhase       = ACE_OS::strtoll(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 2],NULL,10);		
         pData[i].ucGreenTime        = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 3]);
         pData[i].ucYellowTime       = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 4]);
         pData[i].ucRedTime          = ACE_OS::atoi(qryRst.m_ppResult[(i+1)*qryRst.m_iColum + 5]);
@@ -4857,7 +4836,7 @@ bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, TblStagePattern& tblStag
         return false;
     }
 
-    uCount = (Byte)qryRst.m_iRow;
+    uCount = (Ushort)qryRst.m_iRow;  //Mod:20151224 Byte->Ushort
     if (!tblStagePattern.AllocData(uCount))
     {
         return false;
@@ -4914,15 +4893,15 @@ bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, Byte uStageNo, StagePatt
     {
         return false;
     }
-
-    sStagePattern.ucStagePatternId   = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum]);
-    sStagePattern.ucStageNo          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 1]);
-	sStagePattern.usAllowPhase		 = ACE_OS::strtoll(qryRst.m_ppResult[qryRst.m_iColum + 2],NULL,10);
-    sStagePattern.ucGreenTime        = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 3]);
-    sStagePattern.ucYellowTime       = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 4]);
-    sStagePattern.ucRedTime          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 5]);
-    sStagePattern.ucOption           = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 6]);
-
+ 
+    sStagePattern.ucStagePatternId   		 = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum]);
+    sStagePattern.ucStageNo          		 = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 1]);
+    sStagePattern.usAllowPhase			 = ACE_OS::strtoll(qryRst.m_ppResult[qryRst.m_iColum + 2],NULL,10);
+    sStagePattern.ucGreenTime     	          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 3]);
+    sStagePattern.ucYellowTime    	          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 4]);
+    sStagePattern.ucRedTime        	          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 5]);
+    sStagePattern.ucOption        		          = ACE_OS::atoi(qryRst.m_ppResult[qryRst.m_iColum + 6]);
+   
     return true;
 }
 
@@ -4938,17 +4917,20 @@ Return:         true - Ìí¼ÓÊý¾Ý³É¹¦ false -Ìí¼ÓÊý¾ÝÊ§°Ü
 bool CGbtTscDb::AddStagePattern(Byte uStagePatternId, Byte uStageNo, StagePattern& sStagePattern)
 {
     char   sSql[LARGE_BUF_SIZE];
-
-	if ( 0 == uStageNo )  //½×¶ÎºÅ²»ÄÜÎª0
+        /*
+	if ( 0 == uStageNo )  //½×¶ÎºÅ²»ÄÜÎª0 IsStagePatternValidÒÑ¾­ÓÐÑéÖ¤
 	{
 		return true;
 	}
-
+      */
+     
     if (!IsStagePatternValid(uStagePatternId, uStageNo, sStagePattern))
     {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tStagePattern invalid\n", SHORT_FILE, __LINE__));
-        return false;
-    }
+        ACE_DEBUG ((LM_DEBUG, "%s:%04d\t StagePatternId=%d StageNo=%d   invalid\n", __FILE__, __LINE__,uStagePatternId, uStageNo));
+        return true;  //Ö±½ÓºöÂÔÕâÌõ´¦Àí
+    }   
+   
+ //  ACE_OS::printf("%s:%d Add StagePatternId=%d StageNo=%d !\r\n",__FILE__,__LINE__,uStagePatternId,uStageNo);
     ACE_OS::sprintf(sSql, "insert into %s(%s, %s, %s, %s, %s, %s, %s)values(%u,%u,%u,%u,%u,%u,%u)",
 				           Table_Desc[TBL_STAGEPATTERN].sTblName,
 				           Table_Desc[TBL_STAGEPATTERN].sFieldName[0],
@@ -4966,11 +4948,10 @@ bool CGbtTscDb::AddStagePattern(Byte uStagePatternId, Byte uStageNo, StagePatter
 				           sStagePattern.ucRedTime,
 				           sStagePattern.ucOption);
 
-
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
     return true;
 }
@@ -5064,7 +5045,6 @@ bool CGbtTscDb::DelStagePattern(Byte uStagePatternId, Byte uStageNo)
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
         return false;
     }
-
     return true;
 }
 
@@ -5239,13 +5219,13 @@ bool CGbtTscDb::AddOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhas
     if(!IsOverlapPhaseValid(uOverlapPhaseId, sOverlapPhase))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tOverlapPhase invalid\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
 
     if (sOverlapPhase.ucIncldPhaseCnt > MAX_PHASE_COUNT || sOverlapPhase.ucAdjustPhaseCnt > MAX_PHASE_COUNT)
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\t%s sOverlapPhase.ucIncldPhaseCnt = %d, sOverlapPhase.ucAdjustPhaseCnt = %d\n", SHORT_FILE, __LINE__, sOverlapPhase.ucIncldPhaseCnt, sOverlapPhase.ucAdjustPhaseCnt));
-        return false;
+        return true;
     }
 
     ACE_OS::memset(sIncldPhase, 0, SMALL_BUF_SIZE);
@@ -5287,7 +5267,7 @@ bool CGbtTscDb::AddOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhas
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
     return true;
 }
@@ -6101,7 +6081,7 @@ bool CGbtTscDb::AddChannelChk(Byte uChanChkId, ChannelChk& sChannelChk)
     if (!ExecuteCmd(sSql))
     {
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
+        return true;
     }
 
     return true;
@@ -7193,21 +7173,22 @@ Input:          ÎÞ
 Output:         ÎÞ
 Return:         true - ÉèÖÃ¼ÓÃÜÑéÖ¤ÐòºÅ³É¹¦  false - ÉèÖÃÊ§°Ü
 ***************************************************************/
-bool CGbtTscDb::SetEypSerial()
+bool CGbtTscDb::SetEypSerial(char * passwd)
 {
-	char   sSql[LARGE_BUF_SIZE];  
-    char SysEypDevId[32]={0};
-   	if(GetSysEnyDevId(SysEypDevId)==-1)
-   		return false ;	
-   	ACE_DEBUG ((LM_DEBUG, "%s:%d SysEypDevId =%s\n",__FILE__, __LINE__,SysEypDevId));  
-    ACE_OS::sprintf(sSql, "update %s set ucEypDevSerial='%s'",Table_Desc[TBL_SYSTEM].sTblName,  SysEypDevId);
+     char   sSql[LARGE_BUF_SIZE];  
+    //char SysEypDevId[32]={0};
+   //	if(GetSysEnyDevId(SysEypDevId)==-1)
+   		//return false ;	
+   	//ACE_DEBUG ((LM_DEBUG, "%s:%d SysEypDevId =%s\n",__FILE__, __LINE__,SysEypDevId));  
+   	
+   	 ACE_OS::sprintf(sSql, "update %s set ucEypDevSerial='%s'",Table_Desc[TBL_SYSTEM].sTblName,  passwd);
 
-    if (!ExecuteCmd(sSql))
-    {
-        ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-        return false;
-    }
-    return true;
+   	 if (!ExecuteCmd(sSql))
+   	 {
+      		  ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
+       		 return false;
+  	  }
+   	 return true;
     
 }
 
@@ -7552,7 +7533,6 @@ bool CGbtTscDb::IsSysParaValid(const char* sField, Long& lValue)
         }
         return true;
     }
-
     return true;
 }
 
@@ -7677,7 +7657,7 @@ bool CGbtTscDb::AddPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec)
 	if (!ExecuteCmd(sSql))
 	{
 		ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to ExecuteCmd\n", SHORT_FILE, __LINE__));
-		return false;
+		return true;
 	}
 	return true;
 }

@@ -297,6 +297,8 @@ struct STscConfig
 	Byte DegradePattern ; 						  	    //降级基准方案 201310191400
 	GBT_DB::CntDownDev sCntDownDev[MAX_CNTDOWNDEV];     //倒计时表配置
 	//Uint DirecButtonPhase[4] ;    //方向按键相位配置北东南西
+	
+	bool bPeplePhaseTimeCtrl ; //用于行人过街黄闪控制
  }
 /*
 #ifndef WINDOWS
@@ -629,6 +631,24 @@ struct VehicleStat
 	Ulong       ulAddtime;                 /*记录添加的时间*/
 	bool        bRecordQueueLength ;       //记录排队长度
 }PACKED ;
+
+/*
+*公交优先数据包结构
+*/
+struct SBusPriorityData 
+{
+	Byte RfId ; //射频设备ID号，莫惹和相位号一一对应.
+	Byte BusPhaseId ;
+	Uint ucTransTime ; //传输时间utc
+};
+struct SBusPriorityHandled
+{
+	Byte CycleTime ; //周期时长结果
+	Byte HandledType ;//处理结果类型 0-周期无变化 1-绿灯延长 2-最小绿 3-其他相位时间减少
+	Byte HandledTime ; //处理时长变化值
+	Byte BusId[17]  ; //公交射频卡ID 
+};
+
 
 /*Send CntDownNum to client*/
 struct SendCntDownNum

@@ -517,3 +517,27 @@ void RecordTscSN()
 }
 
 
+/**************************************************************
+Function:       TscBeep
+Description:    信号机系统鸣叫
+Input:          无        
+Output:         无
+Return:         无
+Date:           20151208
+***************************************************************/
+
+void TscBeep()
+{
+#ifdef LINUX 
+	ACE_OS::system("echo 113 >/sys/class/gpio/export");	
+	ACE_OS::system("echo out >/sys/class/gpio/gpio113/direction");			
+	ACE_OS::system("echo 0 > /sys/class/gpio/gpio113/value");		
+	ACE_OS::sleep(ACE_Time_Value(0, 100000)); //暂停100毫秒	
+	ACE_OS::system("echo 1 > /sys/class/gpio/gpio113/value");	
+	ACE_OS::system("echo in >/sys/class/gpio/gpio113/direction");			
+	ACE_OS::system("echo 113 >/sys/class/gpio/unexport");	
+#endif
+
+}
+
+

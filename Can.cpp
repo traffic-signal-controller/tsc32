@@ -127,7 +127,6 @@ bool Can::Send(SCanFrame& sendFrame)
 	if(ulBytes == -1)
 	{
 		int erronum = errno ;		
-		//ACE_DEBUG((LM_DEBUG,"%s:%d erronum=%d !\n",__FILE__,__LINE__,erronum));//MODå:20130523 14 25
 		return false ;
 	}
 	
@@ -137,8 +136,6 @@ bool Can::Send(SCanFrame& sendFrame)
 		//这里影响到的can数据的发送
 		pMainBoardLed->DoCan0Led();
 	}
-
-		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MODå:20130523 14 25
 	return true;
 }
 
@@ -191,8 +188,6 @@ void Can::BuildCanId(Ulong u1CanMsgType
 	ulCanIdTmp = ulCanIdTmp | (u1FrameMode  << 18);
 	ulCanIdTmp = ulCanIdTmp | (u1ModuleAddr << 20);
 	ulCanIdTmp = ulCanIdTmp | (u1CanMsgType << 26);
-
-	//À©Õ¹Ö¡
 	ulCanIdTmp = ulCanIdTmp | (1 << 31);
 	*ulCanId = ulCanIdTmp;
 }
@@ -418,12 +413,9 @@ void * Can::DealCanData(void* arg)
 				pDector->RecvDetCan(BOARD_ADDR_DETECTOR2, sRecvFrameTmp);// ADD: 2013 0710 1039	
 				break;
 			case BOARD_ADDR_INTEDET1 :
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET1\n"));				
-				//PrintCurTime("Get intedet1 ");
 				pDector->RecvDetCan(BOARD_ADDR_INTEDET1, sRecvFrameTmp);// ADD: 2014 0504 1039					
 				break;
 			case BOARD_ADDR_INTEDET2 :
-				//ACE_DEBUG((LM_DEBUG,"\nRecv from INTEDET2\n"));	
 				pDector->RecvDetCan(BOARD_ADDR_INTEDET2, sRecvFrameTmp);// ADD: 2014 0504 1039					
 				break;
 			case BOARD_ADDR_FLASH:
@@ -444,12 +436,14 @@ void * Can::DealCanData(void* arg)
 			case BOARD_ADDR_MAIN: //ADD:20141024 Get Can date from mainboard
 			{
 				Byte icandatelength = sRecvFrameTmp.ucCanDataLen ;
+				/*显示 接收到来自主板发的CAN数据
 				ACE_OS::printf("%s:%d ",__FILE__,__LINE__);				
 				for(Byte idex = 0 ; idex<icandatelength;idex++)
 				{
 					ACE_OS::printf(" %2X ",sRecvFrameTmp.pCanData[idex]);
 				}
 				ACE_OS::printf("\r\n");
+				*/
 				break ;
 			}
 			default:

@@ -37,6 +37,7 @@ public:
 	void GoNextStep();
 	void PscSwitchStatus();
 	void InitPara();
+	void DealPSC();
 	Byte m_ucBtnNum  ;
 private:
 	CPscMode();

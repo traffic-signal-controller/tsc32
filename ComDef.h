@@ -112,14 +112,14 @@ const int MAX_LAMP_BOARD         = 8;    //最大灯驱板数
 const int MAX_LAMP_NUM_PER_BOARD = 12;   //每块板的灯具数量
 const int MAX_LAMPGROUP_PER_BOARD =4 ;
 const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //最大通道（信号组）表数 1板4通道
-const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
-const int MAX_DET_BOARD          = 4;    //最大检测器板数(包含接口板)
+const int MAX_LAMP                   = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
+const int MAX_DET_BOARD          = 4;    //最大车检板(接口板)数目
 const int MAX_DETECTOR_PER_BOARD = 16;   //每块板包含的检测器数量
 const int MAX_INTERFACE_PER_BOARD =32 ;  //每块接口板包含的通道数量
 const int MAX_DETECTOR           = (MAX_DETECTOR_PER_BOARD+MAX_INTERFACE_PER_BOARD)*MAX_DET_BOARD/2;   //最大检测器数量
 
 const int MAX_SPESTATUS_CYCLE    = 10;   //时段表里定义的特殊状态周期时长 
-const int MIN_GREEN_TIME	     = 7;    //最小绿灯时长
+const int MIN_GREEN_TIME	         = 7;    //最小绿灯时长
 
 const int MAX_REGET_TIME         = 10;   //100ms 1per 1s=10times
 const int USLEEP_TIME            = 2000;
@@ -169,7 +169,7 @@ enum
 	CTRL_MANUAL          = 6  ,  //手动控制
 	CTRL_VEHACTUATED     = 7  ,  //单点全感应
 	CTRL_MAIN_PRIORITY   = 8  ,  //单点主线优先半感应
-    CTRL_SECOND_PRIORITY = 9  ,  //单点次线优先半感应
+        CTRL_SECOND_PRIORITY = 9  ,  //单点次线优先半感应
 	CTRL_ACTIVATE        = 10 ,  //自适应
 	CTRL_PANEL           = 11 ,  //面板控制	
 	CTRL_SCHEDULE_OFF    = 12 ,  //时段表关灯	
@@ -216,8 +216,10 @@ enum
 	TSC_MSG_TIMEPATTERN      ,  //特定的时间方案
 	TSC_MSG_GREENCONFLICT    ,   //绿冲突
 	TSC_MSG_PATTER_RECOVER   ,    //特定方案切换
-	TSC_MSG_MANUALBUTTON_HANDLE   //无线手控按键处理ADD:201411051548
+	TSC_MSG_MANUALBUTTON_HANDLE ,  //无线手控按键处理ADD:201411051548
+	TSC_MSG_BUSPRIORITY_HANDLE     //公交优先处理
 };
+
 
 /*
 通信进程gbt处理队列消息类型枚举
@@ -357,11 +359,23 @@ enum
 	FUN_LIGHTCHECK	   = 20 ,	//灯泡检测开关	
 	FUN_GPS_INTERVAL   = 21	,	//GPS定时更新时间 1 表示每天，2表示每2天
 	FUN_WIRELESSBTN_TIMEOUT = 22, //无线手控按键手动控制超时时间单位分钟 ADD:201410231639	
-	FUN_CROSSSTREET_TIMEOUT = 23, //无线手控按键手动控制超时时间单位分钟 ADD:201501091738
+	FUN_CROSSSTREET_TIMEOUT = 23, //行人按钮超时间 ADD:201501091738
 	FUN_RS485_BITRATE       =24 , //485倒计时比特率 0-9600 1-2400-2-4800 3-38400   4-15200
 	
 	FUN_FLASHCNTDOWN_TIME   =25,  //闪断式倒计时闪断时间 0-0ms 1-50ms 2-100ms,以此类推. //ADD 20150605
-	FUN_COUNT          = 26      // 总到特定功能数量值
+	FUN_BUS_PRIORITY		=26 , //公交优先启用
+	FUN_BUS_PRIORITY_EARLYRED = 27, //公交优先红灯早断类型 0-最小绿 1-设定值
+	FUN_BUS_PRIORITY_GREENDELAY = 28,//公交优先绿灯延长时间
+	FUN_BUS_PRIORITY_DEFAULTTIME = 29, //公交车从读卡器位置到通过路口默认时间
+	FUN_BUS_PRIORITY_NONBUSPHASEREDUCE = 30, //非公交相位缩短时间
+	FUN_BUS_PRIORITY_BUSPHASEID 	   = 31, //公交相位
+
+	FUN_ADAPTIVE_PerAdjustReduceRate = 32,//  自适应控制相位时间减少百分比
+	FUN_ADAPTIVE_PerAdjustAddRate   = 33, // 自适应控制相位时间增加百分比
+	FUN_ADAPTIVE_MinSaturationDegree = 34,       // 相位时间减少调整饱和度阀值
+	FUN_ADAPTIVE_MaxSaturationDegree 	   = 35, //相位时间增加调整饱和度阀值
+	
+	FUN_COUNT				  = 36	  // 总到特定功能数量值
 };
 
 /*
@@ -370,12 +384,12 @@ enum
 */
 enum
 {
-	COUNTDOWN_STUDY               = 0 ,	  //学习式倒计时
-	COUNTDOWN_GAT5082004          = 1 ,	  //通讯式倒计时国标GAT508-2004 ,固定支持4个倒计时，每个方向一个倒计时
-	COUNTDOWN_FLASHOFF 			  = 2 ,   //闪断式倒计时 发闪断指令给灯驱板，支持32个倒计时
-	COUNTDOWN_GAT5082014  	      = 3 ,   //通讯式倒计时国标GAT508-2004最大支持32个倒计时
-	COUNTDOWN_GAT5082014V2        = 4 ,   //通讯史倒计时国标GAT508-2004兼容支持4方向
-	COUNTDOWN_GAT5082004V2        = 5      //通讯式倒计时国标GAT508-2004 ，支持8个倒计时
+	COUNTDOWN_STUDY                    = 0 ,	  //学习式倒计时
+	COUNTDOWN_GAT5082004         	   = 1 ,	  //通讯式倒计时国标GAT508-2004 ,固定支持4个倒计时，每个方向一个倒计时
+	COUNTDOWN_FLASHOFF 	     		   = 2 ,   	 //闪断式倒计时 发闪断指令给灯驱板，支持32个倒计时
+	COUNTDOWN_GAT5082014  	 	       = 3 ,  	 //通讯式倒计时国标GAT508-2004最大支持32个倒计时
+	COUNTDOWN_GAT5082014V2   		   = 4 ,   	//通讯史倒计时国标GAT508-2004兼容支持4方向
+	COUNTDOWN_GAT5082004V2    		   = 5      //通讯式倒计时国标GAT508-2004 ，支持8个倒计时
 };
 
 /*
