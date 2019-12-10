@@ -632,7 +632,7 @@ Return:         无
 			if(bchkdetstatus)
 		 	{
 				GetAllVehSts(DET_HEAD_STS,ucIndex);    //查询检测器通道状态  开路 正常 短路等情况。
-				GetDecVars(ucIndex,0xff);              //查询每块检测器板接口板连接状态 ADD 2015-02-02
+				GetDecVars(ucIndex,0xff);                         //查询每块检测器板接口板连接状态 ADD 2015-02-02
 		    }
 			if(bchkcar) //ADD:2013 0724 1010
 			{	
@@ -1021,19 +1021,14 @@ void CDetector::GetOccupy()
 	iTick++;
 	//ACE_DEBUG((LM_DEBUG,"%s:%d ******iTick =%d m_iTotalDistance=%d \n",__FILE__,__LINE__,iTick,m_iTotalDistance));
 	if ( iTick <pManaKernel->m_pRunData->ucCycle-1)// m_iTotalDistance )  //5min 5*60
-	{
-		
-		ACE_DEBUG((LM_DEBUG,"%s:%d ******iTick =%d cycle=%d \n",__FILE__,__LINE__,iTick,pManaKernel->m_pRunData->ucCycle));
+	{		
+		//ACE_DEBUG((LM_DEBUG,"%s:%d ******iTick =%d cycle=%d \n",__FILE__,__LINE__,iTick,pManaKernel->m_pRunData->ucCycle));
 		return;
-	}
-  
+	}  
 	iTick = 0;
-
 	//ACE_Guard<ACE_Thread_Mutex> guard(m_sMutex);
 	//ACE_OS::memcpy( m_iLastDetTimeLen , m_iDetTimeLen , sizeof(int)*MAX_DETECTOR );
-
-	iIndex = MAX_DETECTOR;	
-	
+	iIndex = MAX_DETECTOR;		
 	while ( iIndex-- >0)
 	{
 		if(pManaKernel->m_pTscConfig->sDetector[iIndex].ucPhaseId>0)
@@ -1200,11 +1195,9 @@ void CDetector::GetDetData(SDetectorData* pDetData)
 		
 		//上一个周期的占有率
 		(pDetData+iIndex)->ucOccupancy = m_iDetOccupy[iDetId] * 2; //单位0.5
-
 		//当前的占有率
-		//(pDetData+iIndex)->ucOccupancy   = m_iDetTimeLen[iDetId] * 100 * 2 / ( m_iTotalDistance * 10 ) ; //单位0.5
-		
-		//(pDetData+iIndex)->ucVelocity  = m_iDetSpeedAvg[iDetId];
+		//(pDetData+iIndex)->ucOccupancy   = m_iDetTimeLen[iDetId] * 100 * 2 / ( m_iTotalDistance * 10 ) ; //单位0.5		
+	       (pDetData+iIndex)->ucVelocity  = m_iDetSpeedAvg[iDetId];
 		(pDetData+iIndex)->ucVehLen      = 0;
 		iIndex++;
 	}
@@ -1247,7 +1240,6 @@ void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 		(pDetAlarm+iIndex)->ucId = iIndex + 1;
 		iIndex++;
 	}
-
 	iIndex = 0;
 	while ( iIndex < 32 ) 
 	{
@@ -1285,7 +1277,6 @@ void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 			default:
 				break;
 		}
-
 		iIndex++;
 	}
 
@@ -1362,7 +1353,6 @@ bool CDetector::HaveDetBoard()
 	/*判断当前是否有配置检测器板*/
 	for ( Byte iBoardIndex=0x0; iBoardIndex<MAX_DET_BOARD; iBoardIndex++ )
 	{		
-		
 		//ACE_DEBUG((LM_DEBUG,"%s:%d m_iBoardErr[%d] = %02X \n",__FILE__,__LINE__,iBoardIndex,m_iBoardErr[iBoardIndex]));
 			if(DEV_IS_CONNECTED == m_iBoardErr[iBoardIndex] )
 			{
@@ -1402,7 +1392,7 @@ bool CDetector::HaveDetBoard()
 			}		
 			
 		}					
-		
+	//ACE_OS::printf("\r\n%s:%d No active detector found!!!\r\n",__FILE__,__LINE__);
 	return false;
 }
 

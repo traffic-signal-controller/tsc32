@@ -897,7 +897,7 @@ void CSerialCtrl::OpenALLSerial()
 	}else{
 		ACE_DEBUG((LM_DEBUG,"%s:%d***OpenALLSerial***Open ComPort %d Success !\n",__FILE__,__LINE__,SERIALNUM1));
 	}
-	ret = OpenComPort(SERIALNUM2, 38400, 8, "1", 'N');
+	ret = OpenComPort(SERIALNUM2, 9600, 8, "1", 'N');
 	if (ret < 0) {
 		ACE_DEBUG((LM_DEBUG,"Error: Opening Com Port %d\n",SERIALNUM2));
 		//return ;	

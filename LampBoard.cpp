@@ -206,7 +206,6 @@ Return:         ÎÞ
 void CLampBoard::SetLamp(Byte* pLampOn,Byte* pLampFlash)
 {
 	ACE_Guard<ACE_Thread_Mutex>  guard(m_mutexLamp);
-
 	if ( NULL == pLampOn || NULL == pLampFlash )
 	{
 		ACE_DEBUG((LM_DEBUG,"%s:%d SetLamp info error\n",__FILE__,__LINE__));
@@ -583,7 +582,7 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		if ( LAMPBOARD_HEAD_LIGHT_CHK == ucType )
 		{
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Get the LampBoard%d status!\n",__FILE__,__LINE__,ucLampBoardId+1));			
-			//Í¨µÀ¼ì²âbyte1-byte2  		//00:µÆÅÝÁÁÃðÕý³£  01:µÆÅÝ´î½Ó³£ÁÁ	//10:µÆÅÝËð»µ³£Ãð  11:¿É¿Ø¹èËð»µ
+			//Í¨µÀ¼ì²âbyte1-byte2  	//00:µÆÅÝÁÁÃðÕý³£  01:µÆÅÝ´î½Ó³£ÁÁ	//10:µÆÅÝËð»µ³£Ãð  11:¿É¿Ø¹èËð»µ
 			m_ucLampStas[ucLampBoardId*12]    = sRecvCanTmp.pCanData[1] & 0x3;          //1
 			m_ucLampStas[ucLampBoardId*12+2]   = (sRecvCanTmp.pCanData[1] >> 2 ) & 0x3;   //3
 			m_ucLampStas[ucLampBoardId*12+3]   = (sRecvCanTmp.pCanData[1] >> 4 ) & 0x3;   //4
@@ -614,13 +613,25 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 								if(pManakernel->m_pTscConfig->sChannelChk[iLamp].ucIsCheck == 1 && m_bLampErrFlag[iLamp] == true)
 								{
 								//ACE_DEBUG((LM_DEBUG,"%s:%d sChannelChk[%d]=%d is check!\n",__FILE__,__LINE__,iLamp,m_ucLampStas[iLamp]));
+								
 									if(m_ucLampStas[iLamp] != 0 && m_ucLampStas[iLamp] != 0x3)		
 									{						
 										m_bLampErrFlag[iLamp] = false ;
 										ACE_DEBUG((LM_DEBUG,"%s:%d LampBoard: %d Lamp:%d status:%d \n",__FILE__,__LINE__,ucLampBoardId+1,iLamp+1,m_ucLampStas[iLamp]));												
-										CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_LAMP,iLamp+1,m_ucLampStas[iLamp],ucLampBoardId+1,0);			
 										isFlash =1 ; // 1 ±íÊ¾µÆÅÝ¹ÊÕÏ
+										if((iLamp+1)==30 && m_ucLampStas[iLamp] == 0x1)
+										{
+											isFlash = 3;
+											(CDbInstance::m_cGbtTscDb).SetSystemData("ucDownloadFlag",0x3);											
+											CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_GREEN_CONFIG,0x2,ucLampBoardId+1,(iLamp+1)/3,0); //ADD£º201309251130						
+										}
+										else											
+										   CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_LAMP,iLamp+1,m_ucLampStas[iLamp],ucLampBoardId+1,0);			
 									}								
+
+
+
+									
 								}							
 							}						
 						}

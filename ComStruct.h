@@ -84,11 +84,11 @@ struct SThreadMsg
 */
 struct STimeGroup
 {
-	Byte   ucId;            //调度计划号
-	Ushort usMonth;         //调度月        b0-b11   每位1月     1允许执行
-	Byte   ucDayWithWeek;   //调度日(按周)  b0-b6    每位每周1天  b0周天 b1：周1
+	Byte   ucId;                            //调度计划号
+	Ushort usMonth;                 //调度月        b0-b11   每位1月     1允许执行
+	Byte   ucDayWithWeek;     //调度日(按周)  b0-b6    每位每周1天  b0周天 b1：周1
 	Ulong  uiDayWithMonth;  //调度日(按月)  b0-b30   每位每月1天
-	Byte   ucScheduleId;    //时段表号      0表示无效
+	Byte   ucScheduleId;          //时段表号      0表示无效
 }
 PACKED;
 
@@ -296,6 +296,7 @@ struct STscConfig
 	Byte DegradeMode ; 									//降级模式 201310191100
 	Byte DegradePattern ; 						  	    //降级基准方案 201310191400
 	GBT_DB::CntDownDev sCntDownDev[MAX_CNTDOWNDEV];     //倒计时表配置
+	Byte cGbType ;             // 国标协议类型    20170501 1120
 	//Uint DirecButtonPhase[4] ;    //方向按键相位配置北东南西
  }
 /*
@@ -380,7 +381,7 @@ struct STscRunData
 	//ACE_Thread_Mutex  mMutex;                     //互斥体
 	bool              bIsChkLght ;
 	bool              b8cndtown ;   //ADD:20131107
-	Byte 			  ucManualType ;//ADD:20141021 当前手控类型	
+	Byte            ucManualType ;//ADD:20141021 当前手控类型	
 	Byte			  flashType ;   //ADD:20141106 当系统处于黄闪状态时候黄闪类型
 	Byte              ucPlanId ;    //ADD:20150310 时基号
 }

@@ -129,9 +129,11 @@ public:
 	int  GetStageMinGreen(Ushort usAllowPhase);
 	bool ExitOvelapPhase(Byte ucOverlapPhaseId,Byte ucPhaseCnt,SPhaseStep* pPhaseStep);
 	bool ExitStageStretchPhase(SScheduleTime* pScheduleTime);
+    
+	
 
 	void ValidSoftWare() ;  //ADD 201310221450
-	
+	void DealPSC();          //ADD 20160923   
 	
 	bool m_bRestart;        //是否重启 gbt协议测试部分
 	bool m_bWaitStandard;   //等待由四面红进入标准

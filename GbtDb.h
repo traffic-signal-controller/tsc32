@@ -939,7 +939,7 @@ public:
 
     /*根据时段号和事件号查询时段表*/
     bool QuerySchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule);
-
+    
     /*添加时段表*/
     bool AddSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule);
 
@@ -1183,7 +1183,7 @@ public:
     /*删除日志*/
     bool DelEventLog();
 	 /*删除日志*/
-	bool DelEventLog(Byte uEvtTypeId ,Uint uStartTime ,Uint uEndTime) ;
+   bool DelEventLog(Byte uEvtTypeId ,Uint uStartTime ,Uint uEndTime) ;
 
 /******************************通道灯泡检测配置表******************************/
 
@@ -1308,7 +1308,7 @@ bool ModChannelChk(Byte uChanChkId, ChannelChk& sChannelChk);
     /*获取保存加密验证字符串*/
     bool GetEypSerial(char * SysEypSerial);   //201310101344
     /*设置保存加密验证字符串*/
-    bool SetEypSerial();  //201310101350
+    bool SetEypSerial(char *passwd);  //201310101350
 
      /*查询系统表*/
     bool GetSystemData(const char* sField, Ulong& ulData);
@@ -1397,7 +1397,6 @@ ucValue = sValueSeq[0]
     default:\
         PACKET_UCHAR(SEQ, DATA);\
     }
-
 
 #define UNPACKET_DATA(VALSIZE, SEQ, DATA)\
     switch (VALSIZE)\

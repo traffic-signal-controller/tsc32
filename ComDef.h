@@ -3,7 +3,6 @@
 
 #include "Define.h"
 
-
 /*
 Can报文类型 占据ID识别符 bit26-bit28
 */
@@ -112,14 +111,14 @@ const int MAX_LAMP_BOARD         = 8;    //最大灯驱板数
 const int MAX_LAMP_NUM_PER_BOARD = 12;   //每块板的灯具数量
 const int MAX_LAMPGROUP_PER_BOARD =4 ;
 const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //最大通道（信号组）表数 1板4通道
-const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
-const int MAX_DET_BOARD          = 4;    //最大检测器板数(包含接口板)
+const int MAX_LAMP                   = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
+const int MAX_DET_BOARD          = 4;    //最大车检板(接口板)数目
 const int MAX_DETECTOR_PER_BOARD = 16;   //每块板包含的检测器数量
 const int MAX_INTERFACE_PER_BOARD =32 ;  //每块接口板包含的通道数量
 const int MAX_DETECTOR           = (MAX_DETECTOR_PER_BOARD+MAX_INTERFACE_PER_BOARD)*MAX_DET_BOARD/2;   //最大检测器数量
 
 const int MAX_SPESTATUS_CYCLE    = 10;   //时段表里定义的特殊状态周期时长 
-const int MIN_GREEN_TIME	     = 7;    //最小绿灯时长
+const int MIN_GREEN_TIME	         = 7;    //最小绿灯时长
 
 const int MAX_REGET_TIME         = 10;   //100ms 1per 1s=10times
 const int USLEEP_TIME            = 2000;
@@ -357,7 +356,7 @@ enum
 	FUN_LIGHTCHECK	   = 20 ,	//灯泡检测开关	
 	FUN_GPS_INTERVAL   = 21	,	//GPS定时更新时间 1 表示每天，2表示每2天
 	FUN_WIRELESSBTN_TIMEOUT = 22, //无线手控按键手动控制超时时间单位分钟 ADD:201410231639	
-	FUN_CROSSSTREET_TIMEOUT = 23, //无线手控按键手动控制超时时间单位分钟 ADD:201501091738
+	FUN_CROSSSTREET_TIMEOUT = 23, //行人按钮超时间 ADD:201501091738
 	FUN_RS485_BITRATE       =24 , //485倒计时比特率 0-9600 1-2400-2-4800 3-38400   4-15200
 	
 	FUN_FLASHCNTDOWN_TIME   =25,  //闪断式倒计时闪断时间 0-0ms 1-50ms 2-100ms,以此类推. //ADD 20150605
@@ -370,12 +369,12 @@ enum
 */
 enum
 {
-	COUNTDOWN_STUDY               = 0 ,	  //学习式倒计时
-	COUNTDOWN_GAT5082004          = 1 ,	  //通讯式倒计时国标GAT508-2004 ,固定支持4个倒计时，每个方向一个倒计时
-	COUNTDOWN_FLASHOFF 			  = 2 ,   //闪断式倒计时 发闪断指令给灯驱板，支持32个倒计时
-	COUNTDOWN_GAT5082014  	      = 3 ,   //通讯式倒计时国标GAT508-2004最大支持32个倒计时
-	COUNTDOWN_GAT5082014V2        = 4 ,   //通讯史倒计时国标GAT508-2004兼容支持4方向
-	COUNTDOWN_GAT5082004V2        = 5      //通讯式倒计时国标GAT508-2004 ，支持8个倒计时
+	COUNTDOWN_STUDY                    = 0 ,	  //学习式倒计时
+	COUNTDOWN_GAT5082004         	   = 1 ,	  //通讯式倒计时国标GAT508-2004 ,固定支持4个倒计时，每个方向一个倒计时
+	COUNTDOWN_FLASHOFF 	     		   = 2 ,   	 //闪断式倒计时 发闪断指令给灯驱板，支持32个倒计时
+	COUNTDOWN_GAT5082014  	 	       = 3 ,  	 //通讯式倒计时国标GAT508-2004最大支持32个倒计时
+	COUNTDOWN_GAT5082014V2   		   = 4 ,   	//通讯史倒计时国标GAT508-2004兼容支持4方向
+	COUNTDOWN_GAT5082004V2    		   = 5      //通讯式倒计时国标GAT508-2004 ，支持8个倒计时
 };
 
 /*
@@ -405,8 +404,8 @@ enum
 /*************************GBT协议消息处理常量定义************************/
 const int MAX_GBT_MSG_LEN        = 484;   //gbt协议消息的最大长度
 const int MIN_GBT_MSG_LEN        = 3;     //gbt协议消息的最小长度
-const int MAX_CLIENT_NUM         = 4;     //最大的客户端连接数
-const int DEFAULT_GBT_PORT       = 8801;  //默认开辟的端口号
+const int MAX_CLIENT_NUM         = 0xFF;     //最大的客户端连接数
+const int DEFAULT_GBT_PORT       = 5435;  //默认开辟的端口号
 const int DEFAULT_BROADCAST_PORT = 8808;  //默认开辟的端口号
 const int MAX_GBT_PORT           = 10024; //最大端口号    
 const int MIN_GBT_PORT           = 1024;  //最小端口号
@@ -444,13 +443,32 @@ enum
 	GBT_ERROR_SHORT       ,  //消息太短
 	GBT_ERROR_OTHER          //其他错误
 };
+/*
+GB协议类型
+*/
+enum
+{
+	GBT20999     = 0x1,  //
+	GB25280       =0x2     ,  //
+	
+};
 
+/*
+信号灯颜色类型枚举
+*/
+enum
+{
+	LAMP_COLOR_RED = 0,  //红色灯
+	LAMP_COLOR_YELLOW ,  //黄色灯
+	LAMP_COLOR_GREEN     //绿色灯
+};
 
 
 const int MAX_ADJUST_CYCLE = 3;
 const int MAX_PLUS_SCALE   = 30;  //一个周期增加的最大比例 
 const int MAX_MINU_SCALE   = 20;  //每个周期减少的最大比例
 const int PLUS_LINE        = 50;  //增加的界线
+
 
 
 

@@ -67,6 +67,7 @@ CMacControl* CMacControl::CreateInstance()
 	return &cMacControl;
 }
 
+
 /********************************************************
 *主控板请求控制模块发送环境数据
 *如手控数据，温度，湿度，门开关状态，

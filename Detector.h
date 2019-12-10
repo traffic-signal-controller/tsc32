@@ -44,16 +44,14 @@ enum
 	DET_HEAD_SENDATA0814_SET = 0x16 ,         //表示主控板设置检测器发送8-14级的灵敏度数值
 	DET_HEAD_SENDATA1516_SET = 0x17 ,         //表示主控板设置检测器发送15-16级的灵敏度数值
 
-	DET_HEAD_FRENCY_GET = 0x18 , 		 	  //表示主控板请求检测器发送16个通道的震荡频率设置
+	DET_HEAD_FRENCY_GET = 0x18 , 		    //表示主控板请求检测器发送16个通道的震荡频率设置
 	DET_HEAD_FRENCY_SET = 0x19 , 		      //表示主控板发送给检测器16个通道的震荡频率设置。
 
-	DET_HEAD_WORK_SET = 0x1a , 		 		 //表示主控板设置检测器工作方式。
-	DET_HEAD_VER      =0xff  ,                //表示检测器版本 ADD:20141201
-	DET_HEAD_ID       =0x0                    //表示检测器的ID号
+	DET_HEAD_WORK_SET = 0x1a , 		    //表示主控板设置检测器工作方式。
+	DET_HEAD_VER      =0xff  ,             		   //表示检测器版本 ADD:20141201
+	DET_HEAD_ID       =0x0                  		  //表示检测器的ID号
 	  
 };
-
-
 
 class CDetector
 {
@@ -174,7 +172,7 @@ private:
 	int m_iDetTimeLen[MAX_DETECTOR];  //有车时间的统计  100ms/单位
 	int m_iDetOccupy[MAX_DETECTOR];   //占有率
 	Byte m_ucTotalStat[MAX_DETECTOR];  //车辆统计   /次
-	
+	Byte m_iDetSpeedAvg[MAX_DETECTOR]; //车辆速度
 	Byte m_ucDetSts[MAX_DET_BOARD][MAX_DETECTOR_PER_BOARD]; //有车无车标志 ADD: 2013 0710 1050
 	//int m_iLastDetTimeLen[MAX_DETECTOR];  //上个统计周期的有车时间的统计  100ms/单位
 	

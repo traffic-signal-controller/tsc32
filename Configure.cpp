@@ -13,7 +13,6 @@
 #include <map>  
 #include <ace/OS.h>  
 #include "Configure.h"
-#include <iostream>
 using namespace std;
 
 /**************************************************************
@@ -130,20 +129,28 @@ bool Configure::InitConfig()
 		ACE_OS::fputs("\n[APPDESCRIP]",fConfig);
 		ACE_OS::fputs("\napplication   =Gb.aiton",fConfig);
 		ACE_OS::fputs("\ndatebase      =GbAitonTsc.db",fConfig);
-		ACE_OS::fputs("\nversion       = 1.0.1",fConfig);
+		ACE_OS::fputs("\nversion       = 3.0.1",fConfig);
+		ACE_OS::fputs("\nIDCode   = YAJT8417060001",fConfig);
+		ACE_OS::fputs("\nIdentifyCode   = ABCDE",fConfig);
 		ACE_OS::fputs("\ndescription   = 32 Phase Traffic Singal Controner",fConfig);
 		
 		ACE_OS::fputs("\n[COMMUNICATION]",fConfig);
-		ACE_OS::fputs("\nstandard      =GBT20999",fConfig);
+		ACE_OS::fputs("\nstandard      =GBT25280",fConfig);
 		ACE_OS::fputs("\nprotocol      =udp",fConfig);
 		ACE_OS::fputs("\nport          =5435 ",fConfig);
+                ACE_OS::fputs("\nGB25280ServerIp    = 192.168.1.2",fConfig);
 
+		ACE_OS::fputs("\n[Location]",fConfig);
+		ACE_OS::fputs("\nAreaCode       =1",fConfig);
+		ACE_OS::fputs("\nCrossCode       =1",fConfig);
+		
 		ACE_OS::fputs("\n[CONTACT]",fConfig);
-		ACE_OS::fputs("\ncompany       =XiaMenAiTon",fConfig);
-		ACE_OS::fputs("\nlinkman       =Chen",fConfig);
-		ACE_OS::fputs("\ntelephone     = 0592-5212811",fConfig);
-		ACE_OS::fputs("\naddress       = No151,BanMei,HuLi,XiaMen,FuJian,China",fConfig);
-		ACE_OS::fputs("\nWebSite       = http://www.aiton.com.cn	",fConfig);
+		ACE_OS::fputs("\ncompany       =AiTon",fConfig);
+		ACE_OS::fputs("\nlinkman       =Mr Lu",fConfig);
+		ACE_OS::fputs("\ntelephone     = 00000000000",fConfig);
+		ACE_OS::fputs("\naddress       = China",fConfig);
+		ACE_OS::fputs("\nWebSite       = http:	",fConfig);
+		
 		
 		ACE_OS::fputs("\n[FUNCTION]",fConfig);
 		ACE_OS::fputs("\nBACKUP       = 1	",fConfig);		
@@ -163,11 +170,6 @@ Return:         нч
 void Configure::ShowConfig()
 {
   ACE_TString vstring ;
-  //if(open(ACE_TEXT("tsc.ini")) == -1)
-  //{
-	//ACE_OS::printf("\r\n%s:%d ***Configure***Open tsc.ini configure file error!\r\n\n",__FILE__,__LINE__);
-	//return ;
-//  }
  cout<<endl<<"#..................Show Tsc Configure....................# "<<endl ;
  GetString("APPDESCRIP","application",vstring);
 	cout<<"AppName :" <<vstring.c_str()<<endl ;
@@ -175,6 +177,10 @@ void Configure::ShowConfig()
 	cout<<"DataBaseName :" <<vstring.c_str()<<endl ;	
  GetString("APPDESCRIP","version",vstring);
 	cout<<"Version :" <<vstring.c_str()<<endl ;
+ GetString("APPDESCRIP","IDCode",vstring);
+	cout<<"IDCode :" <<vstring.c_str()<<endl ;	
+GetString("APPDESCRIP","IdentifyCode",vstring);
+	cout<<"IdentifyCode :" <<vstring.c_str()<<endl ;	
  GetString("APPDESCRIP","description",vstring);
 	cout<<"Description :" <<vstring.c_str()<<endl ;
 
@@ -184,6 +190,13 @@ void Configure::ShowConfig()
 	cout<<"Protocol :" <<vstring.c_str()<<endl ;	
  GetString("COMMUNICATION","port",vstring);
 	cout<<"Portnumber :" <<vstring.c_str()<<endl ;
+GetString("COMMUNICATION","ClientIp",vstring);
+		cout<<"TscClientIp :" <<vstring.c_str()<<endl ;
+
+ GetString("Location","AreaCode",vstring);
+	cout<<"AreaCode :" <<vstring.c_str()<<endl ;
+GetString("Location","CrossCode",vstring);
+	cout<<"CrossCode :" <<vstring.c_str()<<endl ;	
 
  GetString("CONTACT","company",vstring);
 	cout<<"Company :" <<vstring.c_str()<<endl ;

@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		ationMutex.release();
 		return -1;
 	}
-	StartBeep(); //BEEP	
+	TscBeep(); //BEEP	
 	RunGb();	       //core fuction
 	ationMutex.release();
 	return 0 ;
@@ -120,7 +120,10 @@ static void *RunGps(void *arg)
 	ACE_DEBUG((LM_DEBUG,"\n%s:%d ***THREAD*** Begin to run GPS thread!\r\n",__FILE__,__LINE__));
 	iGps = pManaKernel->m_pTscConfig->sSpecFun[FUN_GPS].ucValue ;
 	if(iGps != 0)//serial 2
-		CGps::CreateInstance()->RunGpsData();
+		{
+		    ACE_OS::printf("%s:%d Start Gps thread!\r\n",__FILE__,__LINE__);
+		     CGps::CreateInstance()->RunGpsData();
+		}
 	return NULL ;
 	
 }
@@ -143,14 +146,12 @@ static void *RunWirelessBtnHandle(void *arg)
 	{
 		if(pWirelessBtn->GetbHandleWirelessBtnMsg())
 		{
-			pWirelessBtn->HandWirelessBtnMsg(); //处理无线手控按键
+			pWirelessBtn->HandWirelessBtnMsg();      //处理无线手控按键
 		}
 		else
 		{
 			ACE_OS::sleep(ACE_Time_Value(0,200000)); //睡眠200毫秒
-		}
-		
-		//ACE_DEBUG((LM_DEBUG,"\n%s:%d wait run WirelessBtnHandle thread!\r\n",__FILE__,__LINE__));
+		}		
 	}	
 	
 }
@@ -171,10 +172,7 @@ static void* BroadCast(void* arg)
 	ACE_SOCK_Dgram_Bcast udpBcast(addrBroadcast);
 	char buf[10];
 	char hostname[MAXHOSTNAMELEN];
-	//Byte pHwEther[6] = {0};
 	Byte pIp[4]      = {0};
-	//Byte pMask[4]    = {0};
-	//Byte pGateway[4] = {0};
 	Byte sBroadcastMessage[64] = {0};
 	Byte ucSendCount = 0;
 	CGbtMsgQueue *pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
@@ -185,7 +183,7 @@ static void* BroadCast(void* arg)
 	{
 		int size = udpBcast.recv(buf,10,addrRemote);
 
-		if ( size > 0 )
+		if ( size ==0x6 )
 		{
 			//信号机ip
 			pGbtMsgQueue->GetNetPara(pIp , NULL , NULL);
@@ -203,10 +201,9 @@ static void* BroadCast(void* arg)
 			ucSendCount += 4;
 			//信号机版本
 			(sBroadcastMessage+ucSendCount)[0] = 0x2;
-			(sBroadcastMessage+ucSendCount)[1] = 0xF4;
-			(sBroadcastMessage+ucSendCount)[2] = 0xA;
-			 ucSendCount += 3;
-
+			(sBroadcastMessage+ucSendCount)[1] = 0xA1;
+			(sBroadcastMessage+ucSendCount)[2] = 0x1;
+			 ucSendCount += 3;			 
 			udpBcast.send(sBroadcastMessage , ucSendCount , addrRemote);
 			ucSendCount = 0;
 		}
@@ -223,8 +220,8 @@ Return:         无
 ***************************************************************/
 void RunGb()
 {
-	ACE_thread_t  tThreadId[9];
-	ACE_hthread_t hThreadHandle[9];
+	ACE_thread_t  tThreadId[10];
+	ACE_hthread_t hThreadHandle[10];
 
 	(CDbInstance::m_cGbtTscDb).InitDb(DB_NAME);  //数据库类初始化
 	
@@ -321,7 +318,7 @@ void RunGb()
 	/********************************************************************************/
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
 	{
-		
+		ACE_OS::printf("Start Gps thread");
 		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGps, //开启gps校时线程
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
@@ -414,7 +411,7 @@ void StartBeep()
 	ACE_OS::system("echo 113 >/sys/class/gpio/export");	
 	ACE_OS::system("echo out >/sys/class/gpio/gpio113/direction");			
 	ACE_OS::system("echo 0 > /sys/class/gpio/gpio113/value");		
-	ACE_OS::sleep(1);			
+	ACE_OS::sleep(1);	
 	ACE_OS::system("echo 1 > /sys/class/gpio/gpio113/value");	
 	ACE_OS::system("echo in >/sys/class/gpio/gpio113/direction");			
 	ACE_OS::system("echo 113 >/sys/class/gpio/unexport");	

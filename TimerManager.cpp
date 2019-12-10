@@ -1,11 +1,13 @@
 #include "TimerManager.h"
 #include "ComFunc.h"
+#include "ManaKernel.h"
 
 //定时器下标
 enum 
 {
 	TIMER_TSC_INDEX    = 0,  //信号机控制模块的定时器
 	TIMER_GBT_INDEX    = 1,  //通信协议模块的定时器
+	TIMER_GB25280_INDEX =2
 };
 
 
@@ -18,6 +20,7 @@ CTimerManager::CTimerManager()
 
 	m_pTscTimer = new CTscTimer(10);
 	m_pGbtTimer = CGbtTimer::CreateInstance();
+	m_pGb25280Timer = CGB25280Timer::CreateInstance();
 	
 	m_tActiveTimer.timer_queue()->gettimeofday(getCurrTime);
 	m_tActiveTimer.activate();
@@ -51,7 +54,7 @@ void CTimerManager::CreateAllTimer()
 
 	ACE_DEBUG((LM_DEBUG,"%s:%d***CreateAllTimer*** Delay 3 seconds to boot all timers!\n",__FILE__,__LINE__));
 	
-    const ACE_Time_Value curr_tv = getCurrTime();
+       const ACE_Time_Value curr_tv = getCurrTime();
 	//100毫秒定时器,延迟3秒启动
 	m_lTimerId[TIMER_TSC_INDEX] = m_tActiveTimer.schedule(m_pTscTimer,NULL,curr_tv+ACE_Time_Value(1),ACE_Time_Value(0,100*1000)); 
 
@@ -59,6 +62,9 @@ void CTimerManager::CreateAllTimer()
 	//m_lTimerId[TIMER_TSC_INDEX ] =  m_tActiveTimer.schedule(m_pTscTimer,  NULL,GetCurTime(),ACE_Time_Value(0,100*1000)); 
 
 	m_lTimerId[TIMER_GBT_INDEX] = m_tActiveTimer.schedule(m_pGbtTimer,NULL,curr_tv+ACE_Time_Value(1),ACE_Time_Value(0,100*1000)); 
+        
+	if(CManaKernel::CreateInstance()->m_pTscConfig->cGbType ==GB25280)
+		m_lTimerId[TIMER_GB25280_INDEX] = m_tActiveTimer.schedule(m_pGb25280Timer,NULL,curr_tv+ACE_Time_Value(1),ACE_Time_Value(1)); 
 }
 
 /*
@@ -84,6 +90,8 @@ void CTimerManager::StartAllTimer()
 	m_lTimerId[TIMER_TSC_INDEX] = m_tActiveTimer.schedule(m_pTscTimer,NULL,getCurrTime(),ACE_Time_Value(0,100*1000)); 
 
 	m_lTimerId[TIMER_GBT_INDEX] = m_tActiveTimer.schedule(m_pGbtTimer,NULL,getCurrTime(),ACE_Time_Value(0,100*1000)); 
+	
+	m_lTimerId[TIMER_GB25280_INDEX] = m_tActiveTimer.schedule(m_pGb25280Timer,NULL,getCurrTime(),ACE_Time_Value(1)); 
 }
 
 /*

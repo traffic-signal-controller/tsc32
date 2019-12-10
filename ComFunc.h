@@ -19,3 +19,6 @@ void RecordTscSN();
 
 void ReadTscSN(char *cdkey);
 bool VaildSN();
+void TscBeep();
+
+unsigned short crc_16(unsigned char *data, unsigned short len);

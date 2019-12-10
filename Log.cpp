@@ -10,6 +10,7 @@ History:
 ***************************************************************/
 #include "Log.h"
 #include "DbInstance.h"
+#include "TscKernelGb25280.h"
 
 /**************************************************************
 Function:       CLogger::CLogger
@@ -35,6 +36,17 @@ Return:         ÎÞ
 void CLogger::WriteEventLog(Byte ucEvtType,Uint uiEvtValue)
 {
 	(CDbInstance::m_cGbtTscDb).AddEventLog(&m_uiLogMaxId,&m_uiLogMinId,ucEvtType,uiEvtValue);
+	 if(ucEvtType  ==LOG_TYPE_GREEN_CONFIG||
+				ucEvtType ==LOG_TYPE_DOOR_WARN||
+				ucEvtType ==LOG_TYPE_OUTLAMP_ERR||
+				ucEvtType ==LOG_TYPE_LAMP||
+				ucEvtType ==LOG_TYPE_CAN||
+				ucEvtType ==LOG_TYPE_FLASHBOARD||
+				ucEvtType ==LOG_TYPE_DETECTOR	)
+	 {
+		 CTscKernelGb25280::CreateInstance()->SelfReportTscError();  //·¢ËÍ
+
+	 }
 }
 
 /**************************************************************
