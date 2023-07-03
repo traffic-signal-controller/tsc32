@@ -3,7 +3,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   Can.cpp
 Date:       2013-1-1
-Description:CAN×ÜÏß½Ó¿Ú´¦ÀíÀàÎÄ¼ş.°üº¬CAN×ÜÏßÊı¾İÊÕ·¢²Ù×÷.
+Description:CANæ€»çº¿æ¥å£å¤„ç†ç±»æ–‡ä»¶.åŒ…å«CANæ€»çº¿æ•°æ®æ”¶å‘æ“ä½œ.
 Version:    V1.0
 History:
 ***************************************************************/
@@ -24,7 +24,7 @@ History:
 #endif
 
 /*
-*Ğ­Òé°æ±¾ bit0-bit3
+*åè®®ç‰ˆæœ¬ bit0-bit3
 */
 enum
 {
@@ -36,9 +36,9 @@ enum
 
 /**************************************************************
 Function:       Can::Can
-Description:    Can£¬ÓÃÓÚÀà³õÊ¼»¯´¦Àí				
-Input:          ÎŞ              
-Output:         ÎŞ
+Description:    Canï¼Œç”¨äºç±»åˆå§‹åŒ–å¤„ç†				
+Input:          æ—               
+Output:         æ— 
 Return:         0
 ***************************************************************/
 Can::Can()
@@ -51,9 +51,9 @@ Can::Can()
 
 /**************************************************************
 Function:       Can::~Can
-Description:    Can	Îö¹¹º¯Êı	
-Input:          ÎŞ              
-Output:         ÎŞ
+Description:    Can	ææ„å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
 Return:         0
 ***************************************************************/
 Can::~Can()
@@ -63,10 +63,10 @@ Can::~Can()
 
 /**************************************************************
 Function:       Can::CreateInstance
-Description:    ´´½¨	Can¾²Ì¬¶ÔÏó
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»º	Cané™æ€å¯¹è±¡
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 Can* Can::CreateInstance()
 {
@@ -76,10 +76,10 @@ Can* Can::CreateInstance()
 
 /**************************************************************
 Function:       Can::InitCan
-Description:    ³õÊ¼»¯Can socket×ÜÏß
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    åˆå§‹åŒ–Can socketæ€»çº¿
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void Can::InitCan()
 {
@@ -98,10 +98,10 @@ void Can::InitCan()
 
 /**************************************************************
 Function:       Can::GetHandle
-Description:    »ñÈ¡Can socket×ÜÏßÎÄ¼ş¾ä±ú
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         Can socket×ÜÏßÎÄ¼ş¾ä±ú
+Description:    è·å–Can socketæ€»çº¿æ–‡ä»¶å¥æŸ„
+Input:          æ—               
+Output:         æ— 
+Return:         Can socketæ€»çº¿æ–‡ä»¶å¥æŸ„
 ***************************************************************/
 int Can::GetHandle()
 {
@@ -110,10 +110,10 @@ int Can::GetHandle()
 
 /**************************************************************
 Function:       Can::Send
-Description:    ·¢ËÍCanÊı¾İ°ü
-Input:          sendFrame canÊı¾İ°ü              
-Output:         ÎŞ
-Return:         false-Ê§°Ü  true-³É¹¦
+Description:    å‘é€Canæ•°æ®åŒ…
+Input:          sendFrame canæ•°æ®åŒ…              
+Output:         æ— 
+Return:         false-å¤±è´¥  true-æˆåŠŸ
 ***************************************************************/
 bool Can::Send(SCanFrame& sendFrame)
 {
@@ -127,27 +127,27 @@ bool Can::Send(SCanFrame& sendFrame)
 	if(ulBytes == -1)
 	{
 		int erronum = errno ;		
-		//ACE_DEBUG((LM_DEBUG,"%s:%d erronum=%d !\n",__FILE__,__LINE__,erronum));//MOD0Š2:20130523 14 25
+		//ACE_DEBUG((LM_DEBUG,"%s:%d erronum=%d !\n",__FILE__,__LINE__,erronum));//MOD:20130523 14 25
 		return false ;
 	}
 	
 	if ( ulBytes == sizeof(struct can_frame))
 	{
-		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN µÄÖ¡ÓëulBytes´óĞ¡²»ÏàµÈ!\n",__FILE__,__LINE__));//MOD0Š2:20130523 14 25
-		//ÕâÀïÓ°Ïìµ½µÄcanÊı¾İµÄ·¢ËÍ
+		//ACE_DEBUG((LM_DEBUG,"%s:%d CAN çš„å¸§ä¸ulByteså¤§å°ä¸ç›¸ç­‰!\n",__FILE__,__LINE__));//MOD:20130523 14 25
+		//è¿™é‡Œå½±å“åˆ°çš„canæ•°æ®çš„å‘é€
 		pMainBoardLed->DoCan0Led();
 	}
 
-		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MOD0Š2:20130523 14 25
+		//ACE_DEBUG((LM_DEBUG,"%s:%d Send  %d  bytes can_frame !\n",__FILE__,__LINE__,ulBytes));//MOD:20130523 14 25
 	return true;
 }
 
 /**************************************************************
 Function:       Can::Recv
-Description:    ½ÓÊÕCanÊı¾İ°ü
-Input:          recvFrame ½ÓÊÕµ½µ½canÊı¾İ°ü              
-Output:         ÎŞ
-Return:         false-Ê§°Ü  true-³É¹¦
+Description:    æ¥æ”¶Canæ•°æ®åŒ…
+Input:          recvFrame æ¥æ”¶åˆ°åˆ°canæ•°æ®åŒ…              
+Output:         æ— 
+Return:         false-å¤±è´¥  true-æˆåŠŸ
 ***************************************************************/
 bool Can::Recv(SCanFrame& recvFrame)
 {
@@ -158,7 +158,7 @@ bool Can::Recv(SCanFrame& recvFrame)
 #ifdef LINUX
 	ulBytes = recvfrom(m_socketHandle  , &m_frameCan,sizeof(struct can_frame) , 0  ,(struct sockaddr *)&m_addrCan,(socklen_t*)&ulLen);
 	
-	//ACE_DEBUG((LM_DEBUG,"%s:%d Recv %d bytes from can_frame! \n",__FILE__,__LINE__,ulBytes));//MOD0Š2:20130523 1422
+	//ACE_DEBUG((LM_DEBUG,"%s:%d Recv %d bytes from can_frame! \n",__FILE__,__LINE__,ulBytes));//MODï¿½0ï¿½2:20130523 1422
 	recvFrame.ulCanId = m_frameCan.can_id;
 	ACE_OS::memcpy(recvFrame.pCanData,m_frameCan.data,m_frameCan.can_dlc);
 	recvFrame.ucCanDataLen = m_frameCan.can_dlc;
@@ -170,12 +170,12 @@ bool Can::Recv(SCanFrame& recvFrame)
 
 /**************************************************************
 Function:       Can::BuildCanId
-Description:    ½¨Á¢CanId
+Description:    å»ºç«‹CanId
 Input:          bit28-bit26  bit25-bit20   bit19-bit18 bit17-bit12  bit11-bit4  bit0-bit3
-		 		±¨ÎÄÀàĞÍ     Ä£¿éµØÖ·      Ö¡Ä£Ê½      Ä¿µÄµØÖ·     ±£Áô        Ğ­Òé°æ±¾
+		 		æŠ¥æ–‡ç±»å‹     æ¨¡å—åœ°å€      å¸§æ¨¡å¼      ç›®çš„åœ°å€     ä¿ç•™        åè®®ç‰ˆæœ¬
  			    ucCanMsgType ucModuleAddr ucFrameMode ucRemodeAddr             
-Output:         ulCanId  can±¨ÎÄid
-Return:         ÎŞ
+Output:         ulCanId  canæŠ¥æ–‡id
+Return:         ï¿½ï¿½
 ***************************************************************/
 void Can::BuildCanId(Ulong u1CanMsgType
 		          , Ulong u1ModuleAddr
@@ -186,13 +186,13 @@ void Can::BuildCanId(Ulong u1CanMsgType
 	Ulong ulCanIdTmp = 0;
 
 	ulCanIdTmp = ulCanIdTmp | B2B_PROTOCOL_V00;  
-	ulCanIdTmp = ulCanIdTmp | (0xff << 4);   //±£Áô²¿·Ö  err	
+	ulCanIdTmp = ulCanIdTmp | (0xff << 4);   //ä¿ç•™éƒ¨åˆ†  err	
 	ulCanIdTmp = ulCanIdTmp | (u1RemodeAddr << 12);
 	ulCanIdTmp = ulCanIdTmp | (u1FrameMode  << 18);
 	ulCanIdTmp = ulCanIdTmp | (u1ModuleAddr << 20);
 	ulCanIdTmp = ulCanIdTmp | (u1CanMsgType << 26);
 
-	//0†80„80ˆ90†10‰00„3
+	//ï¿½0ï¿½8ï¿½0ï¿½8ï¿½0ï¿½9ï¿½0ï¿½1ï¿½0ï¿½0ï¿½0ï¿½3
 	ulCanIdTmp = ulCanIdTmp | (1 << 31);
 	*ulCanId = ulCanIdTmp;
 }
@@ -201,12 +201,12 @@ void Can::BuildCanId(Ulong u1CanMsgType
 
 /**************************************************************
 Function:       Can::ExtractCanId
-Description:    ½âÎöCanId
+Description:    è§£æCanId
 Output:          bit28-bit26  bit25-bit20   bit19-bit18 bit17-bit12  bit11-bit4  bit0-bit3
-		 		±¨ÎÄÀàĞÍ     Ä£¿éµØÖ·      Ö¡Ä£Ê½      Ä¿µÄµØÖ·     ±£Áô        Ğ­Òé°æ±¾
+		 		æŠ¥æ–‡ç±»å‹     æ¨¡å—åœ°å€      å¸§æ¨¡å¼      ç›®çš„åœ°å€     ä¿ç•™        åè®®ç‰ˆæœ¬
  			    ucCanMsgType ucModuleAddr ucFrameMode ucRemodeAddr             
-Input:          ulCanId  can±¨ÎÄid
-Return:         ÎŞ
+Input:          ulCanId  canæŠ¥æ–‡id
+Return:         æ— 
 ***************************************************************/
 void Can::ExtractCanId(Ulong& u1CanMsgType
 		            , Ulong& u1ModuleAddr
@@ -231,13 +231,13 @@ void Can::ExtractCanId(Ulong& u1CanMsgType
 
 /**************************************************************
 Function:       Can::PrintInfo
-Description:    ´òÓ¡Êı¾İ
-Output:         ÎŞ              
-Input:          file  ´òÓ¡ÎÄ¼şÃû
-				line  ´òÓ¡ÆğÊ¼ĞĞ
-				iSub  ´òÓ¡½áÊøĞĞ
-				canFrame ´òÓ¡Êı¾İÖ¡
-Return:         ÎŞ
+Description:    æ‰“å°æ•°æ®
+Output:         æ—               
+Input:          file  æ‰“å°æ–‡ä»¶å
+				line  æ‰“å°èµ·å§‹è¡Œ
+				iSub  æ‰“å°ç»“æŸè¡Œ
+				canFrame æ‰“å°æ•°æ®å¸§
+Return:         æ— 
 ***************************************************************/
 void Can::PrintInfo(char* file,int line,int iSub,SCanFrame canFrame)
 {
@@ -253,12 +253,12 @@ void Can::PrintInfo(char* file,int line,int iSub,SCanFrame canFrame)
 
 /**************************************************************
 Function:       Can::PrintCurTime
-Description:    ´òÓ¡µ±Ç°Ê±¼ä
-Output:         ÎŞ              
-Input:          file  ´òÓ¡ÎÄ¼şÃû
-				line  ´òÓ¡ÆğÊ¼ĞĞ
-				sTmp  ´òÓ¡×Ö·û
-Return:         ÎŞ
+Description:    æ‰“å°å½“å‰æ—¶é—´
+Output:         æ—               
+Input:          file  æ‰“å°æ–‡ä»¶å
+				line  æ‰“å°èµ·å§‹è¡Œ
+				sTmp  æ‰“å°å­—ç¬¦
+Return:         æ— 
 ***************************************************************/
 void Can::PrintCurTime(char* file,int line,char* sTmp)
 {
@@ -276,9 +276,9 @@ void Can::PrintCurTime(char* file,int line,char* sTmp)
 
 /**************************************************************
 Function:       Can::RunCanRecv
-Description:    Can·µ»ØÏûÏ¢½ÓÊÕÏß³Ìº¯Êı£¬½ÓÊÕÊı¾İ²¢·ÅÈëCANÏûÏ¢¶ÓÁĞ
-Output:         ÎŞ              
-Input:          arg  Ä¬ÈÏNULL
+Description:    Canè¿”å›æ¶ˆæ¯æ¥æ”¶çº¿ç¨‹å‡½æ•°ï¼Œæ¥æ”¶æ•°æ®å¹¶æ”¾å…¥CANæ¶ˆæ¯é˜Ÿåˆ—
+Output:         æ—               
+Input:          arg  é»˜è®¤NULL
 Return:         0
 ***************************************************************/
 void * Can::RunCanRecv(void *arg)
@@ -313,12 +313,12 @@ void * Can::RunCanRecv(void *arg)
 	{
 		Can::CreateInstance()->Recv(sRecvFrameTmp);
 		
-		ACE_Message_Block *mb = new ACE_Message_Block(iLenCanFrame); //¹¹ÔìÏûÏ¢¿é
-		mb->copy((char*)&sRecvFrameTmp, iLenCanFrame); // ½«Êı¾İ¿½±´½øÏûÏ¢¿é
+		ACE_Message_Block *mb = new ACE_Message_Block(iLenCanFrame); //æ„é€ æ¶ˆæ¯å—
+		mb->copy((char*)&sRecvFrameTmp, iLenCanFrame); //å°†æ•°æ®æ‹·è´è¿›æ¶ˆæ¯å—
 
 		//ACE_Time_Value nowait(GetCurTime()+ACE_Time_Value(1));
 		ACE_Time_Value nowait(getCurrTime()) ;
-		if( -1 == (pCan->m_CanMsgQue)->enqueue_tail(mb, &nowait))			//Ïò CAN ACE_Message_QueueÖĞÌí¼ÓĞÂÊı¾İ¿é
+		if( -1 == (pCan->m_CanMsgQue)->enqueue_tail(mb, &nowait))			//å‘ CAN ACE_Message_Queueä¸­æ·»åŠ æ–°æ•°æ®å—
 		{
 			mb->release();
 		}
@@ -332,9 +332,9 @@ void * Can::RunCanRecv(void *arg)
 
 /**************************************************************
 Function:       Can::DealCanData
-Description:    ´ÓCAN½ÓÊÕĞÅÏ¢¶ÓÁĞÈ¡³ö½ÓÊÕÊı¾İ²¢´¦ÀíÏß³Ìº¯Êı
-Output:         ÎŞ              
-Input:          arg  Ä¬ÈÏNULL
+Description:    ä»CANæ¥æ”¶ä¿¡æ¯é˜Ÿåˆ—å–å‡ºæ¥æ”¶æ•°æ®å¹¶å¤„ç†çº¿ç¨‹å‡½æ•°
+Output:         æ—               
+Input:          arg  é»˜è®¤NULL
 Return:         0
 ***************************************************************/
 void * Can::DealCanData(void* arg)
@@ -348,7 +348,7 @@ void * Can::DealCanData(void* arg)
 
 	timeval tTmp;
 	tTmp.tv_sec = 0;
-	tTmp.tv_usec = 10 * 1000;//10ºÁÃë
+	tTmp.tv_usec = 10 * 1000;//10æ¯«ç§’
 
 	ACE_Message_Block *mb = NULL;
 
@@ -374,7 +374,7 @@ void * Can::DealCanData(void* arg)
 		}
 		else
 		{		
-			ACE_OS::sleep(ACE_Time_Value(tTmp));  //ÔİÍ£10ºÁÃë
+			ACE_OS::sleep(ACE_Time_Value(tTmp));  //æš‚åœ10æ¯«ç§’
 			continue;			
 		}
 		Can::CreateInstance()->ExtractCanId(u1CanMsgType  , u1ModuleAddr  , u1FrameMode   , u1RemodeAddr, ulProtocolVersion  , sRecvFrameTmp.ulCanId);
