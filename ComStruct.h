@@ -9,7 +9,7 @@
 #include "GbtDb.h"
 
 #ifndef  ActiveTimer
-typedef ACE_Thread_Timer_Queue_Adapter<ACE_Timer_Heap> ActiveTimer;  //Ö÷¶¯¶¨Ê±Æ÷Àà
+typedef ACE_Thread_Timer_Queue_Adapter<ACE_Timer_Heap> ActiveTimer;  //ä¸»åŠ¨å®šæ—¶å™¨ç±»
 #endif
 
 #ifndef TscAceDebug
@@ -31,13 +31,13 @@ ace___->log X; \
 
 
 /*
-	GBTÏûÏ¢½á¹¹Ìå
+	GBTæ¶ˆæ¯ç»“æ„ä½“
 */
 struct SGbtFrame
 {
-	int iIndex;              //ÏûÏ¢×Ö½ÚË÷Òı
-	int iBufLen;             //ÏûÏ¢³¤¶È
-	Byte ucBuf[MAX_BUF_LEN]; //ÏûÏ¢ÄÚÈİÊı×é
+	int iIndex;              //æ¶ˆæ¯å­—èŠ‚ç´¢å¼•
+	int iBufLen;             //æ¶ˆæ¯é•¿åº¦
+	Byte ucBuf[MAX_BUF_LEN]; //æ¶ˆæ¯å†…å®¹æ•°ç»„
 }
 #ifndef WINDOWS
 __attribute__( ( packed, aligned(1) ) )
@@ -45,20 +45,20 @@ __attribute__( ( packed, aligned(1) ) )
 ;
 
 /*
-	GBTÏûÏ¢´¦Àí½á¹¹Ìå
+	GBTæ¶ˆæ¯å¤„ç†ç»“æ„ä½“
 */
 struct SGbtDealData
 {	
-	int            iObjNum;        //¶ÔÏóÊı
-	bool           bIsDeal;        //ÏûÏ¢ÊÇ·ñÒÑ¾­´¦Àí
-	bool           bReportSelf;    //ÊÇ·ñ×Ô¶¯ÉÏ±¨
+	int            iObjNum;        //å¯¹è±¡æ•°
+	bool           bIsDeal;        //æ¶ˆæ¯æ˜¯å¦å·²ç»å¤„ç†
+	bool           bReportSelf;    //æ˜¯å¦è‡ªåŠ¨ä¸ŠæŠ¥
 #ifdef GBT_TCP
-	ACE_SOCK_Stream SockStreamClient;  //TCP¿Í»§¶ËµØÖ·
+	ACE_SOCK_Stream SockStreamClient;  //TCPå®¢æˆ·ç«¯åœ°å€
 #else
-	ACE_INET_Addr  AddrClient;     //UDP¿Í»§¶ËµØÖ·
+	ACE_INET_Addr  AddrClient;     //UDPå®¢æˆ·ç«¯åœ°å€
 #endif
-	SGbtFrame      sRecvFrame;     //½ÓÊÕµ½GBTÏûÏ¢½á¹¹Ìå
-	SGbtFrame      sSendFrame;     //´ı·¢ËÍµ½GBTÏûÏ¢½á¹¹Ìå
+	SGbtFrame      sRecvFrame;     //æ¥æ”¶åˆ°GBTæ¶ˆæ¯ç»“æ„ä½“
+	SGbtFrame      sSendFrame;     //å¾…å‘é€åˆ°GBTæ¶ˆæ¯ç»“æ„ä½“
 }
 /*
 #ifndef WINDOWS
@@ -68,57 +68,57 @@ __attribute__( ( packed, aligned(1) ) )
 ;
 
 /*
-*	¸÷¸öÏß³Ì¼äÏûÏ¢¶ÓÁĞ½»»¥µÄÏûÏ¢Êı¾İ½á¹¹
+*	å„ä¸ªçº¿ç¨‹é—´æ¶ˆæ¯é˜Ÿåˆ—äº¤äº’çš„æ¶ˆæ¯æ•°æ®ç»“æ„
 */
 struct SThreadMsg
 {
-	Ulong ulType;        //ÏûÏ¢ÀàĞÍ
-	Ulong ulThreadPid;   //·¢ËÍ¸ÃÏûÏ¢µÄ½ø³Ì
-	Byte  ucMsgOpt;      //ÏûÏ¢µÄ¸½¼Ó²ÎÊı
-	Uint  uiMsgDataLen;  //ÏûÏ¢Êı¾İ¿é³¤¶È
-	void* pDataBuf;      //Êı¾İ¿é´æ´¢Ö¸Õë
+	Ulong ulType;        //æ¶ˆæ¯ç±»å‹
+	Ulong ulThreadPid;   //å‘é€è¯¥æ¶ˆæ¯çš„è¿›ç¨‹
+	Byte  ucMsgOpt;      //æ¶ˆæ¯çš„é™„åŠ å‚æ•°
+	Uint  uiMsgDataLen;  //æ¶ˆæ¯æ•°æ®å—é•¿åº¦
+	void* pDataBuf;      //æ•°æ®å—å­˜å‚¨æŒ‡é’ˆ
 }PACKED;
 
 /*
-	Ê±»ùµ÷¶È²ÎÊı±í
+	æ—¶åŸºè°ƒåº¦å‚æ•°è¡¨
 */
 struct STimeGroup
 {
-	Byte   ucId;            //µ÷¶È¼Æ»®ºÅ
-	Ushort usMonth;         //µ÷¶ÈÔÂ        b0-b11   Ã¿Î»1ÔÂ     1ÔÊĞíÖ´ĞĞ
-	Byte   ucDayWithWeek;   //µ÷¶ÈÈÕ(°´ÖÜ)  b0-b6    Ã¿Î»Ã¿ÖÜ1Ìì  b0ÖÜÌì b1£ºÖÜ1
-	Ulong  uiDayWithMonth;  //µ÷¶ÈÈÕ(°´ÔÂ)  b0-b30   Ã¿Î»Ã¿ÔÂ1Ìì
-	Byte   ucScheduleId;    //Ê±¶Î±íºÅ      0±íÊ¾ÎŞĞ§
+	Byte   ucId;            //è°ƒåº¦è®¡åˆ’å·
+	Ushort usMonth;         //è°ƒåº¦æœˆ        b0-b11   æ¯ä½1æœˆ     1å…è®¸æ‰§è¡Œ
+	Byte   ucDayWithWeek;   //è°ƒåº¦æ—¥(æŒ‰å‘¨)  b0-b6    æ¯ä½æ¯å‘¨1å¤©  b0å‘¨å¤© b1ï¼šå‘¨1
+	Ulong  uiDayWithMonth;  //è°ƒåº¦æ—¥(æŒ‰æœˆ)  b0-b30   æ¯ä½æ¯æœˆ1å¤©
+	Byte   ucScheduleId;    //æ—¶æ®µè¡¨å·      0è¡¨ç¤ºæ— æ•ˆ
 }
 PACKED;
 
 /*
-	Ê±¶Î±í²ÎÊı±í
+	æ—¶æ®µè¡¨å‚æ•°è¡¨
 */
 struct SSchedule 
 {
-	Byte ucId;              //Ê±¶Î±íºÅ
-	Byte ucEventId;         //Ê±¶ÎÊÂ¼şºÅ
-	Byte ucHour;            //Õûµã
-	Byte ucMin;             //·ÖÖÓ
-	Byte ucCtrl;            //¿ØÖÆ·½Ê½
-	Byte ucTimePatternId;   //ÅäÊ±·½°¸ºÅ
-	Byte ucAuxOut;          //¸¨Öú¹¦ÄÜÊä³ö
-	Byte ucSpecialOut;      //ÌØÊâ¹¦ÄÜÊä³ö
+	Byte ucId;              //æ—¶æ®µè¡¨å·
+	Byte ucEventId;         //æ—¶æ®µäº‹ä»¶å·
+	Byte ucHour;            //æ•´ç‚¹
+	Byte ucMin;             //åˆ†é’Ÿ
+	Byte ucCtrl;            //æ§åˆ¶æ–¹å¼
+	Byte ucTimePatternId;   //é…æ—¶æ–¹æ¡ˆå·
+	Byte ucAuxOut;          //è¾…åŠ©åŠŸèƒ½è¾“å‡º
+	Byte ucSpecialOut;      //ç‰¹æ®ŠåŠŸèƒ½è¾“å‡º
 }
 PACKED
 ;
 
 /*
-	ÅäÊ±·½°¸²ÎÊı
+	é…æ—¶æ–¹æ¡ˆå‚æ•°
 */
 struct STimePattern
 {
 	Byte ucId;
-	Byte ucCycleLen;         //ÖÜÆÚÊ±³¤
-	Byte ucPhaseOffset;      //ÏàÎ»²î
-	Byte ucAdjustPhaseGap;   //Ğ­µ÷ÏàÎ»²î
-	Byte ucScheduleTimeId;   //¶ÔÓ¦½×¶ÎÅäÊ±±íºÅ
+	Byte ucCycleLen;         //å‘¨æœŸæ—¶é•¿
+	Byte ucPhaseOffset;      //ç›¸ä½å·®
+	Byte ucAdjustPhaseGap;   //åè°ƒç›¸ä½å·®
+	Byte ucScheduleTimeId;   //å¯¹åº”é˜¶æ®µé…æ—¶è¡¨å·
 }
 /*
 #ifndef WINDOWS
@@ -129,17 +129,17 @@ PACKED
 ;
 
 /*
-	½×¶ÎÅäÊ±²ÎÊı
+	é˜¶æ®µé…æ—¶å‚æ•°
 */
 struct SScheduleTime
 {
 	Byte   ucId;
-	Byte   ucScheduleId;  //½×¶ÎºÅ
-	Uint32 usAllowPhase;  //·ÅĞĞÏàÎ»
-	Byte   ucGreenTime;   //½×¶ÎÂÌµÆÊ±¼ä
-	Byte   ucYellowTime;  //½×¶Î»ÆµÆÊ±¼ä
+	Byte   ucScheduleId;  //é˜¶æ®µå·
+	Uint32 usAllowPhase;  //æ”¾è¡Œç›¸ä½
+	Byte   ucGreenTime;   //é˜¶æ®µç»¿ç¯æ—¶é—´
+	Byte   ucYellowTime;  //é˜¶æ®µé»„ç¯æ—¶é—´
 	Byte   ucRedTime;
-	Byte   ucOption;      //½×¶ÎÑ¡Ïî
+	Byte   ucOption;      //é˜¶æ®µé€‰é¡¹
 }
 /*
 #ifndef WINDOWS
@@ -150,22 +150,22 @@ PACKED
 ;
 
 /*
-	ÏàÎ»²ÎÊı
+	ç›¸ä½å‚æ•°
 */
 struct SPhase
 {
-	Byte ucId;               //ÏàÎ»ºÅ(Ë÷Òı)
-	Byte ucPedestrianGreen;  //ĞĞÈËÂÌµÆÃëÊı
-	Byte ucPedestrianClear;  //ĞĞÈËÇå¿Õ
-	Byte ucMinGreen;         //×îĞ¡ÂÌ
-	Byte ucGreenDelayUnit;   //µ¥Î»ÂÌµÆÑÓ³¤Ê±¼ä
-	Byte ucMaxGreen1;        //×î´óÂÌµÆÊ±¼ä1
-	Byte ucMaxGreen2;        //×î´óÂÌµÆÊ±¼ä2
-	Byte ucFixedGreen;       //µ¯ĞÔÏàÎ»¹Ì¶¨ÂÌµÆÊ±¼ä
-	Byte ucGreenFlash;       //ÂÌÉÁÊ±¼ä
-	Byte ucType;             //ÏàÎ»ÀàĞÍ
-	Byte ucOption;           //ÏàÎ»Ñ¡Ïî
-	Byte ucExtend;           //À©Õ¹×Ö¶Î
+	Byte ucId;               //ç›¸ä½å·(ç´¢å¼•)
+	Byte ucPedestrianGreen;  //è¡Œäººç»¿ç¯ç§’æ•°
+	Byte ucPedestrianClear;  //è¡Œäººæ¸…ç©º
+	Byte ucMinGreen;         //æœ€å°ç»¿
+	Byte ucGreenDelayUnit;   //å•ä½ç»¿ç¯å»¶é•¿æ—¶é—´
+	Byte ucMaxGreen1;        //æœ€å¤§ç»¿ç¯æ—¶é—´1
+	Byte ucMaxGreen2;        //æœ€å¤§ç»¿ç¯æ—¶é—´2
+	Byte ucFixedGreen;       //å¼¹æ€§ç›¸ä½å›ºå®šç»¿ç¯æ—¶é—´
+	Byte ucGreenFlash;       //ç»¿é—ªæ—¶é—´
+	Byte ucType;             //ç›¸ä½ç±»å‹
+	Byte ucOption;           //ç›¸ä½é€‰é¡¹
+	Byte ucExtend;           //æ‰©å±•å­—æ®µ
 }
 /*
 #ifndef WINDOWS
@@ -176,17 +176,17 @@ PACKED
 ;
 
 /*
-	¸úËæÏàÎ»±í²ÎÊı
+	è·Ÿéšç›¸ä½è¡¨å‚æ•°
 */
 struct SOverlapPhase
 {
 	Byte ucId;
-	Byte ucOperateType;             //²Ù×÷ÀàĞÍ
-	Byte ucIncludePhaseLen;         //°üº¬ÏàÎ»³¤¶È
-	Byte ucIncludePhase[MAX_PHASE]; //°üº¬ÏàÎ» Ã¿¸ö×Ö½Ú1¸öÏàÎ»ºÅ
-	Byte ucCorrectPhaseLen;         //ĞŞÕıÏàÎ»³¤¶È
-	Byte ucCorrectPhase[MAX_PHASE]; //ĞŞÕıÏàÎ»
-	Byte ucTailGreen;               //Î²²¿ÂÌµÆ
+	Byte ucOperateType;             //æ“ä½œç±»å‹
+	Byte ucIncludePhaseLen;         //åŒ…å«ç›¸ä½é•¿åº¦
+	Byte ucIncludePhase[MAX_PHASE]; //åŒ…å«ç›¸ä½ æ¯ä¸ªå­—èŠ‚1ä¸ªç›¸ä½å·
+	Byte ucCorrectPhaseLen;         //ä¿®æ­£ç›¸ä½é•¿åº¦
+	Byte ucCorrectPhase[MAX_PHASE]; //ä¿®æ­£ç›¸ä½
+	Byte ucTailGreen;               //å°¾éƒ¨ç»¿ç¯
 	Byte ucTailYellow;   
 	Byte ucTailRed;  
 }
@@ -199,14 +199,14 @@ PACKED
 ;
 
 /*
-	Í¨µÀ²ÎÊı
+	é€šé“å‚æ•°
 */
 struct SChannel
 {
 	Byte ucId;
-	Byte ucSourcePhase; //Í¨µÀ¿ØÖÆĞÅºÅÔ´£¬ÏàÎ»ºÅ
-	Byte ucFlashAuto;   //×Ô¶¯»ÆÉÁ¿ØÖÆ
-	Byte ucType;        //ÀàĞÍ
+	Byte ucSourcePhase; //é€šé“æ§åˆ¶ä¿¡å·æºï¼Œç›¸ä½å·
+	Byte ucFlashAuto;   //è‡ªåŠ¨é»„é—ªæ§åˆ¶
+	Byte ucType;        //ç±»å‹
 }
 /*
 #ifndef WINDOWS
@@ -217,21 +217,21 @@ PACKED
 ;
 
 /*
-*	µ¥Ôª²ÎÊı
+*	å•å…ƒå‚æ•°
 */
 struct SUnit
 {
-	Byte ucStartFlashTime;     //Æô¶¯Ê±µÄÉÁ¹â¿ØÖÆÊ±¼ä
-	Byte ucStartAllRedTime;    //Æô¶¯Ê±µÄÈ«ºì¿ØÖÆÊ±¼ä
-	Byte ucCtrl;               //µ±Ç°µÄĞÅºÅ»ú¿ØÖÆ×´Ì¬
-	Byte ucFlashCtrl;          //µ±Ç°µÄÉÁ¹â¿ØÖÆÄ£Ê½
-	Byte ucWarn2;              //ĞÅºÅ»ú±¨¾¯
-	Byte ucWarn1;              //ĞÅºÅ»ú±¨¾¯
-	Byte ucWarnSmary;          //ĞÅºÅ»ú±¨¾¯ÕªÒª
-	Byte ucAllowFun;           //ÔÊĞíÔ¶³Ì¿ØÖÆÊµÌå¼¤»îĞÅºÅ»úµÄÄ³Ğ©¹¦ÄÜ
-	Byte ucFlashFre;           //ÉÁ¹âÆµÂÊ
-	Uint uiShineStartTime;     //»Ô¶È¿ØÖÆ¿ªÆôÊ±¼ä
-	Uint uiShineDownTime;      //»Ô¶È¿ØÖÆ¹Ø±ÕÊ±¼ä
+	Byte ucStartFlashTime;     //å¯åŠ¨æ—¶çš„é—ªå…‰æ§åˆ¶æ—¶é—´
+	Byte ucStartAllRedTime;    //å¯åŠ¨æ—¶çš„å…¨çº¢æ§åˆ¶æ—¶é—´
+	Byte ucCtrl;               //å½“å‰çš„ä¿¡å·æœºæ§åˆ¶çŠ¶æ€
+	Byte ucFlashCtrl;          //å½“å‰çš„é—ªå…‰æ§åˆ¶æ¨¡å¼
+	Byte ucWarn2;              //ä¿¡å·æœºæŠ¥è­¦
+	Byte ucWarn1;              //ä¿¡å·æœºæŠ¥è­¦
+	Byte ucWarnSmary;          //ä¿¡å·æœºæŠ¥è­¦æ‘˜è¦
+	Byte ucAllowFun;           //å…è®¸è¿œç¨‹æ§åˆ¶å®ä½“æ¿€æ´»ä¿¡å·æœºçš„æŸäº›åŠŸèƒ½
+	Byte ucFlashFre;           //é—ªå…‰é¢‘ç‡
+	Uint uiShineStartTime;     //è¾‰åº¦æ§åˆ¶å¼€å¯æ—¶é—´
+	Uint uiShineDownTime;      //è¾‰åº¦æ§åˆ¶å…³é—­æ—¶é—´
 }
 /*
 #ifndef WINDOWS
@@ -242,12 +242,12 @@ PACKED
 ;
 
 /*
-	Ã¿Â·µÆÅİ¼ì²âÅäÖÃÇé¿ö  ADD:20130731 
+	æ¯è·¯ç¯æ³¡æ£€æµ‹é…ç½®æƒ…å†µ  ADD:20130731 
 */
 struct SChannelCheck
 {
-	Byte ucSubChannelId;		//Í¨µÀµÄ×ÓÂ·ºÅ   Ä¿Ç°4°åÅäÖÃ¹²48Â·  1---48
-	Byte ucIsCheck; 			//ÊÇ·ñĞèÒª½øĞĞµÆÅİ¼ì²â 0-²»ĞèÒª 1-ĞèÒª
+	Byte ucSubChannelId;		//é€šé“çš„å­è·¯å·   ç›®å‰4æ¿é…ç½®å…±48è·¯  1---48
+	Byte ucIsCheck; 			//æ˜¯å¦éœ€è¦è¿›è¡Œç¯æ³¡æ£€æµ‹ 0-ä¸éœ€è¦ 1-éœ€è¦
 	
 }
 /*
@@ -259,44 +259,44 @@ PACKED
 ;
 
 /*
-*·½ÏòÓëÏàÎ»µÄ¶ÔÓ¦¹ØÏµ
+*æ–¹å‘ä¸ç›¸ä½çš„å¯¹åº”å…³ç³»
 */
 
 struct SPhaseToDirec
 {
-	Byte ucId;     //·½ÏòºÅ
-	Byte ucPhase;  //ÏàÎ»ºÅ
-	Byte ucOverlapPhase; //¸úËæÏàÎ»ºÅ
-	Byte ucRoadCnt;   //³µµÀÊı
+	Byte ucId;     //æ–¹å‘å·
+	Byte ucPhase;  //ç›¸ä½å·
+	Byte ucOverlapPhase; //è·Ÿéšç›¸ä½å·
+	Byte ucRoadCnt;   //è½¦é“æ•°
 }
 PACKED
 ;
 
 /*
-	ĞÅºÅ»ú²ÎÊıÅäÖÃĞÅÏ¢
+	ä¿¡å·æœºå‚æ•°é…ç½®ä¿¡æ¯
 */
 struct STscConfig 
 {
-	int                   iDetCfg[MAX_DET_BOARD];           //¼ì²âÆ÷°åµÄÆğÊ¼ÅäÖÃ 0 1 17
-	STimeGroup            sTimeGroup[MAX_TIMEGROUP];        //Ê±»ùµ÷¶È±í
-	SSchedule             sSchedule[MAX_SCHEDULE_PER_DAY];  //Ò»ÌìµÄÊ±¶Î±í
-	STimePattern          sTimePattern[MAX_TIMEPATTERN];    //ÅäÊ±·½°¸±í
-	SScheduleTime         sScheduleTime[MAX_SCHEDULETIME_TYPE][MAX_SON_SCHEDULE];  //½×¶ÎÅäÊ±±í
-	SPhase                sPhase[MAX_PHASE];                   //ÏàÎ»±í
-	GBT_DB::Collision sPhaseConflict[MAX_CONFLICT_PHASE];  //³åÍ»ÏàÎ»±í
-	SOverlapPhase         sOverlapPhase[MAX_OVERLAP_PHASE];    //¸úËæÏàÎ»±í
-	SChannel              sChannel[MAX_CHANNEL];               //Í¨µÀ±í
-	SUnit                 sUnit;                               //µ¥Ôª²ÎÊı
-	GBT_DB::Detector  sDetector[MAX_DETECTOR];             //¼ì²âÆ÷²ÎÊı
-	GBT_DB::SpecFun   sSpecFun[FUN_COUNT];                 //¹¦ÄÜ¶¨Òå±í
-	GBT_DB::DetExtend sDetExtend[MAX_DETECTOR];            //¼ì²âÆ÷À©Õ¹²ÎÊı
+	int                   iDetCfg[MAX_DET_BOARD];           //æ£€æµ‹å™¨æ¿çš„èµ·å§‹é…ç½® 0 1 17
+	STimeGroup            sTimeGroup[MAX_TIMEGROUP];        //æ—¶åŸºè°ƒåº¦è¡¨
+	SSchedule             sSchedule[MAX_SCHEDULE_PER_DAY];  //ä¸€å¤©çš„æ—¶æ®µè¡¨
+	STimePattern          sTimePattern[MAX_TIMEPATTERN];    //é…æ—¶æ–¹æ¡ˆè¡¨
+	SScheduleTime         sScheduleTime[MAX_SCHEDULETIME_TYPE][MAX_SON_SCHEDULE];  //é˜¶æ®µé…æ—¶è¡¨
+	SPhase                sPhase[MAX_PHASE];                   //ç›¸ä½è¡¨
+	GBT_DB::Collision sPhaseConflict[MAX_CONFLICT_PHASE];  //å†²çªç›¸ä½è¡¨
+	SOverlapPhase         sOverlapPhase[MAX_OVERLAP_PHASE];    //è·Ÿéšç›¸ä½è¡¨
+	SChannel              sChannel[MAX_CHANNEL];               //é€šé“è¡¨
+	SUnit                 sUnit;                               //å•å…ƒå‚æ•°
+	GBT_DB::Detector  sDetector[MAX_DETECTOR];             //æ£€æµ‹å™¨å‚æ•°
+	GBT_DB::SpecFun   sSpecFun[FUN_COUNT];                 //åŠŸèƒ½å®šä¹‰è¡¨
+	GBT_DB::DetExtend sDetExtend[MAX_DETECTOR];            //æ£€æµ‹å™¨æ‰©å±•å‚æ•°
 	//ACE_Thread_Mutex  mMutex;  
-	SChannelCheck         sChannelChk[MAX_LAMP];         //Í¨µÀµÆÅİ¼ì²âÅäÖÃ   
-	SPhaseToDirec         sPhaseToDirec[MAX_DREC] ;     //·½ÏòÓëÏàÎ»²ÎÊı   
-	Byte DegradeMode ; 									//½µ¼¶Ä£Ê½ 201310191100
-	Byte DegradePattern ; 						  	    //½µ¼¶»ù×¼·½°¸ 201310191400
-	GBT_DB::CntDownDev sCntDownDev[MAX_CNTDOWNDEV];     //µ¹¼ÆÊ±±íÅäÖÃ
-	//Uint DirecButtonPhase[4] ;    //·½Ïò°´¼üÏàÎ»ÅäÖÃ±±¶«ÄÏÎ÷
+	SChannelCheck         sChannelChk[MAX_LAMP];         //é€šé“ç¯æ³¡æ£€æµ‹é…ç½®   
+	SPhaseToDirec         sPhaseToDirec[MAX_DREC] ;     //æ–¹å‘ä¸ç›¸ä½å‚æ•°   
+	Byte DegradeMode ; 									//é™çº§æ¨¡å¼ 201310191100
+	Byte DegradePattern ; 						  	    //é™çº§åŸºå‡†æ–¹æ¡ˆ 201310191400
+	GBT_DB::CntDownDev sCntDownDev[MAX_CNTDOWNDEV];     //å€’è®¡æ—¶è¡¨é…ç½®
+	//Uint DirecButtonPhase[4] ;    //æ–¹å‘æŒ‰é”®ç›¸ä½é…ç½®åŒ—ä¸œå—è¥¿
  }
 /*
 #ifndef WINDOWS
@@ -308,17 +308,17 @@ PACKED
 
 
 /*
-*Ã¿¸ö²½·¥µÄÏà¹ØµÆ¾ßÊä³öĞÅÏ¢
+*æ¯ä¸ªæ­¥ä¼çš„ç›¸å…³ç¯å…·è¾“å‡ºä¿¡æ¯
 */
 struct SStepInfo
 {
-	Byte ucLampOn[MAX_LAMP];      //¸÷¸öµÆ¾ßÁÁµÄÇé¿ö0£ºÃğ1£ºÁÁ Ö±½ÓÓëÎïÀíÉè±¸ryg¶ÔÓ¦
-	Byte ucLampFlash[MAX_LAMP];   //¸÷¸öµÆ¾ßÉÁµÄÇé¿ö
-	Byte ucStepLen;               //Ã¿¸ö²½·¥µÄ×ÜÔËĞĞÊ±¼ä
-	Byte ucPhaseColor[MAX_PHASE]; //Ñ¡ÖĞÏàÎ»ÔÚ´Ë²½·¥ÏÔÊ¾µÄÑÕÉ«
-	Byte ucOverlapPhaseColor[MAX_OVERLAP_PHASE];  //Ñ¡ÖĞ¸úËæÏàÎ»ÏàÎ»ÔÚ´Ë²½·¥ÏÔÊ¾µÄÑÕÉ«
-	Uint uiAllowPhase;    //·ÅĞĞÏàÎ» 1Î»1¸öÏàÎ»
-	Uint uiOverlapPhase;  //¸úËæÏàÎ» 1Î»1¸öÏàÎ»
+	Byte ucLampOn[MAX_LAMP];      //å„ä¸ªç¯å…·äº®çš„æƒ…å†µ0ï¼šç­1ï¼šäº® ç›´æ¥ä¸ç‰©ç†è®¾å¤‡rygå¯¹åº”
+	Byte ucLampFlash[MAX_LAMP];   //å„ä¸ªç¯å…·é—ªçš„æƒ…å†µ
+	Byte ucStepLen;               //æ¯ä¸ªæ­¥ä¼çš„æ€»è¿è¡Œæ—¶é—´
+	Byte ucPhaseColor[MAX_PHASE]; //é€‰ä¸­ç›¸ä½åœ¨æ­¤æ­¥ä¼æ˜¾ç¤ºçš„é¢œè‰²
+	Byte ucOverlapPhaseColor[MAX_OVERLAP_PHASE];  //é€‰ä¸­è·Ÿéšç›¸ä½ç›¸ä½åœ¨æ­¤æ­¥ä¼æ˜¾ç¤ºçš„é¢œè‰²
+	Uint uiAllowPhase;    //æ”¾è¡Œç›¸ä½ 1ä½1ä¸ªç›¸ä½
+	Uint uiOverlapPhase;  //è·Ÿéšç›¸ä½ 1ä½1ä¸ªç›¸ä½
 }
 /*
 #ifndef WINDOWS
@@ -329,13 +329,13 @@ PACKED
 ;
 
 /*
-*Ã¿¸öÏàÎ»µÄ²½·¥ĞÅÏ¢
+*æ¯ä¸ªç›¸ä½çš„æ­¥ä¼ä¿¡æ¯
 */
 struct SPhaseStep
 {
-	bool bIsAllowPhase;   //1£º·ÅĞĞÏàÎ» ¸úËæÏàÎ»
-	Byte ucPhaseId;       //ÏàÎ»ºÅ£¬¼´ÔÚÏàÎ»±íµÄid
-	Byte ucStepTime[4];   //ÂÌ ÂÌÉÁ »Æ ºì µÄ³ÖĞøÊ±¼ä  0:ÎªÃ»ÓĞ¸Ã²½
+	bool bIsAllowPhase;   //1ï¼šæ”¾è¡Œç›¸ä½ è·Ÿéšç›¸ä½
+	Byte ucPhaseId;       //ç›¸ä½å·ï¼Œå³åœ¨ç›¸ä½è¡¨çš„id
+	Byte ucStepTime[4];   //ç»¿ ç»¿é—ª é»„ çº¢ çš„æŒç»­æ—¶é—´  0:ä¸ºæ²¡æœ‰è¯¥æ­¥
 }
 /*
 #ifndef WINDOWS
@@ -347,42 +347,42 @@ PACKED
 
 
 /*
-	ĞÅºÅ»ú¶¯Ì¬Êı¾İ¶¨Òå
+	ä¿¡å·æœºåŠ¨æ€æ•°æ®å®šä¹‰
 */
 struct STscRunData 
 {
-	bool              bStartFlash;      //Æô¶¯Ê±µÄ»ÆÉÁ  true:ÉÁ  false:·ÇÉÁ
-	Byte              ucWorkMode;       //ĞÅºÅ»úÔËĞĞÄ£Ê½
-	Uint			  uiWorkStatus;     //¹¤×÷×´Ì¬
-	Uint              uiOldWorkStatus;  //ÉÏ´ÎµÄ¹¤×÷×´Ì¬
-	Uint              uiCtrl;           //¿ØÖÆ·½Ê½
-	Uint              uiOldCtrl;        //ÉÏ´ÎµÄ¿ØÖÆ·½Ê½
-	Uint              uiUtcsHeartBeat;  //utcsÁªÍø ĞÄÌø
-	Byte              ucScheduleId;     //Ê±¶Î±íºÅ
-	Uint              uiScheduleCtrl;   //Ê±¶Î±íÀïµÄ¿ØÖÆ·½Ê½
-	Byte              ucTimePatternId;  //ÅäÊ±·½°¸ºÅ
-	Byte              ucScheduleTimeId; //½×¶ÎÅäÊ±±íºÅ
-	Byte			  ucStepNo;         //µ±Ç°²½·¥ºÅ
-	Byte              ucLockPhase;      //Ëø¶¨ÌØÊâÏàÎ»ºÅ
-	bool              bOldLock;         //¼ÇÂ¼ÉÏ´ÎÊÇ·ñÎªËø¶¨ÏàÎ»
-	Byte              ucStepNum;        //µ±Ç°ÖÜÆÚµÄ²½·¥×ÜÊı
-	Byte              ucStepTime;       //µ±Ç°²½·¥³¤¶È
-	Byte              ucElapseTime;     //µ±Ç°²½ÒÑÔËĞĞµÄÊ±¼ä
-	//Byte              ucStageElapseTime;//µ±Ç°½×¶ÎÒÑÔËĞĞµÄÊ±¼ä
-	Byte              ucRunTime;        //µ±Ç°²½»¹ĞèÔËĞĞµÄÊ±¼ä
-	Byte              ucCycle;          //ÖÜÆÚÊ±³¤
-	SScheduleTime     sScheduleTime[MAX_SON_SCHEDULE];        //µ±Ç°ËùÓĞ×Ó½×¶ÎµÄ¼¯ºÏ
-	Byte              ucStageIncludeSteps[MAX_SON_SCHEDULE];  //µ±Ç°¸÷¸ö½×¶ÎµÄ¸÷×Ô°üº¬µÄ²½·¥Êı
-	Byte              ucStageCount;     //µ±Ç°½×¶Î×ÜÊı
-	Byte              ucStageNo;        //µ±Ç°½×¶ÎºÅ
-	bool              bNeedUpdate;      //¹¤×÷Çø¾²Ì¬¶¯Ì¬²ÎÊıÊÇ·ñĞèÒª¸üĞÂ
-	SStepInfo         sStageStepInfo[MAX_STEP];   //¸÷¸ö²½·¥ĞÅÏ¢
-	//ACE_Thread_Mutex  mMutex;                     //»¥³âÌå
+	bool              bStartFlash;      //å¯åŠ¨æ—¶çš„é»„é—ª  true:é—ª  false:éé—ª
+	Byte              ucWorkMode;       //ä¿¡å·æœºè¿è¡Œæ¨¡å¼
+	Uint			  uiWorkStatus;     //å·¥ä½œçŠ¶æ€
+	Uint              uiOldWorkStatus;  //ä¸Šæ¬¡çš„å·¥ä½œçŠ¶æ€
+	Uint              uiCtrl;           //æ§åˆ¶æ–¹å¼
+	Uint              uiOldCtrl;        //ä¸Šæ¬¡çš„æ§åˆ¶æ–¹å¼
+	Uint              uiUtcsHeartBeat;  //utcsè”ç½‘ å¿ƒè·³
+	Byte              ucScheduleId;     //æ—¶æ®µè¡¨å·
+	Uint              uiScheduleCtrl;   //æ—¶æ®µè¡¨é‡Œçš„æ§åˆ¶æ–¹å¼
+	Byte              ucTimePatternId;  //é…æ—¶æ–¹æ¡ˆå·
+	Byte              ucScheduleTimeId; //é˜¶æ®µé…æ—¶è¡¨å·
+	Byte			  ucStepNo;         //å½“å‰æ­¥ä¼å·
+	Byte              ucLockPhase;      //é”å®šç‰¹æ®Šç›¸ä½å·
+	bool              bOldLock;         //è®°å½•ä¸Šæ¬¡æ˜¯å¦ä¸ºé”å®šç›¸ä½
+	Byte              ucStepNum;        //å½“å‰å‘¨æœŸçš„æ­¥ä¼æ€»æ•°
+	Byte              ucStepTime;       //å½“å‰æ­¥ä¼é•¿åº¦
+	Byte              ucElapseTime;     //å½“å‰æ­¥å·²è¿è¡Œçš„æ—¶é—´
+	//Byte              ucStageElapseTime;//å½“å‰é˜¶æ®µå·²è¿è¡Œçš„æ—¶é—´
+	Byte              ucRunTime;        //å½“å‰æ­¥è¿˜éœ€è¿è¡Œçš„æ—¶é—´
+	Byte              ucCycle;          //å‘¨æœŸæ—¶é•¿
+	SScheduleTime     sScheduleTime[MAX_SON_SCHEDULE];        //å½“å‰æ‰€æœ‰å­é˜¶æ®µçš„é›†åˆ
+	Byte              ucStageIncludeSteps[MAX_SON_SCHEDULE];  //å½“å‰å„ä¸ªé˜¶æ®µçš„å„è‡ªåŒ…å«çš„æ­¥ä¼æ•°
+	Byte              ucStageCount;     //å½“å‰é˜¶æ®µæ€»æ•°
+	Byte              ucStageNo;        //å½“å‰é˜¶æ®µå·
+	bool              bNeedUpdate;      //å·¥ä½œåŒºé™æ€åŠ¨æ€å‚æ•°æ˜¯å¦éœ€è¦æ›´æ–°
+	SStepInfo         sStageStepInfo[MAX_STEP];   //å„ä¸ªæ­¥ä¼ä¿¡æ¯
+	//ACE_Thread_Mutex  mMutex;                     //äº’æ–¥ä½“
 	bool              bIsChkLght ;
 	bool              b8cndtown ;   //ADD:20131107
-	Byte 			  ucManualType ;//ADD:20141021 µ±Ç°ÊÖ¿ØÀàĞÍ	
-	Byte			  flashType ;   //ADD:20141106 µ±ÏµÍ³´¦ÓÚ»ÆÉÁ×´Ì¬Ê±ºò»ÆÉÁÀàĞÍ
-	Byte              ucPlanId ;    //ADD:20150310 Ê±»ùºÅ
+	Byte 			  ucManualType ;//ADD:20141021 å½“å‰æ‰‹æ§ç±»å‹	
+	Byte			  flashType ;   //ADD:20141106 å½“ç³»ç»Ÿå¤„äºé»„é—ªçŠ¶æ€æ—¶å€™é»„é—ªç±»å‹
+	Byte              ucPlanId ;    //ADD:20150310 æ—¶åŸºå·
 }
 /*
 #ifndef WINDOWS
@@ -395,14 +395,14 @@ PACKED
 
 
 /*
-	ÏàÎ»×´Ì¬Êä³ö²ÎÊı
+	ç›¸ä½çŠ¶æ€è¾“å‡ºå‚æ•°
 */
 struct SPhaseSts 
 {
-	Byte ucId;     //±àºÅ
-	Byte ucRed;    //ºìµÆÊä³ö×´Ì¬  b0-b7 1 ÓĞĞÅºÅ 0 ÎŞĞÅºÅ
-	Byte ucYellow; //»ÆµÆ
-	Byte ucGreen;  //ÂÌµÆ
+	Byte ucId;     //ç¼–å·
+	Byte ucRed;    //çº¢ç¯è¾“å‡ºçŠ¶æ€  b0-b7 1 æœ‰ä¿¡å· 0 æ— ä¿¡å·
+	Byte ucYellow; //é»„ç¯
+	Byte ucGreen;  //ç»¿ç¯
 }
 /*
 #ifndef WINDOWS
@@ -413,12 +413,12 @@ PACKED
 ;
 
 /*
-	Í¨µÀ×´Ì¬Êä³ö²ÎÊı
+	é€šé“çŠ¶æ€è¾“å‡ºå‚æ•°
 */
 struct SChannelSts 
 {
 	Byte ucId;     
-	Byte ucRed;     //ºìµÆÊä³ö×´Ì¬ 1 »î¶¯ 0²»»î¶¯
+	Byte ucRed;     //çº¢ç¯è¾“å‡ºçŠ¶æ€ 1 æ´»åŠ¨ 0ä¸æ´»åŠ¨
 	Byte ucYellow;
 	Byte ucGreen;
 }
@@ -432,12 +432,12 @@ PACKED
 
 
 /*
-	¸úËæÏàÎ»×´Ì¬²ÎÊı
+	è·Ÿéšç›¸ä½çŠ¶æ€å‚æ•°
 */
 struct SOverlapPhaseSts 
 {
 	Byte ucId;
-	Byte ucRed;      //ºìµÆÊä³ö×´Ì¬±êÖ¾ Ã¿Ò»Î»1¸öÏàÎ»
+	Byte ucRed;      //çº¢ç¯è¾“å‡ºçŠ¶æ€æ ‡å¿— æ¯ä¸€ä½1ä¸ªç›¸ä½
 	Byte ucYellow;
 	Byte ucGreen;
 }
@@ -451,13 +451,13 @@ PACKED
 
 
 /*
-	¼ì²âÆ÷×´Ì¬²ÎÊı
+	æ£€æµ‹å™¨çŠ¶æ€å‚æ•°
 */
 struct SDetectorSts 
 {
 	Byte ucId;
-	Byte ucStatus;  //×´Ì¬
-	Byte ucAlarm;   //±¨¾¯
+	Byte ucStatus;  //çŠ¶æ€
+	Byte ucAlarm;   //æŠ¥è­¦
 }
 /*
 #ifndef WINDOWS
@@ -469,17 +469,17 @@ PACKED
 
 
 /*
-	½»Í¨¼ì²âÊı¾İ²ÎÊı
+	äº¤é€šæ£€æµ‹æ•°æ®å‚æ•°
 */
 struct SDetectorData 
 {
 	Byte ucId;
-	Byte ucVolume;       //×ÜÁ÷Á¿
-	Byte ucLongVolume;   //´óĞÍ³µÁ÷Á¿
-	Byte ucSmallVolume;  //Ğ¡ĞÍ³µÁ÷Á¿
-	Byte ucOccupancy;    //Õ¼ÓĞÂÊ
-	Byte ucVelocity;     //ËÙ¶È
-	Byte ucVehLen;       //³µÉí³¤¶È
+	Byte ucVolume;       //æ€»æµé‡
+	Byte ucLongVolume;   //å¤§å‹è½¦æµé‡
+	Byte ucSmallVolume;  //å°å‹è½¦æµé‡
+	Byte ucOccupancy;    //å æœ‰ç‡
+	Byte ucVelocity;     //é€Ÿåº¦
+	Byte ucVehLen;       //è½¦èº«é•¿åº¦
 }
 /*
 #ifndef WINDOWS
@@ -491,13 +491,13 @@ PACKED
 
 
 /*
-	³µÁ¾¼ì²âÆ÷¸æ¾¯
+	è½¦è¾†æ£€æµ‹å™¨å‘Šè­¦
 */
 struct SDetectorAlarm
 {
 	Byte ucId;
-	Byte ucDetAlarm;   //¼ì²âÆ÷±¨¾¯×´Ì¬
-	Byte ucCoilAlarm;  //¸ĞÓ¦ÏßÈ¦±¨¾¯×´Ì¬
+	Byte ucDetAlarm;   //æ£€æµ‹å™¨æŠ¥è­¦çŠ¶æ€
+	Byte ucCoilAlarm;  //æ„Ÿåº”çº¿åœˆæŠ¥è­¦çŠ¶æ€
 }
 /*
 #ifndef WINDOWS
@@ -507,30 +507,30 @@ __attribute__( ( packed, aligned(1) ) )
 PACKED
 ;
 
-//ĞÅºÅ»ú×´Ì¬
+//ä¿¡å·æœºçŠ¶æ€
 struct STscStatus
 {
-	bool bStartFlash;       //Æô¶¯Ê±µÄ»ÆÉÁ
-	Uint uiWorkStatus;      //¹¤×÷×´Ì¬
-	Uint uiCtrl;            //¿ØÖÆ·½Ê½
-	Byte ucStepNo;          //µ±Ç°²½·¥
-	Byte ucStageNo;         //µ±Ç°½×¶Î
-	Byte ucActiveSchNo;     //µ±Ç°»î¶¯µÄÊ±¶Î±íºÅ
-	Byte ucTscAlarm2;       //ĞÅºÅ»ú±¨¾¯2
-	Byte ucTscAlarm1;       //ĞÅºÅ»ú±¨¾¯1
-	Byte ucTscAlarmSummary; //ĞÅºÅ»ú±¨¾¯ÕªÒª
+	bool bStartFlash;       //å¯åŠ¨æ—¶çš„é»„é—ª
+	Uint uiWorkStatus;      //å·¥ä½œçŠ¶æ€
+	Uint uiCtrl;            //æ§åˆ¶æ–¹å¼
+	Byte ucStepNo;          //å½“å‰æ­¥ä¼
+	Byte ucStageNo;         //å½“å‰é˜¶æ®µ
+	Byte ucActiveSchNo;     //å½“å‰æ´»åŠ¨çš„æ—¶æ®µè¡¨å·
+	Byte ucTscAlarm2;       //ä¿¡å·æœºæŠ¥è­¦2
+	Byte ucTscAlarm1;       //ä¿¡å·æœºæŠ¥è­¦1
+	Byte ucTscAlarmSummary; //ä¿¡å·æœºæŠ¥è­¦æ‘˜è¦
 
-	Byte ucCurStageLen[16]; //µ±Ç°·½°¸¸÷½×¶ÎÊ±³¤
-	Byte ucCurKeyGreen[16]; //µ±Ç°·½°¸¸÷¹Ø¼üÏàÎ»ÂÌµÆÊ±³¤
+	Byte ucCurStageLen[16]; //å½“å‰æ–¹æ¡ˆå„é˜¶æ®µæ—¶é•¿
+	Byte ucCurKeyGreen[16]; //å½“å‰æ–¹æ¡ˆå„å…³é”®ç›¸ä½ç»¿ç¯æ—¶é•¿
 	
-	Byte ucActiveDetCnt;             //»î¶¯¼ì²âÆ÷×ÜÊı
-	SDetectorSts  sDetSts[8];        //¼ì²âÆ÷×´Ì¬
-	SDetectorData sDetData[48];      //½»Í¨¼ì²âÆ÷Êı¾İ
-	SDetectorAlarm    sDetAlarm[48]; //¼ì²âÆ÷±¨¾¯
+	Byte ucActiveDetCnt;             //æ´»åŠ¨æ£€æµ‹å™¨æ€»æ•°
+	SDetectorSts  sDetSts[8];        //æ£€æµ‹å™¨çŠ¶æ€
+	SDetectorData sDetData[48];      //äº¤é€šæ£€æµ‹å™¨æ•°æ®
+	SDetectorAlarm    sDetAlarm[48]; //æ£€æµ‹å™¨æŠ¥è­¦
 
-	SPhaseSts  sPhaseSts[MAX_PHASE/8];       //ÏàÎ»×´Ì¬Êä³ö
-	SOverlapPhaseSts  sOverlapPhaseSts;      //¸úËæÏàÎ»×´Ì¬Êä³ö
-	SChannelSts  sChannelSts[MAX_CHANNEL/8]; //Í¨µÀ×´Ì¬Êä³ö
+	SPhaseSts  sPhaseSts[MAX_PHASE/8];       //ç›¸ä½çŠ¶æ€è¾“å‡º
+	SOverlapPhaseSts  sOverlapPhaseSts;      //è·Ÿéšç›¸ä½çŠ¶æ€è¾“å‡º
+	SChannelSts  sChannelSts[MAX_CHANNEL/8]; //é€šé“çŠ¶æ€è¾“å‡º
 }
 /*
 #ifndef WINDOWS
@@ -542,13 +542,13 @@ PACKED
 
 
 /*
-*ÏàÎ»Óë¼ì²âÆ÷µÄ¶ÔÓ¦¹ØÏµ
+*ç›¸ä½ä¸æ£€æµ‹å™¨çš„å¯¹åº”å…³ç³»
 */
 struct SPhaseDetector 
 {
-	int iRoadwayCnt;                 //³µµÀÊı »ò ¼ì²âÆ÷Êı
-	int iDetectorId[MAX_DETECTOR];   //¶ÔÓ¦µÄ¼ì²âÆ÷id
-	int iDetectorCarNumbers[MAX_DETECTOR] ; //¶ÔÓ¦¼ì²âÆ÷³µÊıÁ¿
+	int iRoadwayCnt;                 //è½¦é“æ•° æˆ– æ£€æµ‹å™¨æ•°
+	int iDetectorId[MAX_DETECTOR];   //å¯¹åº”çš„æ£€æµ‹å™¨id
+	int iDetectorCarNumbers[MAX_DETECTOR] ; //å¯¹åº”æ£€æµ‹å™¨è½¦æ•°é‡
 }
 /*
 #ifndef WINDOWS
@@ -559,12 +559,12 @@ PACKED
 ;
 
 /*
-*ĞÂ¹ú±êGAT508-2014 32¸öµØÖ·µ¹¼ÆÊ±ĞÅÏ¢
+*æ–°å›½æ ‡GAT508-2014 32ä¸ªåœ°å€å€’è®¡æ—¶ä¿¡æ¯
 */
 struct SNewGBCntDownTimeInfo
 {
-	Byte CntDownColor;               //µ¹¼ÆÊ±Éè±¸ÑÕÉ«
-	Byte CntDownTime;                //µ¹¼ÆÊ±Éè±¸Ê±¼ä
+	Byte CntDownColor;               //å€’è®¡æ—¶è®¾å¤‡é¢œè‰²
+	Byte CntDownTime;                //å€’è®¡æ—¶è®¾å¤‡æ—¶é—´
 }
 PACKED
 ;
@@ -573,13 +573,13 @@ PACKED
 
 
 /*
-*CanÊı¾İ½á¹¹
+*Canæ•°æ®ç»“æ„
 */
 struct SCanFrame 
 {
-	Ulong ulCanId;     //canid 4×Ö½Ú32bit ÓĞĞ§Î»29Î» 11¸ö»ù±¾IDºÍ18¸öÀ©Õ¹ID
-	Byte pCanData[8];  //canÊı¾İ×î´ó8¸ö×Ö½Ú
-	Byte ucCanDataLen; //canÊı¾İµÄÓĞĞ§³¤¶È
+	Ulong ulCanId;     //canid 4å­—èŠ‚32bit æœ‰æ•ˆä½29ä½ 11ä¸ªåŸºæœ¬IDå’Œ18ä¸ªæ‰©å±•ID
+	Byte pCanData[8];  //canæ•°æ®æœ€å¤§8ä¸ªå­—èŠ‚
+	Byte ucCanDataLen; //canæ•°æ®çš„æœ‰æ•ˆé•¿åº¦
 }
 /*
 #ifndef WINDOWS
@@ -607,27 +607,27 @@ __attribute__( ( packed, aligned(1) ) )
 PACKED
 ;
 /*
-*ÊÂÇ°·ÖÎö¿ØÖÆ´«µİ²ÎÊı
+*äº‹å‰åˆ†ææ§åˆ¶ä¼ é€’å‚æ•°
 */
 struct SPreAnalysisParaData 
 {
-	Byte DevId ; //Éè±¸ºÅ	
+	Byte DevId ; //è®¾å¤‡å·	
 	bool    IsUsed ;
-	bool    IsOffline ; //ÊÇ·ñÀëÏß
-	Ushort CarLength ; //³µÁ¾ÅÅ¶Ó³¤¶È
-	Ushort CarNumber ; //³µÁ¾ÊıÄ¿
-	Byte   CarDirecLamp ; //³µÁ¾³µµÀ·½Ïò
+	bool    IsOffline ; //æ˜¯å¦ç¦»çº¿
+	Ushort CarLength ; //è½¦è¾†æ’é˜Ÿé•¿åº¦
+	Ushort CarNumber ; //è½¦è¾†æ•°ç›®
+	Byte   CarDirecLamp ; //è½¦è¾†è½¦é“æ–¹å‘
 	Byte   PhaseId ;	
 };
 
 struct VehicleStat
 {
-	Ulong       ulId;                       /*±àºÅ*/
-	Byte       ucDetId;                    /*¼ì²âÆ÷id*/
-	Ulong       ulCarTotal;                 /*³µÁ¾×ÜÁ÷Á¿ÅÅ¶Ó³¤¶È*/
-	Byte       ucOccupancy;                /*Õ¼ÓĞÂÊ*/
-	Ulong       ulAddtime;                 /*¼ÇÂ¼Ìí¼ÓµÄÊ±¼ä*/
-	bool        bRecordQueueLength ;       //¼ÇÂ¼ÅÅ¶Ó³¤¶È
+	Ulong       ulId;                       /*ç¼–å·*/
+	Byte       ucDetId;                    /*æ£€æµ‹å™¨id*/
+	Ulong       ulCarTotal;                 /*è½¦è¾†æ€»æµé‡æ’é˜Ÿé•¿åº¦*/
+	Byte       ucOccupancy;                /*å æœ‰ç‡*/
+	Ulong       ulAddtime;                 /*è®°å½•æ·»åŠ çš„æ—¶é—´*/
+	bool        bRecordQueueLength ;       //è®°å½•æ’é˜Ÿé•¿åº¦
 }PACKED ;
 
 /*Send CntDownNum to client*/
@@ -635,7 +635,7 @@ struct SendCntDownNum
 {
 	bool bSend ;
 	bool bUsed ;
-	ACE_INET_Addr addClient;  //¿Í»§¶ËµØÖ·
+	ACE_INET_Addr addClient;  //å®¢æˆ·ç«¯åœ°å€
 };
 
 //#pragma pack(pop)
@@ -645,17 +645,17 @@ struct SendCntDownNum
 #endif
 
 /*
-*Ö÷¶¯ÉÏ±¨
+*ä¸»åŠ¨ä¸ŠæŠ¥
 */
 struct SReportSelf
 {
-	Byte   ucTick;            //ÀÛ¼Æ´ÎÊı
-	Ushort usCycle;           //ÖÜÆÚ µ¥Î»100ms
-	Byte   ucCmd;             //ÃüÁî×Ö
+	Byte   ucTick;            //ç´¯è®¡æ¬¡æ•°
+	Ushort usCycle;           //å‘¨æœŸ å•ä½100ms
+	Byte   ucCmd;             //å‘½ä»¤å­—
 #ifdef GBT_TCP
-	Byte   ucGbtDealDataIndex;  //´¦ÀíµÄÏÂ±ê
+	Byte   ucGbtDealDataIndex;  //å¤„ç†çš„ä¸‹æ ‡
 #else
-	ACE_INET_Addr addClient;  //¿Í»§¶ËµØÖ·
+	ACE_INET_Addr addClient;  //å®¢æˆ·ç«¯åœ°å€
 #endif
 };
 

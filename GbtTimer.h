@@ -4,16 +4,16 @@
 #include "ComStruct.h"
 #include "GbtMsgQueue.h"
 
-const int MAX_REPORT_NUM = 4;   //×î´óÖ÷¶¯ÉÏ±¨ÏûÏ¢
+const int MAX_REPORT_NUM = 4;   //æœ€å¤§ä¸»åŠ¨ä¸ŠæŠ¥æ¶ˆæ¯
 
 /*
-*gbtÖ÷¶¯ÉÏ±¨¶¨Ê±Æ÷
+*gbtä¸»åŠ¨ä¸ŠæŠ¥å®šæ—¶å™¨
 */
 class CGbtTimer : public ACE_Event_Handler
 {
 public:
 	static CGbtTimer* CreateInstance();
-	virtual int handle_timeout(const ACE_Time_Value &tCurrentTime, const void * = 0); //¶¨Ê±Æ÷»Øµ÷º¯Êı
+	virtual int handle_timeout(const ACE_Time_Value &tCurrentTime, const void * = 0); //å®šæ—¶å™¨å›è°ƒå‡½æ•°
 
 #ifdef GBT_TCP
 	void TailorReport(Byte ucGbtArrIndex , Uint uBufCnt , Byte* pBuf);

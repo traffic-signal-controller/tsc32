@@ -23,26 +23,26 @@ const Ushort PATTERN_SIZE = 5;
 const Ushort STAGEPATTERN_SIZE = 8;
 const Ushort CHANNELCHK_SIZE =2;
 /*
-	Êı¾İ²Ù×÷ÀàĞÍÃ¶¾Ù
+	æ•°æ®æ“ä½œç±»å‹æšä¸¾
 */
 enum
 {
-    OPERATE_SET_VALUE     = 0,    //ÉèÖÃÖµ
-    OPERATE_GET_VALUE     = 1,    //»ñÈ¡Öµ
-    OPERATE_GET_LENGTH    = 2     //»ñÈ¡³¤¶È
+    OPERATE_SET_VALUE     = 0,    //è®¾ç½®å€¼
+    OPERATE_GET_VALUE     = 1,    //è·å–å€¼
+    OPERATE_GET_LENGTH    = 2     //è·å–é•¿åº¦
 };
 
 /*
-	GBTÏûÏ¢´¦Àí½á¹ûÃ¶¾Ù
+	GBTæ¶ˆæ¯å¤„ç†ç»“æœæšä¸¾
 */
 enum
 {
-    GBT_MSG_SUCCESS    = 0,      //ÏûÏ¢ÕıÈ·
-    GBT_MSG_SIZE_LONG  = 1,      //ÏûÏ¢³¤¶È¹ı³¤
-    GBT_MSG_TYPE_ERROR = 2,      //ÏûÏ¢ÀàĞÍ´íÎó
-    GBT_MSG_OBJ_ERROR  = 3,      //ÏûÏ¢¶ÔÏó´íÎó
-    GBT_MSG_SIZE_SHORT = 4,      //ÏûÏ¢³¤¶È¹ı¶Ì
-    GBT_MSG_ERROR_OTHER = 5      //ÆäËûÀàĞÍ´íÎó
+    GBT_MSG_SUCCESS    = 0,      //æ¶ˆæ¯æ­£ç¡®
+    GBT_MSG_SIZE_LONG  = 1,      //æ¶ˆæ¯é•¿åº¦è¿‡é•¿
+    GBT_MSG_TYPE_ERROR = 2,      //æ¶ˆæ¯ç±»å‹é”™è¯¯
+    GBT_MSG_OBJ_ERROR  = 3,      //æ¶ˆæ¯å¯¹è±¡é”™è¯¯
+    GBT_MSG_SIZE_SHORT = 4,      //æ¶ˆæ¯é•¿åº¦è¿‡çŸ­
+    GBT_MSG_ERROR_OTHER = 5      //å…¶ä»–ç±»å‹é”™è¯¯
 };
 
 #define EXCHAGE_ONE_OBJECT_BASE(TYPE,TABLE,FIELD,GETDATA,SETDATA,BASE)\
@@ -195,14 +195,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶ÎÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\tä¸æ”¯æŒæ•´è¡¨å•å­—æ®µè®¾ç½®\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓĞÒ»¸öË÷Òı,ÎŞ·¨ÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tåªæœ‰ä¸€ä¸ªç´¢å¼•,æ— æ³•è®¾ç½®\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -222,7 +222,7 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓĞÒ»¸öË÷Òı,ÎŞ·¨ÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tåªæœ‰ä¸€ä¸ªç´¢å¼•,æ— æ³•è®¾ç½®\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -239,14 +239,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶Î²éÑ¯\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\tä¸æ”¯æŒæ•´è¡¨å•å­—æ®µæŸ¥è¯¢\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓĞÒ»¸öË÷Òı,ÎŞ·¨²éÑ¯\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tåªæœ‰ä¸€ä¸ªç´¢å¼•,æ— æ³•æŸ¥è¯¢\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -266,7 +266,7 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tÖ»ÓĞÒ»¸öË÷Òı,ÎŞ·¨²éÑ¯\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tåªæœ‰ä¸€ä¸ªç´¢å¼•,æ— æ³•æŸ¥è¯¢\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -300,14 +300,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶ÎÉèÖÃ\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\tä¸æ”¯æŒæ•´è¡¨å•å­—æ®µè®¾ç½®\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tµÚÒ»¸öË÷Òı±ØĞëÓĞĞ§\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tç¬¬ä¸€ä¸ªç´¢å¼•å¿…é¡»æœ‰æ•ˆ\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -349,14 +349,14 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
                     uErrorSts = GBT_MSG_ERROR_OTHER;\
-                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶Î²éÑ¯\n", SHORT_FILE, __LINE__));\
+                    ACE_DEBUG ((LM_DEBUG, "%s:%04d\tä¸æ”¯æŒæ•´è¡¨å•å­—æ®µæŸ¥è¯¢\n", SHORT_FILE, __LINE__));\
                     return -1;\
                 }\
             }\
             else\
             {\
                 uErrorSts = GBT_MSG_ERROR_OTHER;\
-                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tµÚÒ»¸öË÷Òı±ØĞëÓĞĞ§\n", SHORT_FILE, __LINE__));\
+                ACE_DEBUG ((LM_DEBUG, "%s:%04d\tç¬¬ä¸€ä¸ªç´¢å¼•å¿…é¡»æœ‰æ•ˆ\n", SHORT_FILE, __LINE__));\
                 return -1;\
             }\
         }\
@@ -371,7 +371,7 @@ EXCHAGE_ONE_OBJECT_BASE(Byte,m_gTableDesc[TBL_CONSTANT].sTblName,FIELD,m_gTscDb-
                 else\
                 {\
 					uErrorSts = GBT_MSG_ERROR_OTHER;\
-					ACE_DEBUG ((LM_DEBUG, "%s:%04d\t²»Ö§³ÖÕû±íµ¥×Ö¶Î²éÑ¯\n", SHORT_FILE, __LINE__));\
+					ACE_DEBUG ((LM_DEBUG, "%s:%04d\tä¸æ”¯æŒæ•´è¡¨å•å­—æ®µæŸ¥è¯¢\n", SHORT_FILE, __LINE__));\
 					return -1;\
                 }\
             }\
@@ -460,7 +460,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     int iPos = 0;
     int iPackSize;
     
-    /*Ä£¿é±íID*/
+    /*æ¨¡å—è¡¨ID*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -470,7 +470,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     sValueSeq[iPos++] = sModule.ucModuleId;
 
-    //Éè±¸½Úµã
+    //è®¾å¤‡èŠ‚ç‚¹
     iPackSize = Packet( sModule.strDevNode, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -481,7 +481,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    //ÖÆÔìÉÌ
+    //åˆ¶é€ å•†
     iPackSize = Packet(sModule.strCompany, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -492,7 +492,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    //ĞÍºÅ
+    //å‹å·
     iPackSize = Packet(sModule.strModel, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -503,7 +503,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    //°æ±¾
+    //ç‰ˆæœ¬
     iPackSize = Packet(sModule.strVersion, sValueSeq+iPos, iValSize-iPos);
     if (iPackSize < 0)
     {
@@ -514,7 +514,7 @@ int Packet(Module& sModule, Byte* sValueSeq, int iValSize)
     }
     iPos += iPackSize;
 
-    /*ÀàĞÍ*/
+    /*ç±»å‹*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -530,7 +530,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     int iPos = 0;
     int iPackSize;
     
-    /*Ä£¿é±íID*/
+    /*æ¨¡å—è¡¨ID*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -540,7 +540,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     sModule.ucModuleId = sValueSeq[iPos++];
 
-    //Éè±¸½Úµã
+    //è®¾å¤‡èŠ‚ç‚¹
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strDevNode);
     if (iPackSize < 0)
     {
@@ -551,7 +551,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    //ÖÆÔìÉÌ
+    //åˆ¶é€ å•†
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strCompany);
     if (iPackSize < 0)
     {
@@ -562,7 +562,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    //ĞÍºÅ
+    //å‹å·
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strModel);
     if (iPackSize < 0)
     {
@@ -573,7 +573,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    //°æ±¾
+    //ç‰ˆæœ¬
     iPackSize = Unpacket(sValueSeq+iPos, iValSize-iPos, sModule.strVersion);
     if (iPackSize < 0)
     {
@@ -584,7 +584,7 @@ int Unpacket(Byte* sValueSeq, int iValSize, Module& sModule)
     }
     iPos += iPackSize;
 
-    /*ÀàĞÍ*/
+    /*ç±»å‹*/
     if ((iPos+1) > iValSize)
     {
 #ifdef TSC_DEBUG
@@ -2418,7 +2418,7 @@ int GetPlan(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte
 }
 
 
-/*******************************»ñÈ¡Í¨µÀµÆÅİ¼ì²âÅäÖÃ±íÄÚÈİ***************************************************/
+/*******************************è·å–é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨å†…å®¹***************************************************/
 int GetChannelChk(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
     	 int iPos = 0;
@@ -2444,7 +2444,7 @@ int GetChannelChk(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts
 			return -1;
 		}
 		
-		pData[iPos++] = ucCount; //±í²éÑ¯½á¹ûĞĞÊı
+		pData[iPos++] = ucCount; //è¡¨æŸ¥è¯¢ç»“æœè¡Œæ•°
 	
 		for (i = 0; i < ucCount; i++)
 		{
@@ -2488,9 +2488,9 @@ int SetChannelChk(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts
         uErrorSts = GBT_MSG_SIZE_SHORT;
         return -1;
     }
-    ucCount = pData[iPos++];//»ñÈ¡ÉÏÎ»»ú·¢ËÍ¹ıÀ´µÄÒªÉèÖÃµÄĞĞÊı
+    ucCount = pData[iPos++];//è·å–ä¸Šä½æœºå‘é€è¿‡æ¥çš„è¦è®¾ç½®çš„è¡Œæ•°
 
-	if (!pTscDb->DelChannelChk()) //ĞèÒªÏÈÉ¾³ıÔ­Ê¼Êı¾İ
+	if (!pTscDb->DelChannelChk()) //éœ€è¦å…ˆåˆ é™¤åŸå§‹æ•°æ®
 	{
 		uErrorSts = GBT_MSG_ERROR_OTHER;
 		uErrorIdx = 0;
@@ -2749,7 +2749,7 @@ int SetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uScheduleId,
 #endif
         return -1;
     }
-    /*É¾³ı*/
+    /*åˆ é™¤*/
     if (0 == uEvtCount)
     {
         pTscDb->DelSchedule(uScheduleId);
@@ -2813,7 +2813,7 @@ int SetSchedule(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
     uScheduleCount = pData[iPos++];
     uEvtCount      = pData[iPos++];
 
-    /*É¾³ı*/
+    /*åˆ é™¤*/
    /*
    if (0 == uEvtCount || 0 == uScheduleCount)
    {
@@ -3521,7 +3521,7 @@ int GetEventLog(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
     pEventLog = tblEvt.GetData(uiCount);
 	
 	PACKET_ULONG(pData+iPos, uiCount);
-	iPos += 4;   						//ËÄ¸ö×Ö½Ú´æ´¢ÈÕÖ¾ÊıÄ¿
+	iPos += 4;   						//å››ä¸ªå­—èŠ‚å­˜å‚¨æ—¥å¿—æ•°ç›®
     for (i = 0; i < uiCount; i++)
     {
         iPackSize = Packet(pEventLog[i], pData+iPos, uDataSize-iPos);
@@ -3530,7 +3530,7 @@ int GetEventLog(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, 
         {
             uErrorSts = GBT_MSG_SIZE_SHORT;
             ACE_DEBUG ((LM_DEBUG, "%s:%04d\tFailed to Packet EventLog(%d)\n", SHORT_FILE, __LINE__, pEventLog[i].ucEventId));   
-			continue;	//ÔÚÊµ¼ÊÓ¦ÓÃ¹ı³ÌÖĞ£¬ÓĞ·¢ÏÖÒ»ÌõÊı¾İ³öÏÖÌ«¶Ì£¬ÆäËü¶¼Ã»ÓĞ¡£ËùÒÔÕâÀï²»½øĞĞ·µ»Ø²¢²»¼ÓÈë
+			continue;	//åœ¨å®é™…åº”ç”¨è¿‡ç¨‹ä¸­ï¼Œæœ‰å‘ç°ä¸€æ¡æ•°æ®å‡ºç°å¤ªçŸ­ï¼Œå…¶å®ƒéƒ½æ²¡æœ‰ã€‚æ‰€ä»¥è¿™é‡Œä¸è¿›è¡Œè¿”å›å¹¶ä¸åŠ å…¥
             //return -1;
         }
         iPos += iPackSize;
@@ -5425,7 +5425,7 @@ int SetDetDelicacy(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapP
 }
 
 /*
-*Èí¼ş²ÎÊı±í
+*è½¯ä»¶å‚æ•°è¡¨
 */
 int GetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5507,7 +5507,7 @@ int GetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte ucFunType, By
 }
 
 /*
-*Èí¼ş²ÎÊı±í
+*è½¯ä»¶å‚æ•°è¡¨
 */
 int SetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5604,7 +5604,7 @@ int SetSpecFun(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPhase
 }
 
 /*
-*¼ì²âÆ÷À©Õ¹±í
+*æ£€æµ‹å™¨æ‰©å±•è¡¨
 */
 int GetDetExtend(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5656,7 +5656,7 @@ int GetDetExtend(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPha
 }
 
 /*
-*¼ì²âÆ÷À©Õ¹Õû±íÉèÖÃ
+*æ£€æµ‹å™¨æ‰©å±•æ•´è¡¨è®¾ç½®
 */
 int SetDetExtend(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5812,7 +5812,7 @@ int SetAdaptPara(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPha
 }
 
 /*
-*µ¹¼ÆÊ±Éè±¸±í
+*å€’è®¡æ—¶è®¾å¤‡è¡¨
 */
 int GetCntDownDev(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5916,7 +5916,7 @@ int SetCntDownDev(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPh
 }
 
 /*
-*×ÔÊÊÓ¦¿ØÖÆ½×¶ÎÊ±¼ä
+*è‡ªé€‚åº”æ§åˆ¶é˜¶æ®µæ—¶é—´
 */
 int GetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -5968,7 +5968,7 @@ int GetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPh
 }
 
 /*
-*ÉèÖÃ×ÔÊÊÓ¦½×¶Î±í
+*è®¾ç½®è‡ªé€‚åº”é˜¶æ®µè¡¨
 */
 int SetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {
@@ -6023,7 +6023,7 @@ int SetAdaptStage(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte uOverlapPh
 }
 
 /*
-*·½ÏòÓëÏàÎ»¶ÔÓ¦±íÕû±í»ñÈ¡
+*æ–¹å‘ä¸ç›¸ä½å¯¹åº”è¡¨æ•´è¡¨è·å–
 */
 int GetPhaseToDirec(CGbtTscDb* pTscDb, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx)
 {

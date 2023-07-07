@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   Detetctor.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»ú¼ì²âÆ÷´¦ÀíÀàÎÄ¼ş¡£
+Description:ä¿¡å·æœºæ£€æµ‹å™¨å¤„ç†ç±»æ–‡ä»¶ã€‚
 Version:    V1.0
 History:
 ***************************************************************/
@@ -38,22 +38,22 @@ History:
 #endif
 
 /*
-	¼ì²âÆ÷ÏßÈ¦¹¤×÷×´Ì¬
+	æ£€æµ‹å™¨çº¿åœˆå·¥ä½œçŠ¶æ€
 */
 enum
 {
-	DET_NORMAL = 0,  //Õı³£
-	DET_CARVE     ,  //¿ªÂ·
-	DET_SHORT     ,  //¶ÌÂ·
-	DET_STOP         //Í£Õñ
+	DET_NORMAL = 0,  //æ­£å¸¸
+	DET_CARVE     ,  //å¼€è·¯
+	DET_SHORT     ,  //çŸ­è·¯
+	DET_STOP         //åœæŒ¯
 };
 
 /**************************************************************
 Function:        CDetector::CDetector
-Description:     ¼ì²âÆ÷CDetectorÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ£€æµ‹å™¨CDetectorç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CDetector::CDetector()
 {
@@ -111,10 +111,10 @@ CDetector::CDetector()
 
 /**************************************************************
 Function:        CDetector::~CDetector
-Description:     ¼ì²âÆ÷CDetectorÎö¹¹º¯Êı		
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ£€æµ‹å™¨CDetectorææ„å‡½æ•°		
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CDetector::~CDetector()
 {
@@ -130,10 +130,10 @@ CDetector::~CDetector()
 
 /**************************************************************
 Function:        CDetector::CreateInstance
-Description:     ´´½¨CreateInstance¼ì²âÆ÷¾²Ì¬¶ÔÏó		
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:     åˆ›å»ºCreateInstanceæ£€æµ‹å™¨é™æ€å¯¹è±¡		
+Input:          æ—            
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CDetector* CDetector::CreateInstance()
 {
@@ -144,10 +144,10 @@ CDetector* CDetector::CreateInstance()
 
 /**************************************************************
 Function:        CDetector::SelectDetectorBoardCfg
-Description:     »ñÈ¡¼ì²â°åµÄÅäÖÃÇé¿ö£¬»ñÈ¡»î¶¯¼ì²âÆ÷°å		
-Input:          pDetCfg   ¼ì²âÆ÷ÅäÖÃ½á¹¹ÌåÖ¸Õë           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è·å–æ£€æµ‹æ¿çš„é…ç½®æƒ…å†µï¼Œè·å–æ´»åŠ¨æ£€æµ‹å™¨æ¿		
+Input:          pDetCfg   æ£€æµ‹å™¨é…ç½®ç»“æ„ä½“æŒ‡é’ˆ           
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SelectDetectorBoardCfg(int *pDetCfg)
 {
@@ -159,17 +159,17 @@ void CDetector::SelectDetectorBoardCfg(int *pDetCfg)
 		//ACE_DEBUG((LM_DEBUG,"%s:%d m_iDetCfg[%d] = %d\n",__FILE__,__LINE__,iIndex,m_iDetCfg[iIndex] ));
 		if ( 1 == m_iDetCfg[iIndex] )
 		{
-			m_ucActiveBoard1 = iIndex;     // 1-16¶ÔÓ¦µÄ¼ì²âÆ÷°åm_ucActiveBoard1 = 0  0-15
+			m_ucActiveBoard1 = iIndex;     // 1-16å¯¹åº”çš„æ£€æµ‹å™¨æ¿m_ucActiveBoard1 = 0  0-15
 		}
 		else if ( 17 == m_iDetCfg[iIndex] )
 		{
-			m_ucActiveBoard2 = iIndex;    // 17 - 32 ¶ÔÓ¦µÄ¼ì²âÆ÷°å  m_ucActiveBoard2=1 16-31
+			m_ucActiveBoard2 = iIndex;    // 17 - 32 å¯¹åº”çš„æ£€æµ‹å™¨æ¿  m_ucActiveBoard2=1 16-31
 		}
-		else if(33 == m_iDetCfg[iIndex]) //33-64 ¶ÔÓ¦½Ó¿Ú°å1
+		else if(33 == m_iDetCfg[iIndex]) //33-64 å¯¹åº”æ¥å£æ¿1
 		{
 			m_ucActiveBoard3 = iIndex;
 		}
-		else if(65 == m_iDetCfg[iIndex]) //65-96 ¶ÔÓ¦½Ó¿Ú°å2
+		else if(65 == m_iDetCfg[iIndex]) //65-96 å¯¹åº”æ¥å£æ¿2
 		{
 			m_ucActiveBoard4 = iIndex;
 		}
@@ -181,12 +181,12 @@ void CDetector::SelectDetectorBoardCfg(int *pDetCfg)
 
 /**************************************************************
 Function:        CDetector::PrintDetInfo
-Description:     ´òÓ¡½ÓÊÕµ½µÄµÆÅİÊı¾İĞÅÏ¢		
-Input:          pFileName:ÎÄ¼şÃû 			iFileLine:ÎÄ¼şĞĞÊı  
-				ucBoardIndex:°åµÄÏÂ±ê		sErrSrc:´íÎóÔ­Òò 
-			   iPrintCnt:´òÓ¡µÄ¸öÊı 			ucRecvBuf£º´òÓ¡µÄ×Ö·û´®          
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ‰“å°æ¥æ”¶åˆ°çš„ç¯æ³¡æ•°æ®ä¿¡æ¯		
+Input:          pFileName:æ–‡ä»¶å 			iFileLine:æ–‡ä»¶è¡Œæ•°  
+				ucBoardIndex:æ¿çš„ä¸‹æ ‡		sErrSrc:é”™è¯¯åŸå›  
+			   iPrintCnt:æ‰“å°çš„ä¸ªæ•° 			ucRecvBufï¼šæ‰“å°çš„å­—ç¬¦ä¸²          
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::PrintDetInfo(char* pFileName,int iFileLine,Byte ucBoardIndex, char* sErrSrc,int iPrintCnt,Byte* ucRecvBuf)
 {
@@ -204,10 +204,10 @@ void CDetector::PrintDetInfo(char* pFileName,int iFileLine,Byte ucBoardIndex, ch
 
 /**************************************************************
 Function:        CDetector::SelectBrekonCardStatus
-Description:     ²éÑ¯Ä³¿é°åµÄ³µÁ¾×´Ì¬¼°¹ÊÕÏ×´Ì¬£¬100msÒ»´Î	
-Input:         iBoardIndex:°å¿éÏÂ±ê  iAddress:»ñÈ¡°åĞÅÏ¢µÄµØÖ·(Ğ­Òé¹æ¶¨)          
-Output:         ÎŞ£¬AACCVVCXXBBB
-Return:         false:¸Ã°å¿é²»´æÔÚ
+Description:     æŸ¥è¯¢æŸå—æ¿çš„è½¦è¾†çŠ¶æ€åŠæ•…éšœçŠ¶æ€ï¼Œ100msä¸€æ¬¡	
+Input:         iBoardIndex:æ¿å—ä¸‹æ ‡  iAddress:è·å–æ¿ä¿¡æ¯çš„åœ°å€(åè®®è§„å®š)          
+Output:         æ— ï¼ŒAACCVVCXXBBB
+Return:         false:è¯¥æ¿å—ä¸å­˜åœ¨
 ***************************************************************/
 bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 {
@@ -275,7 +275,7 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 		PrintDetInfo((char*)"CDetector.cpp",__LINE__,ucBoardIndex,(char*)"Timeout",0,NULL);
 #endif
 	}
-	else  /*0‡80ˆ90…80“40‡80‹50—00‰6*/
+	else  /*????????????????*/
 	{
 		m_iBoardErr[ucBoardIndex] = DEV_IS_CONNECTED;
 
@@ -344,7 +344,7 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 #endif
 		iReadCnt = iPreReadCnt;
 		
-		if ( ucData[0] != ( ucAddress + 16 ) )  //µØÖ·´í
+		if ( ucData[0] != ( ucAddress + 16 ) )  //åœ°å€é”™
 		{			
 			SendRecordBoardMsg(ucBoardIndex,2);
 			PrintDetInfo((char*)"Detector.cpp",__LINE__,ucBoardIndex,(char*)"Addr Error",iReadCnt,ucData);
@@ -373,7 +373,7 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 
 			if ( (0x10+ucBoardIndex) == ucData[0] )
 			{
-				//³µÁ¾×´Ì¬
+				//è½¦è¾†çŠ¶æ€
 				ucTmp = ucData[2];
 				iIndex = 0;
 				while ( iIndex < 8 )
@@ -382,14 +382,14 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 
 					if ( 1 == ( (ucTmp>>iIndex) & 1 ) )
 					{
-						m_iDetTimeLen[16*ucBoardIndex+iIndex] += 1;     //¼ÆËãÕ¼ÓĞÂÊ
-						m_iDetStatus[16*ucBoardIndex+iIndex]  = 1;      //³µµÀÉÏÓĞ³µ
+						m_iDetTimeLen[16*ucBoardIndex+iIndex] += 1;     //è®¡ç®—å æœ‰ç‡
+						m_iDetStatus[16*ucBoardIndex+iIndex]  = 1;      //è½¦é“ä¸Šæœ‰è½¦
 
 						m_iAdapDetTimeLen[16*ucBoardIndex+iIndex] += 1;
 						
 						if ( 0 == m_iLastDetSts[16*ucBoardIndex+iIndex] )
 						{
-							m_ucTotalStat[16*ucBoardIndex+iIndex] += 1;    //¼ÆËã³µÁ÷Á¿ ÉÏ´ÎÎŞ³µ´Ë´ÎÓĞ³µ²ÅÎªÓĞ³µ 
+							m_ucTotalStat[16*ucBoardIndex+iIndex] += 1;    //è®¡ç®—è½¦æµé‡ ä¸Šæ¬¡æ— è½¦æ­¤æ¬¡æœ‰è½¦æ‰ä¸ºæœ‰è½¦ 
 							m_iAdapTotalStat[16*ucBoardIndex+iIndex] += 1; 
 						}
 					}
@@ -405,13 +405,13 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 
 					if ( 1 == ( (ucTmp>>iIndex) & 1 ) )
 					{
-						m_iDetTimeLen[16*ucBoardIndex+8+iIndex]     += 1;     //¼ÆËãÕ¼ÓĞÂÊ
-						m_iDetStatus[16*ucBoardIndex+8+iIndex]       = 1;     //³µµÀÉÏÓĞ³µ
+						m_iDetTimeLen[16*ucBoardIndex+8+iIndex]     += 1;     //è®¡ç®—å æœ‰ç‡
+						m_iDetStatus[16*ucBoardIndex+8+iIndex]       = 1;     //è½¦é“ä¸Šæœ‰è½¦
 						m_iAdapDetTimeLen[16*ucBoardIndex+8+iIndex] += 1;   
 
 						if ( 0 == m_iLastDetSts[16*ucBoardIndex+8+iIndex] )
 						{
-							m_ucTotalStat[16*ucBoardIndex+8+iIndex]     += 1;    //¼ÆËã³µÁ÷Á¿ ÉÏ´ÎÎŞ³µ´Ë´ÎÓĞ³µ²ÅÎªÓĞ³µ 
+							m_ucTotalStat[16*ucBoardIndex+8+iIndex]     += 1;    //è®¡ç®—è½¦æµé‡ ä¸Šæ¬¡æ— è½¦æ­¤æ¬¡æœ‰è½¦æ‰ä¸ºæœ‰è½¦ 
 							m_iAdapTotalStat[16*ucBoardIndex+8+iIndex] += 1;
 						}
 					}
@@ -419,7 +419,7 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 					iIndex++;
 				}
 				
-				if ( 0 == ucBoardIndex || 1 == ucBoardIndex )  //¼ì²âÆ÷½Ó¿Ú°åÃ»ÓĞ¹ÊÕÏ×´Ì¬ĞÅÏ¢
+				if ( 0 == ucBoardIndex || 1 == ucBoardIndex )  //æ£€æµ‹å™¨æ¥å£æ¿æ²¡æœ‰æ•…éšœçŠ¶æ€ä¿¡æ¯
 				{
 					for ( int i=0; i<16; i++ )
 					{
@@ -427,7 +427,7 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 					}
 					return true;
 				}
-				//¹ÊÕÏ×´Ì¬
+				//æ•…éšœçŠ¶æ€
 				for (int i = 0; i< 4; i++ )
 				{
 					ucTmp = ucData[4+i];
@@ -448,10 +448,10 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 									ucDetCfgIndex = m_pTscCfg->iDetCfg[ucDetIndex/MAX_DETECTOR_PER_BOARD] - 1
 													+ ucDetIndex % MAX_DETECTOR_PER_BOARD;
 									if ( ucDetCfgIndex < MAX_DETECTOR 
-										&& m_pTscCfg->sDetector[ucDetCfgIndex].ucPhaseId != 0 )  //´æÔÚÅäÖÃµÄ¼ì²âÆ÷²Å¼ÇÂ¼
+										&& m_pTscCfg->sDetector[ucDetCfgIndex].ucPhaseId != 0 )  //å­˜åœ¨é…ç½®çš„æ£€æµ‹å™¨æ‰è®°å½•
 									{
-										//·¢ËÍ¼ÇÂ¼¼ì²âÆ÷Ëğ»µÇé¿ö
-										//µÈ´ı¼ì²âÆ÷¹ÊÕÏ¼ì²âÎÈ¶¨¿ª·Å¸Ã¹¦ÄÜ
+										//å‘é€è®°å½•æ£€æµ‹å™¨æŸåæƒ…å†µ
+										//ç­‰å¾…æ£€æµ‹å™¨æ•…éšœæ£€æµ‹ç¨³å®šå¼€æ”¾è¯¥åŠŸèƒ½
 										SThreadMsg sTscMsg;
 										sTscMsg.ulType       = TSC_MSG_LOG_WRITE;
 										sTscMsg.ucMsgOpt     = LOG_TYPE_DETECTOR;
@@ -490,10 +490,10 @@ bool CDetector::SelectBrekonCardStatus(Byte ucBoardIndex,Byte ucAddress)
 
 /**************************************************************
 Function:        CDetector::SendRecordBoardMsg
-Description:     ·¢ËÍ¼ÇÂ¼µÆ¿Ø°åÍ¨ĞÅ×´Ì¬	
-Input:          ucType  - 0ÕıÈ· 1Ğ£Ñé´íÎó 2µØÖ·´íÎó 3Ã»ÓĞÊı¾İ        
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     å‘é€è®°å½•ç¯æ§æ¿é€šä¿¡çŠ¶æ€	
+Input:          ucType  - 0æ­£ç¡® 1æ ¡éªŒé”™è¯¯ 2åœ°å€é”™è¯¯ 3æ²¡æœ‰æ•°æ®        
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendRecordBoardMsg(Byte ucDetIndex,Byte ucType)
 {
@@ -505,22 +505,22 @@ void CDetector::SendRecordBoardMsg(Byte ucDetIndex,Byte ucType)
 	{
 		switch ( ucType )
 		{
-			case 0:  //ÕıÈ·	
+			case 0:  //æ­£ç¡®	
 				m_ucErrCheckCnt[ucDetIndex] = 0;
 				m_ucNoCnt[ucDetIndex]       = 0;          
 				m_ucErrAddrCnt[ucDetIndex]  = 0; 
 				return;
-			case 1:   //Ğ£Ñé´íÎó
+			case 1:   //æ ¡éªŒé”™è¯¯
 				m_ucNoCnt[ucDetIndex]       = 0;          
 				m_ucErrAddrCnt[ucDetIndex]  = 0;     
 				m_ucRightCnt[ucDetIndex]    = 0;
 				return;
-			case 2:   //µØÖ·´íÎó
+			case 2:   //åœ°å€é”™è¯¯
 				m_ucErrCheckCnt[ucDetIndex] = 0;
 				m_ucNoCnt[ucDetIndex]       = 0;            
 				m_ucRightCnt[ucDetIndex]    = 0;
 				return;
-			case 3:  //Ã»ÓĞÊı¾İ
+			case 3:  //æ²¡æœ‰æ•°æ®
 				m_ucErrCheckCnt[ucDetIndex] = 0;        
 				m_ucErrAddrCnt[ucDetIndex]  = 0;     
 				m_ucRightCnt[ucDetIndex]    = 0;
@@ -556,7 +556,7 @@ void CDetector::SendRecordBoardMsg(Byte ucDetIndex,Byte ucType)
 	{
 		switch ( ucType )
 		{
-			case 0:  //ÕıÈ·
+			case 0:  //æ­£ç¡®
 				m_bRecordSts[ucDetIndex] = true;
 				m_ucErrCheckCnt[ucDetIndex] = 0;
 				m_ucNoCnt[ucDetIndex]       = 0;          
@@ -564,7 +564,7 @@ void CDetector::SendRecordBoardMsg(Byte ucDetIndex,Byte ucType)
 				ucByte0 = 0;
 				ucByte1 = 0;
 				break;
-			case 1:  //Ğ£Ñé´íÎó
+			case 1:  //æ ¡éªŒé”™è¯¯
 				m_bRecordSts[ucDetIndex] = false;
 				m_ucNoCnt[ucDetIndex]       = 0;          
 				m_ucErrAddrCnt[ucDetIndex]  = 0;     
@@ -572,7 +572,7 @@ void CDetector::SendRecordBoardMsg(Byte ucDetIndex,Byte ucType)
 				ucByte0 = 1;
 				ucByte1 = 2;
 				break;
-			case 2:  //µØÖ·´íÎó
+			case 2:  //åœ°å€é”™è¯¯
 				m_bRecordSts[ucDetIndex] = false;
 				m_ucErrCheckCnt[ucDetIndex] = 0;
 				m_ucNoCnt[ucDetIndex]       = 0;            
@@ -580,7 +580,7 @@ void CDetector::SendRecordBoardMsg(Byte ucDetIndex,Byte ucType)
 				ucByte0 = 1;
 				ucByte1 = 1;
 				break;
-			case 3:  //Ã»ÓĞÊı¾İ
+			case 3:  //æ²¡æœ‰æ•°æ®
 				m_bRecordSts[ucDetIndex] = false;
 				m_ucErrCheckCnt[ucDetIndex] = 0;        
 				m_ucErrAddrCnt[ucDetIndex]  = 0;     
@@ -615,11 +615,11 @@ void CDetector::SendRecordBoardMsg(Byte ucDetIndex,Byte ucType)
 
 /**************************************************************
 Function:        CDetector::SearchAllStatus
-Description:     »ñÈ¡¼ì²âÆ÷°å³µÁ¾×´Ì¬¼°¹ÊÕÏ×´Ì¬£¬100msÒ»´Î	
-Input:        	  bchkdetstatus -ÊÇ·ñ²éÑ¯¼ì²âÆ÷°å½Ó¿Ú°åÁ¬½ÓºÍÍ¨µÀ×´Ì¬
-		    	  bchkcar - ÊÇ·ñ¼ì²â¼ì²âÆ÷°å½Ó¿Ú°åÍ¨µÀÊÇ·ñÓĞ³µ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è·å–æ£€æµ‹å™¨æ¿è½¦è¾†çŠ¶æ€åŠæ•…éšœçŠ¶æ€ï¼Œ100msä¸€æ¬¡	
+Input:        	  bchkdetstatus -æ˜¯å¦æŸ¥è¯¢æ£€æµ‹å™¨æ¿æ¥å£æ¿è¿æ¥å’Œé€šé“çŠ¶æ€
+		    	  bchkcar - æ˜¯å¦æ£€æµ‹æ£€æµ‹å™¨æ¿æ¥å£æ¿é€šé“æ˜¯å¦æœ‰è½¦
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
  void CDetector::SearchAllStatus(bool bchkcar ,bool bchkdetstatus)
  {
@@ -628,15 +628,15 @@ Return:         ÎŞ
 	{
 		//if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )	&& ( m_iDetCfg[ucIndex] != 0 ))
 		//{			
-			//SelectBrekonCardStatus(ucIndex, ucIndex);  //µÚiIndexÆ¬¼ì²âÆ÷°å³µÁ¾×´Ì¬¼°¹ÊÕÏ×´Ì¬ MOD:20130723 1620
+			//SelectBrekonCardStatus(ucIndex, ucIndex);  //ç¬¬iIndexç‰‡æ£€æµ‹å™¨æ¿è½¦è¾†çŠ¶æ€åŠæ•…éšœçŠ¶æ€ MOD:20130723 1620
 			if(bchkdetstatus)
 		 	{
-				GetAllVehSts(DET_HEAD_STS,ucIndex);    //²éÑ¯¼ì²âÆ÷Í¨µÀ×´Ì¬  ¿ªÂ· Õı³£ ¶ÌÂ·µÈÇé¿ö¡£
-				GetDecVars(ucIndex,0xff);              //²éÑ¯Ã¿¿é¼ì²âÆ÷°å½Ó¿Ú°åÁ¬½Ó×´Ì¬ ADD 2015-02-02
+				GetAllVehSts(DET_HEAD_STS,ucIndex);    //æŸ¥è¯¢æ£€æµ‹å™¨é€šé“çŠ¶æ€  å¼€è·¯ æ­£å¸¸ çŸ­è·¯ç­‰æƒ…å†µã€‚
+				GetDecVars(ucIndex,0xff);              //æŸ¥è¯¢æ¯å—æ£€æµ‹å™¨æ¿æ¥å£æ¿è¿æ¥çŠ¶æ€ ADD 2015-02-02
 		    }
 			if(bchkcar) //ADD:2013 0724 1010
 			{	
-				GetAllVehSts(DET_HEAD_VEHSTS,ucIndex); //²éÑ¯³µ¼ì°åÓĞ³µÎŞ³µÍ¨¹ı
+				GetAllVehSts(DET_HEAD_VEHSTS,ucIndex); //æŸ¥è¯¢è½¦æ£€æ¿æœ‰è½¦æ— è½¦é€šè¿‡
 			}		 
 	//}		
 		ucIndex++;
@@ -649,10 +649,10 @@ Return:         ÎŞ
 /**************************************************************
 
 Function:        CDetector::GetAllWorkSts
-Description:     »ñÈ¡ËùÓĞ¼ì²âÆ÷°åµÄ¹¤×÷×´Ì¬£¬Ò»¸öÖÜÆÚÒ»´Î	
-Input:          ÎŞ        
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è·å–æ‰€æœ‰æ£€æµ‹å™¨æ¿çš„å·¥ä½œçŠ¶æ€ï¼Œä¸€ä¸ªå‘¨æœŸä¸€æ¬¡	
+Input:          æ—         
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetAllWorkSts()
 {
@@ -662,7 +662,7 @@ void CDetector::GetAllWorkSts()
 	{
 		if ( ( DEV_IS_CONNECTED == m_iBoardErr[ucIndex] )&& (m_iDetCfg[ucIndex] != 0 ))
 		{	 
-			GetAllVehSts(DET_HEAD_STS,ucIndex);   //²éÑ¯¼ì²âÆ÷Í¨µÀ×´Ì¬  ¿ªÂ· Õı³£ ¶ÌÂ·µÈÇé¿ö¡£								
+			GetAllVehSts(DET_HEAD_STS,ucIndex);   //æŸ¥è¯¢æ£€æµ‹å™¨é€šé“çŠ¶æ€  å¼€è·¯ æ­£å¸¸ çŸ­è·¯ç­‰æƒ…å†µã€‚								
 		}		
 		ucIndex++;
 	}
@@ -672,12 +672,12 @@ void CDetector::GetAllWorkSts()
 
 /**************************************************************
 Function:        CDetector::SendDetLink
-Description:     ÉèÖÃ¼ì²âÆ÷¶ÔÓ¦¹ØÏµ ÏßÈ¦¶ÔÓ¦¹ØÏµ	
-Input:          ucBoardIndex - 0    1    2    3   ¼ì²â°åÏÂ±ê  
+Description:     è®¾ç½®æ£€æµ‹å™¨å¯¹åº”å…³ç³» çº¿åœˆå¯¹åº”å…³ç³»	
+Input:          ucBoardIndex - 0    1    2    3   æ£€æµ‹æ¿ä¸‹æ ‡  
 				SetType  - DET_HEAD_COIL0104_SET 
-						   DET_HEAD_COIL0508_SET ÉèÖÃ×éÀàĞÍ      
-Output:         ÎŞ
-Return:         ÎŞ
+						   DET_HEAD_COIL0508_SET è®¾ç½®ç»„ç±»å‹      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendDetLink(Byte ucBoardIndex,Byte SetType)
 {
@@ -715,10 +715,10 @@ void CDetector::SendDetLink(Byte ucBoardIndex,Byte SetType)
 
 /**************************************************************
 Function:        CDetector::GetDecAddr
-Description:     Í¨¹ı¼ì²â°åÏÂ±ê»ñÈ¡¼ì²â°åCANµØÖ·	
-Input:          ucBoardIndex - 0    1    2    3   ¼ì²â°åÏÂ±ê   
-Output:         ÎŞ
-Return:         ¼ì²âÆ÷°åµØÖ·
+Description:     é€šè¿‡æ£€æµ‹æ¿ä¸‹æ ‡è·å–æ£€æµ‹æ¿CANåœ°å€	
+Input:          ucBoardIndex - 0    1    2    3   æ£€æµ‹æ¿ä¸‹æ ‡   
+Output:         æ— 
+Return:         æ£€æµ‹å™¨æ¿åœ°å€
 ***************************************************************/
 Byte CDetector::GetDecAddr(Byte ucBoardIndex)
 {
@@ -749,12 +749,12 @@ Byte CDetector::GetDecAddr(Byte ucBoardIndex)
 
 /**************************************************************
 Function:        CDetector::SendDelicacy
-Description:     ÉèÖÃ¼ì²âÆ÷°å¸÷¸öÍ¨µÀµÄÁéÃô¶ÈµÈ¼¶
+Description:     è®¾ç½®æ£€æµ‹å™¨æ¿å„ä¸ªé€šé“çš„çµæ•åº¦ç­‰çº§
 Input:          ucBoardIndex - 0 1 2 3
 			   SetType DET_HEAD_SEN0108_SET  
-			   		   DET_HEAD_SEN0916_SET Í¨µÀ×éÀàĞÍ 
-Output:         ÎŞ
-Return:         ÎŞ
+			   		   DET_HEAD_SEN0916_SET é€šé“ç»„ç±»å‹ 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendDelicacy(Byte ucBoardIndex,Byte SetType)
 {
@@ -799,11 +799,11 @@ void CDetector::SendDelicacy(Byte ucBoardIndex,Byte SetType)
 
 /**************************************************************
 Function:        CDetector::GetDecVars
-Description:    ²éÑ¯¼ì²âÆ÷¸÷¸ö×´Ì¬ÀàĞÍµÄÖµ
+Description:    æŸ¥è¯¢æ£€æµ‹å™¨å„ä¸ªçŠ¶æ€ç±»å‹çš„å€¼
 Input:          ucBoardIndex - 0 1 2 3
-   				SetType  ²éÑ¯ÀàĞÍ
-Output:         ÎŞ
-Return:         ÎŞ
+   				SetType  æŸ¥è¯¢ç±»å‹
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetDecVars(Byte ucBoardIndex,Byte GetType)
 {		
@@ -833,12 +833,12 @@ void CDetector::GetDecVars(Byte ucBoardIndex,Byte GetType)
 
 /**************************************************************
 Function:        CDetector::SendRoadDistance
-Description:    ÉèÖÃ¼ì²âÆ÷×éÏßÈ¦¾àÀë 
+Description:    è®¾ç½®æ£€æµ‹å™¨ç»„çº¿åœˆè·ç¦» 
 Input:          ucBoardIndex - 0 1 2 3
-   				SetType  ÉèÖÃÀàĞÍ
+   				SetType  è®¾ç½®ç±»å‹
    						 DET_HEAD_DISTAN0104_SET DET_HEAD_DISTAN0508_SET
-Output:         ÎŞ
-Return:         ÎŞ
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendRoadDistance(Byte ucBoardIndex,Byte SetType)
 {
@@ -873,11 +873,11 @@ void CDetector::SendRoadDistance(Byte ucBoardIndex,Byte SetType)
 
 /**************************************************************
 Function:        CDetector::SendDecWorkType
-Description:    ÉèÖÃ¼ì²âÆ÷¹¤×÷·½Ê½  0 -- Âö³åĞÍ 1--´æÔÚĞÍ
+Description:    è®¾ç½®æ£€æµ‹å™¨å·¥ä½œæ–¹å¼  0 -- è„‰å†²å‹ 1--å­˜åœ¨å‹
 Input:          ucBoardIndex - 0 1 2 3
    				
-Output:         ÎŞ
-Return:         ÎŞ
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendDecWorkType(Byte ucBoardIndex)
 {	
@@ -899,11 +899,11 @@ void CDetector::SendDecWorkType(Byte ucBoardIndex)
 
 /**************************************************************
 Function:        CDetector::SendDecIsLink
-Description:    ÉèÖÃ¼ì²âÆ÷°åÊÇ·ñÔÊĞí°ó¶¨ÏßÈ¦×é
+Description:    è®¾ç½®æ£€æµ‹å™¨æ¿æ˜¯å¦å…è®¸ç»‘å®šçº¿åœˆç»„
 Input:          ucBoardIndex - 0 1 2 3
-   				IsAllowLink true-ÔÊĞí false-²»ÔÊĞí
-Output:         ÎŞ
-Return:         ÎŞ
+   				IsAllowLink true-å…è®¸ false-ä¸å…è®¸
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendDecIsLink(Byte ucBoardIndex,Byte IsAllowLink)
 {
@@ -923,11 +923,11 @@ void CDetector::SendDecIsLink(Byte ucBoardIndex,Byte IsAllowLink)
 
 /**************************************************************
 Function:        CDetector::SendDecFrency
-Description:    ÉèÖÃ¼ì²âÆ÷µÄÕñµ´ÆµÂÊ
+Description:    è®¾ç½®æ£€æµ‹å™¨çš„æŒ¯è¡é¢‘ç‡
 Input:          ucBoardIndex - 0 1 2 3
-   				IsAllowLink true-ÔÊĞí false-²»ÔÊĞí
-Output:         ÎŞ
-Return:         ÎŞ
+   				IsAllowLink true-å…è®¸ false-ä¸å…è®¸
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendDecFrency(Byte ucBoardIndex)
 {		
@@ -951,11 +951,11 @@ void CDetector::SendDecFrency(Byte ucBoardIndex)
 
 /**************************************************************
 Function:        CDetector::SendDecSenData
-Description:    ÉèÖÃ¼ì²âÆ÷°åÁéÃô¶ÈÊıÖµ
+Description:    è®¾ç½®æ£€æµ‹å™¨æ¿çµæ•åº¦æ•°å€¼
 Input:          ucBoardIndex - 0 1 2 3
-   				ucSetType ÁéÃô¶ÈÊı×éÉèÖÃ×é
-Output:         ÎŞ
-Return:         ÎŞ
+   				ucSetType çµæ•åº¦æ•°ç»„è®¾ç½®ç»„
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SendDecSenData(Byte ucBoardIndex,Byte ucSetType)
 {	
@@ -1008,10 +1008,10 @@ void CDetector::SendDecSenData(Byte ucBoardIndex,Byte ucSetType)
 
 /**************************************************************
 Function:        CDetector::GetOccupy
-Description:    »ñÈ¡Õ¼ÓĞÂÊ 1s per  5minÍ³¼ÆÒ»´Î
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è·å–å æœ‰ç‡ 1s per  5minç»Ÿè®¡ä¸€æ¬¡
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetOccupy()
 {
@@ -1056,10 +1056,10 @@ void CDetector::GetOccupy()
 
 /**************************************************************
 Function:        CDetector::GetActiveDetSum
-Description:    »ñÈ¡»î¶¯¼ì²âÆ÷×ÜÊı
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è·å–æ´»åŠ¨æ£€æµ‹å™¨æ€»æ•°
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 int CDetector::GetActiveDetSum()
 {
@@ -1092,10 +1092,10 @@ int CDetector::GetActiveDetSum()
 
 /**************************************************************
 Function:        CDetector::GetDetBoardType
-Description:    »ñÈ¡¼ì²âÆ÷°åµÄÀàĞÍ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         0:¼ì²âÆ÷ 1:¼ì²âÆ÷½Ó¿Ú°å
+Description:    è·å–æ£€æµ‹å™¨æ¿çš„ç±»å‹
+Input:          æ— 
+Output:         æ— 
+Return:         0:æ£€æµ‹å™¨ 1:æ£€æµ‹å™¨æ¥å£æ¿
 ***************************************************************/
 int CDetector::GetDetBoardType()
 {
@@ -1109,10 +1109,10 @@ int CDetector::GetDetBoardType()
 
 /**************************************************************
 Function:        CDetector::GetDetStatus
-Description:    »ñÈ¡¼ì²âÆ÷°åµÄÀàĞÍ
-Input:          ÎŞ
-Output:         pDetStatus ¼ì²âÆ÷×´Ì¬½á¹¹ÌåÊı×éÖ¸Õë
-Return:         ÎŞ
+Description:    è·å–æ£€æµ‹å™¨æ¿çš„ç±»å‹
+Input:          æ— 
+Output:         pDetStatus æ£€æµ‹å™¨çŠ¶æ€ç»“æ„ä½“æ•°ç»„æŒ‡é’ˆ
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetDetStatus(SDetectorSts* pDetStatus)
 {
@@ -1168,10 +1168,10 @@ void CDetector::GetDetStatus(SDetectorSts* pDetStatus)
 
 /**************************************************************
 Function:        CDetector::GetDetData
-Description:    »ñÈ¡½»Í¨¼ì²âÆ÷Êı¾İ±í
-Input:          ÎŞ
-Output:         pDetData ½»Í¨¼ì²âÊı¾İ½á¹¹ÌåÖ¸Õë
-Return:         ÎŞ
+Description:    è·å–äº¤é€šæ£€æµ‹å™¨æ•°æ®è¡¨
+Input:          æ— 
+Output:         pDetData äº¤é€šæ£€æµ‹æ•°æ®ç»“æ„ä½“æŒ‡é’ˆ
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetDetData(SDetectorData* pDetData)
 {
@@ -1198,11 +1198,11 @@ void CDetector::GetDetData(SDetectorData* pDetData)
 		(pDetData+iIndex)->ucLongVolume  = 0;
 		(pDetData+iIndex)->ucSmallVolume = 0;
 		
-		//ÉÏÒ»¸öÖÜÆÚµÄÕ¼ÓĞÂÊ
-		(pDetData+iIndex)->ucOccupancy = m_iDetOccupy[iDetId] * 2; //µ¥Î»0.5
+		//ä¸Šä¸€ä¸ªå‘¨æœŸçš„å æœ‰ç‡
+		(pDetData+iIndex)->ucOccupancy = m_iDetOccupy[iDetId] * 2; //å•ä½0.5
 
-		//µ±Ç°µÄÕ¼ÓĞÂÊ
-		//(pDetData+iIndex)->ucOccupancy   = m_iDetTimeLen[iDetId] * 100 * 2 / ( m_iTotalDistance * 10 ) ; //µ¥Î»0.5
+		//å½“å‰çš„å æœ‰ç‡
+		//(pDetData+iIndex)->ucOccupancy   = m_iDetTimeLen[iDetId] * 100 * 2 / ( m_iTotalDistance * 10 ) ; //å•ä½0.5
 		
 		//(pDetData+iIndex)->ucVelocity  = m_iDetSpeedAvg[iDetId];
 		(pDetData+iIndex)->ucVehLen      = 0;
@@ -1230,10 +1230,10 @@ void CDetector::GetDetData(SDetectorData* pDetData)
 
 /**************************************************************
 Function:        CDetector::GetDetAlarm
-Description:    »ñÈ¡³µÁ¾¼ì²âÆ÷¸æ¾¯±í
-Input:          ÎŞ
-Output:         pDetAlarm ³µÁ¾¸æ¾¯Êı¾İ½á¹¹ÌåÖ¸Õë
-Return:         ÎŞ
+Description:    è·å–è½¦è¾†æ£€æµ‹å™¨å‘Šè­¦è¡¨
+Input:          æ— 
+Output:         pDetAlarm è½¦è¾†å‘Šè­¦æ•°æ®ç»“æ„ä½“æŒ‡é’ˆ
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 {
@@ -1258,7 +1258,7 @@ void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 		
 		if ( m_iBoardErr[ucBoardIndex] == DEV_IS_DISCONNECTED )
 		{
-			(pDetAlarm+iIndex)->ucDetAlarm |= (1<<3);  /*Í¨ĞÅ¹ÊÕÏ*/
+			(pDetAlarm+iIndex)->ucDetAlarm |= (1<<3);  /*é€šä¿¡æ•…éšœ*/
 			iIndex++;
 			continue;
 		}
@@ -1268,19 +1268,19 @@ void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 		if ( ( m_ucDetError[iDetId] != DET_NORMAL )
 		  /*&& ( pTscConfig->sDetector[iIndex].ucPhaseId != 0 ) */)
 		{
-			(pDetAlarm+iIndex)->ucDetAlarm |= (1<<7); /*Î´Öª¹ÊÕÏ*/
+			(pDetAlarm+iIndex)->ucDetAlarm |= (1<<7); /*æœªçŸ¥æ•…éšœ*/
 		}
 
 		switch ( m_ucDetError[iDetId] )
 		{
-			case DET_CARVE:  //¿ªÂ·
-				(pDetAlarm+iIndex)->ucCoilAlarm |= (1<<2);    //¿ªÂ·
+			case DET_CARVE:  //å¼€è·¯
+				(pDetAlarm+iIndex)->ucCoilAlarm |= (1<<2);    //å¼€è·¯
 				break;
-			case DET_SHORT:   //¶ÌÂ·
-				(pDetAlarm+iIndex)->ucCoilAlarm |= (1<<4);  //¸ĞÓ¦±ä»¯³¬ÏŞ 
+			case DET_SHORT:   //çŸ­è·¯
+				(pDetAlarm+iIndex)->ucCoilAlarm |= (1<<4);  //æ„Ÿåº”å˜åŒ–è¶…é™ 
 				break;
-			case DET_STOP:    //Í£Õñ
-				(pDetAlarm+iIndex)->ucCoilAlarm |= (1<<3);  //µç¸Ğ²»×ã
+			case DET_STOP:    //åœæŒ¯
+				(pDetAlarm+iIndex)->ucCoilAlarm |= (1<<3);  //ç”µæ„Ÿä¸è¶³
 				break;
 			default:
 				break;
@@ -1307,10 +1307,10 @@ void CDetector::GetDetAlarm(SDetectorAlarm* pDetAlarm)
 
 /**************************************************************
 Function:        CDetector::IsDetError
-Description:    ÅĞ¶ÏÊÇ·ñ´æÔÚ¼ì²âÆ÷¹ÊÕÏ ¼ì²âÆ÷°å´æÔÚ+¼ì²âÆ÷¹ÊÕÏ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         false:²»´æÔÚ°å»òÕßÃ»ÓĞ¼ì²âÆ÷¹ÊÕÏ true:´æÔÚ¼ì²âÆ÷¹ÊÕÏ
+Description:    åˆ¤æ–­æ˜¯å¦å­˜åœ¨æ£€æµ‹å™¨æ•…éšœ æ£€æµ‹å™¨æ¿å­˜åœ¨+æ£€æµ‹å™¨æ•…éšœ
+Input:          æ— 
+Output:         æ— 
+Return:         false:ä¸å­˜åœ¨æ¿æˆ–è€…æ²¡æœ‰æ£€æµ‹å™¨æ•…éšœ true:å­˜åœ¨æ£€æµ‹å™¨æ•…éšœ
 ***************************************************************/
 bool CDetector::IsDetError()
 {
@@ -1333,7 +1333,7 @@ bool CDetector::IsDetError()
 
 /***************************************************************
 
-»ñÈ¡ÓĞ³µµÄÊ±¼ä¼ÇÂ¼1s»ñÈ¡Ò»´Î
+è·å–æœ‰è½¦çš„æ—¶é—´è®°å½•1sè·å–ä¸€æ¬¡
 #ifndef WINDOWS
 void CDetector::GetHaveCarTime(time_t* pTime)
 {
@@ -1347,31 +1347,31 @@ void CDetector::GetHaveCarTime(time_t* pTime)
 
 /**************************************************************
 Function:        CDetector::HaveDetBoard
-Description:    ÊÇ·ñ´æÔÚ¼ì²âÆ÷°å ÇÒ ´æÔÚ¼ì²âÆ÷ÊÇºÃµÄ   Á½¿é¼ì²â°å
-				ÈÎÒâÒ»¿éÓĞÈÎÒâÒ»¸ö¼ì²âÆ÷Ôò·µ»ØÕæ Õâ¸öÖ÷ÒªÊÇ´ÓÅäÖÃ
-				±íÀ´ÅĞ¶ÏÊÇ·ñÓĞ¼ì²âÆ÷
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true:´æÔÚ  false:²»´æÔÚ
+Description:    æ˜¯å¦å­˜åœ¨æ£€æµ‹å™¨æ¿ ä¸” å­˜åœ¨æ£€æµ‹å™¨æ˜¯å¥½çš„   ä¸¤å—æ£€æµ‹æ¿
+				ä»»æ„ä¸€å—æœ‰ä»»æ„ä¸€ä¸ªæ£€æµ‹å™¨åˆ™è¿”å›çœŸ è¿™ä¸ªä¸»è¦æ˜¯ä»é…ç½®
+				è¡¨æ¥åˆ¤æ–­æ˜¯å¦æœ‰æ£€æµ‹å™¨
+Input:          æ— 
+Output:         æ— 
+Return:         true:å­˜åœ¨  false:ä¸å­˜åœ¨
 ***************************************************************/
 bool CDetector::HaveDetBoard()
 {	
 	int iDetId =0x0;
 	int iMaxDetId =0x0 ;
 	STscConfig* pTscConfig = CManaKernel::CreateInstance()->m_pTscConfig;
-	/*ÅĞ¶Ïµ±Ç°ÊÇ·ñÓĞÅäÖÃ¼ì²âÆ÷°å*/
+	/*åˆ¤æ–­å½“å‰æ˜¯å¦æœ‰é…ç½®æ£€æµ‹å™¨æ¿*/
 	for ( Byte iBoardIndex=0x0; iBoardIndex<MAX_DET_BOARD; iBoardIndex++ )
 	{		
 		
 		//ACE_DEBUG((LM_DEBUG,"%s:%d m_iBoardErr[%d] = %02X \n",__FILE__,__LINE__,iBoardIndex,m_iBoardErr[iBoardIndex]));
 			if(DEV_IS_CONNECTED == m_iBoardErr[iBoardIndex] )
 			{
-				if(iBoardIndex < 2) //¼ì²âÆ÷°å
+				if(iBoardIndex < 2) //æ£€æµ‹å™¨æ¿
 				{
 				 iDetId = iBoardIndex*MAX_DETECTOR_PER_BOARD ;
 				 iMaxDetId = (iDetId + MAX_DETECTOR_PER_BOARD-1) ;
 				}
-				else  //½Ó¿Ú°å
+				else  //æ¥å£æ¿
 				{
 				 iDetId = (iBoardIndex-1)*MAX_INTERFACE_PER_BOARD;
 				 iMaxDetId = (iDetId + MAX_INTERFACE_PER_BOARD-1) ;
@@ -1386,13 +1386,13 @@ bool CDetector::HaveDetBoard()
 						if((iBoardIndex <2) && (DET_NORMAL == m_ucDetError[iDetId]))
 						{
 							
-						//	m_iBoardErr[iBoardIndex] = DEV_IS_DISCONNECTED ; //·ÀÖ¹²»ÄÜ½µ¼¶
+						//	m_iBoardErr[iBoardIndex] = DEV_IS_DISCONNECTED ; //é˜²æ­¢ä¸èƒ½é™çº§
 							return true ;
 						}
-						else if(iBoardIndex >=2) //½Ó¿Ú°å²»ÓÃÅĞ¶ÏÍ¨µÀºÃ»µ
+						else if(iBoardIndex >=2) //æ¥å£æ¿ä¸ç”¨åˆ¤æ–­é€šé“å¥½å
 						{
 							
-							//m_iBoardErr[iBoardIndex] = DEV_IS_DISCONNECTED ; //·ÀÖ¹²»ÄÜ½µ¼¶
+							//m_iBoardErr[iBoardIndex] = DEV_IS_DISCONNECTED ; //é˜²æ­¢ä¸èƒ½é™çº§
 							return true ;
 						}						
 					}
@@ -1409,16 +1409,16 @@ bool CDetector::HaveDetBoard()
 
 /**************************************************************
 Function:        CDetector::IsVehileHaveCar
-Description:    ¸ĞÓ¦¿ØÖÆ,ÅĞ¶ÏÊÇ·ñÓĞ³µ Èç¹ûÓĞ³µÔò¼ÓÂÌµÆÑÓ³¤Ê±¼ä
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ„Ÿåº”æ§åˆ¶,åˆ¤æ–­æ˜¯å¦æœ‰è½¦ å¦‚æœæœ‰è½¦åˆ™åŠ ç»¿ç¯å»¶é•¿æ—¶é—´
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::IsVehileHaveCar()
 {
 	static bool bVehile      = false;
 	static bool bDefStep     = false;
-	static bool bOtherWayCar = false;   //ÁíÒ»¸ö³µµÀÊÇ·ñÓĞ³µ
+	static bool bOtherWayCar = false;   //å¦ä¸€ä¸ªè½¦é“æ˜¯å¦æœ‰è½¦
 	bool bOtherTmp           = false;
 	bool bHaveCar            = false;
 	bool bCurMainDrive       = false;
@@ -1436,12 +1436,12 @@ void CDetector::IsVehileHaveCar()
 	//ACE_Date_Time tvTime(ACE_OS::gettimeofday());		
 	//ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_PreAnalysis %d:%d:%d:%d!\n",__FILE__,__LINE__,tvTime.hour(),tvTime.minute(),tvTime.second(),tvTime.microsec()));
 			
-	if ( !bVehile && uiTscCtrl != CTRL_PREANALYSIS) //Èç¹û²»ÊÇ½×¶Î³õÊ¼²½²¢ÇÒÊÇÂÌ³¤²½£¬ÔòÖ±½Ó·µ»Ø ²»»áÔö¼ÓÂÌ²½³¤
+	if ( !bVehile && uiTscCtrl != CTRL_PREANALYSIS) //å¦‚æœä¸æ˜¯é˜¶æ®µåˆå§‹æ­¥å¹¶ä¸”æ˜¯ç»¿é•¿æ­¥ï¼Œåˆ™ç›´æ¥è¿”å› ä¸ä¼šå¢åŠ ç»¿æ­¥é•¿
 	{
 		return;
 	}
 
-	if ( bDefStep )  //ĞÂµÄ²½·¥
+	if ( bDefStep )  //æ–°çš„æ­¥ä¼
 	{
 		bDefStep     = false;
 		bOtherWayCar = false;
@@ -1450,33 +1450,33 @@ void CDetector::IsVehileHaveCar()
 
 	if ( uiTscCtrl != CTRL_VEHACTUATED || uiTscCtrl != CTRL_PREANALYSIS)
 	{
-		bCurMainDrive = pManaKernel->IsMainPhaseGrp(uiCurPhase);  //Ö»ÓĞÊÇ½×¶ÎµÚÒ»²½²¢ÇÒÊÇÂÌ³¤²½µÄÇé¿öÏÂÓĞ¸ĞÓ¦²ÅÓĞÒâÒå
+		bCurMainDrive = pManaKernel->IsMainPhaseGrp(uiCurPhase);  //åªæœ‰æ˜¯é˜¶æ®µç¬¬ä¸€æ­¥å¹¶ä¸”æ˜¯ç»¿é•¿æ­¥çš„æƒ…å†µä¸‹æœ‰æ„Ÿåº”æ‰æœ‰æ„ä¹‰
 	}
 	switch ( uiTscCtrl )
 	{
 		case CTRL_VEHACTUATED:
-			if (IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet) ) //uiCurPhaseµ±Ç°½×¶Î·ÅĞĞÏàÎ» Ã¿¸öÖÜÆÚ»á»ñÈ¡Ò»´Î¸÷¸ö½×¶ÎµÄ·ÅĞĞÏàÎ»
+			if (IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet) ) //uiCurPhaseå½“å‰é˜¶æ®µæ”¾è¡Œç›¸ä½ æ¯ä¸ªå‘¨æœŸä¼šè·å–ä¸€æ¬¡å„ä¸ªé˜¶æ®µçš„æ”¾è¡Œç›¸ä½
 			{
-				bHaveCar = true; //·ÅĞĞÏàÎ»ÈÎºÎÒ»¸öÏàÎ»µÄÈÎºÎÒ»¸ö¼ì²âÆ÷ÓĞ³µ Ôò ½á¹ûÓĞ³µ	 sPhaseDet ÏàÎ»Óë¼ì²âÆ÷¶ÔÓ¦¹ØÏµ 
+				bHaveCar = true; //æ”¾è¡Œç›¸ä½ä»»ä½•ä¸€ä¸ªç›¸ä½çš„ä»»ä½•ä¸€ä¸ªæ£€æµ‹å™¨æœ‰è½¦ åˆ™ ç»“æœæœ‰è½¦	 sPhaseDet ç›¸ä½ä¸æ£€æµ‹å™¨å¯¹åº”å…³ç³» 
 			}
 			break;
 		case CTRL_MAIN_PRIORITY:
-			if ( bCurMainDrive )  //µ±Ç°ÎªÖ÷ÏàÎ»
+			if ( bCurMainDrive )  //å½“å‰ä¸ºä¸»ç›¸ä½
 			{
-				if ( IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet) ) //Ö÷³µµÀÓĞ³µ
+				if ( IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet) ) //ä¸»è½¦é“æœ‰è½¦
 				{
 					bHaveCar = true;
 				}
 			}
-			else  if ( !bOtherWayCar ) //µ±Ç°Îª´ÎÏàÎ» + Ö÷³µµÀÔÚ¸Ã²½·¥Ò»Ö±Ã»ÓĞ³µ
+			else  if ( !bOtherWayCar ) //å½“å‰ä¸ºæ¬¡ç›¸ä½ + ä¸»è½¦é“åœ¨è¯¥æ­¥ä¼ä¸€ç›´æ²¡æœ‰è½¦
 			{
-				bOtherTmp = IsHaveCarPhaseGrp(uiNextPhase, ucPhaseIndex , sPhaseDet);   //µ±Ç°Ö÷³µµÀÊÇ·ñÓĞ³µ
+				bOtherTmp = IsHaveCarPhaseGrp(uiNextPhase, ucPhaseIndex , sPhaseDet);   //å½“å‰ä¸»è½¦é“æ˜¯å¦æœ‰è½¦
 				if ( bOtherTmp )
 				{
 					bOtherWayCar = true;
 				}
 
-				if ( !bOtherWayCar && IsHaveCarPhaseGrp(uiCurPhase, ucPhaseIndex ,sPhaseDet) )  //Ö÷³µµÀÔÚ¸Ã²½·¥Ò»Ö±Ã»ÓĞ³µ + ´Î³µµÀÓĞ³µ 
+				if ( !bOtherWayCar && IsHaveCarPhaseGrp(uiCurPhase, ucPhaseIndex ,sPhaseDet) )  //ä¸»è½¦é“åœ¨è¯¥æ­¥ä¼ä¸€ç›´æ²¡æœ‰è½¦ + æ¬¡è½¦é“æœ‰è½¦ 
 					                          
 				{
 					bHaveCar = true;    
@@ -1484,22 +1484,22 @@ void CDetector::IsVehileHaveCar()
 			}
 			break;
 		case CTRL_SECOND_PRIORITY:
-			if ( !bCurMainDrive ) //µ±Ç°Îª´ÎÏàÎ»
+			if ( !bCurMainDrive ) //å½“å‰ä¸ºæ¬¡ç›¸ä½
 			{
-				if ( IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet) )   //´Î³µµÀÓĞ³µ
+				if ( IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet) )   //æ¬¡è½¦é“æœ‰è½¦
 				{
 					bHaveCar = true;
 				}
 				
 				//ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bOtherTmp=%s uiCurPhase=%d \r\n",__FILE__,__LINE__,(bOtherTmp == false)?"false":"true",uiCurPhase);
 			}
-			else  if ( !bOtherWayCar ) //µ±Ç°Ö÷ÏàÎ» + ´Î³µµÀÔÚ¸Ã²½·¥Ò»Ö±Ã»ÓĞ³µ
+			else  if ( !bOtherWayCar ) //å½“å‰ä¸»ç›¸ä½ + æ¬¡è½¦é“åœ¨è¯¥æ­¥ä¼ä¸€ç›´æ²¡æœ‰è½¦
 			{
-				bOtherTmp = IsHaveCarPhaseGrp(uiNextPhase, ucPhaseIndex , sPhaseDet);   //µ±Ç°´Î³µµÀÊÇ·ñÓĞ³µ
+				bOtherTmp = IsHaveCarPhaseGrp(uiNextPhase, ucPhaseIndex , sPhaseDet);   //å½“å‰æ¬¡è½¦é“æ˜¯å¦æœ‰è½¦
 				//ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bOtherTmp=%s uiNextPhase=%d \r\n",__FILE__,__LINE__,(bOtherTmp == false)?"false":"true",uiNextPhase);
 				if ( bOtherTmp )
 				{
-					bOtherWayCar = true; //´Î³µµÀÓĞ³µ,´Î³µµÀ¿ÉÒÔ·ÅĞĞÂÌµÆ
+					bOtherWayCar = true; //æ¬¡è½¦é“æœ‰è½¦,æ¬¡è½¦é“å¯ä»¥æ”¾è¡Œç»¿ç¯
 					if(pManaKernel->bSecondPriority ==false)
 						pManaKernel->bSecondPriority = true ;
 				}			
@@ -1515,13 +1515,13 @@ void CDetector::IsVehileHaveCar()
 			Byte iDetId = 0x0 ;
 			while(iIndex < MAX_PHASE )
 			{
-				ucPhaseIndex = iIndex;  //·ÅĞĞÏàÎ»
-				iDetCnt      = pManaKernel->m_sPhaseDet[iIndex].iRoadwayCnt;//ÅĞ¶Ï¸ÃÏàÎ»ÓĞ¼¸¸ö¼ì²âÆ÷
+				ucPhaseIndex = iIndex;  //æ”¾è¡Œç›¸ä½
+				iDetCnt      = pManaKernel->m_sPhaseDet[iIndex].iRoadwayCnt;//åˆ¤æ–­è¯¥ç›¸ä½æœ‰å‡ ä¸ªæ£€æµ‹å™¨
 
 				iDetIndex = 0;
-				while ( iDetIndex < iDetCnt )//¸ÃÏàÎ»ËùÓĞµÄ¼ì²âÆ÷Ñ­»·Ò»±é
+				while ( iDetIndex < iDetCnt )//è¯¥ç›¸ä½æ‰€æœ‰çš„æ£€æµ‹å™¨å¾ªç¯ä¸€é
 				{
-					iDetId = pManaKernel->m_sPhaseDet[iIndex].iDetectorId[iDetIndex] - 1; //¼ì²âÆ÷Êı×éÏÂ±ê
+					iDetId = pManaKernel->m_sPhaseDet[iIndex].iDetectorId[iDetIndex] - 1; //æ£€æµ‹å™¨æ•°ç»„ä¸‹æ ‡
 				
 					if(0x1==m_iDetStatus[iDetId])
 					{							
@@ -1541,9 +1541,9 @@ void CDetector::IsVehileHaveCar()
 				iIndex++;
 			}
 			
-			if ( IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet)&&bVehile ) //uiCurPhaseµ±Ç°½×¶Î·ÅĞĞÏàÎ» Ã¿¸öÖÜÆÚ»á»ñÈ¡Ò»´Î¸÷¸ö½×¶ÎµÄ·ÅĞĞÏàÎ»
+			if ( IsHaveCarPhaseGrp( uiCurPhase, ucPhaseIndex , sPhaseDet)&&bVehile ) //uiCurPhaseå½“å‰é˜¶æ®µæ”¾è¡Œç›¸ä½ æ¯ä¸ªå‘¨æœŸä¼šè·å–ä¸€æ¬¡å„ä¸ªé˜¶æ®µçš„æ”¾è¡Œç›¸ä½
 			{
-				bHaveCar = true; //·ÅĞĞÏàÎ»ÈÎºÎÒ»¸öÏàÎ»µÄÈÎºÎÒ»¸ö¼ì²âÆ÷ÓĞ³µ Ôò ½á¹ûÓĞ³µ	 sPhaseDet ÏàÎ»Óë¼ì²âÆ÷¶ÔÓ¦¹ØÏµ 
+				bHaveCar = true; //æ”¾è¡Œç›¸ä½ä»»ä½•ä¸€ä¸ªç›¸ä½çš„ä»»ä½•ä¸€ä¸ªæ£€æµ‹å™¨æœ‰è½¦ åˆ™ ç»“æœæœ‰è½¦	 sPhaseDet ç›¸ä½ä¸æ£€æµ‹å™¨å¯¹åº”å…³ç³» 
 			}
 									
 		}
@@ -1562,12 +1562,12 @@ void CDetector::IsVehileHaveCar()
 
 /**************************************************************
 Function:        CDetector::IsHaveCarPhaseGrp
-Description:    ÅĞ¶ÏÄ³¸öÏàÎ»×éÊÇ·ñÓĞ³µ
-Input:          uiPhase-ÏàÎ»×é  pPhaseDet-µ¥¸öÏàÎ»Óë¼ì²âÆ÷µÄ¹ØÏµ
-Output:         ucPhaseIndex - ÓĞ³µµÄÏàÎ» 0 - 15
-Return:         true-ÓĞ³µ   false-ÎŞ³µ
+Description:    åˆ¤æ–­æŸä¸ªç›¸ä½ç»„æ˜¯å¦æœ‰è½¦
+Input:          uiPhase-ç›¸ä½ç»„  pPhaseDet-å•ä¸ªç›¸ä½ä¸æ£€æµ‹å™¨çš„å…³ç³»
+Output:         ucPhaseIndex - æœ‰è½¦çš„ç›¸ä½ 0 - 15
+Return:         true-æœ‰è½¦   false-æ— è½¦
 ***************************************************************/
-bool CDetector::IsHaveCarPhaseGrp(Uint uiPhase,Byte& ucPhaseIndex , SPhaseDetector* pPhaseDet)//uiPhase ½×¶Î³¤²½ÂÌµÆ½×¶Î·ÅĞĞÏàÎ»×é È¡ÖµÀ´Ô´ÓÚÖÜÆÚovercycleÖĞµÄº¯Êı
+bool CDetector::IsHaveCarPhaseGrp(Uint uiPhase,Byte& ucPhaseIndex , SPhaseDetector* pPhaseDet)//uiPhase é˜¶æ®µé•¿æ­¥ç»¿ç¯é˜¶æ®µæ”¾è¡Œç›¸ä½ç»„ å–å€¼æ¥æºäºå‘¨æœŸovercycleä¸­çš„å‡½æ•°
 {
 	bool bHaveCar  = false;
 	int  iIndex    = 0;
@@ -1579,13 +1579,13 @@ bool CDetector::IsHaveCarPhaseGrp(Uint uiPhase,Byte& ucPhaseIndex , SPhaseDetect
 	{
 		if ( (uiPhase>>iIndex) & 1 )
 		{
-			ucPhaseIndex = iIndex;  //·ÅĞĞÏàÎ»
-			iDetCnt      = pPhaseDet[iIndex].iRoadwayCnt;//ÅĞ¶Ï¸ÃÏàÎ»ÓĞ¼¸¸ö¼ì²âÆ÷
+			ucPhaseIndex = iIndex;  //æ”¾è¡Œç›¸ä½
+			iDetCnt      = pPhaseDet[iIndex].iRoadwayCnt;//åˆ¤æ–­è¯¥ç›¸ä½æœ‰å‡ ä¸ªæ£€æµ‹å™¨
 
 			iDetIndex = 0;
-			while ( iDetIndex < iDetCnt )//¸ÃÏàÎ»ËùÓĞµÄ¼ì²âÆ÷Ñ­»·Ò»±é
+			while ( iDetIndex < iDetCnt )//è¯¥ç›¸ä½æ‰€æœ‰çš„æ£€æµ‹å™¨å¾ªç¯ä¸€é
 			{
-				iDetId = pPhaseDet[iIndex].iDetectorId[iDetIndex] - 1; //¼ì²âÆ÷Êı×éÏÂ±ê
+				iDetId = pPhaseDet[iIndex].iDetectorId[iDetIndex] - 1; //æ£€æµ‹å™¨æ•°ç»„ä¸‹æ ‡
 				
 				if(0x1==m_iDetStatus[iDetId])
 				{
@@ -1603,11 +1603,11 @@ bool CDetector::IsHaveCarPhaseGrp(Uint uiPhase,Byte& ucPhaseIndex , SPhaseDetect
 				   }				    
 				}
 
-			//	if ( (1==m_iDetStatus[iDetId]) && (DET_NORMAL==m_ucDetError[iDetId]) && (m_iDetOccupy[iDetId] < 99 ) )  //ÓĞ³µÇÒ¼ì²âÆ÷Ã»ÓĞËğ»µÇÒÕ¼ÓĞÂÊĞ¡ÓÚ99
+			//	if ( (1==m_iDetStatus[iDetId]) && (DET_NORMAL==m_ucDetError[iDetId]) && (m_iDetOccupy[iDetId] < 99 ) )  //æœ‰è½¦ä¸”æ£€æµ‹å™¨æ²¡æœ‰æŸåä¸”å æœ‰ç‡å°äº99
 				//{
 					//ACE_DEBUG((LM_DEBUG,"\n%s:%d Dector No.:%d\n\n",__FILE__,__LINE__,iDetId+1));
 
-				//	bHaveCar = true; //Èç¹û·ÅĞĞÏàÎ»ÂÌµÆ³¤²½Ê±ºòµÄÈÎºÎÒ»¸ö¼ì²âÆ÷ÓĞ³µÔòÖĞ¶ÏÍË³öÑ­»· ²¢ÇÒ·µ»ØÓĞ³µ true 
+				//	bHaveCar = true; //å¦‚æœæ”¾è¡Œç›¸ä½ç»¿ç¯é•¿æ­¥æ—¶å€™çš„ä»»ä½•ä¸€ä¸ªæ£€æµ‹å™¨æœ‰è½¦åˆ™ä¸­æ–­é€€å‡ºå¾ªç¯ å¹¶ä¸”è¿”å›æœ‰è½¦ true 
 				//	break;
 				//}
 				iDetIndex++;
@@ -1627,10 +1627,10 @@ bool CDetector::IsHaveCarPhaseGrp(Uint uiPhase,Byte& ucPhaseIndex , SPhaseDetect
 
 /**************************************************************
 Function:        CDetector::GetAdaptInfo
-Description:   ×ÔÊÊÓ¦¿ØÖÆ
-Input:           pDetTimeLen - ¼ì²âÆ÷ÓĞ³µµÄÊ±¼ä
-Output:         pTotalStat  - ³µÁ÷Á¿
-Return:         ÎŞ
+Description:   è‡ªé€‚åº”æ§åˆ¶
+Input:           pDetTimeLen - æ£€æµ‹å™¨æœ‰è½¦çš„æ—¶é—´
+Output:         pTotalStat  - è½¦æµé‡
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetAdaptInfo(int* pDetTimeLen , int* pTotalStat)
 {
@@ -1639,8 +1639,8 @@ void CDetector::GetAdaptInfo(int* pDetTimeLen , int* pTotalStat)
 		return;
 	}
 
-	ACE_OS::memcpy(pDetTimeLen , m_iAdapDetTimeLen , sizeof(int)*MAX_DETECTOR);   //0ˆ70ˆ40…60…80‡8¡À0“30Š1 0‡90Š00ˆ90“30ˆ70ˆ40‡00‡8
-	ACE_OS::memcpy(pTotalStat  , m_iAdapTotalStat  , sizeof(int)*MAX_DETECTOR);   //0…60…80†9¡Â0†90†7
+	ACE_OS::memcpy(pDetTimeLen , m_iAdapDetTimeLen , sizeof(int)*MAX_DETECTOR);   //??????????Â±???? ????????????????
+	ACE_OS::memcpy(pTotalStat  , m_iAdapTotalStat  , sizeof(int)*MAX_DETECTOR);   //??????Ã·????
 
 	ACE_OS::memset(m_iAdapDetTimeLen , 0 , sizeof(int)*MAX_DETECTOR);
 	ACE_OS::memset(m_iAdapTotalStat  , 0 , sizeof(int)*MAX_DETECTOR);
@@ -1649,10 +1649,10 @@ void CDetector::GetAdaptInfo(int* pDetTimeLen , int* pTotalStat)
 
 /**************************************************************
 Function:        CDetector::SetStatCycle
-Description:    ÉèÖÃ²É¼¯ÖÜÆÚ
-Input:           ucCycle - ÖÜÆÚ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®é‡‡é›†å‘¨æœŸ
+Input:           ucCycle - å‘¨æœŸ
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::SetStatCycle(Byte ucCycle)
 {
@@ -1662,11 +1662,11 @@ void CDetector::SetStatCycle(Byte ucCycle)
 
 /**************************************************************
 Function:        CDetector::RecvDetCan
-Description:     Ö÷¿Ø°å´¦Àí´Ó¼ì²âÆ÷°å·¢ËÍ¹ıÀ´µÄCANÊı¾İ°ü
-Input:           ucBoardAddr-¼ì²âÆ÷°åµØÖ· 
-				 sRecvCanTmp-½ÓÊÕµ½CANÊı¾İÖ¡
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     ä¸»æ§æ¿å¤„ç†ä»æ£€æµ‹å™¨æ¿å‘é€è¿‡æ¥çš„CANæ•°æ®åŒ…
+Input:           ucBoardAddr-æ£€æµ‹å™¨æ¿åœ°å€ 
+				 sRecvCanTmp-æ¥æ”¶åˆ°CANæ•°æ®å¸§
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 {
@@ -1682,7 +1682,7 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 	if ( DET_HEAD_VEHSTS ==RecvType )
 		{				
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Get car info %2x:%2x !Time %d:%d\n",__FILE__,__LINE__,sRecvCanTmp.pCanData[1],sRecvCanTmp.pCanData[2],tvTime.minute(),tvTime.second()));
-				//Êı¾İ×Ö½ÚÖ»Ê¹ÓÃµ½Á½¸ö×Ö½Ú
+				//æ•°æ®å­—èŠ‚åªä½¿ç”¨åˆ°ä¸¤ä¸ªå­—èŠ‚
 			for ( int i=1; i<sRecvCanTmp.ucCanDataLen; i++ )
 			{				
 				ucValueTmp = sRecvCanTmp.pCanData[i];			
@@ -1691,14 +1691,14 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 				{
 					//iDetId = ucDetBoardIndex*16+(i-1)*8+j ;
 					if(ucDetBoardIndex <2)
-						iDetId = ucDetBoardIndex*16+(i-1)*8+j ;    //¼ì²âÆ÷°å
+						iDetId = ucDetBoardIndex*16+(i-1)*8+j ;    //æ£€æµ‹å™¨æ¿
 					else 
-						iDetId = (ucDetBoardIndex-1)*32+(i-1)*8+j ; //½Ó¿Ú°å
+						iDetId = (ucDetBoardIndex-1)*32+(i-1)*8+j ; //æ¥å£æ¿
 					m_iDetStatus[iDetId] = (ucValueTmp >> j) & 0x01;
 					if((ucValueTmp >> j) & 0x1)
 					{
-						m_iDetTimeLen[iDetId] += 1;    //¼ÆËãÕ¼ÓĞÂÊ
-						m_iDetStatus[iDetId]  = 1;     //³µµÀÉÏÓĞ³µ
+						m_iDetTimeLen[iDetId] += 1;    //è®¡ç®—å æœ‰ç‡
+						m_iDetStatus[iDetId]  = 1;     //è½¦é“ä¸Šæœ‰è½¦
 
 						m_iAdapDetTimeLen[iDetId] += 1;
 						
@@ -1708,7 +1708,7 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 						//	ACE_DEBUG((LM_DEBUG,"%s:%d Detcotr No.:%d has car,%02x %d:%d:%d:%d!\n",__FILE__,__LINE__,iDetId+1,sRecvCanTmp.pCanData[i],tvTime.hour(),tvTime.minute(),tvTime.second(),tvTime.microsec()));
 							//if(m_ucTotalStat[iDetId]==0xff)
 								//m_ucTotalStat[iDetId]=0;
-							m_ucTotalStat[iDetId] += 1;   //¼ÆËã³µÁ÷Á¿ ÉÏ´ÎÎŞ³µ´Ë´ÎÓĞ³µ²ÅÎªÓĞ³µ 
+							m_ucTotalStat[iDetId] += 1;   //è®¡ç®—è½¦æµé‡ ä¸Šæ¬¡æ— è½¦æ­¤æ¬¡æœ‰è½¦æ‰ä¸ºæœ‰è½¦ 
 							
 							m_iAdapTotalStat[iDetId] += 1; 
 						}
@@ -1719,7 +1719,7 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 	
 			
 		}
-		else if(DET_HEAD_STS == RecvType && ucDetBoardIndex<0x2) //Ö»ÏŞ¼ì²âÆ÷°å
+		else if(DET_HEAD_STS == RecvType && ucDetBoardIndex<0x2) //åªé™æ£€æµ‹å™¨æ¿
 		{			
 			Byte ucDecId = 0 ;
 			CManaKernel * pManakernel = CManaKernel::CreateInstance() ;
@@ -1881,11 +1881,11 @@ void CDetector::RecvDetCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 
 /**************************************************************
 Function:        CDetector::GetAllVehSts
-Description:     »ñÈ¡¼ì²âÆ÷°å×´Ì¬ ADD :201307101054
-Input:           QueryType-²éÑ¯×´Ì¬ÀàĞÍ ÓĞ³µÎŞ³µ»¹ÊÇÏßÈ¦×´Ì¬ 
-				 ucBdindex-0 1 2 3 ¼ì²âÆ÷°åÏÂ±ê
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è·å–æ£€æµ‹å™¨æ¿çŠ¶æ€ ADD :201307101054
+Input:           QueryType-æŸ¥è¯¢çŠ¶æ€ç±»å‹ æœ‰è½¦æ— è½¦è¿˜æ˜¯çº¿åœˆçŠ¶æ€ 
+				 ucBdindex-0 1 2 3 æ£€æµ‹å™¨æ¿ä¸‹æ ‡
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetAllVehSts(Byte QueryType,Byte ucBdindex)
 {	
@@ -1915,12 +1915,12 @@ void CDetector::GetAllVehSts(Byte QueryType,Byte ucBdindex)
 
 /**************************************************************
 Function:        CDetector::GetVehSts
-Description:     Ö÷¿Ø°åÇëÇó¼ì²âÆ÷·¢ËÍ16¸öÍ¨µÀµÄ³µÁ¾¼ì²â×´Ì¬ 
+Description:     ä¸»æ§æ¿è¯·æ±‚æ£€æµ‹å™¨å‘é€16ä¸ªé€šé“çš„è½¦è¾†æ£€æµ‹çŠ¶æ€ 
 				 ADD:201307101054
-Input:           QueryType-²éÑ¯×´Ì¬ÀàĞÍ ÓĞ³µÎŞ³µ»¹ÊÇÏßÈ¦×´Ì¬ 
-				 ucBoardAddr-¼ì²âÆ÷°åµØÖ·
-Output:         ÎŞ
-Return:         ÎŞ
+Input:           QueryType-æŸ¥è¯¢çŠ¶æ€ç±»å‹ æœ‰è½¦æ— è½¦è¿˜æ˜¯çº¿åœˆçŠ¶æ€ 
+				 ucBoardAddr-æ£€æµ‹å™¨æ¿åœ°å€
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CDetector::GetVehSts(Byte ucBoardAddr,Byte QueryType)
 {
@@ -1932,7 +1932,7 @@ void CDetector::GetVehSts(Byte ucBoardAddr,Byte QueryType)
 		case DET_HEAD_VEHSTS :
 			Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  ,ucBoardAddr  , &(sSendFrameTmp.ulCanId));
 			sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND << 6 ) | DET_HEAD_VEHSTS; //DATA_HEAD_CHECK ->>> DATA_HEAD_RESEND MOD?2013 0710 1645			
-			sSendFrameTmp.ucCanDataLen = 1; //¼ì²âÊÇ·ñÓĞ³µ
+			sSendFrameTmp.ucCanDataLen = 1; //æ£€æµ‹æ˜¯å¦æœ‰è½¦
 	//		ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD_ADDR:%x,QueryType=%d\n",__FILE__,__LINE__,ucBoardAddr,QueryType));
 			break ;
 		case DET_HEAD_STS :
@@ -1940,8 +1940,8 @@ void CDetector::GetVehSts(Byte ucBoardAddr,Byte QueryType)
 				break ;
 			Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  ,ucBoardAddr  , &(sSendFrameTmp.ulCanId));
 
-			sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND << 6 ) | DET_HEAD_STS; ////DATA_HEAD_CHECK ->>> DATA_HEAD_RESEND ĞèÒª»Ø¸´¼ì²âÆ÷ÄÚ²¿Êı¾İ
-			sSendFrameTmp.ucCanDataLen = 1; //¼ì²âÃ¿¿é°å¼ì²âÆ÷¹¤×÷×´Ì¬
+			sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND << 6 ) | DET_HEAD_STS; ////DATA_HEAD_CHECK ->>> DATA_HEAD_RESEND éœ€è¦å›å¤æ£€æµ‹å™¨å†…éƒ¨æ•°æ®
+			sSendFrameTmp.ucCanDataLen = 1; //æ£€æµ‹æ¯å—æ¿æ£€æµ‹å™¨å·¥ä½œçŠ¶æ€
 	//		ACE_DEBUG((LM_DEBUG,"%s:%d send CAN data to BOARD_ADDR:%x,QueryType=%d\n",__FILE__,__LINE__,ucBoardAddr,QueryType));
 			break ;
 		default :
@@ -1953,10 +1953,10 @@ void CDetector::GetVehSts(Byte ucBoardAddr,Byte QueryType)
 
 /**************************************************************
 Function:        CDetector::GetAllDecVer
-Description:    ²éÑ¯ËùÓĞ¼ì²âÆ÷°å½Ó¿Ú°åÊÇ·ñÁ¬½Ó´æÔÚ
-Input:            ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æŸ¥è¯¢æ‰€æœ‰æ£€æµ‹å™¨æ¿æ¥å£æ¿æ˜¯å¦è¿æ¥å­˜åœ¨
+Input:            æ— 
+Output:         æ— 
+Return:         æ— 
 Date :          2015-02-02
 ***************************************************************/
 void CDetector:: GetAllDecVer()
@@ -1970,10 +1970,10 @@ void CDetector:: GetAllDecVer()
 
 /**************************************************************
 Function:        CDetector::GetDecBoardIndex
-Description:    ²éÑ¯ËùÓĞ¼ì²âÆ÷°å½Ó¿Ú°åÊÇ·ñÁ¬½Ó´æÔÚ
-Input:           DecBoardHexAddr -¼ì²âÆ÷°å½Ó¿Ú°åµØÖ·16½øÖÆ
-Output:         ·µ»ØµØÖ·Ë÷Òı 0-¼ì²âÆ÷°å1 1-¼ì²âÆ÷°å2 2-½Ó¿Ú°å1 3-½Ó¿Ú°å2
-Return:         ÎŞ
+Description:    æŸ¥è¯¢æ‰€æœ‰æ£€æµ‹å™¨æ¿æ¥å£æ¿æ˜¯å¦è¿æ¥å­˜åœ¨
+Input:           DecBoardHexAddr -æ£€æµ‹å™¨æ¿æ¥å£æ¿åœ°å€16è¿›åˆ¶
+Output:         è¿”å›åœ°å€ç´¢å¼• 0-æ£€æµ‹å™¨æ¿1 1-æ£€æµ‹å™¨æ¿2 2-æ¥å£æ¿1 3-æ¥å£æ¿2
+Return:         æ— 
 Date :          2015-02-02
 ***************************************************************/
 Byte CDetector::GetDecBoardIndex(Byte DecBoardHexAddr)

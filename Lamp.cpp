@@ -27,7 +27,7 @@
 
 CLamp::CLamp()
 {
-	m_tick       = 0;   //Ä¬ÈÏ»ÆÉÁÆµÂÊÎª0.5HZ
+	m_tick       = 0;   //é»˜è®¤é»„é—ªé¢‘ç‡ä¸º0.5HZ
 	m_firstSend  = true;
 	m_ucFlashFre = 1;
 	m_ucOverCnt  = 0;
@@ -78,7 +78,7 @@ CLamp* CLamp::CreateInstance()
 }
 
 /*
-*ÉèÖÃÖØÆôºóµÄÖÜÆÚ´ÎÊı
+*è®¾ç½®é‡å¯åçš„å‘¨æœŸæ¬¡æ•°
 */
 void CLamp::SetOverCycle()
 {
@@ -89,7 +89,7 @@ void CLamp::SetOverCycle()
 }
 
 /*
-*ÉèÖÃÉÁ¹âÆµÂÊ
+*è®¾ç½®é—ªå…‰é¢‘ç‡
 */
 void CLamp::SetFlashFre(Byte ucFlashFre)
 {
@@ -101,8 +101,8 @@ void CLamp::SetFlashFre(Byte ucFlashFre)
 }
 
 /*
-*ºÏ·¨µÆÉ«ĞÅÏ¢Ğ£Õı
-*input: ucType-0ÁÁ ucType-1ÉÁ
+*åˆæ³•ç¯è‰²ä¿¡æ¯æ ¡æ­£
+*input: ucType-0äº® ucType-1é—ª
 */
 void CLamp::ReviseLampInfo(Byte ucType,Byte pLampInfo[MAX_LAMP])
 {
@@ -155,8 +155,8 @@ void CLamp::ReviseLampInfo(Byte ucType,Byte pLampInfo[MAX_LAMP])
 }
 
 /*
-*µÆ¾ßÑÕÉ«ÉèÖÃ
-*Õı³£Ò»¸ö²½·¥ÉèÖÃÒ»´Î
+*ç¯å…·é¢œè‰²è®¾ç½®
+*æ­£å¸¸ä¸€ä¸ªæ­¥ä¼è®¾ç½®ä¸€æ¬¡
 */
 void CLamp::SetLamp(Byte* pLampOn,Byte* pLampFlash)
 {
@@ -170,14 +170,14 @@ void CLamp::SetLamp(Byte* pLampOn,Byte* pLampFlash)
 }
 
 /*
-*·¢ËÍµÆ¾ßĞÅÏ¢
-*Õı³£500msÒ»´Î
+*å‘é€ç¯å…·ä¿¡æ¯
+*æ­£å¸¸500msä¸€æ¬¡
 */
 void CLamp::SendLamp()
 {
 	m_tick++;
 
-	if ( m_tick < m_ucFlashFre ) //Î´µ½·¢ËÍÆµÂÊ
+	if ( m_tick < m_ucFlashFre ) //æœªåˆ°å‘é€é¢‘ç‡
 	{
 		//m_mMutex.release();
 		return;
@@ -187,11 +187,11 @@ void CLamp::SendLamp()
 		m_tick = 0;
 	}
 
-	SendToCom1();   //½«µÆ¾ßĞÅÏ¢Êı¾İ·¢ËÍµ½com1
+	SendToCom1();   //å°†ç¯å…·ä¿¡æ¯æ•°æ®å‘é€åˆ°com1
 }
 
 /*
-*½«µÆ¾ßĞÅÏ¢°´ÕÕÒ»¶¨µÄ¸ñÊ½·¢ËÍµ½µÆÇı°å
+*å°†ç¯å…·ä¿¡æ¯æŒ‰ç…§ä¸€å®šçš„æ ¼å¼å‘é€åˆ°ç¯é©±æ¿
 */
 void CLamp::SendToCom1()
 {
@@ -214,20 +214,20 @@ void CLamp::SendToCom1()
 		m_ucSendFrame[2+i] = 0;
 		for (Byte j=0; j<8; j++ )
 		{
-			if ( !m_bLampBoardExit[(i*8+j)/MAX_LAMP_NUM_PER_BOARD] )  //¸Ã°åÃ»ÓĞÅäÖÃ
+			if ( !m_bLampBoardExit[(i*8+j)/MAX_LAMP_NUM_PER_BOARD] )  //è¯¥æ¿æ²¡æœ‰é…ç½®
 			{
 				//ACE_DEBUG((LM_DEBUG,"%s:%d m_bLampBoardExit[%d]:%d\n",__FILE__,__LINE__,i,m_bLampBoardExit[i]))
 				continue;
 			}
 			m_ucSendFrame[2+i] |= ( ( m_ucLampOn[i*8+j] & 0x1 ) << j );
-			if ( m_ucLampFlash[i*8+j] )   //¸ÃµÆÉÁ
+			if ( m_ucLampFlash[i*8+j] )   //è¯¥ç¯é—ª
 			{
 				m_ucLampOn[i*8+j] = !m_ucLampOn[i*8+j];
 			}
 		}
 	}
 
-	//Ô¤¶¨Òå
+	//é¢„å®šä¹‰
 	m_ucSendFrame[8] = m_ucSendFrame[2];
 	m_ucSendFrame[9] = m_ucSendFrame[3];
 	m_ucSendFrame[10] = m_ucSendFrame[4];
@@ -238,7 +238,7 @@ void CLamp::SendToCom1()
 	}
 	m_ucSendFrame[m_ucSendFrame[1]+2] = ( (~ucSum) & 0xff );   //SUM
 
-	//ºÏ·¨Êı¾İÅĞ¶Ï
+	//åˆæ³•æ•°æ®åˆ¤æ–­
 	CheckSendFrame(m_ucSendFrame);
 	
 
@@ -253,7 +253,7 @@ void CLamp::SendToCom1()
 	}
 	
 	//usleep(USLEEP_TIME);
-	ioctl(m_iSerial1Fd, com_9bit_disable, 0);  //Êı¾İ
+	ioctl(m_iSerial1Fd, com_9bit_disable, 0);  //æ•°æ®
 	//usleep(USLEEP_TIME);
 	
 	if ( !CIoOprate::TscWrite(m_iSerial1Fd , m_ucSendFrame+1 , m_ucSendFrame[1]+2) )
@@ -281,22 +281,22 @@ void CLamp::SendToCom1()
 }
 
 /*
-*¼ì²â¹ã²¥µÆ¿Ø°åµÄÊı¾İ
+*æ£€æµ‹å¹¿æ’­ç¯æ§æ¿çš„æ•°æ®
 */
 bool CLamp::CheckSendFrame(Byte* ucSendFrame)
 {
-	static Uint uiFlashTime        = 0;   //¼ÇÂ¼»ÆÉÁµÄÊ±¼ä
-	static Uint uiMoreGreenTime    = 0;   //¼ÇÂ¼¹ı¶àÂÌµÆµÄÊ±¼ä
-	static Uint uiUnusualGroupTime = 0;   //¼ÇÂ¼Òì³£µÆ×éµÄÊ±¼ä
+	static Uint uiFlashTime        = 0;   //è®°å½•é»„é—ªçš„æ—¶é—´
+	static Uint uiMoreGreenTime    = 0;   //è®°å½•è¿‡å¤šç»¿ç¯çš„æ—¶é—´
+	static Uint uiUnusualGroupTime = 0;   //è®°å½•å¼‚å¸¸ç¯ç»„çš„æ—¶é—´
 
 	bool bFunRet      = true;
-	Byte ucSendCount  = ucSendFrame[1];   //·¢ËÍ³¤¶È
+	Byte ucSendCount  = ucSendFrame[1];   //å‘é€é•¿åº¦
 	Byte ucCheckCount = 0;
 	Byte ucColorCount = 0;
 	Byte ucFlashCount = 0;   
 	Byte ucGreenCount = 0;
 	Byte ucData       = 0;
-	Uint uiCurTime    = (Uint)ACE_OS::gettimeofday().sec();   //µ±Ç°Ê±¼ä
+	Uint uiCurTime    = (Uint)ACE_OS::gettimeofday().sec();   //å½“å‰æ—¶é—´
 
 	SThreadMsg sTscMsg;
 	ACE_OS::memset(&sTscMsg,0,sizeof(sTscMsg));
@@ -306,7 +306,7 @@ bool CLamp::CheckSendFrame(Byte* ucSendFrame)
 		return false;
 	}
 
-	ucSendCount = 6;  //Ä¿Ç°Ö»¼ì²â4¿éµÆ¿Ø°åµÄÊı¾İ
+	ucSendCount = 6;  //ç›®å‰åªæ£€æµ‹4å—ç¯æ§æ¿çš„æ•°æ®
 
 	for ( Byte ucIndex=0; ucIndex<ucSendCount; ucIndex++ )
 	{
@@ -314,7 +314,7 @@ bool CLamp::CheckSendFrame(Byte* ucSendFrame)
 
 		for ( Byte ucDataIndex=0; ucDataIndex<8; ucDataIndex++ )
 		{
-			if ( (ucData >> ucDataIndex & 1) != 0 )  //ÁÁµÆ
+			if ( (ucData >> ucDataIndex & 1) != 0 )  //äº®ç¯
 			{
 				ucColorCount++;  
 
@@ -330,9 +330,9 @@ bool CLamp::CheckSendFrame(Byte* ucSendFrame)
 
 			ucCheckCount++;
 
-			if ( 3 == ucCheckCount )  //R Y G ¼ì²éÒ»´Î  
+			if ( 3 == ucCheckCount )  //R Y G æ£€æŸ¥ä¸€æ¬¡  
 			{
-				if ( ucColorCount >= 2 )  //µÆ×é²»Ö¹ÁÁÒ»¸öµÆ
+				if ( ucColorCount >= 2 )  //ç¯ç»„ä¸æ­¢äº®ä¸€ä¸ªç¯
 				{
 					bFunRet = false;
 
@@ -360,7 +360,7 @@ bool CLamp::CheckSendFrame(Byte* ucSendFrame)
 		}
 	}
 
-	if ( ucFlashCount > 15 )   //»ÆÉÁ
+	if ( ucFlashCount > 15 )   //é»„é—ª
 	{
 		bFunRet = false;
 
@@ -380,7 +380,7 @@ bool CLamp::CheckSendFrame(Byte* ucSendFrame)
 			//printf("%s:%d flash\n",__FILE__,__LINE__);
 		}
 	}
-	if ( ucGreenCount > 10 )  //ÂÌµÆ¹ı¶à ¶àÓÚ10Õµ
+	if ( ucGreenCount > 10 )  //ç»¿ç¯è¿‡å¤š å¤šäº10ç›
 	{
 		bFunRet = false;
 
@@ -406,9 +406,9 @@ bool CLamp::CheckSendFrame(Byte* ucSendFrame)
 }
 
 /*
-*´òÓ¡½ÓÊÕµ½µÄµÆÅİÊı¾İĞÅÏ¢
-*input: pFileName:ÎÄ¼şÃû iFileLine:ÎÄ¼şĞĞÊı   ucBoardIndex:°åµÄÏÂ±ê
-*       sErrSrc:´íÎóÔ­Òò iPrintCnt:´òÓ¡µÄ¸öÊı ucRecvBuf£º´òÓ¡µÄ×Ö·û´®
+*æ‰“å°æ¥æ”¶åˆ°çš„ç¯æ³¡æ•°æ®ä¿¡æ¯
+*input: pFileName:æ–‡ä»¶å iFileLine:æ–‡ä»¶è¡Œæ•°   ucBoardIndex:æ¿çš„ä¸‹æ ‡
+*       sErrSrc:é”™è¯¯åŸå›  iPrintCnt:æ‰“å°çš„ä¸ªæ•° ucRecvBufï¼šæ‰“å°çš„å­—ç¬¦ä¸²
 */
 void CLamp::PrintLampInfo(char* pFileName,int iFileLine,Byte ucBoardIndex,
 						  char* sErrSrc,int iPrintCnt,Byte* ucRecvBuf)
@@ -425,7 +425,7 @@ void CLamp::PrintLampInfo(char* pFileName,int iFileLine,Byte ucBoardIndex,
 }
 
 /*
-*½ÓÊÕµÆ¾ß»ØËÍ¹ıÀ´µÄÊı¾İ
+*æ¥æ”¶ç¯å…·å›é€è¿‡æ¥çš„æ•°æ®
 */
 void CLamp::RecvFromCom1(int iBoardIndex)
 {
@@ -477,7 +477,7 @@ void CLamp::RecvFromCom1(int iBoardIndex)
 		ioctl(m_iSerial1Fd, com_9bit_enable, 0);
 		//usleep(USLEEP_TIME);
 #endif
-		ucLampBoardAddr = (Byte)(i + LAMP_BOARD_START_ADDR);  /*µÆ¿Ø°åµØÖ·*/
+		ucLampBoardAddr = (Byte)(i + LAMP_BOARD_START_ADDR);  /*ç¯æ§æ¿åœ°å€*/
 #ifndef WINDOWS
 		//write(m_iCom1fd, &ucLampBoardAddr, 1);
 		if ( !CIoOprate::TscWrite(m_iSerial1Fd , &ucLampBoardAddr , 1) )
@@ -528,7 +528,7 @@ void CLamp::RecvFromCom1(int iBoardIndex)
 			PrintLampInfo((char*)"Lamp.cpp",__LINE__,i,(char*)"Timeout",0,NULL);
 			return;
 		}
-		else  /*ÊÕµ½Êı¾İ*/
+		else  /*æ”¶åˆ°æ•°æ®*/
 		{
 			m_ucLampBoardError[i] = DEV_IS_CONNECTED;
 
@@ -575,7 +575,7 @@ void CLamp::RecvFromCom1(int iBoardIndex)
 			}
 			else
 			{
-				//ÅĞ¶Ï½ÓÊÕµ½µÄÊı¾İÊÇ·ñÎªÕıÈ·µÄÊı¾İ...............
+				//åˆ¤æ–­æ¥æ”¶åˆ°çš„æ•°æ®æ˜¯å¦ä¸ºæ­£ç¡®çš„æ•°æ®...............
 				#if 0
 				ACE_DEBUG((LM_DEBUG,"%s:%d recv lampStatus:",__FILE__,__LINE__));
 				for ( int iTmp = 0; iTmp<6; iTmp++ )
@@ -594,13 +594,13 @@ void CLamp::RecvFromCom1(int iBoardIndex)
 
 				//ACE_DEBUG((LM_DEBUG,"!!!!!!!!!!!!!!!! %d %d \n",ucSum,ucRecvLampUnitBoard[5]));
 
-				if ( ucRecvLampUnitBoard[5] != ucSum )  /*Ğ£ÑéÂë´íÎó*/
+				if ( ucRecvLampUnitBoard[5] != ucSum )  /*æ ¡éªŒç é”™è¯¯*/
 				{
 					SendRecordBoardMsg(i,1);
 					PrintLampInfo((char*)"Lamp.cpp",__LINE__,i,(char*)"Checksum Error",6,ucRecvLampUnitBoard);
 					return;
 				}
-				else   /*Ğ£ÑéÂëÕıÈ·*/
+				else   /*æ ¡éªŒç æ­£ç¡®*/
 				{
 					SendRecordBoardMsg(i,0);
 					PrintLampInfo((char*)"Lamp.cpp",__LINE__,i,(char*)"Right",6,ucRecvLampUnitBoard);
@@ -610,14 +610,14 @@ void CLamp::RecvFromCom1(int iBoardIndex)
 						
 						for ( int j=0; j<4; j++ )
 						{
-							if ( !CManaKernel::CreateInstance()->IsInChannel((iLampIndex+j)/3+1) )  //¸ÃÍ¨µÀÓĞ¶ÔÓ¦ÅäÖÃ
+							if ( !CManaKernel::CreateInstance()->IsInChannel((iLampIndex+j)/3+1) )  //è¯¥é€šé“æœ‰å¯¹åº”é…ç½®
 							{
 								continue;
 							}
 
 							ucLampErrSts = (ucRecvLampUnitBoard[2+iDataId]>>(2*j)) & 0x03;
 
-							if ( m_ucLastLampError[iLampIndex+j] == ucLampErrSts )  //00Õı³££»01³¤ÁÁ£»10³¤Ãğ£»11¿É¿Ø¹è»÷´©	
+							if ( m_ucLastLampError[iLampIndex+j] == ucLampErrSts )  //00æ­£å¸¸ï¼›01é•¿äº®ï¼›10é•¿ç­ï¼›11å¯æ§ç¡…å‡»ç©¿	
 							{
 								if ( m_ucLampErrTime[iLampIndex+j] > 3 )
 								{
@@ -689,9 +689,9 @@ void CLamp::RecvFromCom1(int iBoardIndex)
 }
 
 /*
-*·¢ËÍ¼ÇÂ¼µÆ¿Ø°åÍ¨ĞÅ×´Ì¬
-*input: ucBoardIndex °åÏÂ±ê 0 1 2 3 
-*       ucType  - 0ÕıÈ· 1Ğ£Ñé´íÎó 2µØÖ·´íÎó 3Ã»ÓĞÊı¾İ
+*å‘é€è®°å½•ç¯æ§æ¿é€šä¿¡çŠ¶æ€
+*input: ucBoardIndex æ¿ä¸‹æ ‡ 0 1 2 3 
+*       ucType  - 0æ­£ç¡® 1æ ¡éªŒé”™è¯¯ 2åœ°å€é”™è¯¯ 3æ²¡æœ‰æ•°æ®
 */
 void CLamp::SendRecordBoardMsg(Byte ucBoardIndex,Byte ucType)
 {
@@ -700,26 +700,26 @@ void CLamp::SendRecordBoardMsg(Byte ucBoardIndex,Byte ucType)
 	Byte ucByte1 = 0;
 
 	if ( ( 0 == ucType && m_bRecordSts[ucBoardIndex] ) 
-		|| ( ucType != 0 && !m_bRecordSts[ucBoardIndex] ) )  //µ±Ç°ÎªÕıÈ·×´Ì¬ÓÖÀ´ÕıÈ·Êı¾İ µ±Ç°Îª´íÎó×´Ì¬ÓÖÀ´´íÎóÊı¾İ
+		|| ( ucType != 0 && !m_bRecordSts[ucBoardIndex] ) )  //å½“å‰ä¸ºæ­£ç¡®çŠ¶æ€åˆæ¥æ­£ç¡®æ•°æ® å½“å‰ä¸ºé”™è¯¯çŠ¶æ€åˆæ¥é”™è¯¯æ•°æ®
 	{
 		switch ( ucType )
 		{
-			case 0:  //ÕıÈ·	
+			case 0:  //æ­£ç¡®	
 				m_ucErrCheckCnt[ucBoardIndex] = 0;
 				m_ucNoCnt[ucBoardIndex]       = 0;          
 				m_ucErrAddrCnt[ucBoardIndex]  = 0; 
 				return;
-			case 1:  //Ğ£Ñé´íÎó
+			case 1:  //æ ¡éªŒé”™è¯¯
 				m_ucNoCnt[ucBoardIndex]       = 0;          
 				m_ucErrAddrCnt[ucBoardIndex]  = 0;     
 				m_ucRightCnt[ucBoardIndex]    = 0;
 				return;
-			case 2:  //µØÖ·´íÎó
+			case 2:  //åœ°å€é”™è¯¯
 				m_ucErrCheckCnt[ucBoardIndex] = 0;
 				m_ucNoCnt[ucBoardIndex]       = 0;            
 				m_ucRightCnt[ucBoardIndex]    = 0;
 				return;
-			case 3:  //Ã»ÓĞÊı¾İ
+			case 3:  //æ²¡æœ‰æ•°æ®
 				m_ucErrCheckCnt[ucBoardIndex] = 0;        
 				m_ucErrAddrCnt[ucBoardIndex]  = 0;     
 				m_ucRightCnt[ucBoardIndex]    = 0;
@@ -755,7 +755,7 @@ void CLamp::SendRecordBoardMsg(Byte ucBoardIndex,Byte ucType)
 	{
 		switch ( ucType )
 		{
-			case 0:  //ÕıÈ·
+			case 0:  //æ­£ç¡®
 				m_bRecordSts[ucBoardIndex] = true;
 				m_ucErrCheckCnt[ucBoardIndex] = 0;
 				m_ucNoCnt[ucBoardIndex]       = 0;          
@@ -763,7 +763,7 @@ void CLamp::SendRecordBoardMsg(Byte ucBoardIndex,Byte ucType)
 				ucByte0 = 0;
 				ucByte1 = 0;
 				break;
-			case 1:  //Ğ£Ñé´íÎó
+			case 1:  //æ ¡éªŒé”™è¯¯
 				m_bRecordSts[ucBoardIndex] = false;
 				m_ucNoCnt[ucBoardIndex]       = 0;          
 				m_ucErrAddrCnt[ucBoardIndex]  = 0;     
@@ -771,7 +771,7 @@ void CLamp::SendRecordBoardMsg(Byte ucBoardIndex,Byte ucType)
 				ucByte0 = 1;
 				ucByte1 = 2;
 				break;
-			case 2:  //µØÖ·´íÎó
+			case 2:  //åœ°å€é”™è¯¯
 				m_bRecordSts[ucBoardIndex] = false;
 				m_ucErrCheckCnt[ucBoardIndex] = 0;
 				m_ucNoCnt[ucBoardIndex]       = 0;            
@@ -779,7 +779,7 @@ void CLamp::SendRecordBoardMsg(Byte ucBoardIndex,Byte ucType)
 				ucByte0 = 1;
 				ucByte1 = 1;
 				break;
-			case 3:  //Ã»ÓĞÊı¾İ
+			case 3:  //æ²¡æœ‰æ•°æ®
 				m_bRecordSts[ucBoardIndex] = false;
 				m_ucErrCheckCnt[ucBoardIndex] = 0;        
 				m_ucErrAddrCnt[ucBoardIndex]  = 0;     
@@ -815,7 +815,7 @@ void CLamp::SendRecordBoardMsg(Byte ucBoardIndex,Byte ucType)
 }
 
 /*
-*ÅĞ¶ÏÊÇ·ñÎªÂÌ³åÍ»
+*åˆ¤æ–­æ˜¯å¦ä¸ºç»¿å†²çª
 */
 void CLamp::IsGreenConfict()
 {
@@ -832,7 +832,7 @@ void CLamp::IsGreenConfict()
 		return;
 	}
 
-	if ( LampGreenAlwaysOn() || LampAllRedOff() )  //ÂÌ³åÍ»
+	if ( LampGreenAlwaysOn() || LampAllRedOff() )  //ç»¿å†²çª
 	{
 		if ( m_iGreenConflict < 2 )
 		{
@@ -853,10 +853,10 @@ void CLamp::IsGreenConfict()
 
 
 /*
-*ÅĞ¶ÏÄ³¸öÂÌµÆ³£ÁÁ
+*åˆ¤æ–­æŸä¸ªç»¿ç¯å¸¸äº®
 *
-*return: true : ´æÔÚÄ³¸öÂÌµÆ³£ÁÁ
-*        false: ÂÌµÆ¶¼Õı³£
+*return: true : å­˜åœ¨æŸä¸ªç»¿ç¯å¸¸äº®
+*        false: ç»¿ç¯éƒ½æ­£å¸¸
 */
 bool CLamp::LampGreenAlwaysOn()
 {
@@ -864,18 +864,18 @@ bool CLamp::LampGreenAlwaysOn()
 
 	for ( int i=0; i<MAX_LAMP_BOARD; i++ )
 	{
-		if ( DEV_IS_CONNECTED == m_ucLampBoardError[i] )  /*µÆ¿Ø°å´æÔÚ*/
+		if ( DEV_IS_CONNECTED == m_ucLampBoardError[i] )  /*ç¯æ§æ¿å­˜åœ¨*/
 		{
 			for ( int j=i*MAX_LAMP_NUM_PER_BOARD; j<(i+1)*MAX_LAMP_NUM_PER_BOARD; j++ )
 			{ 
-				if ( CManaKernel::CreateInstance()->IsInChannel(j/3+1)   //ÔÚÍ¨µÀ²ÎÊıÀï
-					&& (LAMP_COLOR_GREEN == j % 3) )  //ÂÌµÆ
+				if ( CManaKernel::CreateInstance()->IsInChannel(j/3+1)   //åœ¨é€šé“å‚æ•°é‡Œ
+					&& (LAMP_COLOR_GREEN == j % 3) )  //ç»¿ç¯
 				{
-					if ( (DEV_ALWAYS_ON == m_ucLampError[j]) || (DEV_SILICON_SHOT == m_ucLampError[j]) )  //³£ÁÁ
+					if ( (DEV_ALWAYS_ON == m_ucLampError[j]) || (DEV_SILICON_SHOT == m_ucLampError[j]) )  //å¸¸äº®
 					{
 						if ( !m_bLampGreenFlag[j] )
 						{
-							//(CDbInstance::m_cGbtTscDb).AddEventLog(j+1,2);  //ÂÌ³åÍ»
+							//(CDbInstance::m_cGbtTscDb).AddEventLog(j+1,2);  //ç»¿å†²çª
 							SThreadMsg sTscMsg;
 
 							sTscMsg.ulType       = TSC_MSG_LOG_WRITE;
@@ -909,10 +909,10 @@ void CLamp::SetSeriousFlash()
 }
 
 /*
-*ÅĞ¶ÏÃ»ÓĞºìµÆÁÁ
+*åˆ¤æ–­æ²¡æœ‰çº¢ç¯äº®
 *
-*return: true : Ã»ÓĞºìµÆÁÁ
-*        false: ´æÔÚÁÁµÄºìµÆ
+*return: true : æ²¡æœ‰çº¢ç¯äº®
+*        false: å­˜åœ¨äº®çš„çº¢ç¯
 */
 bool CLamp::LampAllRedOff()
 {
@@ -935,18 +935,18 @@ bool CLamp::LampAllRedOff()
 		iIndex++;
 	}
 
-	if ( !bExitLampBoard )  //²»´æÔÚµÆ¿Ø°å
+	if ( !bExitLampBoard )  //ä¸å­˜åœ¨ç¯æ§æ¿
 	{
 		return false;
 	}
 
 	for ( int i=0; i<MAX_LAMP_BOARD; i++ )
 	{
-		if ( DEV_IS_CONNECTED == m_ucLampBoardError[i] )  /*µÆ¿Ø°å´æÔÚ*/
+		if ( DEV_IS_CONNECTED == m_ucLampBoardError[i] )  /*ç¯æ§æ¿å­˜åœ¨*/
 		{
 			for ( int j=i*MAX_LAMP_NUM_PER_BOARD; j<(i+1)*MAX_LAMP_NUM_PER_BOARD; j++ )
 			{
-				if ( (LAMP_COLOR_RED == j % 3 ) && (DEV_IS_GOOD == m_ucLampError[j]) )  /*Õı³£ÁÁµÄºìµÆ*/
+				if ( (LAMP_COLOR_RED == j % 3 ) && (DEV_IS_GOOD == m_ucLampError[j]) )  /*æ­£å¸¸äº®çš„çº¢ç¯*/
 				{
 					/*
 					ACE_DEBUG((LM_DEBUG,"%s:%d j:%d m_ucLampError[%d]:%d LampAllRedOff\n"
@@ -959,7 +959,7 @@ bool CLamp::LampAllRedOff()
 		}
 	}
 	
-	//(CDbInstance::m_cGbtTscDb).AddEventLog(3,3);  //ÎŞºìµÆÁÁ
+	//(CDbInstance::m_cGbtTscDb).AddEventLog(3,3);  //æ— çº¢ç¯äº®
 	SThreadMsg sTscMsg;
 
 	sTscMsg.ulType       = TSC_MSG_LOG_WRITE;
@@ -979,7 +979,7 @@ bool CLamp::LampAllRedOff()
 
 /*
 *
-* true: ³åÍ»ÏàÎ»ÂÌµÆÍ¬Ê±ÁÁ false:Õı³£
+* true: å†²çªç›¸ä½ç»¿ç¯åŒæ—¶äº® false:æ­£å¸¸
 bool CLamp::InConflictPhase()
 {
 	bool bGreenConflict = false;
@@ -992,7 +992,7 @@ bool CLamp::InConflictPhase()
 	
 	while ( iIndex < MAX_PHASE )
 	{
-		if ( (uiAllowPhase >> iIndex) & 1 )  //´æÔÚ¸ÃÏàÎ»
+		if ( (uiAllowPhase >> iIndex) & 1 )  //å­˜åœ¨è¯¥ç›¸ä½
 		{
 
 		}
@@ -1005,8 +1005,8 @@ bool CLamp::InConflictPhase()
 */
 
 /*
-*Ä£Äâ·¢ËÍ
-*±£´æµ½ÎÄ¼ş
+*æ¨¡æ‹Ÿå‘é€
+*ä¿å­˜åˆ°æ–‡ä»¶
 */
 #ifdef WINDOWS
 void CLamp::SimulateSend()
@@ -1030,8 +1030,8 @@ void CLamp::SimulateSend()
 #endif 
 
 /*
-*·¢ËÍµÆ¾ß×´Ì¬¸ø´®¿Ú2£¬ÓÃÓÚ½»Í¨ĞÅºÅÖÇÄÜ¹ÜÀíÆ÷
-*1s½øÀ´Ò»´Î
+*å‘é€ç¯å…·çŠ¶æ€ç»™ä¸²å£2ï¼Œç”¨äºäº¤é€šä¿¡å·æ™ºèƒ½ç®¡ç†å™¨
+*1sè¿›æ¥ä¸€æ¬¡
 */
 #if 0
 void CLamp::SendLampStsToCom2()
@@ -1056,21 +1056,21 @@ void CLamp::SendLampStsToCom2()
 	}
 	iTick = 3;
 
-	/****** Êı¾İ ******/
+	/****** æ•°æ® ******/
 	iBufIndex = 4;
 	while ( iIndex < MAX_LAMP_BOARD  )
 	{
-		if ( DEV_IS_CONNECTED == m_ucLampBoardError[iIndex] )  //¸Ã°å´æÔÚ
+		if ( DEV_IS_CONNECTED == m_ucLampBoardError[iIndex] )  //è¯¥æ¿å­˜åœ¨
 		{
 			ucData[iBufIndex++] = m_ucLampStatus[iIndex*3];
 			ucData[iBufIndex++] = m_ucLampStatus[iIndex*3+1];
 			ucData[iBufIndex++] = m_ucLampStatus[iIndex*3+2];
-			ucDataLen += 3;   //1¿é°åÈı¸ö×Ö½Ú
+			ucDataLen += 3;   //1å—æ¿ä¸‰ä¸ªå­—èŠ‚
 		}
 		iIndex++;
 	}
 
-	ucData[1] = ucDataLen + 2;  //³¤¶È
+	ucData[1] = ucDataLen + 2;  //é•¿åº¦
 	ucData[2] = 0x02;
 	ucData[3] = ucDataLen;  
 
@@ -1115,7 +1115,7 @@ void CLamp::SendLampStsToCom2()
 #endif
 
 /*
-*»ñÈ¡µÆ¿Ø°åÊÇ·ñ´æÔÚ£¬ÊÇ·ñÓĞÅäÖÃ´æÔÚ
+*è·å–ç¯æ§æ¿æ˜¯å¦å­˜åœ¨ï¼Œæ˜¯å¦æœ‰é…ç½®å­˜åœ¨
 */
 void CLamp::GetLampBoardExit(bool* bLampBoardExit)
 {

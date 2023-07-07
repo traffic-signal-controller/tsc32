@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   WirelessCoord.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úÎŞÏßĞ­µ÷Ä£Ê½´¦ÀíÀàÎÄ¼ş£¬ÓÃÓÚ´¦ÀíĞÅºÅ»úÎŞÏßĞ­µ÷¿ØÖÆ
+Description:ä¿¡å·æœºæ— çº¿åè°ƒæ¨¡å¼å¤„ç†ç±»æ–‡ä»¶ï¼Œç”¨äºå¤„ç†ä¿¡å·æœºæ— çº¿åè°ƒæ§åˆ¶
 Version:    V1.0
 History:
 ***************************************************************/
@@ -24,9 +24,9 @@ History:
 
 /**************************************************************
 Function:        CWirelessCoord::IsMasterMachine
-Description:     ÅĞ¶ÏÊÇ·ñÊÇÎŞÏßĞ­µ÷Ö÷»ú		
-Input:          ÎŞ           
-Output:         ÎŞ
+Description:     åˆ¤æ–­æ˜¯å¦æ˜¯æ— çº¿åè°ƒä¸»æœº		
+Input:          æ—            
+Output:         æ— 
 Return:         0
 ***************************************************************/
 Uint CWirelessCoord::IsMasterMachine()
@@ -36,9 +36,9 @@ Uint CWirelessCoord::IsMasterMachine()
 
 /**************************************************************
 Function:        CWirelessCoord::SyncSubMachine
-Description:     ÅĞ¶ÏÊÇ·ñÊÇÎŞÏßĞ­µ÷×Ó»ú		
-Input:          ÎŞ           
-Output:         ÎŞ
+Description:     åˆ¤æ–­æ˜¯å¦æ˜¯æ— çº¿åè°ƒå­æœº		
+Input:          æ—            
+Output:         æ— 
 Return:         0
 ***************************************************************/
 void CWirelessCoord::SyncSubMachine()
@@ -49,10 +49,10 @@ void CWirelessCoord::SyncSubMachine()
 
 /**************************************************************
 Function:        CWirelessCoord::CWirelessCoord
-Description:     ÎŞÏßĞ­µ÷Àà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà±äÁ¿			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ— çº¿åè°ƒç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»å˜é‡			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CWirelessCoord::CWirelessCoord()
 {
@@ -72,10 +72,10 @@ CWirelessCoord::CWirelessCoord()
 
 /**************************************************************
 Function:        CWirelessCoord::~CWirelessCoord
-Description:     ÎŞÏßĞ­µ÷ÀàÎö¹¹º¯Êı		
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ— çº¿åè°ƒç±»ææ„å‡½æ•°		
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CWirelessCoord::~CWirelessCoord()
 {
@@ -85,10 +85,10 @@ CWirelessCoord::~CWirelessCoord()
 
 /**************************************************************
 Function:        CWirelessCoord::CreateInstance
-Description:     ´´½¨CWirelessCoord¼ì²âÆ÷¾²Ì¬¶ÔÏó		
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:     åˆ›å»ºCWirelessCoordæ£€æµ‹å™¨é™æ€å¯¹è±¡		
+Input:          æ—            
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CWirelessCoord* CWirelessCoord::CreateInstance()
 {
@@ -100,15 +100,15 @@ CWirelessCoord* CWirelessCoord::CreateInstance()
 
 /**************************************************************
 Function:        CWirelessCoord::SetStepInfo
-Description:     ÉèÖÃÎŞÏßĞ­µ÷¿ØÖÆÄ£Ê½ĞÅÏ¢		
-Input:          bCenter - ÊÇ·ñÎªÖĞĞÄĞ­µ÷
-*        		iStepNum  - ²½·¥×ÜÊı
-*        		iCycle    - ÖÜÆÚÊ±³¤
-*       		iOffset   - Ğ­µ÷ÏàÎ»²î
-*        		iStepLen - ¸÷¸ö²½·¥µÄ³¤¶È 
-				iMaster   Ö÷½Úµã±àºÅ         
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è®¾ç½®æ— çº¿åè°ƒæ§åˆ¶æ¨¡å¼ä¿¡æ¯		
+Input:          bCenter - æ˜¯å¦ä¸ºä¸­å¿ƒåè°ƒ
+*        		iStepNum  - æ­¥ä¼æ€»æ•°
+*        		iCycle    - å‘¨æœŸæ—¶é•¿
+*       		iOffset   - åè°ƒç›¸ä½å·®
+*        		iStepLen - å„ä¸ªæ­¥ä¼çš„é•¿åº¦ 
+				iMaster   ä¸»èŠ‚ç‚¹ç¼–å·         
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CWirelessCoord::SetStepInfo(bool bCenter
 							 , int iStepNum 
@@ -118,7 +118,7 @@ void CWirelessCoord::SetStepInfo(bool bCenter
 {
 	if ( ( !bCenter && ( (iCycle != m_iCycle) || ( iOffset != m_iOffset) ) ) 
 		|| ( bCenter && ( (iCycle != m_iUtsCycle) || ( iOffset != m_iUtscOffset) ) ) )  
-		                                                       //ÖÜÆÚÊ±³¤ »òÕßÏàÎ»²î ¸Ä±äĞèÒªÖØĞÂĞ­µ÷
+		                                                       //å‘¨æœŸæ—¶é•¿ æˆ–è€…ç›¸ä½å·® æ”¹å˜éœ€è¦é‡æ–°åè°ƒ
 	{
 		m_tLastTi = 0;
 	}
@@ -150,10 +150,10 @@ void CWirelessCoord::SetStepInfo(bool bCenter
 
 /**************************************************************
 Function:        CWirelessCoord::GetDeflection
-Description:     »ñÈ¡×Üµ÷ÕûÊ±¼ä		
-Input:          ÎŞ  
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è·å–æ€»è°ƒæ•´æ—¶é—´		
+Input:          æ—   
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CWirelessCoord::GetDeflection()
 {
@@ -225,10 +225,10 @@ void CWirelessCoord::GetDeflection()
 
 /**************************************************************
 Function:        CWirelessCoord::GetAdjust
-Description:     »ñÈ¡ËùÓĞ²½·¥µÄµ÷ÕûÊ±¼ä		
-Input:          ÎŞ  
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è·å–æ‰€æœ‰æ­¥ä¼çš„è°ƒæ•´æ—¶é—´		
+Input:          æ—   
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CWirelessCoord::GetAdjust()
 {
@@ -258,29 +258,29 @@ void CWirelessCoord::GetAdjust()
 
 	if ( m_bPlus )
 	{
-		iMaxAdjustCnt = iCycle * MAX_PLUS_SCALE / 100;   //Ã¿¸öÖÜÆÚ×î´óµÄÔö¼ÓµÄµ÷ÕûÊı
+		iMaxAdjustCnt = iCycle * MAX_PLUS_SCALE / 100;   //æ¯ä¸ªå‘¨æœŸæœ€å¤§çš„å¢åŠ çš„è°ƒæ•´æ•°
 	}
 	else
 	{
-		iMaxAdjustCnt = iCycle * MAX_MINU_SCALE / 100;   //Ã¿¸öÖÜÆÚ×î´óµÄ¼õÉÙµÄµ÷ÕûÊı
+		iMaxAdjustCnt = iCycle * MAX_MINU_SCALE / 100;   //æ¯ä¸ªå‘¨æœŸæœ€å¤§çš„å‡å°‘çš„è°ƒæ•´æ•°
 	}
 
-	if ( iMaxAdjustCnt > iAdjustCnt )  //¸ÃÖÜÆÚËùĞèµ÷ÕûµÄ×ÜÊı
+	if ( iMaxAdjustCnt > iAdjustCnt )  //è¯¥å‘¨æœŸæ‰€éœ€è°ƒæ•´çš„æ€»æ•°
 	{
 		iMaxAdjustCnt = iAdjustCnt;
 	}
 
-	for ( i = 0; i < MAX_STEP && i < m_iStepNum; i++ ) //Æ½·Ö
+	for ( i = 0; i < MAX_STEP && i < m_iStepNum; i++ ) //å¹³åˆ†
 	{
 		if ( !pWorkParaManager->IsLongStep(i) )
 		{
 			continue;
 		}
-		m_iAdjustSecond[i] = iMaxAdjustCnt / ucStageCnt;  //³õ²½È·¶¨µÄµ÷Õû8
+		m_iAdjustSecond[i] = iMaxAdjustCnt / ucStageCnt;  //åˆæ­¥ç¡®å®šçš„è°ƒæ•´8
 	}
 	iMaxAdjustCnt = iMaxAdjustCnt - ( iMaxAdjustCnt / ucStageCnt ) * ucStageCnt;
 
-	//µ÷Õû·¶Î§ºËÊµ
+	//è°ƒæ•´èŒƒå›´æ ¸å®
 	for ( i = 0; i < MAX_STEP && i < m_iStepNum; i++ ) 
 	{
 		if ( !pWorkParaManager->IsLongStep(i) )
@@ -300,7 +300,7 @@ void CWirelessCoord::GetAdjust()
 			iAdjustPerStep = m_iStepLen[i] - iMinGreen; //28
 		}
 
-		if ( iAdjustPerStep < 0 )  //Ô¤·À×îĞ¡ÂÌ»ò×î´óÂÌµÄÉèÖÃ´íÎó
+		if ( iAdjustPerStep < 0 )  //é¢„é˜²æœ€å°ç»¿æˆ–æœ€å¤§ç»¿çš„è®¾ç½®é”™è¯¯
 		{
 			iAdjustPerStep = m_iStepLen[i] / MAX_ADJUST_CYCLE;
 		}
@@ -315,7 +315,7 @@ void CWirelessCoord::GetAdjust()
 			iAdjustPerStep = iAdjustPerStep - m_iAdjustSecond[i];//20
 		}
 
-		if ( iAdjustPerStep > iMaxAdjustCnt )  //µ÷ÕûÍê±Ï
+		if ( iAdjustPerStep > iMaxAdjustCnt )  //è°ƒæ•´å®Œæ¯•
 		{
 			iAdjustPerStep = iMaxAdjustCnt;
 		}
@@ -330,10 +330,10 @@ void CWirelessCoord::GetAdjust()
 
 /**************************************************************
 Function:        CWirelessCoord::OverCycle
-Description:     Ò»´ÎÖÜÆÚ¿ªÊ¼ºóµÄ²Ù×÷		
-Input:          ÎŞ  
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     ä¸€æ¬¡å‘¨æœŸå¼€å§‹åçš„æ“ä½œ		
+Input:          æ—   
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CWirelessCoord::OverCycle()
 {
@@ -353,15 +353,15 @@ void CWirelessCoord::OverCycle()
 
 /**************************************************************
 Function:        CWirelessCoord::GetStepLength
-Description:     Ã¿´Î²½·¥¿ªÊ¼µ÷ÓÃÒ»´Î		
-Input:          iCurStepNo:µ±Ç°µÄ²½·¥ºÅ  
-Output:         ÎŞ
-Return:         ·µ»Øµ±Ç°²½·¥µÄ³¤¶È -1:´íÎó
+Description:     æ¯æ¬¡æ­¥ä¼å¼€å§‹è°ƒç”¨ä¸€æ¬¡		
+Input:          iCurStepNo:å½“å‰çš„æ­¥ä¼å·  
+Output:         æ— 
+Return:         è¿”å›å½“å‰æ­¥ä¼çš„é•¿åº¦ -1:é”™è¯¯
 ***************************************************************/
 int CWirelessCoord::GetStepLength(int iCurStepNo)
 {
 	int iCurSetpTime = 0;
-	if ( iCurStepNo > m_iStepNum )  /*Òì³£Çé¿ö*/
+	if ( iCurStepNo > m_iStepNum )  /*å¼‚å¸¸æƒ…å†µ*/
 	{
 		ACE_DEBUG((LM_DEBUG,"%s:%d,iCurStepNo:%d m_iStepNum:%d \n",__FILE__,__LINE__,iCurStepNo,m_iStepNum));
 		return m_iStepLen[0];
@@ -384,10 +384,10 @@ int CWirelessCoord::GetStepLength(int iCurStepNo)
 
 /**************************************************************
 Function:        CWirelessCoord::ForceAssort
-Description:     ÉèÖÃÇ¿ÖÆĞ­µ÷ÊôĞÔ	
-Input:          iCurStepNo:µ±Ç°µÄ²½·¥ºÅ  
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è®¾ç½®å¼ºåˆ¶åè°ƒå±æ€§	
+Input:          iCurStepNo:å½“å‰çš„æ­¥ä¼å·  
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CWirelessCoord::ForceAssort()
 {
@@ -396,14 +396,14 @@ void CWirelessCoord::ForceAssort()
 
 /**************************************************************
 Function:        CWirelessCoord::ForceAssort
-Description:     ÉèÖÃ½µ¼¶Ê±²½·¥ÊıºÍ²½·¥³¤¶ÈÇåÁã	
-Input:          ÎŞ 
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è®¾ç½®é™çº§æ—¶æ­¥ä¼æ•°å’Œæ­¥ä¼é•¿åº¦æ¸…é›¶	
+Input:          æ—  
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
  void CWirelessCoord::SetDegrade()
 {
-	 m_iStepNum = 0 ;                //²½·¥×ÜÊı
-	 memset(m_iStepLen,0,MAX_STEP);      //¸÷²½³¤
+	 m_iStepNum = 0 ;                //æ­¥ä¼æ€»æ•°
+	 memset(m_iStepLen,0,MAX_STEP);      //å„æ­¥é•¿
 
 }

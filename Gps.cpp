@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   MainBoardLed.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úGPSĞ£Ê±´¦Àí
+Description:ä¿¡å·æœºGPSæ ¡æ—¶å¤„ç†
 Version:    V1.0
 History:
 ***************************************************************/
@@ -19,10 +19,10 @@ History:
 
 /**************************************************************
 Function:        CGps::CGps
-Description:     CGpsÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     CGpsç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGps::CGps()
 {
@@ -36,10 +36,10 @@ CGps::CGps()
 
 /**************************************************************
 Function:       CGps::~CGps
-Description:    CGpsÀàÎö¹¹º¯Êı		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGpsç±»ææ„å‡½æ•°		
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGps::~CGps()
 {
@@ -50,10 +50,10 @@ CGps::~CGps()
 
 /**************************************************************
 Function:       CGps::CGps
-Description:    ´´½¨CGpsÀà¾²Ì¬¶ÔÏó		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         CGps¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»ºCGpsç±»é™æ€å¯¹è±¡		
+Input:          æ—               
+Output:         æ— 
+Return:         CGpsé™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CGps* CGps::CreateInstance()
 {
@@ -63,9 +63,9 @@ CGps* CGps::CreateInstance()
 
 /**************************************************************
 Function:       CGps::RunGpsData
-Description:    GPSÏß³ÌÈë¿Úº¯Êı		
-Input:          arg  Ä¬ÈÏNULL              
-Output:         ÎŞ
+Description:    GPSçº¿ç¨‹å…¥å£å‡½æ•°		
+Input:          arg  é»˜è®¤NULL              
+Output:         æ— 
 Return:         0
 ***************************************************************/
 void CGps::RunGpsData()
@@ -77,19 +77,19 @@ void CGps::RunGpsData()
 	}	
 	char *pBuf   = m_cBuf;
 	int iFlagGps = 0;	
-	tcflush(m_iGpsFd, TCIFLUSH); //Çå¿Õ»º³åÇø,±ÜÃâÊÜµ½ÉÏ´ÎGPS½ÓÊÕµ½µÄĞÅÏ¢¸ÉÈÅ
+	tcflush(m_iGpsFd, TCIFLUSH); //æ¸…ç©ºç¼“å†²åŒº,é¿å…å—åˆ°ä¸Šæ¬¡GPSæ¥æ”¶åˆ°çš„ä¿¡æ¯å¹²æ‰°
 	while ( true ) 
 	{	
 		if ( ACE_OS::read(m_iGpsFd, pBuf,1) <= 0 )
 		{
 			ACE_OS::sleep(ACE_Time_Value(0,100*1000));
 			ierrorcount ++ ;
-			if(ierrorcount > 300) // 30Ãë»¹ÊÇÃ»ÓĞ¶ÁÈ¡µ½ÔòĞİÃßÒ»·ÖÖÓ
+			if(ierrorcount > 300) // 30ç§’è¿˜æ˜¯æ²¡æœ‰è¯»å–åˆ°åˆ™ä¼‘çœ ä¸€åˆ†é’Ÿ
 			{			
 			 ACE_DEBUG((LM_DEBUG,"\n%s:%d Cant read gps info than 300 times!\n",__FILE__,__LINE__));
 			 ierrorcount = 0 ;
-			 //return ; TODO  ÕâÀï¶ÁÈ¡1000´Î¶¼Ã»ÓĞ¶ÁÈ¡µ½GPSĞÅÏ¢£¬Òò´Ë¼ÇÂ¼Êı¾İ¿âÈÕÖ¾ÖĞ¡£
-			 CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_FLASH); //ADD:20141106 ÎŞGPS½ÓÊÕÊı¾İÔòÉÁË¸
+			 //return ; TODO  è¿™é‡Œè¯»å–1000æ¬¡éƒ½æ²¡æœ‰è¯»å–åˆ°GPSä¿¡æ¯ï¼Œå› æ­¤è®°å½•æ•°æ®åº“æ—¥å¿—ä¸­ã€‚
+			 CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_FLASH); //ADD:20141106 æ— GPSæ¥æ”¶æ•°æ®åˆ™é—ªçƒ
 			 ACE_OS::sleep(60);
 			}
 			continue;
@@ -114,21 +114,21 @@ void CGps::RunGpsData()
 						Byte result = Extract();
 						if(result == 1)
 						{							
-							CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_ON); //ADD:20141106 ½ÓÊÕÕı³£²¢½âÎöÔòÁÁ
-							//day±íÊ¾¼¸Ìì£¬Ò²¾ÍÊÇÏß³ÌĞİÃß¼¸Ìì¡£1±íÊ¾Ã¿Ìì½øĞĞĞ£Ê±£¬2±íÊ¾µÚÁ½Ìì½øĞĞĞ£Ê±......
+							CMainBoardLed::CreateInstance()->SetSignalLed(LED_GPS,LED_STATUS_ON); //ADD:20141106 æ¥æ”¶æ­£å¸¸å¹¶è§£æåˆ™äº®
+							//dayè¡¨ç¤ºå‡ å¤©ï¼Œä¹Ÿå°±æ˜¯çº¿ç¨‹ä¼‘çœ å‡ å¤©ã€‚1è¡¨ç¤ºæ¯å¤©è¿›è¡Œæ ¡æ—¶ï¼Œ2è¡¨ç¤ºç¬¬ä¸¤å¤©è¿›è¡Œæ ¡æ—¶......
 							Byte day = CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS_INTERVAL].ucValue;
 							m_bGpsTime = false ;
 							Uint m_iIntervalSec = day*3600*24 ;
-							//m_iIntervalSec = 3*3600; //²âÊÔÄ¬ÈÏ3Ğ¡Ê±Ğ£Ê±Ò»´Î
-							while(m_iIntervalSec/60 >0) //²ÉÈ¡Ò»·ÖÖÓĞİÃßÒ»´Î£¬ÅĞ¶ÏÊÇ·ñ»½ĞÑ
+							//m_iIntervalSec = 3*3600; //æµ‹è¯•é»˜è®¤3å°æ—¶æ ¡æ—¶ä¸€æ¬¡
+							while(m_iIntervalSec/60 >0) //é‡‡å–ä¸€åˆ†é’Ÿä¼‘çœ ä¸€æ¬¡ï¼Œåˆ¤æ–­æ˜¯å¦å”¤é†’
 							{
-								if(m_tLastTi == 0)  //Ç¿ÖÆĞ£Ê±
+								if(m_tLastTi == 0)  //å¼ºåˆ¶æ ¡æ—¶
 								 break ;
 								m_iIntervalSec -= 60 ;
 								ACE_OS::sleep(60);					
 							}
 							m_bGpsTime = true ;
-							tcflush(m_iGpsFd, TCIFLUSH); //Çå¿Õ»º³åÇø,±ÜÃâÊÜµ½ÉÏ´ÎGPS½ÓÊÕµ½µÄĞÅÏ¢¸ÉÈÅ
+							tcflush(m_iGpsFd, TCIFLUSH); //æ¸…ç©ºç¼“å†²åŒº,é¿å…å—åˆ°ä¸Šæ¬¡GPSæ¥æ”¶åˆ°çš„ä¿¡æ¯å¹²æ‰°
 						}
 					}
 					else
@@ -158,10 +158,10 @@ void CGps::RunGpsData()
 
 /**************************************************************
 Function:       CGps::Extract
-Description:    ½âÎöGPSÊı¾İ		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         0-Ê§°Ü 1-³É¹¦
+Description:    è§£æGPSæ•°æ®		
+Input:          æ—               
+Output:         æ— 
+Return:         0-å¤±è´¥ 1-æˆåŠŸ
 ***************************************************************/
 int CGps::Extract()
 {
@@ -215,10 +215,10 @@ int CGps::Extract()
 
 /**************************************************************
 Function:       CGps::CheckSum
-Description:    Ğ£ÑéGPSÊı¾İ		
-Input:          cMsg  GPSÊı¾İÖ¸Õë              
-Output:         ÎŞ
-Return:         false-Ê§°Ü true-³É¹¦
+Description:    æ ¡éªŒGPSæ•°æ®		
+Input:          cMsg  GPSæ•°æ®æŒ‡é’ˆ              
+Output:         æ— 
+Return:         false-å¤±è´¥ true-æˆåŠŸ
 ***************************************************************/
 bool CGps::CheckSum(char *cMsg)
 {
@@ -266,11 +266,11 @@ bool CGps::CheckSum(char *cMsg)
 
 /**************************************************************
 Function:       CGps::SetTime
-Description:    ÉèÖÃÏµÍ³Ê±¼ä		
-Input:          iYear-Äê    iMon-ÔÂ      iDay-ÈÕ  
-		     iHour-Ê±    iMin-·Ö      iSec-Ãë
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®ç³»ç»Ÿæ—¶é—´		
+Input:          iYear-å¹´    iMon-æœˆ      iDay-æ—¥  
+		     iHour-æ—¶    iMin-åˆ†      iSec-ç§’
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSec)
 {
@@ -296,7 +296,7 @@ void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSe
 	sTscMsg.ucMsgOpt     = OBJECT_UTC_TIME;
 	sTscMsg.uiMsgDataLen = 4;
 	sTscMsg.pDataBuf     = ACE_OS::malloc(4);
-	Ttime += 2*8*3600 ;  // ÕâÀïÖ÷ÒªÊÇÅäºÏÉÏÎ»»ú£¬ÉÏÎ»»ú¸üĞÂÊ±¼äµÄÊ±¼äÈ¡Öµ.
+	Ttime += 2*8*3600 ;  // è¿™é‡Œä¸»è¦æ˜¯é…åˆä¸Šä½æœºï¼Œä¸Šä½æœºæ›´æ–°æ—¶é—´çš„æ—¶é—´å–å€¼.
 	*((Byte*)sTscMsg.pDataBuf+3)  = Ttime & 0xff;  
 	*((Byte*)sTscMsg.pDataBuf+2)  = (Ttime>>8) & 0xff;
 	*((Byte*)sTscMsg.pDataBuf+1)  = (Ttime>>16) & 0xff;
@@ -307,10 +307,10 @@ void CGps::SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSe
 
 /**************************************************************
 Function:       CGps::ForceAdjust
-Description:    ÉèÖÃÇ¿ÖÆĞ£Ê±	ÊôĞÔ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®å¼ºåˆ¶æ ¡æ—¶	å±æ€§
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGps::ForceAdjust()
 {
@@ -318,10 +318,10 @@ void CGps::ForceAdjust()
 }
  /**************************************************************
  Function:		 CGps::GetLastTi
- Description:	 ·µ»ØGPSĞ£Ê±±È½ÏÊ±¼ä
- Input: 		 ÎŞ
- Output:		 ÎŞ
- Return:		 ÎŞ
+ Description:	 è¿”å›GPSæ ¡æ—¶æ¯”è¾ƒæ—¶é—´
+ Input: 		 æ— 
+ Output:		 æ— 
+ Return:		 æ— 
  ***************************************************************/
  time_t CGps::GetLastTi()
  {

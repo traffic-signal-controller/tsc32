@@ -3,21 +3,21 @@
 #include "ManaKernel.h"
 #include "DbInstance.h"
 #include "string.h"
-#define SEND_CLIENT_CNTOWN_BYTES 43 	 //(¾É¹ú±êGAT508-2004  8¸ö·½Ïò)
-#define GANEW_MAX_DIRECT  4 				//±±¶«ÄÏÎ÷
-#define GANEW_MAX_LANE    8  			 //×ó,Ö±,ÓÒ,ÈËĞĞ ,¶ş´ÎÈËĞĞ ,µ÷Í· ,ÆäËû ,ÌØÊâ(×óÖ±ÓÒ)
-#define GANEW_CHKDATA_INDEX 67            //Ğ£Ñé×Ö½ÚÏÂ±ê
-#define GANEW_FRAMEHEAD_INDEX0 0          //Ö¡Í·µØÖ·ÏÂ±ê0
-#define GANEW_FRAMEHEAD_INDEX1 1		  //Ö¡Í·µØÖ·ÏÂ±ê1
-#define GANEW_CNTDEVNUM_INDEX  2          //µ¹¼ÆÊ±ÊıÁ¿µØÖ·ÏÂ±ê
+#define SEND_CLIENT_CNTOWN_BYTES 43 	 //(æ—§å›½æ ‡GAT508-2004  8ä¸ªæ–¹å‘)
+#define GANEW_MAX_DIRECT  4 				//åŒ—ä¸œå—è¥¿
+#define GANEW_MAX_LANE    8  			 //å·¦,ç›´,å³,äººè¡Œ ,äºŒæ¬¡äººè¡Œ ,è°ƒå¤´ ,å…¶ä»– ,ç‰¹æ®Š(å·¦ç›´å³)
+#define GANEW_CHKDATA_INDEX 67            //æ ¡éªŒå­—èŠ‚ä¸‹æ ‡
+#define GANEW_FRAMEHEAD_INDEX0 0          //å¸§å¤´åœ°å€ä¸‹æ ‡0
+#define GANEW_FRAMEHEAD_INDEX1 1		  //å¸§å¤´åœ°å€ä¸‹æ ‡1
+#define GANEW_CNTDEVNUM_INDEX  2          //å€’è®¡æ—¶æ•°é‡åœ°å€ä¸‹æ ‡
 
 
 /**************************************************************
 Function:       CGaCountDown::CGaCountDown
-Description:    CGaCountDown£¬ÓÃÓÚµ¹¼ÆÊ±Àà³õÊ¼»¯´¦Àí				
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGaCountDownï¼Œç”¨äºå€’è®¡æ—¶ç±»åˆå§‹åŒ–å¤„ç†				
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGaCountDown::CGaCountDown()
 {
@@ -25,14 +25,14 @@ CGaCountDown::CGaCountDown()
 	ACE_OS::memset(m_ucLampBoardFlashBreak, 0x0 , MAX_LAMP_BOARD);	
 	ACE_OS::memset(m_newGbCntDownDevTime, 0x0 , MAX_CNTDOWNDEV*sizeof(SNewGBCntDownTimeInfo));
 
-	m_newsGaSendBuf[0]= 0x55; //ĞÂ¹ú±êÖ¡Í·
-	m_newsGaSendBuf[1]= 0xAA; //ĞÂ¹ú±êÖ¡Í·											  
-	m_newsGaSendBuf[2]= MAX_CNTDOWNDEV;	 //×î´óµ¹¼ÆÊ±Êı32
+	m_newsGaSendBuf[0]= 0x55; //æ–°å›½æ ‡å¸§å¤´
+	m_newsGaSendBuf[1]= 0xAA; //æ–°å›½æ ‡å¸§å¤´											  
+	m_newsGaSendBuf[2]= MAX_CNTDOWNDEV;	 //æœ€å¤§å€’è®¡æ—¶æ•°32
 
 	
-	m_newsGaSendBuf4D[0]= 0x55;	 //ĞÂ¹ú±êÖ¡Í·
-	m_newsGaSendBuf4D[1]= 0xAA;  //ĞÂ¹ú±êÖ¡Í·											  
-	m_newsGaSendBuf4D[2]= 0x4;	 //×î´óµ¹¼ÆÊ±Êı4  ±±¶«ÄÏÎ÷ µØÖ· 0 1 2 3
+	m_newsGaSendBuf4D[0]= 0x55;	 //æ–°å›½æ ‡å¸§å¤´
+	m_newsGaSendBuf4D[1]= 0xAA;  //æ–°å›½æ ‡å¸§å¤´											  
+	m_newsGaSendBuf4D[2]= 0x4;	 //æœ€å¤§å€’è®¡æ—¶æ•°4  åŒ—ä¸œå—è¥¿ åœ°å€ 0 1 2 3
 	
 	for(Byte index = 0 ;index<MAX_CLIENT_NUM ; index++)
 	{
@@ -45,10 +45,10 @@ CGaCountDown::CGaCountDown()
 
 /**************************************************************
 Function:       CGaCountDown::~CGaCountDown
-Description:    CGaCountDownÀà	Îö¹¹º¯Êı	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGaCountDownç±»	ææ„å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGaCountDown::~CGaCountDown()
 {
@@ -57,10 +57,10 @@ CGaCountDown::~CGaCountDown()
 
 /**************************************************************
 Function:       CGaCountDown::CreateInstance
-Description:    ´´½¨CGaCountDown¾²Ì¬¶ÔÏó
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»ºCGaCountDowné™æ€å¯¹è±¡
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CGaCountDown* CGaCountDown::CreateInstance()
 {
@@ -71,11 +71,11 @@ CGaCountDown* CGaCountDown::CreateInstance()
 
 /**************************************************************
 Function:       CGaCountDown::GaGetCntDownInfo
-Description:    ÅĞ¶Ï¸÷¸ö·½Ïò/ÊôĞÔ(×ó¡¢Ö±¡¢ÓÒÓëÈËĞĞ)ÊÇ·ñĞèÒªµ¹¼ÆÊ±
-				ÒÔ¼°¼ÆËã¶ÔÓ¦µÄµ¹¼ÆÊ±ÃëÊıºÍµÆÉ«ĞÅÏ¢
-Input:           ÎŞ              
-Output:         ÎŞ
-Return:          ÎŞ
+Description:    åˆ¤æ–­å„ä¸ªæ–¹å‘/å±æ€§(å·¦ã€ç›´ã€å³ä¸äººè¡Œ)æ˜¯å¦éœ€è¦å€’è®¡æ—¶
+				ä»¥åŠè®¡ç®—å¯¹åº”çš„å€’è®¡æ—¶ç§’æ•°å’Œç¯è‰²ä¿¡æ¯
+Input:           æ—               
+Output:         æ— 
+Return:          æ— 
 ***************************************************************/
 void CGaCountDown::GaGetCntDownInfo()
 {
@@ -115,13 +115,13 @@ void CGaCountDown::GaGetCntDownInfo()
 				ucPhaseId     = m_sGaPhaseToDirec[ucDirIndex][ucLaneIndex].ucPhase;
 				bIsAllowPhase = true;
 			}		
-			//ÏàÎ»ÀàĞÍ+ÏàÎ»id-->Í¨µÀĞÅÏ¢(ryg)
+			//ç›¸ä½ç±»å‹+ç›¸ä½id-->é€šé“ä¿¡æ¯(ryg)
 			ucSignalGrpNum = 0;
 			pCWorkParaManager->GetSignalGroupId(bIsAllowPhase ,ucPhaseId,&ucSignalGrpNum,ucSignalGrp);
 
-			if ( ucSignalGrpNum > 0 ) //ÏàÎ»¶ÔÓ¦Í¨µÀ¸öÊı´óÓÚ0
+			if ( ucSignalGrpNum > 0 ) //ç›¸ä½å¯¹åº”é€šé“ä¸ªæ•°å¤§äº0
 			{
-				ucLightLamp = (ucSignalGrp[0] - 1) * 3;  //ucLightLamp Í¨µÀ×éºÅ£¬ÏÂÃæÅĞ¶Ïµ±Ç°Í¨µÀ×éºÅÁÁÊ²Ã´µÆ¡£
+				ucLightLamp = (ucSignalGrp[0] - 1) * 3;  //ucLightLamp é€šé“ç»„å·ï¼Œä¸‹é¢åˆ¤æ–­å½“å‰é€šé“ç»„å·äº®ä»€ä¹ˆç¯ã€‚
 				if ( 1 == pStepInfo->ucLampOn[ucLightLamp] )
 				{
 					m_ucGaColor[ucDirIndex][ucLaneIndex] = GANEW_COLOR_RED;
@@ -136,8 +136,8 @@ void CGaCountDown::GaGetCntDownInfo()
 					m_ucGaColor[ucDirIndex][ucLaneIndex] = GANEW_COLOR_GREEN;
 					ucLightLamp = ucLightLamp + 2;
 				}
-				m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = true; //ÏàÎ»·½ÏòÉÏÓĞ·ÅĞĞÏàÎ»ºÍÍ¨µÀ »òÕßÓĞ¸úËæÏàÎ»ÓĞ¸úËæÍ¨µÀ
-				m_ucGaRuntime[ucDirIndex][ucLaneIndex]    = GaGetCntTime(ucLightLamp); //»ñÈ¡Ê£ÓàÊ±¼ä
+				m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = true; //ç›¸ä½æ–¹å‘ä¸Šæœ‰æ”¾è¡Œç›¸ä½å’Œé€šé“ æˆ–è€…æœ‰è·Ÿéšç›¸ä½æœ‰è·Ÿéšé€šé“
+				m_ucGaRuntime[ucDirIndex][ucLaneIndex]    = GaGetCntTime(ucLightLamp); //è·å–å‰©ä½™æ—¶é—´
 			
 				if(pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_FLASHOFF)
 								{				
@@ -156,7 +156,7 @@ void CGaCountDown::GaGetCntDownInfo()
 			}
 			else
 			{
-				m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = false;//¸Ã·½ÏòÉÏÎŞÏàÎ»ÎŞÍ¨µÀÔòÎŞµ¹¼ÆÊ±£¬¸úËæÏàÎ»ÎŞ¸úËæÍ¨µÀÔòÎŞµ¹¼ÆÊ±
+				m_bGaNeedCntDown[ucDirIndex][ucLaneIndex] = false;//è¯¥æ–¹å‘ä¸Šæ— ç›¸ä½æ— é€šé“åˆ™æ— å€’è®¡æ—¶ï¼Œè·Ÿéšç›¸ä½æ— è·Ÿéšé€šé“åˆ™æ— å€’è®¡æ—¶
 			}
 			
 		}
@@ -166,10 +166,10 @@ void CGaCountDown::GaGetCntDownInfo()
 
 /**************************************************************
 Function:       CGaCountDown::GaSendStepPer
-Description:    Ã¿Ò»´Î²½·¥¿ªÊ¼·¢ËÍÒ»´Î
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ¯ä¸€æ¬¡æ­¥ä¼å¼€å§‹å‘é€ä¸€æ¬¡
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGaCountDown::GaSendStepPer()
 {
@@ -199,7 +199,7 @@ void CGaCountDown::GaSendStepPer()
 		if(sSendCDN[iClinetDex].bSend== true && sSendCDN[iClinetDex].bUsed == true )
 		{			
 			Byte SendClientData[SEND_CLIENT_CNTOWN_BYTES] ={0};
-			SendClientData[0] = 0x84 ; //Ó¦´ğ
+			SendClientData[0] = 0x84 ; //åº”ç­”
 			SendClientData[1] = 0xE6 ;
 			SendClientData[2] = 0x0  ;
 			ACE_OS::memcpy((Byte*)SendClientData+3,m_sGaSendBuf,GA_MAX_DIRECT*GA_MAX_SEND_BUF);
@@ -211,10 +211,10 @@ void CGaCountDown::GaSendStepPer()
 
 /**************************************************************
 Function:       CGaCountDown::GaSetSendBuffer
-Description:    ¹¹Ôì·¢ËÍÊı¾İ
-Input:           ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ„é€ å‘é€æ•°æ®
+Input:           æ—               
+Output:         æ— 
+Return:         æ— 
 Date:           20150324
 ***************************************************************/
 void CGaCountDown::GaSetSendBuffer()
@@ -222,13 +222,13 @@ void CGaCountDown::GaSetSendBuffer()
 	Byte ucColor     = GANEW_COLOR_BLACK;
 	Byte ucCountTime = 0;
 
-	for (Byte ucDirIndex=0; ucDirIndex<GA_MAX_DIRECT-4; ucDirIndex++ ) //Ã»ÓĞ¶«±± Î÷±± ¶«ÄÏÎ÷ÄÏ·½Ïò
+	for (Byte ucDirIndex=0; ucDirIndex<GA_MAX_DIRECT-4; ucDirIndex++ ) //æ²¡æœ‰ä¸œåŒ— è¥¿åŒ— ä¸œå—è¥¿å—æ–¹å‘
 	{
 		ucColor     = GANEW_COLOR_BLACK;
 		ucCountTime = 0;
-		//»ñÈ¡Ä³Ò»·½Ïòµ¹¼ÆÊ±ÅÆµÄÑÕÉ«ÓëÃëÊı
+		//è·å–æŸä¸€æ–¹å‘å€’è®¡æ—¶ç‰Œçš„é¢œè‰²ä¸ç§’æ•°
 		ComputeColorCount(ucDirIndex,ucColor,ucCountTime);	
-		//´ò°üÊı¾İ
+		//æ‰“åŒ…æ•°æ®
 		PackSendBuf(ucDirIndex,ucColor,ucCountTime);	
 		
 	}	
@@ -236,10 +236,10 @@ void CGaCountDown::GaSetSendBuffer()
 
 /**************************************************************
 Function:       CGaCountDown::GaSetSendBufferNewGB4Direc
-Description:   ¹¹Ôì·¢ËÍÊı¾İĞÂ¹ú±ê4·½Ïò
-Input:           ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:   æ„é€ å‘é€æ•°æ®æ–°å›½æ ‡4æ–¹å‘
+Input:           æ—               
+Output:         æ— 
+Return:         æ— 
 Date:           20150325
 ***************************************************************/
 void CGaCountDown::GaSetSendBufferNewGB4Direc()
@@ -247,11 +247,11 @@ void CGaCountDown::GaSetSendBufferNewGB4Direc()
 	Byte ucColor     = GANEW_COLOR_BLACK;
 	Byte ucCountTime = 0;
 
-	for (Byte ucDirIndex=0; ucDirIndex<GA_MAX_DIRECT-4; ucDirIndex++ ) //Ã»ÓĞ¶«±± Î÷±± ¶«ÄÏÎ÷ÄÏ·½Ïò
+	for (Byte ucDirIndex=0; ucDirIndex<GA_MAX_DIRECT-4; ucDirIndex++ ) //æ²¡æœ‰ä¸œåŒ— è¥¿åŒ— ä¸œå—è¥¿å—æ–¹å‘
 	{
-		//»ñÈ¡Ä³Ò»·½Ïòµ¹¼ÆÊ±ÅÆµÄÑÕÉ«ÓëÃëÊı
+		//è·å–æŸä¸€æ–¹å‘å€’è®¡æ—¶ç‰Œçš„é¢œè‰²ä¸ç§’æ•°
 		ComputeColorCount(ucDirIndex,ucColor,ucCountTime);	
-		//´ò°üÊı¾İ
+		//æ‰“åŒ…æ•°æ®
 		PackSendBufNewGB4Direc(ucDirIndex,ucColor,ucCountTime);
 	}	
 }
@@ -259,10 +259,10 @@ void CGaCountDown::GaSetSendBufferNewGB4Direc()
 
 /**************************************************************
 Function:       CGaCountDown::GaSetSendBufferNewGB
-Description:    ¸ù¾İĞÂ¹ú±êGAT508-2014¹¹ÔìÈ«²¿µ¹¼ÆÊ±µÄ·¢ËÍÊı¾İ
-Input:           ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ ¹æ®æ–°å›½æ ‡GAT508-2014æ„é€ å…¨éƒ¨å€’è®¡æ—¶çš„å‘é€æ•°æ®
+Input:           æ—               
+Output:         æ— 
+Return:         æ— 
 Date: 	      20150324
 ***************************************************************/
 void CGaCountDown::GaSetSendBufferNewGB()
@@ -274,12 +274,12 @@ void CGaCountDown::GaSetSendBufferNewGB()
 
 /**************************************************************
 Function:       CGaCountDown::ComputeColorCount
-Description:    ¸ù¾İ·½Ïò¼ÆËãÄ³·½ÏòµÄµ¹¼ÆÊ±ÑÕÉ«ºÍ×ÜÃëÊı,²»¿¼ÂÇÈËĞĞ
-			µ¹¼ÆÊ±ÓÅÏÈ¼¶£ºÓĞÂÌµ¹ÂÌ ÎŞÂÌµ¹»Æ Í¬ÂÌÍ¬»ÆÍ¬ºìµ¹×îĞ¡
-Input:          ucDirIndex-·½Ïò(0 1 2 3)              
-Output:         ucColor-ÑÕÉ«(r y g)
-		        ucCountTime-ÃëÊı
-Return:         false-Ê§°Ü  true-³É¹¦
+Description:    æ ¹æ®æ–¹å‘è®¡ç®—æŸæ–¹å‘çš„å€’è®¡æ—¶é¢œè‰²å’Œæ€»ç§’æ•°,ä¸è€ƒè™‘äººè¡Œ
+			å€’è®¡æ—¶ä¼˜å…ˆçº§ï¼šæœ‰ç»¿å€’ç»¿ æ— ç»¿å€’é»„ åŒç»¿åŒé»„åŒçº¢å€’æœ€å°
+Input:          ucDirIndex-æ–¹å‘(0 1 2 3)              
+Output:         ucColor-é¢œè‰²(r y g)
+		        ucCountTime-ç§’æ•°
+Return:         false-å¤±è´¥  true-æˆåŠŸ
 ***************************************************************/
 bool CGaCountDown::ComputeColorCount( Byte ucDirIndex , Byte& ucColor , Byte& ucCountTime )
 {
@@ -295,7 +295,7 @@ bool CGaCountDown::ComputeColorCount( Byte ucDirIndex , Byte& ucColor , Byte& uc
 	
 	if(pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_GAT5082004||pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_GAT5082014V2)
 	{
-	//×ó Ö±  ÓÒ  ²»ËãÈËĞĞ
+	//å·¦ ç›´  å³  ä¸ç®—äººè¡Œ
 	for ( ucLaneIndex=0; ucLaneIndex<GA_MAX_LANE; ucLaneIndex++ )
 	{
 		if ( false == m_bGaNeedCntDown[ucDirIndex][ucLaneIndex]) 
@@ -332,12 +332,12 @@ bool CGaCountDown::ComputeColorCount( Byte ucDirIndex , Byte& ucColor , Byte& uc
 		}
 	}
 
-	if ( bGreen )  //ÂÌµÆµ¹¼ÆÊ±
+	if ( bGreen )  //ç»¿ç¯å€’è®¡æ—¶
 	{
 		ucColor     = GANEW_COLOR_GREEN;
 		ucCountTime = ucMinGreenCnt;
 	}
-	else if ( bYellow )  //Èç²»µ¹»ÆµÆ ÔÚ´Ë´¦×öÏŞÖÆ
+	else if ( bYellow )  //å¦‚ä¸å€’é»„ç¯ åœ¨æ­¤å¤„åšé™åˆ¶
 	{
 		ucColor     = GANEW_COLOR_YELLOW;
 		ucCountTime = ucMinYellowCnt;
@@ -352,7 +352,7 @@ bool CGaCountDown::ComputeColorCount( Byte ucDirIndex , Byte& ucColor , Byte& uc
 		return false;
 	}
 }
-else if(pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_GAT5082004V2) //8¸öµØÖ·µ¹¼ÆÊ±
+else if(pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_GAT5082004V2) //8ä¸ªåœ°å€å€’è®¡æ—¶
 {
 	Byte CntDownDevPhase = pConfig->sCntDownDev[ucDirIndex].usPhase ;	
 	Byte CntDownDevOverPhase = pConfig->sCntDownDev[ucDirIndex].ucOverlapPhase ;
@@ -384,16 +384,16 @@ else if(pConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_GAT5082004V2) //8
 
 /**************************************************************
 Function:       CGaCountDown::ComputeColorCountNewGB
-Description:    ¸ù¾İ·½Ïò¼ÆËãÄ³·½ÏòµÄµ¹¼ÆÊ±ÑÕÉ«ºÍ×ÜÃëÊı,²»¿¼ÂÇÈËĞĞ
-			µ¹¼ÆÊ±ÓÅÏÈ¼¶£ºÓĞÂÌµ¹ÂÌ ÎŞÂÌµ¹»Æ Í¬ÂÌÍ¬»ÆÍ¬ºìµ¹×îĞ¡
-Input:            ÎŞ        
-Output:          ÎŞ
-Return:         false-Ê§°Ü  true-³É¹¦
+Description:    æ ¹æ®æ–¹å‘è®¡ç®—æŸæ–¹å‘çš„å€’è®¡æ—¶é¢œè‰²å’Œæ€»ç§’æ•°,ä¸è€ƒè™‘äººè¡Œ
+			å€’è®¡æ—¶ä¼˜å…ˆçº§ï¼šæœ‰ç»¿å€’ç»¿ æ— ç»¿å€’é»„ åŒç»¿åŒé»„åŒçº¢å€’æœ€å°
+Input:            æ—         
+Output:          æ— 
+Return:         false-å¤±è´¥  true-æˆåŠŸ
 ***************************************************************/
 bool CGaCountDown::ComputeColorCountNewGB()
 {
 	Byte CntDownDevAddr = 0 ;
-	for (Byte ucDirIndex=0; ucDirIndex<GANEW_MAX_DIRECT; ucDirIndex++ ) //Ã»ÓĞ¶«±± Î÷±± ¶«ÄÏÎ÷ÄÏ·½Ïò
+	for (Byte ucDirIndex=0; ucDirIndex<GANEW_MAX_DIRECT; ucDirIndex++ ) //æ²¡æœ‰ä¸œåŒ— è¥¿åŒ— ä¸œå—è¥¿å—æ–¹å‘
 	{
 		for(Byte ucLaneIndex = 0 ;ucLaneIndex<GANEW_MAX_LANE; ucLaneIndex++)
 		{
@@ -417,10 +417,10 @@ bool CGaCountDown::ComputeColorCountNewGB()
 }
 /**************************************************************
 Function:       CGaCountDown::PackSendBufNewGB
-Description:    ´ò°ü·¢ËÍµÄÊı¾İ(¸ù¾İGAT508-2014)
-Input:           ÎŞ      
-Output:        ÎŞ
-Return:         false-Ê§°Ü  true-³É¹¦
+Description:    æ‰“åŒ…å‘é€çš„æ•°æ®(æ ¹æ®GAT508-2014)
+Input:           æ—       
+Output:        æ— 
+Return:         false-å¤±è´¥  true-æˆåŠŸ
 ***************************************************************/
 bool CGaCountDown::PackSendBufNewGB()
 {  		
@@ -437,11 +437,11 @@ bool CGaCountDown::PackSendBufNewGB()
 
 /**************************************************************
 Function:       CGaCountDown::PackSendBuf
-Description:    ´ò°ü·¢ËÍµÄÊı¾İ
-Input:           ucDirIndex-·½Ïò(0 1 2 3)              
-Output:         ucColor-ÑÕÉ«(0r 1y 2g)
-*        		ucCountTime-ÃëÊı
-Return:         false-Ê§°Ü  true-³É¹¦
+Description:    æ‰“åŒ…å‘é€çš„æ•°æ®
+Input:           ucDirIndex-æ–¹å‘(0 1 2 3)              
+Output:         ucColor-é¢œè‰²(0r 1y 2g)
+*        		ucCountTime-ç§’æ•°
+Return:         false-å¤±è´¥  true-æˆåŠŸ
 ***************************************************************/
 bool CGaCountDown::PackSendBuf( Byte ucDirIndex , Byte ucColor , Byte ucCountTime )
 { 										  
@@ -455,11 +455,11 @@ bool CGaCountDown::PackSendBuf( Byte ucDirIndex , Byte ucColor , Byte ucCountTim
 
 	ACE_OS::memset(m_sGaSendBuf[ucDirIndex] , 0 , GA_MAX_SEND_BUF);
 
-	m_sGaSendBuf[ucDirIndex][0] = 0xFE;   //Ö¡Í·
+	m_sGaSendBuf[ucDirIndex][0] = 0xFE;   //å¸§å¤´
 
-	ucColorDir |= ucColor;       //D0-D1 ±íÊ¾ÑÕÉ«
-	ucColorDir |= (ucDirIndex<<2); //D2-D4 ±íÊ¾·½Ïò
-	ucColorDir |= 0x20;                       //D5Î»Îª1  D6-D7À©Õ¹
+	ucColorDir |= ucColor;       //D0-D1 è¡¨ç¤ºé¢œè‰²
+	ucColorDir |= (ucDirIndex<<2); //D2-D4 è¡¨ç¤ºæ–¹å‘
+	ucColorDir |= 0x20;                       //D5ä½ä¸º1  D6-D7æ‰©å±•
 	m_sGaSendBuf[ucDirIndex][1] = ucColorDir;
 
 	ucThousand = ucCountTime / 1000;
@@ -479,11 +479,11 @@ bool CGaCountDown::PackSendBuf( Byte ucDirIndex , Byte ucColor , Byte ucCountTim
 
 /**************************************************************
 Function:       CGaCountDown::PackSendBuf
-Description:    ´ò°ü·¢ËÍµÄÊı¾İ
-Input:           ucDirIndex-·½Ïò(0 1 2 3)              
-Output:         ucColor-ÑÕÉ«(0r 1y 2g)
-*        		ucCountTime-ÃëÊı
-Return:         false-Ê§°Ü  true-³É¹¦
+Description:    æ‰“åŒ…å‘é€çš„æ•°æ®
+Input:           ucDirIndex-æ–¹å‘(0 1 2 3)              
+Output:         ucColor-é¢œè‰²(0r 1y 2g)
+*        		ucCountTime-ç§’æ•°
+Return:         false-å¤±è´¥  true-æˆåŠŸ
 ***************************************************************/
 bool CGaCountDown::PackSendBufNewGB4Direc(Byte ucDirIndex , Byte ucColor , Byte ucCountTime )
 { 					  
@@ -499,10 +499,10 @@ bool CGaCountDown::PackSendBufNewGB4Direc(Byte ucDirIndex , Byte ucColor , Byte 
 
 /**************************************************************
 Function:       CGaCountDown::GaGetCntTime
-Description:    ¸ù¾İÍ¨µÀ»ñÈ¡¸ÃÍ¨µÀÍ¬Ò»µÆÉ«Ê£ÓàµÄ³ÖĞøÊ±¼ä
-Input:          ucSignalId: Í¨µÀId  1-16            
-Output:         ÎŞ
-Return:         ¸ÃµÆÉ«µÄÊ£ÓàÊ±¼ä
+Description:    æ ¹æ®é€šé“è·å–è¯¥é€šé“åŒä¸€ç¯è‰²å‰©ä½™çš„æŒç»­æ—¶é—´
+Input:          ucSignalId: é€šé“Id  1-16            
+Output:         æ— 
+Return:         è¯¥ç¯è‰²çš„å‰©ä½™æ—¶é—´
 ***************************************************************/
 Byte CGaCountDown::GaGetCntTime(Byte ucSignalId)
 {
@@ -520,7 +520,7 @@ Byte CGaCountDown::GaGetCntTime(Byte ucSignalId)
 		ucRuntime = 0;
 	}
 
-	//ÆäËû²½·¥¸ÃµÆÉ«»¹»áÁÁ£¬±ÈÈçÍ¨µÀµÄºìµÆ¿ÉÄÜ»á³ıÁËÍ¨µÀ×éÂÌµÆ²½ÍâÆäËû²½·¥Ê±ºòÒ²Ò»Ö±ÁÁ
+	//å…¶ä»–æ­¥ä¼è¯¥ç¯è‰²è¿˜ä¼šäº®ï¼Œæ¯”å¦‚é€šé“çš„çº¢ç¯å¯èƒ½ä¼šé™¤äº†é€šé“ç»„ç»¿ç¯æ­¥å¤–å…¶ä»–æ­¥ä¼æ—¶å€™ä¹Ÿä¸€ç›´äº®
 	for (int iStep = ((ucCurStep+1) % pRunData->ucStepNum); iStep != ucCurStep;iStep = (iStep + 1) % pRunData->ucStepNum) 
 	{
 		pStepInfo = pRunData->sStageStepInfo + iStep;
@@ -540,10 +540,10 @@ Byte CGaCountDown::GaGetCntTime(Byte ucSignalId)
 
 /**************************************************************
 Function:       CGaCountDown::GaUpdateCntDownCfg
-Description:    ¸üĞÂµ¹¼ÆÊ±ÅäÖÃ²ÎÊı Êı¾İ¿â¸üĞÂÊ±ĞèÒªµ÷ÓÃ
-Input:          ÎŞ         
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ›´æ–°å€’è®¡æ—¶é…ç½®å‚æ•° æ•°æ®åº“æ›´æ–°æ—¶éœ€è¦è°ƒç”¨
+Input:          æ—          
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGaCountDown::GaUpdateCntDownCfg()
 {
@@ -555,7 +555,7 @@ void CGaCountDown::GaUpdateCntDownCfg()
 	GBT_DB::PhaseToDirec*   pPhaseToDirec = NULL;    
 	GBT_DB::TblPhaseToDirec tTblPhaseToDirec;
 
-	/******·½ÏòÓëÏàÎ»¶ÔÓ¦±í******/
+	/******æ–¹å‘ä¸ç›¸ä½å¯¹åº”è¡¨******/
 	(CDbInstance::m_cGbtTscDb).QueryPhaseToDirec(tTblPhaseToDirec);
 	pPhaseToDirec = tTblPhaseToDirec.GetData(ucRecordCnt);
 	ACE_OS::memset(m_sGaPhaseToDirec  , 0, (GA_MAX_DIRECT*GA_MAX_LANE)*sizeof(GBT_DB::PhaseToDirec));
@@ -580,11 +580,11 @@ void CGaCountDown::GaUpdateCntDownCfg()
 
 /**************************************************************
 Function:       CGaCountDown::GaUpdateCntDownCfg
-Description:    »ñÈ¡·½ÏòÓë×ªÏò  Èç£º×ó Ö±
-Input:          ucTableId - ·½ÏòÓëÏàÎ»±íµÄid         
-Output:         ucDir     - ·½Ïò
-*        		ucLane    - ×ªÏò
-Return:         ÎŞ
+Description:    è·å–æ–¹å‘ä¸è½¬å‘  å¦‚ï¼šå·¦ ç›´
+Input:          ucTableId - æ–¹å‘ä¸ç›¸ä½è¡¨çš„id         
+Output:         ucDir     - æ–¹å‘
+*        		ucLane    - è½¬å‘
+Return:         æ— 
 ***************************************************************/
 void CGaCountDown::GaGetDirLane(Byte ucTableId , Byte& ucDir , Byte& ucLane)
 {	
@@ -596,16 +596,16 @@ void CGaCountDown::GaGetDirLane(Byte ucTableId , Byte& ucDir , Byte& ucLane)
 	switch ( ucDirCfg )
 	{
 		case 0:
-			ucDir = GA_DIRECT_NORTH; //±±
+			ucDir = GA_DIRECT_NORTH; //åŒ—
 			break;
 		case 2:
-			ucDir = GA_DIRECT_EAST; //¶«
+			ucDir = GA_DIRECT_EAST; //ä¸œ
 			break;
 		case 4:
-			ucDir = GA_DIRECT_SOUTH; //ÄÏ
+			ucDir = GA_DIRECT_SOUTH; //å—
 			break;
 		case 6:
-			ucDir =  GA_DIRECT_WEST; //Î÷
+			ucDir =  GA_DIRECT_WEST; //è¥¿
 			break;
 		case 1:
 			ucDir = GA_DIRECT_NORTH_EAST ; //
@@ -668,10 +668,10 @@ void CGaCountDown::GaGetDirLane(Byte ucTableId , Byte& ucDir , Byte& ucLane)
 
 /**************************************************************
 Function:       CGaCountDown::sendblack
-Description:    ÓÃÓÚ·¢ËÍµ¹¼ÆÊ±ºÚÆÁ
-Input:          ÎŞ         
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ç”¨äºå‘é€å€’è®¡æ—¶é»‘å±
+Input:          æ—          
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGaCountDown::sendblack()
 {	
@@ -703,10 +703,10 @@ void CGaCountDown::sendblack()
 
 /**************************************************************
 Function:       CGaCountDown::send8cntdown
-Description:    ÓÃÓÚ¸ĞÓ¦¿ØÖÆÊ±µÄ8Ãëµ¹¼ÆÊ±·¢ËÍ
-Input:          ÎŞ         
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ç”¨äºæ„Ÿåº”æ§åˆ¶æ—¶çš„8ç§’å€’è®¡æ—¶å‘é€
+Input:          æ—          
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGaCountDown:: send8cntdown()
 {
@@ -765,10 +765,10 @@ void CGaCountDown:: send8cntdown()
 /**************************************************************
 
 Function:       CGaCountDown::SetClinetCntDown
-Description:    ÓÃÓÚÅäÖÃÏòÉÏÎ»»ú·¢ËÍ¸÷¸ö·½Ïòµ¹¼ÆÊ±ĞÅÏ¢
-Input:          ÎŞ         
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ç”¨äºé…ç½®å‘ä¸Šä½æœºå‘é€å„ä¸ªæ–¹å‘å€’è®¡æ—¶ä¿¡æ¯
+Input:          æ—          
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGaCountDown::SetClinetCntDown(ACE_INET_Addr& addremote, Uint uBufCnt , Byte* pBuf)
 	
@@ -804,9 +804,9 @@ void CGaCountDown::SetClinetCntDown(ACE_INET_Addr& addremote, Uint uBufCnt , Byt
 		pGbtMsgQueue->m_sockLocal.send(sErrMsg ,3, addremote);
 		return ;
 	}
-	else if ( GBT_SET_REQ == ucRecvOptType || GBT_SET_REQ_NOACK == ucRecvOptType )  //ÉèÖÃ
+	else if ( GBT_SET_REQ == ucRecvOptType || GBT_SET_REQ_NOACK == ucRecvOptType )  //è®¾ç½®
 	{
-		//ÕıÈ·µÄÓ¦´ğ
+		//æ­£ç¡®çš„åº”ç­”
 		if ( GBT_SET_REQ == ucRecvOptType )
 		{
 			

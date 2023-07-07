@@ -13,22 +13,22 @@ public:
 	static CPowerBoard* CreateInstance();
 
 public:
-	//µçÑ¹Êı¾İ£¬µçÑ¹×´Ì¬
+	//ç”µå‹æ•°æ®ï¼Œç”µå‹çŠ¶æ€
 	void CheckVoltage();
 
-	//Ö÷¿Ø°åÇëÇóµçÔ´Ä£¿é·¢ËÍÅäÖÃÊı¾İ
+	//ä¸»æ§æ¿è¯·æ±‚ç”µæºæ¨¡å—å‘é€é…ç½®æ•°æ®
 	void GetPowerBoardCfg();
 
-	//Ö÷¿Ø°å·¢ËÍ¸øµçÔ´Ä£¿éÅäÖÃÊı¾İ
+	//ä¸»æ§æ¿å‘é€ç»™ç”µæºæ¨¡å—é…ç½®æ•°æ®
 	void SetPowerBoardCfg();
 	void SetPowerCfgData(Byte m_ucWarnHighVol,Byte m_ucWarnLowVol,Byte m_ucVolPlan,Byte m_ucDogCfg);
-	//¹ã²¥ĞÄÌø 
+	//å¹¿æ’­å¿ƒè·³ 
 	void HeartBeat();
-	//½ÓÊÕµçÔ´°åµÄCanÊı¾İ²¢´¦Àí
+	//æ¥æ”¶ç”µæºæ¿çš„Canæ•°æ®å¹¶å¤„ç†
 	void RecvPowerCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp);
 	
-	int GetStongVoltage() ;//»ñÈ¡¸ßµçÑ¹ADD£º201309281540
-	void GetPowerVer(Byte PowerBdindex); //»ñÈ¡µçÔ´°å°æ±¾
+	int GetStongVoltage() ;//è·å–é«˜ç”µå‹ADDï¼š201309281540
+	void GetPowerVer(Byte PowerBdindex); //è·å–ç”µæºæ¿ç‰ˆæœ¬
 	static Byte iHeartBeat ;
 private:
 	CPowerBoard();
@@ -36,25 +36,25 @@ private:
 
 public:
 	//input
-	Byte m_iSetWarnHighVol;  //¸ßÑ¹Ô¤¾¯µçÑ¹(ÉèÖÃÖµ)
-	Byte m_iSetWarnLowVol;   //µÍÑ¹Ô¤¾¯µçÑ¹(ÉèÖÃÖµ)
-	Byte m_ucSetStongHighVolPlan;  //Ç¿µç¸ßÑ¹Ô¤°¸
-	Byte m_ucSetStongLowVolPlan;   //Ç¿µçµÍÑ¹Ô¤°¸
-	Byte m_ucSetWeakHighVolPlan;   //Èõµç¸ßÑ¹Ô¤°¸
-	Byte m_ucSetWeakLowVolPlan;    //ÈõµçµÍÑ¹Ô¤°¸
+	Byte m_iSetWarnHighVol;  //é«˜å‹é¢„è­¦ç”µå‹(è®¾ç½®å€¼)
+	Byte m_iSetWarnLowVol;   //ä½å‹é¢„è­¦ç”µå‹(è®¾ç½®å€¼)
+	Byte m_ucSetStongHighVolPlan;  //å¼ºç”µé«˜å‹é¢„æ¡ˆ
+	Byte m_ucSetStongLowVolPlan;   //å¼ºç”µä½å‹é¢„æ¡ˆ
+	Byte m_ucSetWeakHighVolPlan;   //å¼±ç”µé«˜å‹é¢„æ¡ˆ
+	Byte m_ucSetWeakLowVolPlan;    //å¼±ç”µä½å‹é¢„æ¡ˆ
 
 	//output
-	int m_iStongVoltage;  //Ç¿µçµçÑ¹
-	int m_iWeakVoltage;   //ÈõµçµçÑ¹
-	int m_iBusVoltage;    //×ÜÏßµçÑ¹
+	int m_iStongVoltage;  //å¼ºç”µç”µå‹
+	int m_iWeakVoltage;   //å¼±ç”µç”µå‹
+	int m_iBusVoltage;    //æ€»çº¿ç”µå‹
 
-	int m_iGetWarnHighVol;  //¸ßÑ¹Ô¤¾¯µçÑ¹(ÉèÖÃÖµ)
-	int m_iGetWarnLowVol;   //µÍÑ¹Ô¤¾¯µçÑ¹(ÉèÖÃÖµ)
-	Byte m_ucGetStongHighVolPlan;  //Ç¿µç¸ßÑ¹Ô¤°¸
-	Byte m_ucGetStongLowVolPlan;   //Ç¿µçµÍÑ¹Ô¤°¸
-	Byte m_ucGetWeakHighVolPlan;   //Èõµç¸ßÑ¹Ô¤°¸
-	Byte m_ucGetWeakLowVolPlan;    //ÈõµçµÍÑ¹Ô¤°¸
-	Byte m_ucSetWatchCfg ;         //µçÔ´°å¿´ÃÅ¹·ÉèÖÃ //ADD:201404021301
+	int m_iGetWarnHighVol;  //é«˜å‹é¢„è­¦ç”µå‹(è®¾ç½®å€¼)
+	int m_iGetWarnLowVol;   //ä½å‹é¢„è­¦ç”µå‹(è®¾ç½®å€¼)
+	Byte m_ucGetStongHighVolPlan;  //å¼ºç”µé«˜å‹é¢„æ¡ˆ
+	Byte m_ucGetStongLowVolPlan;   //å¼ºç”µä½å‹é¢„æ¡ˆ
+	Byte m_ucGetWeakHighVolPlan;   //å¼±ç”µé«˜å‹é¢„æ¡ˆ
+	Byte m_ucGetWeakLowVolPlan;    //å¼±ç”µä½å‹é¢„æ¡ˆ
+	Byte m_ucSetWatchCfg ;         //ç”µæºæ¿çœ‹é—¨ç‹—è®¾ç½® //ADD:201404021301
 	Byte m_ucPowerBoardVer[MAX_POWERBOARD][5];
 
 	ACE_Thread_Mutex  m_mutexVoltage;

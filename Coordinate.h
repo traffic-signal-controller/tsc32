@@ -6,7 +6,7 @@
 
 
 /*
-*ÎŞµçÏßÀÂĞ­µ÷
+*æ— ç”µçº¿ç¼†åè°ƒ
 */
 class CWirelessCoord
 {
@@ -14,15 +14,15 @@ public:
 	void SetStepInfo(bool bUtcsPara,int iStepNum , int iCycle , int iOffset , int* iStepLen );
 	void GetDeflection();
 	void GetAdjust();
-	//ÅĞ¶ÏÊÇ·ñÊÇÖ÷Òª»úÆ÷£¬ÒÔÖ÷Òª»úÆ÷À´¹ÜÀí´ÎÒª»úÆ÷
+	//åˆ¤æ–­æ˜¯å¦æ˜¯ä¸»è¦æœºå™¨ï¼Œä»¥ä¸»è¦æœºå™¨æ¥ç®¡ç†æ¬¡è¦æœºå™¨
 	Uint IsMasterMachine();
-	//Í¬²½Ö÷ÒªµÄÅäÖÃĞÅÏ¢
+	//åŒæ­¥ä¸»è¦çš„é…ç½®ä¿¡æ¯
 	void SyncSubMachine();
 	void OverCycle();
 	int GetStepLength(int iCurStepNo);
 
 	void ForceAssort();
-    void SetDegrade();       //ÁªÍø½µ¼¶Ê±ÉèÖÃ²Ù×÷
+    void SetDegrade();       //è”ç½‘é™çº§æ—¶è®¾ç½®æ“ä½œ
 	static CWirelessCoord* CreateInstance();
 
 private:
@@ -30,20 +30,20 @@ private:
 	~CWirelessCoord();
 
 private:
-	//bool m_bForceAssort;     //Ç¿ÖÆĞ­µ÷
-	bool m_bUtcs;             //ÖĞĞÄĞ­µ÷
-	bool m_bPlus;             //ÖÜÆÚÔö¼Ó
+	//bool m_bForceAssort;     //å¼ºåˆ¶åè°ƒ
+	bool m_bUtcs;             //ä¸­å¿ƒåè°ƒ
+	bool m_bPlus;             //å‘¨æœŸå¢åŠ 
 	bool m_bMaster;
-	int m_iUtsCycle;       //ÖĞĞÄ¹«¹²ÖÜÆÚÊ±³¤
-	int m_iUtscOffset;     //ÖĞĞÄĞ­µ÷µÄÏàÎ»²î
+	int m_iUtsCycle;       //ä¸­å¿ƒå…¬å…±å‘¨æœŸæ—¶é•¿
+	int m_iUtscOffset;     //ä¸­å¿ƒåè°ƒçš„ç›¸ä½å·®
 	
-	int m_iCycle;          //ĞÅºÅ»ú×ÔÉíÔËĞĞµÄÖÜÆÚ                          
-	int m_iOffset;         //ĞÅºÅ»ú×ÔÉíĞ­µ÷µÄÏàÎ»²î
-	int m_iAdjustCnt;      //×Üµ÷ÕûÊ±¼ä
-	int m_iStepNum;                //²½·¥×ÜÊı
-	int m_iStepLen[MAX_STEP];      //¸÷²½³¤
-	int m_iAdjustSecond[MAX_STEP]; //¸÷¸öµ÷Õû²½·¥
-	time_t m_tLastTi;              //ÉÏ´ÎĞ­µ÷Íê±ÏµÄÊ±¼ä
+	int m_iCycle;          //ä¿¡å·æœºè‡ªèº«è¿è¡Œçš„å‘¨æœŸ                          
+	int m_iOffset;         //ä¿¡å·æœºè‡ªèº«åè°ƒçš„ç›¸ä½å·®
+	int m_iAdjustCnt;      //æ€»è°ƒæ•´æ—¶é—´
+	int m_iStepNum;                //æ­¥ä¼æ€»æ•°
+	int m_iStepLen[MAX_STEP];      //å„æ­¥é•¿
+	int m_iAdjustSecond[MAX_STEP]; //å„ä¸ªè°ƒæ•´æ­¥ä¼
+	time_t m_tLastTi;              //ä¸Šæ¬¡åè°ƒå®Œæ¯•çš„æ—¶é—´
 };
 
 #endif  //_WIRELESSCOORD_H_

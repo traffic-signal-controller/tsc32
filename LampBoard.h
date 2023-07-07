@@ -7,7 +7,7 @@
 #include "ManaKernel.h"
 #define LAMPBOARD_DEBUG
 /*
-*µÆ¿Ø°åĞÅÏ¢Êä³öÒÔ¼°µÆ×´Ì¬»ñÈ¡µÈ
+*ç¯æ§æ¿ä¿¡æ¯è¾“å‡ºä»¥åŠç¯çŠ¶æ€è·å–ç­‰
 */
 class CLampBoard 
 {
@@ -17,27 +17,27 @@ public:
 	void SetLamp(Byte* pLampOn,Byte* pLampFlash);
 	void SetSeriousFlash(bool isflash);
 	bool IsFlash() ;	
-	//µÆÉ«Êı¾İ 
+	//ç¯è‰²æ•°æ® 
 	void SendLamp();
 	void SendSingleLamp(Byte ucLampBoardId ,Byte ucFlashBreak);
-	//µÆ¿Ø°åÏÂ·¢ÅäÖÃÊı¾İ£¬ÈçµÆÅİ¼ì²â¿ª¹Ø£¬ºìÂÌ³åÍ»¼ì²â¿ª¹Ø
+	//ç¯æ§æ¿ä¸‹å‘é…ç½®æ•°æ®ï¼Œå¦‚ç¯æ³¡æ£€æµ‹å¼€å…³ï¼Œçº¢ç»¿å†²çªæ£€æµ‹å¼€å…³
 	void SendCfg();
 	void SendSingleCfg(Byte ucLampBoardId);
-	//µÆÅİ¼ì²âÊı¾İ£¬ºìÂÌ³åÍ»¼ì²âÊı¾İ
+	//ç¯æ³¡æ£€æµ‹æ•°æ®ï¼Œçº¢ç»¿å†²çªæ£€æµ‹æ•°æ®
 	void CheckLight();
 	void CheckSingleLight(Byte ucLampBoardId);
-	//µÆÅİµçÁ÷¼ì²â½á¹ûÊı¾İ
+	//ç¯æ³¡ç”µæµæ£€æµ‹ç»“æœæ•°æ®
 	void CheckLampElect(Byte ucLampBoardId,Byte ucType);
 	void CheckSingleElect(Byte ucLampBoardId);
 	void CheckElect();
-	//µÆ¿Ø°å°åÔØÎÂ¶È¼ì²âµÄÎÂ¶ÈÖµ
+	//ç¯æ§æ¿æ¿è½½æ¸©åº¦æ£€æµ‹çš„æ¸©åº¦å€¼
 	void CheckTemp();
 	void CheckSingleTemp(Byte ucLampBoardId);
-	void RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp); //ADD: 2013 0712 CAN½ÓÊÕµÆÅİ¼ì²âÊı¾İ
-	Byte GetLampBoardAddr(Byte LampBoardIndex); //»ñÈ¡µÆÇı°åCANµØÖ·ADD:20141226
-	Byte GetLampBoardVer(Byte LampBoardIndex); //»ñÈ¡µÆÇı°å³ÌĞò°æ±¾ADD20150113
+	void RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp); //ADD: 2013 0712 CANæ¥æ”¶ç¯æ³¡æ£€æµ‹æ•°æ®
+	Byte GetLampBoardAddr(Byte LampBoardIndex); //è·å–ç¯é©±æ¿CANåœ°å€ADD:20141226
+	Byte GetLampBoardVer(Byte LampBoardIndex); //è·å–ç¯é©±æ¿ç¨‹åºç‰ˆæœ¬ADD20150113
 	
-	void GetLamp(Byte* pLampOn,Byte* pLampFlash);//»ñÈ¡µÆÇıµÆÉ«ADD:20150313
+	void GetLamp(Byte* pLampOn,Byte* pLampFlash);//è·å–ç¯é©±ç¯è‰²ADD:20150313
 	
 	void SetLampChannelColor(Byte ColorType,Byte CountDownTime); //ADD:20150806
 private:
@@ -45,26 +45,26 @@ private:
 	~CLampBoard();
 public:
 	CManaKernel * pManakernel ;
-	bool m_bRecordSts[MAX_LAMP/12];  //¸÷¸öµÆ¿Ø°åµÄÍ¨ĞÅ×´Ì¬
+	bool m_bRecordSts[MAX_LAMP/12];  //å„ä¸ªç¯æ§æ¿çš„é€šä¿¡çŠ¶æ€
 	bool IsChkLight ;
-	Byte m_ucCheckCfg[MAX_LAMP_BOARD];        //bit 0 1 ´æÊÇ·ñ¿ªÆôµÆÅİËğ»µ¼ì²â,bit 2 3±£´æÊÇ·ñ¿ªÆôºìÂÌ³åÍ»¼ì²â  //ADD: 2013 0712 1111
+	Byte m_ucCheckCfg[MAX_LAMP_BOARD];        //bit 0 1 å­˜æ˜¯å¦å¼€å¯ç¯æ³¡æŸåæ£€æµ‹,bit 2 3ä¿å­˜æ˜¯å¦å¼€å¯çº¢ç»¿å†²çªæ£€æµ‹  //ADD: 2013 0712 1111
 	
-	Byte m_ucLampBoardVer[MAX_LAMP_BOARD][5]; //¸÷¸öµÆÇı°å°æ±¾
+	Byte m_ucLampBoardVer[MAX_LAMP_BOARD][5]; //å„ä¸ªç¯é©±æ¿ç‰ˆæœ¬
 private:
 	//input para
 	Byte m_ucLampBoardError[MAX_LAMP_BOARD] ;
-	Byte m_ucLampOn[MAX_LAMP];         //ÓëÎïÀí¶Ë×Ó¶ÔÓ¦ ÁÁ£º1 Ãğ£º0
+	Byte m_ucLampOn[MAX_LAMP];         //ä¸ç‰©ç†ç«¯å­å¯¹åº” äº®ï¼š1 ç­ï¼š0
 	Byte m_ucLampFlash[MAX_LAMP];
 	bool m_bSeriousFlash;	
-	Byte m_ucLampOnCfg[MAX_LAMP_BOARD][3] ;   // ÅäÖÃÃ¿¿é°åÃ¿¸öÍ¨µÀµÄµÆÅİÁÁÃğÓëÉÁË¸×´¿ö£¬ÏÂ·¢µ½µÆ¿Ø°åµÄÅäÖÃ±ØĞëÓë´ËÆ¥Åä 3×Ö½ÚµÄÃ¿Á½Î»±íÊ¾Ò»¸öÍ¨µÀ
+	Byte m_ucLampOnCfg[MAX_LAMP_BOARD][3] ;   // é…ç½®æ¯å—æ¿æ¯ä¸ªé€šé“çš„ç¯æ³¡äº®ç­ä¸é—ªçƒçŠ¶å†µï¼Œä¸‹å‘åˆ°ç¯æ§æ¿çš„é…ç½®å¿…é¡»ä¸æ­¤åŒ¹é… 3å­—èŠ‚çš„æ¯ä¸¤ä½è¡¨ç¤ºä¸€ä¸ªé€šé“
 	bool m_bLampErrFlag[MAX_LAMP];
 	//output para
-	//Byte m_ucLampSts[MAX_LAMP];      //¸÷¸öµÆ×´Ì¬
-	Byte m_ucLampStas[MAX_LAMP] ;     // µ¥¸öµÆ¿Ø°åµÆÅİËğ»µ×´Ì¬   //ADD: 2013 0712 1111
-	Byte m_ucLampConflic[MAX_LAMP_BOARD][4] ; // µÆ¿Ø°åËÄ×éĞÅºÅµÆµÄºìÂÌ³åÍ»Çé¿ö ADD:20130802 1350 
-	Byte m_ucChannelSts[(MAX_LAMP+3)/4]; //¸÷¸öÍ¨µÀ×´Ì¬
-	Ushort m_usLampElect[MAX_LAMP_BOARD][8];  //¸÷¸öµÆµÄµçÁ÷
-	int iLampBoardTemp[MAX_LAMP_BOARD]; //¸÷¸öµÆ¿Ø°å¿¨µÄ°åÔØÎÂ¶È
+	//Byte m_ucLampSts[MAX_LAMP];      //å„ä¸ªç¯çŠ¶æ€
+	Byte m_ucLampStas[MAX_LAMP] ;     // å•ä¸ªç¯æ§æ¿ç¯æ³¡æŸåçŠ¶æ€   //ADD: 2013 0712 1111
+	Byte m_ucLampConflic[MAX_LAMP_BOARD][4] ; // ç¯æ§æ¿å››ç»„ä¿¡å·ç¯çš„çº¢ç»¿å†²çªæƒ…å†µ ADD:20130802 1350 
+	Byte m_ucChannelSts[(MAX_LAMP+3)/4]; //å„ä¸ªé€šé“çŠ¶æ€
+	Ushort m_usLampElect[MAX_LAMP_BOARD][8];  //å„ä¸ªç¯çš„ç”µæµ
+	int iLampBoardTemp[MAX_LAMP_BOARD]; //å„ä¸ªç¯æ§æ¿å¡çš„æ¿è½½æ¸©åº¦
 	
 	ACE_Thread_Mutex  m_mutexLamp;
 };

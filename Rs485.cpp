@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   Rs485.cpp
 Date:       2013-1-1
-Description:Rs485´®¿Ú´¦ÀíÎÄ¼ş
+Description:Rs485ä¸²å£å¤„ç†æ–‡ä»¶
 Version:    V1.0
 History:
 ***************************************************************/
@@ -62,16 +62,16 @@ static INT32    set_port_attr (
 static void     set_stopbit (const char *stopbit);
 static void     set_parity (char parity);
 
-#define RS485_OTHER  "/dev/ttyO5"    //485ÆäËü¹¦ÄÜÊä³ö
-#define RS485        "/dev/ttyO4"   //ÓÃÓÚµ¹¼ÆÊ±Êä³ö
+#define RS485_OTHER  "/dev/ttyO5"    //485å…¶å®ƒåŠŸèƒ½è¾“å‡º
+#define RS485        "/dev/ttyO4"   //ç”¨äºå€’è®¡æ—¶è¾“å‡º
 
 
 /**************************************************************
 Function:       CRs485::CRs485
-Description:    CRs485Àà¹¹Ôìº¯Êı£¬³õÊ¼»¯´®¿Ú
-Input:          ÎŞ                 
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CRs485ç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ä¸²å£
+Input:          æ—                  
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CRs485::CRs485()
 {
@@ -83,10 +83,10 @@ CRs485::CRs485()
 
 /**************************************************************
 Function:       CRs485::~CRs485
-Description:    CRs485ÀàÎö¹¹º¯Êı£¬ÊÍ·ÅÀà¶ÔÏó×ÊÔ´
-Input:          ÎŞ               
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CRs485ç±»ææ„å‡½æ•°ï¼Œé‡Šæ”¾ç±»å¯¹è±¡èµ„æº
+Input:          æ—                
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CRs485::~CRs485()
 {
@@ -97,10 +97,10 @@ CRs485::~CRs485()
 
 /**************************************************************
 Function:       CRs485::CreateInstance
-Description:    ´´½¨	CRs485¾²Ì¬¶ÔÏó
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»º	CRs485é™æ€å¯¹è±¡
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CRs485* CRs485::CreateInstance()
 {
@@ -111,10 +111,10 @@ CRs485* CRs485::CreateInstance()
 
 /**************************************************************
 Function:       CRs485::OpenRs485
-Description:    ´ò¿ªR485´®¿Ú
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    æ‰“å¼€R485ä¸²å£
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 INT32 CRs485::OpenComPort(INT32 ComPort, INT32 baudrate, INT32 databit,const char *stopbit, char parity)
 {
@@ -178,10 +178,10 @@ int CRs485::getPortFd()
 
 /**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CRs485::ReadComPort (Byte *data, INT32 datalength)
 {    
@@ -453,7 +453,7 @@ static INT32 Bxx2baudrate (INT32 _baudrate)
 	}
 }
 /*
-*Íù485·¢ËÍÊı¾İ
+*å¾€485å‘é€æ•°æ®
 */
 bool CRs485::Send(Byte* pBuffer, int iSize)
 {
@@ -499,7 +499,7 @@ bool CRs485::Send(Byte* pBuffer, int iSize)
 }
 
 /*
-*´Ó485½ÓÊÕÊı¾İ
+*ä»485æ¥æ”¶æ•°æ®
 */
 bool CRs485::Recvice(Byte* pBuffer , int iSize)
 {
@@ -519,10 +519,10 @@ void CRs485::Reopen()
 // nEvent: parity;
 // nStop: stop bit;
 /*
-*ÉèÖÃÉè±¸²ÎÊı
+*è®¾ç½®è®¾å¤‡å‚æ•°
 *
-*input: fd-Éè±¸id        nSpeed-²¨ÌØÂÊ nBits-Êı¾İÎ»
-*       nEvent-ÆæÅ¼Ğ£ÑéÎ» nStop-Í£Ö¹Î»
+*input: fd-è®¾å¤‡id        nSpeed-æ³¢ç‰¹ç‡ nBits-æ•°æ®ä½
+*       nEvent-å¥‡å¶æ ¡éªŒä½ nStop-åœæ­¢ä½
 */
 int CRs485::SetOpt(int fd,int nSpeed,int nBits, char nEvent, int nStop)
 {
@@ -627,10 +627,10 @@ int CRs485::SetOpt(int fd,int nSpeed,int nBits, char nEvent, int nStop)
 
 /**************************************************************
 Function:       CRs485::SetBaudrateType
-Description:    ÉèÖÃ485×ÜÏßµÄ²¨ÌØÂÊ
-Input:          ÎŞ              
-Output:        ÎŞ
-Return:         ²¨ÌØÂÊÖµ
+Description:    è®¾ç½®485æ€»çº¿çš„æ³¢ç‰¹ç‡
+Input:          æ—               
+Output:        æ— 
+Return:         æ³¢ç‰¹ç‡å€¼
 Date:           20150-01-29
 ***************************************************************/
 

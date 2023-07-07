@@ -5,88 +5,88 @@
 
 
 /*
-Can�������� ռ��IDʶ��� bit26-bit28
+Can报文类型 占据ID识别符 bit26-bit28
 */
 enum
 {
-	CAN_MSG_TYPE_000 = 0, //���ʵʱ��  ��������ʹ��
-	CAN_MSG_TYPE_001 = 1, //��ɫ���̳�ͻ�����ݼ��
-	CAN_MSG_TYPE_010 = 2, //��ɫ���̳�ͻ�����ݼ��
-	CAN_MSG_TYPE_011 = 3, //��ɫ���̳�ͻ�����ݼ��
-	CAN_MSG_TYPE_100 = 4, //������ݡ��ֿ����ݺ͵�Դ������
-	CAN_MSG_TYPE_101 = 5, //�������ݵķ��ͣ�����������״̬����������ٰ�
-	CAN_MSG_TYPE_110 = 6, //û��ʵʱ��Ҫ��ϵͳ��������ģ������
-	CAN_MSG_TYPE_111 = 7  //��ϵͳ�б�����
+	CAN_MSG_TYPE_000 = 0, //最高实时性  保留紧急使用
+	CAN_MSG_TYPE_001 = 1, //灯色和绿冲突，灯泡检测
+	CAN_MSG_TYPE_010 = 2, //灯色和绿冲突，灯泡检测
+	CAN_MSG_TYPE_011 = 3, //灯色和绿冲突，灯泡检测
+	CAN_MSG_TYPE_100 = 4, //检测数据、手控数据和电源板数据
+	CAN_MSG_TYPE_101 = 5, //配置数据的发送，如检测器故障状态，检测器测速绑定
+	CAN_MSG_TYPE_110 = 6, //没有实时性要求，系统保留后期模块连接
+	CAN_MSG_TYPE_111 = 7  //本系统中被禁用
 };
 
 /*
-*ģ���ַ ռ��IDʶ���bit20-bit25 Ŀ�ĵ�ַ ռ��IDʶ���bit12-bit17
+*模块地址 占据ID识别符bit20-bit25 目的地址 占据ID识别符bit12-bit17
 */
 enum
 {
-	BOARD_ADDR_MAIN         = 0x10 ,  //���ذ�
-	BOARD_ADDR_MAINBACK     = 0x11 ,  //���屸�ݵ�Ƭ��
-	BOARD_ADDR_LAMP1        = 0x13 ,  //�ƿذ�1
-	BOARD_ADDR_LAMP2        = 0x14 ,  //�ƿذ�2
-	BOARD_ADDR_LAMP3        = 0x15 ,  //�ƿذ�3
-	BOARD_ADDR_LAMP4        = 0x16 ,  //�ƿذ�4
-	BOARD_ADDR_LAMP5        = 0x17,   //��չ�ƿذ�1	
-	BOARD_ADDR_LAMP6        = 0x18,   //��չ�ƿذ�2 
-	BOARD_ADDR_ALLLAMP      = 0x19 ,  //�ƿذ��鲥
+	BOARD_ADDR_MAIN         = 0x10 ,  //主控板
+	BOARD_ADDR_MAINBACK     = 0x11 ,  //主板备份单片机
+	BOARD_ADDR_LAMP1        = 0x13 ,  //灯控板1
+	BOARD_ADDR_LAMP2        = 0x14 ,  //灯控板2
+	BOARD_ADDR_LAMP3        = 0x15 ,  //灯控板3
+	BOARD_ADDR_LAMP4        = 0x16 ,  //灯控板4
+	BOARD_ADDR_LAMP5        = 0x17,   //扩展灯控板1	
+	BOARD_ADDR_LAMP6        = 0x18,   //扩展灯控板2 
+	BOARD_ADDR_ALLLAMP      = 0x19 ,  //灯控板组播
 	
-	BOARD_ADDR_LAMP7        = 0x1a,   //��չ�ƿذ�3 	
-	BOARD_ADDR_LAMP8        = 0x1b,   //��չ�ƿذ�4 
-	BOARD_ADDR_LAMP9        = 0x1c,   //��չ�ƿذ�5 
-	BOARD_ADDR_LAMPa        = 0x1d,   //��չ�ƿذ�6
-	BOARD_ADDR_LAMPb        = 0x1e,   //��չ�ƿذ�7 
-	BOARD_ADDR_LAMPc        = 0x1f,   //��չ�ƿذ�8
+	BOARD_ADDR_LAMP7        = 0x1a,   //扩展灯控板3 	
+	BOARD_ADDR_LAMP8        = 0x1b,   //扩展灯控板4 
+	BOARD_ADDR_LAMP9        = 0x1c,   //扩展灯控板5 
+	BOARD_ADDR_LAMPa        = 0x1d,   //扩展灯控板6
+	BOARD_ADDR_LAMPb        = 0x1e,   //扩展灯控板7 
+	BOARD_ADDR_LAMPc        = 0x1f,   //扩展灯控板8
 		
-	BOARD_ADDR_POWER        = 0x20 ,  //��Դģ��	
-	BOARD_ADDR_POWER2       = 0x22 ,  //��Դģ��2
-	BOARD_ADDR_DETECTOR1    = 0x24 ,  //�����1
-	BOARD_ADDR_DETECTOR2    = 0x25 ,  //�����2
-	BOARD_ADDR_ALLDETECTOR  = 0x26 ,  //������鲥
-	BOARD_ADDR_INTEDET1     = 0x29 ,  //������ӿ�1
-	BOARD_ADDR_INTEDET2     = 0x2A ,  //������ӿ�2
-	BOARD_ADDR_ALLINTEDET   = 0x2B ,  //������ӿڰ��鲥
-	BOARD_ADDR_FLASH        = 0x2E ,  //Ӳ��������
-	BOARD_ADDR_HARD_CONTROL = 0x30 ,  //Ӳ������ģ��
-	BOARD_ADDR_LED          = 0x32 ,  //��ʾ���� ADD:20130808 15 50
-	BOARD_ADDR_WIRELESS_BTNCTRLA = 0x33 , //����ң����A	���ͨ�Ű棨15����315M��//ADD:20141021
-	BOARD_ADDR_WIRELESS_BTNCTRLB = 0x34   //����ң����B	�߼��棬һ�Զ�ң�ؼ�����//ADD:20141021
+	BOARD_ADDR_POWER        = 0x20 ,  //电源模块	
+	BOARD_ADDR_POWER2       = 0x22 ,  //电源模块2
+	BOARD_ADDR_DETECTOR1    = 0x24 ,  //检测器1
+	BOARD_ADDR_DETECTOR2    = 0x25 ,  //检测器2
+	BOARD_ADDR_ALLDETECTOR  = 0x26 ,  //检测器组播
+	BOARD_ADDR_INTEDET1     = 0x29 ,  //检测器接口1
+	BOARD_ADDR_INTEDET2     = 0x2A ,  //检测器接口2
+	BOARD_ADDR_ALLINTEDET   = 0x2B ,  //检测器接口板组播
+	BOARD_ADDR_FLASH        = 0x2E ,  //硬件黄闪器
+	BOARD_ADDR_HARD_CONTROL = 0x30 ,  //硬件控制模块
+	BOARD_ADDR_LED          = 0x32 ,  //显示灯组 ADD:20130808 15 50
+	BOARD_ADDR_WIRELESS_BTNCTRLA = 0x33 , //无线遥控器A	多键通信版（15键，315M）//ADD:20141021
+	BOARD_ADDR_WIRELESS_BTNCTRLB = 0x34   //无线遥控器B	高级版，一对多遥控加设置//ADD:20141021
 	
 };
 
 /*
-*֡ģʽ  ռ��IDʶ���bit18-bit19
+*帧模式  占据ID识别符bit18-bit19
 */
 enum
 {
-	FRAME_MODE_P2P        = 0 , //��Ե�
-	FRAME_MODE_MULTICAST  = 1 , //�鲥
-	FRAME_MODE_BROADCAST  = 2 , //�㲥
-	FRAME_MODE_HEART_BEAT = 3   //�㲥����
+	FRAME_MODE_P2P        = 0 , //点对点
+	FRAME_MODE_MULTICAST  = 1 , //组播
+	FRAME_MODE_BROADCAST  = 2 , //广播
+	FRAME_MODE_HEART_BEAT = 3   //广播心跳
 };
 
 
 /*
-*GBTӦ�ò�Э����������
+*GBT应用层协议数据类型
 */
 enum
 {
-	DATA_HEAD_NOREPLY = 0 , //ͨ�����ݣ�����Ҫ�ظ�
-	DATA_HEAD_RESEND  = 1 , //������
-	DATA_HEAD_CHECK   = 2 , //ȷ������
-	DATA_HEAD_OTHER   = 3   //δ���壬����
+	DATA_HEAD_NOREPLY = 0 , //通用数据，不需要回复
+	DATA_HEAD_RESEND  = 1 , //请求发送
+	DATA_HEAD_CHECK   = 2 , //确认请求
+	DATA_HEAD_OTHER   = 3   //未定义，保留
 };
 
-const int DET_STAT_CYCLE = 60;   //ռ����ͳ�Ƶ����� 1����
+const int DET_STAT_CYCLE = 60;   //占有率统计的周期 1分钟
 enum
 {
-	DETECTOR_INTERFACE_BOARD1 = 0,  //������ӿڰ�1��ַ
-	DETECTOR_INTERFACE_BOARD2 = 1 ,  //������ӿڰ�2��ַ
-	DETECTOR_BOARD1           = 2  ,  //�������1
-	DETECTOR_BOARD2           = 3     //�������2
+	DETECTOR_INTERFACE_BOARD1 = 0,  //检测器接口板1地址
+	DETECTOR_INTERFACE_BOARD2 = 1 ,  //检测器接口板2地址
+	DETECTOR_BOARD1           = 2  ,  //检测器板1
+	DETECTOR_BOARD2           = 3     //检测器板2
 };
 
 
@@ -96,158 +96,158 @@ enum
 
 /************************************************************************************************/
 /*
-*�źŻ�ϵͳ����ֵ���壬��ӦGBTЭ�鲿�ֳ�������
+*信号机系统常量值定义，对应GBT协议部分常量对象
 */
-const int MAX_TIMEGROUP          = 40;   //���ʱ�����ȱ���
-const int MAX_SCHEDULE_PER_DAY   = 48;   //ÿ�����ʱ����
-const int MAX_TIMEPATTERN        = 32;   //������ʱ������
-const int MAX_SCHEDULETIME_TYPE  = 17;   //1-16 �û����壬17�������ⷽ�� �׶���ʱ��������???
-const int MAX_SON_SCHEDULE       = 16;   //���׶���ʱ������ӽ׶���
-const int MAX_PHASE              = 32;   //�����λ����
-const int MAX_OVERLAP_PHASE      = 16;    //��������λ����
-const int MAX_CONFLICT_PHASE     = 32;   //����ͻ����
-const int MAX_STATUSOUT_PER      = 8;    //ÿ��״̬��������ĸ���
-const int MAX_STEP               = 64;   //���Ĳ�����
-const int MAX_LAMP_BOARD         = 8;    //����������
-const int MAX_LAMP_NUM_PER_BOARD = 12;   //ÿ���ĵƾ�����
+const int MAX_TIMEGROUP          = 40;   //最大时基调度表数
+const int MAX_SCHEDULE_PER_DAY   = 48;   //每天最大时段数
+const int MAX_TIMEPATTERN        = 32;   //最大的配时方案表
+const int MAX_SCHEDULETIME_TYPE  = 17;   //1-16 用户定义，17用于特殊方案 阶段配时方案类型???
+const int MAX_SON_SCHEDULE       = 16;   //最大阶段配时表里的子阶段数
+const int MAX_PHASE              = 32;   //最大相位表数
+const int MAX_OVERLAP_PHASE      = 16;    //最大跟随相位表数
+const int MAX_CONFLICT_PHASE     = 32;   //最大冲突表数
+const int MAX_STATUSOUT_PER      = 8;    //每组状态输出包含的个数
+const int MAX_STEP               = 64;   //最大的步伐数
+const int MAX_LAMP_BOARD         = 8;    //最大灯驱板数
+const int MAX_LAMP_NUM_PER_BOARD = 12;   //每块板的灯具数量
 const int MAX_LAMPGROUP_PER_BOARD =4 ;
-const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //���ͨ�����ź��飩���� 1��4ͨ��
-const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //���ƾ���  1ͨ��3�ƾ� 1��12�ƾ�
-const int MAX_DET_BOARD          = 4;    //�����������(�����ӿڰ�)
-const int MAX_DETECTOR_PER_BOARD = 16;   //ÿ�������ļ��������
-const int MAX_INTERFACE_PER_BOARD =32 ;  //ÿ��ӿڰ������ͨ������
-const int MAX_DETECTOR           = (MAX_DETECTOR_PER_BOARD+MAX_INTERFACE_PER_BOARD)*MAX_DET_BOARD/2;   //�����������
+const int MAX_CHANNEL            = MAX_LAMP_BOARD * 4;                        //最大通道（信号组）表数 1板4通道
+const int MAX_LAMP               = MAX_LAMP_BOARD * MAX_LAMP_NUM_PER_BOARD;   //最大灯具数  1通道3灯具 1板12灯具
+const int MAX_DET_BOARD          = 4;    //最大检测器板数(包含接口板)
+const int MAX_DETECTOR_PER_BOARD = 16;   //每块板包含的检测器数量
+const int MAX_INTERFACE_PER_BOARD =32 ;  //每块接口板包含的通道数量
+const int MAX_DETECTOR           = (MAX_DETECTOR_PER_BOARD+MAX_INTERFACE_PER_BOARD)*MAX_DET_BOARD/2;   //最大检测器数量
 
-const int MAX_SPESTATUS_CYCLE    = 10;   //ʱ�α��ﶨ�������״̬����ʱ�� 
-const int MIN_GREEN_TIME	     = 7;    //��С�̵�ʱ��
+const int MAX_SPESTATUS_CYCLE    = 10;   //时段表里定义的特殊状态周期时长 
+const int MIN_GREEN_TIME	     = 7;    //最小绿灯时长
 
 const int MAX_REGET_TIME         = 10;   //100ms 1per 1s=10times
 const int USLEEP_TIME            = 2000;
-const int MAX_WORK_TIME          = 3;    //3��һ���Ĳ�������
-const int BOARD_REPEART_TIME     = 5;    //��״̬�жϵ��ظ�����
-const int MAX_DREC               = 80;  //���������   201310181705->201401031017 8������ÿ������10��֧��
-const Byte MAX_CNTDOWNDEV        = MAX_PHASE ;  //֧�����ĵ���ʱ�豸��32,��λ����ʱ
-const Byte MAX_MODULE            =50 ;  //����豸ģ���� 20150112
-const Byte MAX_POWERBOARD        =2 ;    //����Դ������
+const int MAX_WORK_TIME          = 3;    //3次一样的才起作用
+const int BOARD_REPEART_TIME     = 5;    //板状态判断的重复次数
+const int MAX_DREC               = 80;  //最大方向数量   201310181705->201401031017 8个方向，每个方向10个支流
+const Byte MAX_CNTDOWNDEV        = MAX_PHASE ;  //支持最大的倒计时设备数32,相位倒计时
+const Byte MAX_MODULE            =50 ;  //最大设备模块数 20150112
+const Byte MAX_POWERBOARD        =2 ;    //最大电源板数量
 /************************************************************************************************/
 
 /*
-�źŻ��Ĺ���ģʽ
+信号机的工作模式
 */
 enum
 {
-	MODE_TSC  = 0 , //tscģʽ
-	MODE_PSC1 = 1 , //һ�ι���ģʽ
-	MODE_PSC2 = 2 , //���ι���ģʽ
-	MODE_OTHER =3   //��������ģʽ
+	MODE_TSC  = 0 , //tsc模式
+	MODE_PSC1 = 1 , //一次过街模式
+	MODE_PSC2 = 2 , //二次过街模式
+	MODE_OTHER =3   //其他待定模式
 };
 
 
 
 /*
-�źŻ��Ĺ���״̬
+信号机的工作状态
 */
 enum
 {
-	SIGNALOFF = 0,  //�ص�
-	ALLRED       ,  //ȫ��
-	FLASH        ,  //����
-	STANDARD        //��׼
+	SIGNALOFF = 0,  //关灯
+	ALLRED       ,  //全红
+	FLASH        ,  //闪光
+	STANDARD        //标准
 };
 
 /*
-�źŻ��Ŀ���ģʽ
+信号机的控制模式
 */
 enum
 {
-	CTRL_UNKNOWN         = 0  ,  //δ֪����״̬
-	CTRL_SCHEDULE        = 1  ,  //��ʱ��
-	CTRL_UTCS            = 2  ,  //ϵͳ�Ż���������
-	CTRL_WIRELESS        = 3  ,  //�޵�����Э��
-	CTRL_LINE            = 4  ,  //���ߵ���Э��
-	CTRL_HOST            = 5  ,  //�����߿�
-	CTRL_MANUAL          = 6  ,  //�ֶ�����
-	CTRL_VEHACTUATED     = 7  ,  //����ȫ��Ӧ
-	CTRL_MAIN_PRIORITY   = 8  ,  //�����������Ȱ��Ӧ
-    CTRL_SECOND_PRIORITY = 9  ,  //����������Ȱ��Ӧ
-	CTRL_ACTIVATE        = 10 ,  //����Ӧ
-	CTRL_PANEL           = 11 ,  //������	
-	CTRL_SCHEDULE_OFF    = 12 ,  //ʱ�α��ص�	
-	CTRL_SCHEDULE_FLASH  = 13 ,  //ʱ�α�����	
-	CTRL_SCHEDULE_RED    = 14 ,  //ʱ�α�ȫ��	
+	CTRL_UNKNOWN         = 0  ,  //未知控制状态
+	CTRL_SCHEDULE        = 1  ,  //多时段
+	CTRL_UTCS            = 2  ,  //系统优化，即联网
+	CTRL_WIRELESS        = 3  ,  //无电线缆协调
+	CTRL_LINE            = 4  ,  //有线电缆协调
+	CTRL_HOST            = 5  ,  //主从线控
+	CTRL_MANUAL          = 6  ,  //手动控制
+	CTRL_VEHACTUATED     = 7  ,  //单点全感应
+	CTRL_MAIN_PRIORITY   = 8  ,  //单点主线优先半感应
+    CTRL_SECOND_PRIORITY = 9  ,  //单点次线优先半感应
+	CTRL_ACTIVATE        = 10 ,  //自适应
+	CTRL_PANEL           = 11 ,  //面板控制	
+	CTRL_SCHEDULE_OFF    = 12 ,  //时段表关灯	
+	CTRL_SCHEDULE_FLASH  = 13 ,  //时段表黄闪	
+	CTRL_SCHEDULE_RED    = 14 ,  //时段表全红	
 	CTRL_PREANALYSIS     = 15 ,
-	CTRL_LAST_CTRL       = 16    //�ϴεĿ��Ʒ�ʽ
+	CTRL_LAST_CTRL       = 16    //上次的控制方式
 };
 
 /*
-����������LCD ����ԭ��20141106
+新增控制器LCD 黄闪原因20141106
 */
 enum
 {
-	CTRLBOARD_FLASH_NORMAL 		 = 0x0  , //��������»���	
-	CTRLBOARD_FLASH_MANUALCTRL	 = 0x01 , //�ֿػ���	
-	CTRLBOARD_FLASH_NOPATTERN	 = 0x03 , //�޷�������
-	CTRLBOARD_FLASH_LAMPCHECK    = 0x02 , //���ݼ�����
-	CTRLBOARD_FLASH_DOWNGRADE 	 = 0x04 , //��������
-	CTRLBOARD_FLASH_FORCEFLASH	 = 0x05 , //������ǿ�ƻ���
-	CTRLBOARD_FLASH_PHASECONFLIC = 0x06 , //��λ��ͻ
+	CTRLBOARD_FLASH_NORMAL 		 = 0x0  , //正常情况下黄闪	
+	CTRLBOARD_FLASH_MANUALCTRL	 = 0x01 , //手控黄闪	
+	CTRLBOARD_FLASH_NOPATTERN	 = 0x03 , //无方案黄闪
+	CTRLBOARD_FLASH_LAMPCHECK    = 0x02 , //灯泡检测黄闪
+	CTRLBOARD_FLASH_DOWNGRADE 	 = 0x04 , //降级黄闪
+	CTRLBOARD_FLASH_FORCEFLASH	 = 0x05 , //黄闪器强制黄闪
+	CTRLBOARD_FLASH_PHASECONFLIC = 0x06 , //相位冲突
 	
 };
 
 /*
-�źŻ����ƶ�����Ϣö������
+信号机控制队列消息枚举类型
 */
 enum
 {
-	TSC_MSG_SWITCH_STATUS = 0,  //����״̬�л�
-	TSC_MSG_SWITCH_CTRL      ,  //���Ʒ�ʽ�л�
-	TSC_MSG_UPDATE_PARA      ,  //���ݿ�õ�����
-	TSC_MSG_NEXT_STEP        ,  //��������
-	TSC_MSG_OVER_CYCLE       ,  //���ڽ���
-	TSC_MSG_LOCK_STEP        ,  //��������
-	TSC_MSG_LOCK_PHASE       ,  //������λ
-	TSC_MSG_LOCK_STAGE       ,  //�����׶�
-	TSC_MSG_NEXT_STAGE       ,  //��һ���׶�
-	TSC_MSG_STATUS_READ      ,  //״̬��ȡ
-	TSC_MSG_EXSTATUS_READ    ,  //��չ�����ȡ
-	TSC_MSG_EVENT_READ       ,  //�¼���ȡ
-	TSC_MSG_LOG_WRITE        ,  //��־��¼
-	TSC_MSG_CORRECT_TIME     ,  //ʱ��Уʱ  SpeTimePattern
-	TSC_MSG_TIMEPATTERN      ,  //�ض���ʱ�䷽��
-	TSC_MSG_GREENCONFLICT    ,   //�̳�ͻ
-	TSC_MSG_PATTER_RECOVER   ,    //�ض������л�
-	TSC_MSG_MANUALBUTTON_HANDLE   //�����ֿذ�������ADD:201411051548
+	TSC_MSG_SWITCH_STATUS = 0,  //工作状态切换
+	TSC_MSG_SWITCH_CTRL      ,  //控制方式切换
+	TSC_MSG_UPDATE_PARA      ,  //数据库得到更新
+	TSC_MSG_NEXT_STEP        ,  //步进命令
+	TSC_MSG_OVER_CYCLE       ,  //周期结束
+	TSC_MSG_LOCK_STEP        ,  //锁定步伐
+	TSC_MSG_LOCK_PHASE       ,  //锁定相位
+	TSC_MSG_LOCK_STAGE       ,  //锁定阶段
+	TSC_MSG_NEXT_STAGE       ,  //下一个阶段
+	TSC_MSG_STATUS_READ      ,  //状态获取
+	TSC_MSG_EXSTATUS_READ    ,  //扩展对象获取
+	TSC_MSG_EVENT_READ       ,  //事件读取
+	TSC_MSG_LOG_WRITE        ,  //日志记录
+	TSC_MSG_CORRECT_TIME     ,  //时间校时  SpeTimePattern
+	TSC_MSG_TIMEPATTERN      ,  //特定的时间方案
+	TSC_MSG_GREENCONFLICT    ,   //绿冲突
+	TSC_MSG_PATTER_RECOVER   ,    //特定方案切换
+	TSC_MSG_MANUALBUTTON_HANDLE   //无线手控按键处理ADD:201411051548
 };
 
 /*
-ͨ�Ž���gbt����������Ϣ����ö��
+通信进程gbt处理队列消息类型枚举
 */
 enum
 {
-	GBT_MSG_FIRST_RECV = 0    ,  //�״ν���
-	GBT_MSG_DEAL_RECVBUF      ,  //�������յ���BUF
-	GBT_MSG_SEND_HOST         ,  //������λ��
-	GBT_MSG_TSC_STATUS        ,  //�õ��źŻ�״̬
-	GBT_MSG_TSC_EXSTATUS      ,  //�õ��źŻ���չ״̬
-	GBT_MSG_SELF_REPORT       ,  //�����ϱ�
-	GBT_MSG_OTHER_OBJECT      ,  //gbtЭ����������Ͷ���
-	GBT_MSG_EXTEND               //��չ����
+	GBT_MSG_FIRST_RECV = 0    ,  //首次接收
+	GBT_MSG_DEAL_RECVBUF      ,  //处理接收到的BUF
+	GBT_MSG_SEND_HOST         ,  //发往上位机
+	GBT_MSG_TSC_STATUS        ,  //得到信号机状态
+	GBT_MSG_TSC_EXSTATUS      ,  //得到信号机扩展状态
+	GBT_MSG_SELF_REPORT       ,  //主动上报
+	GBT_MSG_OTHER_OBJECT      ,  //gbt协议的其他类型对象
+	GBT_MSG_EXTEND               //扩展对象
 };
 
 
 
 
 /*
-�豸״̬����ö��
+设备状态类型枚举
 */
 enum
 {	
-	DEV_IS_GOOD      = 0,  //����
+	DEV_IS_GOOD      = 0,  //正常
 
-	DEV_ALWAYS_ON    = 1,  //����
-	DEV_ALWAYS_OFF   = 2,  //����
+	DEV_ALWAYS_ON    = 1,  //常亮
+	DEV_ALWAYS_OFF   = 2,  //常灭
 
-	DEV_SILICON_SHOT = 3,  //�ɿع����
+	DEV_SILICON_SHOT = 3,  //可控硅击穿
 
 	DEV_ALWAYS_ON_CLEAR,
 	DEV_ALWAYS_OFF_CLEAR,
@@ -263,7 +263,7 @@ enum
 };
 
 /*
-*���ذ���ʾ��״̬����ö��
+*主控板显示灯状态类型枚举
 */
 enum
 {
@@ -287,7 +287,7 @@ enum
 };
 
 /*
-*����9λͨ�Ź���ö��
+*串口9位通信功能枚举
 */
 enum
 {
@@ -298,159 +298,159 @@ enum
 };
 
 /*
-*ͨ������ö��
+*通道类型枚举
 */
 enum
 {
-	CHANNEL_OTHER   = 1 ,  //��������ͨ��
-	CHANNEL_VEHICLE = 2 ,  //������ͨ��
-	CHANNEL_FOOT    = 3 ,  //����ͨ��
-	CHANNEL_OVERLAP = 4    //������λͨ��
+	CHANNEL_OTHER   = 1 ,  //其他类型通道
+	CHANNEL_VEHICLE = 2 ,  //机动车通道
+	CHANNEL_FOOT    = 3 ,  //行人通道
+	CHANNEL_OVERLAP = 4    //跟随相位通道
 };
 
-/*����ʱ��������*/
+/*倒计时类型设置*/
 enum
 {
-	CNTDOWN_15 = 1 ,      //����15�뵹��ʱ
-	CNTDOWN_8  = 2,       //8�뵹��ʱ
-	CNTDOWN_NORMAL       //��ͨ����ʱ
+	CNTDOWN_15 = 1 ,      //黑屏15秒倒计时
+	CNTDOWN_8  = 2,       //8秒倒计时
+	CNTDOWN_NORMAL       //普通倒计时
 };
 
 /*
-*�źŻ��ֶ���������
+*信号机手动控制类型
 *Date:201410211730
 */
 enum
 {
-	Manual_CTRL_NO               = 0 ,	  //�������ֿ�״̬
-	Manual_CTRL_PANEL            = 1 ,	  //����ֿ�
-	Manual_CTRL_WIRELESSBUTTONS  = 2 , 	  //����ң����
-	Manual_CTRL_SYSTEM 	         = 3      //��λ������
+	Manual_CTRL_NO               = 0 ,	  //不处于手控状态
+	Manual_CTRL_PANEL            = 1 ,	  //面板手控
+	Manual_CTRL_WIRELESSBUTTONS  = 2 , 	  //无线遥控器
+	Manual_CTRL_SYSTEM 	         = 3      //上位机命令
 };
 
 
 /*
-*�źŻ��ض���������ö��
+*信号机特定功能类型枚举
 */
 enum
 {
-	FUN_SERIOUS_FLASH  = 0  , //���ع��ϻ���
-	FUN_COUNT_DOWN     = 1  , //��������ʱ
-	FUN_GPS            = 2  , //gps����
-	FUN_MSG_ALARM      = 3  , //���ű���
-	FUN_CROSS_TYPE     = 4  , //���ַ�ʽ 0-tsc 1-one psc 2-twice psc
-	FUN_STAND_STAGEID  = 5  , //�����׶κ�
-	FUN_CORSS1_STAGEID = 6  , //����ͨ�н׶κ�1
-	FUN_CROSS2_STAGEID = 7  , //����ͨ�н׶κ�2
-	FUN_TEMPERATURE    = 8  , //�¶ȼ��û�
-	FUN_VOLTAGE        = 9  , //��ѹ��⿪��
-	FUN_DOOR           = 10 , //�ſ���
-	FUN_COMMU_PARA     = 11 , //ͨ�Žӿ�
-	FUN_PORT_LOW       = 12 , //�˿ںŵ��ֽ�
-	FUN_PORT_HIGH      = 13 , //�˿ںŸ��ֽ�
-	FUN_PRINT_FLAG     = 14 , //��ӡ��־  0����� 1����Դ��   2�յ�Դ�� 3���ƿذ� 4�յƿذ� 5�������� 6�ջ����� 7������Ϣ
-	FUN_PRINT_FLAGII   = 15 , //��ӡ��־  0����ʱ 1StartTime 2CostTime
-	FUN_CAM			   = 16 , // ����ͷ
-	FUN_3G             = 17 , //3Gͨ��
-	FUN_WIRELESSBTN	   = 18 , //�����ֿ�
-	FUN_CNTTYPE	       = 19 ,  //����ʱ����
-	FUN_LIGHTCHECK	   = 20 ,	//���ݼ�⿪��	
-	FUN_GPS_INTERVAL   = 21	,	//GPS��ʱ����ʱ�� 1 ��ʾÿ�죬2��ʾÿ2��
-	FUN_WIRELESSBTN_TIMEOUT = 22, //�����ֿذ����ֶ����Ƴ�ʱʱ�䵥λ���� ADD:201410231639	
-	FUN_CROSSSTREET_TIMEOUT = 23, //�����ֿذ����ֶ����Ƴ�ʱʱ�䵥λ���� ADD:201501091738
-	FUN_RS485_BITRATE       =24 , //485����ʱ������ 0-9600 1-2400-2-4800 3-38400   4-15200
+	FUN_SERIOUS_FLASH  = 0  , //严重故障黄闪
+	FUN_COUNT_DOWN     = 1  , //主动倒计时
+	FUN_GPS            = 2  , //gps启用
+	FUN_MSG_ALARM      = 3  , //短信报警
+	FUN_CROSS_TYPE     = 4  , //过街方式 0-tsc 1-one psc 2-twice psc
+	FUN_STAND_STAGEID  = 5  , //待机阶段号
+	FUN_CORSS1_STAGEID = 6  , //行人通行阶段号1
+	FUN_CROSS2_STAGEID = 7  , //行人通行阶段号2
+	FUN_TEMPERATURE    = 8  , //温度计用户
+	FUN_VOLTAGE        = 9  , //电压检测开关
+	FUN_DOOR           = 10 , //门开关
+	FUN_COMMU_PARA     = 11 , //通信接口
+	FUN_PORT_LOW       = 12 , //端口号低字节
+	FUN_PORT_HIGH      = 13 , //端口号高字节
+	FUN_PRINT_FLAG     = 14 , //打印标志  0检测器 1发电源板   2收电源板 3发灯控板 4收灯控板 5发黄闪器 6收黄闪器 7步伐信息
+	FUN_PRINT_FLAGII   = 15 , //打印标志  0倒计时 1StartTime 2CostTime
+	FUN_CAM			   = 16 , // 摄像头
+	FUN_3G             = 17 , //3G通信
+	FUN_WIRELESSBTN	   = 18 , //无线手控
+	FUN_CNTTYPE	       = 19 ,  //倒计时类型
+	FUN_LIGHTCHECK	   = 20 ,	//灯泡检测开关	
+	FUN_GPS_INTERVAL   = 21	,	//GPS定时更新时间 1 表示每天，2表示每2天
+	FUN_WIRELESSBTN_TIMEOUT = 22, //无线手控按键手动控制超时时间单位分钟 ADD:201410231639	
+	FUN_CROSSSTREET_TIMEOUT = 23, //无线手控按键手动控制超时时间单位分钟 ADD:201501091738
+	FUN_RS485_BITRATE       =24 , //485倒计时比特率 0-9600 1-2400-2-4800 3-38400   4-15200
 	
-	FUN_FLASHCNTDOWN_TIME   =25,  //����ʽ����ʱ����ʱ�� 0-0ms 1-50ms 2-100ms,�Դ�����. //ADD 20150605
-	FUN_COUNT          = 26      // �ܵ��ض���������ֵ
+	FUN_FLASHCNTDOWN_TIME   =25,  //闪断式倒计时闪断时间 0-0ms 1-50ms 2-100ms,以此类推. //ADD 20150605
+	FUN_COUNT          = 26      // 总到特定功能数量值
 };
 
 /*
-*�źŻ�����ʱ����
+*信号机倒计时类型
 *Date:201503251001
 */
 enum
 {
-	COUNTDOWN_STUDY               = 0 ,	  //ѧϰʽ����ʱ
-	COUNTDOWN_GAT5082004          = 1 ,	  //ͨѶʽ����ʱ����GAT508-2004 ,�̶�֧��4������ʱ��ÿ������һ������ʱ
-	COUNTDOWN_FLASHOFF 			  = 2 ,   //����ʽ����ʱ ������ָ��������壬֧��32������ʱ
-	COUNTDOWN_GAT5082014  	      = 3 ,   //ͨѶʽ����ʱ����GAT508-2004���֧��32������ʱ
-	COUNTDOWN_GAT5082014V2        = 4 ,   //ͨѶʷ����ʱ����GAT508-2004����֧��4����
-	COUNTDOWN_GAT5082004V2        = 5      //ͨѶʽ����ʱ����GAT508-2004 ��֧��8������ʱ
+	COUNTDOWN_STUDY               = 0 ,	  //学习式倒计时
+	COUNTDOWN_GAT5082004          = 1 ,	  //通讯式倒计时国标GAT508-2004 ,固定支持4个倒计时，每个方向一个倒计时
+	COUNTDOWN_FLASHOFF 			  = 2 ,   //闪断式倒计时 发闪断指令给灯驱板，支持32个倒计时
+	COUNTDOWN_GAT5082014  	      = 3 ,   //通讯式倒计时国标GAT508-2004最大支持32个倒计时
+	COUNTDOWN_GAT5082014V2        = 4 ,   //通讯史倒计时国标GAT508-2004兼容支持4方向
+	COUNTDOWN_GAT5082004V2        = 5      //通讯式倒计时国标GAT508-2004 ，支持8个倒计时
 };
 
 /*
-*�źż���־����ö��
+*信号及日志类型枚举
 */
 enum 
 {
-	LOG_TYPE_LAMP         = 0 ,  //�źŵ�
-	LOG_TYPE_GREEN_CONFIG = 1 ,  //�̳�ͻ
-	LOG_TYPE_DETECTOR     = 2 ,  //�����
-	LOG_TYPE_VOLTAGE      = 3 ,  //��ѹ
-	LOG_TYPE_TEMPERATURE  = 4 ,  //�¶�
-	LOG_TYPE_POWERBOARD   = 5 ,  //��Դ��
-	LOG_TYPE_LAMPBOARD    = 6 ,  //�ƿذ�
-	LOG_TYPE_DETBOARD     = 7 ,  //�������
-	LOG_TYPE_FLASHBOARD   = 8 ,  //��������
-	LOG_TYPE_REBOOT       = 9 ,  //��������
-	LOG_TYPE_CORRECT_TIME = 10,  //ϵͳʱ���޸�
-	LOG_TYPE_DOOR_WARN    = 11,  //�ű���
-	LOG_TYPE_MANUAL       = 12,  //�����ֶ�
-	LOG_TYPE_OUTLAMP_ERR  = 13,  //��ɫ����쳣
-	LOG_TYPE_OUTLAMP_ERR2 = 14,  //��ɫ����쳣2
+	LOG_TYPE_LAMP         = 0 ,  //信号灯
+	LOG_TYPE_GREEN_CONFIG = 1 ,  //绿冲突
+	LOG_TYPE_DETECTOR     = 2 ,  //检测器
+	LOG_TYPE_VOLTAGE      = 3 ,  //电压
+	LOG_TYPE_TEMPERATURE  = 4 ,  //温度
+	LOG_TYPE_POWERBOARD   = 5 ,  //电源板
+	LOG_TYPE_LAMPBOARD    = 6 ,  //灯控板
+	LOG_TYPE_DETBOARD     = 7 ,  //检测器板
+	LOG_TYPE_FLASHBOARD   = 8 ,  //黄闪器板
+	LOG_TYPE_REBOOT       = 9 ,  //程序重启
+	LOG_TYPE_CORRECT_TIME = 10,  //系统时间修改
+	LOG_TYPE_DOOR_WARN    = 11,  //门报警
+	LOG_TYPE_MANUAL       = 12,  //机器手动
+	LOG_TYPE_OUTLAMP_ERR  = 13,  //灯色输出异常
+	LOG_TYPE_OUTLAMP_ERR2 = 14,  //灯色输出异常2
 	LOG_TYPE_OTHER        = 15,
-	LOG_TYPE_CAN                //CAN����     
+	LOG_TYPE_CAN                //CAN总线     
 };
 
-/*************************GBTЭ����Ϣ������������************************/
-const int MAX_GBT_MSG_LEN        = 484;   //gbtЭ����Ϣ����󳤶�
-const int MIN_GBT_MSG_LEN        = 3;     //gbtЭ����Ϣ����С����
-const int MAX_CLIENT_NUM         = 4;     //���Ŀͻ���������
-const int DEFAULT_GBT_PORT       = 8801;  //Ĭ�Ͽ��ٵĶ˿ں�
-const int DEFAULT_BROADCAST_PORT = 8808;  //Ĭ�Ͽ��ٵĶ˿ں�
-const int MAX_GBT_PORT           = 10024; //���˿ں�    
-const int MIN_GBT_PORT           = 1024;  //��С�˿ں�
-const int MAX_BUF_LEN            = 8192;  //���֡�ĳ���
-/*************************GBTЭ����Ϣ������������************************/
+/*************************GBT协议消息处理常量定义************************/
+const int MAX_GBT_MSG_LEN        = 484;   //gbt协议消息的最大长度
+const int MIN_GBT_MSG_LEN        = 3;     //gbt协议消息的最小长度
+const int MAX_CLIENT_NUM         = 4;     //最大的客户端连接数
+const int DEFAULT_GBT_PORT       = 8801;  //默认开辟的端口号
+const int DEFAULT_BROADCAST_PORT = 8808;  //默认开辟的端口号
+const int MAX_GBT_PORT           = 10024; //最大端口号    
+const int MIN_GBT_PORT           = 1024;  //最小端口号
+const int MAX_BUF_LEN            = 8192;  //最大帧的长度
+/*************************GBT协议消息处理常量定义************************/
 
 /*
-GBTЭ�����ݰ�����ö��
+GBT协议数据包类型枚举
 */
 enum 
 {
-	GBT_SEEK_REQ      = 0,  //��ѯ����
-	GBT_SET_REQ       = 1,  //��������
-	GBT_SET_REQ_NOACK = 2,  //�������󣬵�����ȷ��Ӧ��
+	GBT_SEEK_REQ      = 0,  //查询请求
+	GBT_SET_REQ       = 1,  //设置请求
+	GBT_SET_REQ_NOACK = 2,  //设置请求，但不需确认应答
 
-	GBT_SELF_REPORT   = 3,  //�����ϱ�
+	GBT_SELF_REPORT   = 3,  //主动上报
 
-	GBT_SEEK_ACK      = 4,  //��ѯӦ��
-	GBT_SET_ACK       = 5,  //����Ӧ��
-	GBT_ERR_ACK       = 6,  //����Ӧ��
+	GBT_SEEK_ACK      = 4,  //查询应答
+	GBT_SET_ACK       = 5,  //设置应答
+	GBT_ERR_ACK       = 6,  //出错应答
 
-	GBT_OTHER_ACK     = 7   //��������
+	GBT_OTHER_ACK     = 7   //其他类型
 };
 
 
 
 /*
-GBT��������ö��
+GBT错误类型枚举
 */
 enum
 {
-	GBT_ERROR_LONG     = 1,  //��Ϣ̫��
-	GBT_ERROR_TYPE        ,  //��Ϣ����
-	GBT_ERROR_OBJECT_VALUE,  //����ֵ������Χ
-	GBT_ERROR_SHORT       ,  //��Ϣ̫��
-	GBT_ERROR_OTHER          //��������
+	GBT_ERROR_LONG     = 1,  //消息太长
+	GBT_ERROR_TYPE        ,  //消息类型
+	GBT_ERROR_OBJECT_VALUE,  //对象值超过范围
+	GBT_ERROR_SHORT       ,  //消息太短
+	GBT_ERROR_OTHER          //其他错误
 };
 
 
 
 const int MAX_ADJUST_CYCLE = 3;
-const int MAX_PLUS_SCALE   = 30;  //һ���������ӵ������� 
-const int MAX_MINU_SCALE   = 20;  //ÿ�����ڼ��ٵ�������
-const int PLUS_LINE        = 50;  //���ӵĽ���
+const int MAX_PLUS_SCALE   = 30;  //一个周期增加的最大比例 
+const int MAX_MINU_SCALE   = 20;  //每个周期减少的最大比例
+const int PLUS_LINE        = 50;  //增加的界线
 
 
 

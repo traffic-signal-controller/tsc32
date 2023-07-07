@@ -3,9 +3,9 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   MacControl.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»ú¿ØÖÆÄ£¿é¹ÜÀíÀàÎÄ¼ş.
+Description:ä¿¡å·æœºæ§åˆ¶æ¨¡å—ç®¡ç†ç±»æ–‡ä»¶.
 Version:    V1.0
-History:	20130910 Ìí¼Ó¿ØÖÆÆ÷LCD×´Ì¬ÏÔÊ¾ĞÅÏ¢
+History:	20130910 æ·»åŠ æ§åˆ¶å™¨LCDçŠ¶æ€æ˜¾ç¤ºä¿¡æ¯
 ***************************************************************/
 #include "ace/Date_Time.h"
 #include "MacControl.h"
@@ -16,36 +16,36 @@ History:	20130910 Ìí¼Ó¿ØÖÆÆ÷LCD×´Ì¬ÏÔÊ¾ĞÅÏ¢
 #include "PowerBoard.h"     //ADD:201309091530
 #include "GbtMsgQueue.h"
 /*
-¿ØÖÆÆ÷¹¦ÄÜÀàĞÍÃ¶¾Ù
+æ§åˆ¶å™¨åŠŸèƒ½ç±»å‹æšä¸¾
 */
 enum
 {
-	CTRLBOARD_HEAD_ENVSTS   	 = 0x02 , //»ñÈ¡µ±Ç°¿ØÖÆÆ÷»·¾³Êı¾İ
-	CTRLBOARD_HEAD_CFGSET1 		 = 0x03 , //ÅäÖÃ¿ØÖÆÆ÷1
-	CTRLBOARD_HEAD_CFGSET2 	 	 = 0x04 , //ÅäÖÃ¿ØÖÆÆ÷2
-	CTRLBOARD_HEAD_TIMESHOW 	 = 0x05 , //¸ø¿ØÖÆÆ÷LCD·¢ËÍÊ±¼äÏÔÊ¾ĞÅÏ¢
-	CTRLBOARD_HEAD_MAINCTRL		 = 0x06 , //Ö÷¿Ø°åÖ±½Ó¿ØÖÆÄ£¿éÖĞÉè±¸£¬Èç¼ÓÈÈÆ÷£¬É¢ÈÈÆ÷,±¾µØ±¨¾¯Æ÷£¬ÕÕÃ÷Éè±¸ºÍÔ¶³ÌIO¿ØÖÆ¿Ú
-	CTRLBOARD_HEAD_CTRLSTATUS 	 = 0x07 , //¸ø¿ØÖÆÆ÷LCD·¢ËÍµ±Ç°ĞÅºÅ¼°¿ØÖÆÄ£Ê½ºÍ×´Ì¬
-	CTRLBOARD_HEAD_VOLTAGE 	 	 = 0x08 , //¸ø¿ØÖÆÆ÷LCD·¢ËÍµ±Ç°Ç¿µçÑ¹Öµ
-	CTRLBOARD_HEAD_IP            = 0x09 ,  //¸ø¿ØÖÆÆ÷·¢ËÍĞÅºÅ»úIPµØÖ·
-	CTRLBOARD_HEAD_VER           = 0xff    //»ñÈ¡¿ØÖÆÆ÷³ÌĞò°æ±¾
+	CTRLBOARD_HEAD_ENVSTS   	 = 0x02 , //è·å–å½“å‰æ§åˆ¶å™¨ç¯å¢ƒæ•°æ®
+	CTRLBOARD_HEAD_CFGSET1 		 = 0x03 , //é…ç½®æ§åˆ¶å™¨1
+	CTRLBOARD_HEAD_CFGSET2 	 	 = 0x04 , //é…ç½®æ§åˆ¶å™¨2
+	CTRLBOARD_HEAD_TIMESHOW 	 = 0x05 , //ç»™æ§åˆ¶å™¨LCDå‘é€æ—¶é—´æ˜¾ç¤ºä¿¡æ¯
+	CTRLBOARD_HEAD_MAINCTRL		 = 0x06 , //ä¸»æ§æ¿ç›´æ¥æ§åˆ¶æ¨¡å—ä¸­è®¾å¤‡ï¼Œå¦‚åŠ çƒ­å™¨ï¼Œæ•£çƒ­å™¨,æœ¬åœ°æŠ¥è­¦å™¨ï¼Œç…§æ˜è®¾å¤‡å’Œè¿œç¨‹IOæ§åˆ¶å£
+	CTRLBOARD_HEAD_CTRLSTATUS 	 = 0x07 , //ç»™æ§åˆ¶å™¨LCDå‘é€å½“å‰ä¿¡å·åŠæ§åˆ¶æ¨¡å¼å’ŒçŠ¶æ€
+	CTRLBOARD_HEAD_VOLTAGE 	 	 = 0x08 , //ç»™æ§åˆ¶å™¨LCDå‘é€å½“å‰å¼ºç”µå‹å€¼
+	CTRLBOARD_HEAD_IP            = 0x09 ,  //ç»™æ§åˆ¶å™¨å‘é€ä¿¡å·æœºIPåœ°å€
+	CTRLBOARD_HEAD_VER           = 0xff    //è·å–æ§åˆ¶å™¨ç¨‹åºç‰ˆæœ¬
 };
 
 /*
-ĞÂÔö¿ØÖÆÆ÷LCDĞÅºÅ»ú¿ØÖÆ·½Ê½¼°×´Ì¬ÏÔÊ¾ 201309281540
+æ–°å¢æ§åˆ¶å™¨LCDä¿¡å·æœºæ§åˆ¶æ–¹å¼åŠçŠ¶æ€æ˜¾ç¤º 201309281540
 */
 enum
 {
-	CTRLBOARD_LCD_LAST  		 = 0x0  , //¿ØÖÆÆ÷LCDÏÔÊ¾±£³Ö²»±ä
-	CTRLBOARD_LCD_LAMPOFF  		 = 0x01 , //¿ØÖÆÆ÷LCDÏÔÊ¾ÃğµÆ
-	CTRLBOARD_LCD_LAMPFLASH  	 = 0x02 , //¿ØÖÆÆ÷LCDÏÔÊ¾»ÆÉÁ
-	CTRLBOARD_LCD_LAMPRED	     = 0x03 , //¿ØÖÆÆ÷LCDÏÔÊ¾ËÄÃæºì
-	CTRLBOARD_LCD_CTRLPANEL	     = 0x04 , //¿ØÖÆÆ÷LCDÏÔÊ¾ĞÅºÅ»ú´¦ÓÚÊÖ¶¯¿ØÖÆ
-	CTRLBOARD_LCD_SCHEDULE	     = 0x05 , //¿ØÖÆÆ÷LCDÏÔÊ¾ĞÅºÅ»ú´¦ÓÚ¶àÊ±¶Î¿ØÖÆ
-	CTRLBOARD_LCD_VECHE	    	 = 0x06 , //¿ØÖÆÆ÷LCDÏÔÊ¾ĞÅºÅ»ú´¦ÓÚ¸ĞÓ¦¿ØÖÆ
-	CTRLBOARD_LCD_ADAPTIVE	     = 0x07 , //¿ØÖÆÆ÷LCDÏÔÊ¾ĞÅºÅ»ú´¦ÓÚ×ÔÊÊÓ¦¿ØÖÆ
-	CTRLBOARD_LCD_UTCS	     	 = 0x08 , //¿ØÖÆÆ÷LCDÏÔÊ¾ĞÅºÅ»ú´¦ÓÚĞ­µ÷¿ØÖÆ
-	CTRLBOARD_LCD_PSC			 = 0x09   //¿ØÖÆÆ÷LCDÏÔÊ¾ĞÅºÅ»ú´¦ÓÚPSCÄ£Ê½
+	CTRLBOARD_LCD_LAST  		 = 0x0  , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºä¿æŒä¸å˜
+	CTRLBOARD_LCD_LAMPOFF  		 = 0x01 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºç­ç¯
+	CTRLBOARD_LCD_LAMPFLASH  	 = 0x02 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºé»„é—ª
+	CTRLBOARD_LCD_LAMPRED	     = 0x03 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºå››é¢çº¢
+	CTRLBOARD_LCD_CTRLPANEL	     = 0x04 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºä¿¡å·æœºå¤„äºæ‰‹åŠ¨æ§åˆ¶
+	CTRLBOARD_LCD_SCHEDULE	     = 0x05 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºä¿¡å·æœºå¤„äºå¤šæ—¶æ®µæ§åˆ¶
+	CTRLBOARD_LCD_VECHE	    	 = 0x06 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºä¿¡å·æœºå¤„äºæ„Ÿåº”æ§åˆ¶
+	CTRLBOARD_LCD_ADAPTIVE	     = 0x07 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºä¿¡å·æœºå¤„äºè‡ªé€‚åº”æ§åˆ¶
+	CTRLBOARD_LCD_UTCS	     	 = 0x08 , //æ§åˆ¶å™¨LCDæ˜¾ç¤ºä¿¡å·æœºå¤„äºåè°ƒæ§åˆ¶
+	CTRLBOARD_LCD_PSC			 = 0x09   //æ§åˆ¶å™¨LCDæ˜¾ç¤ºä¿¡å·æœºå¤„äºPSCæ¨¡å¼
 	
 };
 
@@ -68,10 +68,10 @@ CMacControl* CMacControl::CreateInstance()
 }
 
 /********************************************************
-*Ö÷¿Ø°åÇëÇó¿ØÖÆÄ£¿é·¢ËÍ»·¾³Êı¾İ
-*ÈçÊÖ¿ØÊı¾İ£¬ÎÂ¶È£¬Êª¶È£¬ÃÅ¿ª¹Ø×´Ì¬£¬
-*ÕÕÃ÷Éè±¸×´Ì¬£¬±¾µØ±¨¾¯Æ÷×´Ì¬£¬Ô¶³ÌIO×´Ì¬£¬
-*¼ÓÈÈÆ÷×´Ì¬ºÍÉ¢ÈÈÆ÷×´Ì¬£¬Õğ¶¯´«¸ĞÆ÷×´Ì¬
+*ä¸»æ§æ¿è¯·æ±‚æ§åˆ¶æ¨¡å—å‘é€ç¯å¢ƒæ•°æ®
+*å¦‚æ‰‹æ§æ•°æ®ï¼Œæ¸©åº¦ï¼Œæ¹¿åº¦ï¼Œé—¨å¼€å…³çŠ¶æ€ï¼Œ
+*ç…§æ˜è®¾å¤‡çŠ¶æ€ï¼Œæœ¬åœ°æŠ¥è­¦å™¨çŠ¶æ€ï¼Œè¿œç¨‹IOçŠ¶æ€ï¼Œ
+*åŠ çƒ­å™¨çŠ¶æ€å’Œæ•£çƒ­å™¨çŠ¶æ€ï¼Œéœ‡åŠ¨ä¼ æ„Ÿå™¨çŠ¶æ€
 *********************************************************/
 void CMacControl::GetEnvSts()
 {
@@ -86,8 +86,8 @@ void CMacControl::GetEnvSts()
 }
 
 /*******************************************************************
-*Ö÷¿Ø°å·¢ËÍ¸øµçÔ´Ä£¿éÅäÖÃÊı¾İ
-*°üÀ¨¼ÓÈÈºÍÉ¢ÈÈµÄ¿ªÆôÎÂ¶È£¬µçÑ¹¸ßµÍÑ¹Ô¤¾¯µçÑ¹Öµ£¬Êª¶ÈÔ¤¾¯ÊıÖµ
+*ä¸»æ§æ¿å‘é€ç»™ç”µæºæ¨¡å—é…ç½®æ•°æ®
+*åŒ…æ‹¬åŠ çƒ­å’Œæ•£çƒ­çš„å¼€å¯æ¸©åº¦ï¼Œç”µå‹é«˜ä½å‹é¢„è­¦ç”µå‹å€¼ï¼Œæ¹¿åº¦é¢„è­¦æ•°å€¼
 ********************************************************************/
 void CMacControl::SetCfg1()
 {
@@ -109,7 +109,7 @@ void CMacControl::SetCfg1()
 
 }
 
-/***********************Ö÷¿Ø°å·¢ËÍ¸ø¿ØÖÆÄ£¿éÅäÖÃÊı¾İ***********************/
+/***********************ä¸»æ§æ¿å‘é€ç»™æ§åˆ¶æ¨¡å—é…ç½®æ•°æ®***********************/
 void CMacControl::SetCfg2()
 {
 	SCanFrame sSendFrameTmp;	
@@ -138,8 +138,8 @@ void CMacControl::SetCfg2()
 }
 
 /********************************************************************
-*Ö÷¿Ø°åÖ±½Ó¿ØÖÆÄ£¿éÖĞÉè±¸
-*Èç¼ÓÈÈÆ÷£¬É¢ÈÈÆ÷,±¾µØ±¨¾¯Æ÷£¬ÕÕÃ÷Éè±¸ºÍÔ¶³ÌIO¿ØÖÆ¿Ú
+*ä¸»æ§æ¿ç›´æ¥æ§åˆ¶æ¨¡å—ä¸­è®¾å¤‡
+*å¦‚åŠ çƒ­å™¨ï¼Œæ•£çƒ­å™¨,æœ¬åœ°æŠ¥è­¦å™¨ï¼Œç…§æ˜è®¾å¤‡å’Œè¿œç¨‹IOæ§åˆ¶å£
 *********************************************************************/
 void CMacControl::MainBoardCtrl()
 {
@@ -161,7 +161,7 @@ void CMacControl::MainBoardCtrl()
 }
 
 /****************************************************************
-*¶Ô´Ó¿ØÖÆ°å·µ»ØÖ÷°åµÄCANÊı¾İ½øĞĞ´¦Àí
+*å¯¹ä»æ§åˆ¶æ¿è¿”å›ä¸»æ¿çš„CANæ•°æ®è¿›è¡Œå¤„ç†
 *
 *****************************************************************/
 void CMacControl::RecvMacCan(SCanFrame sRecvCanTmp)
@@ -190,7 +190,7 @@ void CMacControl::RecvMacCan(SCanFrame sRecvCanTmp)
 			m_ucReduHot  = (sRecvCanTmp.pCanData[4] >> 5) & 0x1;
 			m_ucCabinet  = (sRecvCanTmp.pCanData[4] >> 6) & 0x1;
 			m_ucPsc      = sRecvCanTmp.pCanData[5];
-			//ACE_DEBUG((LM_DEBUG,"%s:%d DoorFront: %d  m_ucDoor: %d Back Temp:%d¡æ Hum:%d\n"	,__FILE__,__LINE__,m_ucDoorFront,m_ucDoorBack,m_ucTemp,m_ucHum)); //MOD:0604 1415
+			//ACE_DEBUG((LM_DEBUG,"%s:%d DoorFront: %d  m_ucDoor: %d Back Temp:%dâ„ƒ Hum:%d\n"	,__FILE__,__LINE__,m_ucDoorFront,m_ucDoorBack,m_ucTemp,m_ucHum)); //MOD:0604 1415
 			
 			break ;
 		case CTRLBOARD_HEAD_CFGSET1 :
@@ -223,10 +223,10 @@ void CMacControl::RecvMacCan(SCanFrame sRecvCanTmp)
 
 /**************************************************************
 Function:        CMacControl::SetCtrlStaus
-Description:     ÉèÖÃ¿ØÖÆÆ÷ĞÅºÅ»ú¿ØÖÆÄ£Ê½LCDÏÔÊ¾ÊôĞÔ			
-Input:          ucCtrlStas   ¿ØÖÆÄ£Ê½×´Ì¬Öµ           
-Output:         ÎŞ
-Return:         ¿ØÖÆÆ÷LCD¿ØÖÆÄ£Ê½×´Ì¬Öµ
+Description:     è®¾ç½®æ§åˆ¶å™¨ä¿¡å·æœºæ§åˆ¶æ¨¡å¼LCDæ˜¾ç¤ºå±æ€§			
+Input:          ucCtrlStas   æ§åˆ¶æ¨¡å¼çŠ¶æ€å€¼           
+Output:         æ— 
+Return:         æ§åˆ¶å™¨LCDæ§åˆ¶æ¨¡å¼çŠ¶æ€å€¼
 ***************************************************************/
 Byte CMacControl::GetCtrlStaus()
 {
@@ -288,22 +288,22 @@ Byte CMacControl::GetCtrlStaus()
 
 /**************************************************************
 Function:        CMacControl::SndLcdShow
-Description:     ·¢ËÍÏÔÊ¾ĞÅÏ¢¸ø¿ØÖÆÆ÷LCDÏÔÊ¾£¬1sµ÷ÓÃÒ»´Î			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     å‘é€æ˜¾ç¤ºä¿¡æ¯ç»™æ§åˆ¶å™¨LCDæ˜¾ç¤ºï¼Œ1sè°ƒç”¨ä¸€æ¬¡			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CMacControl::SndLcdShow()
 {
 	static Byte ucTimeCnt = 0 ;
 	CManaKernel * pManakernel = CManaKernel::CreateInstance();
-	if(ucTimeCnt++ >=30)   //30sÏÔÊ¾¸üĞÂÏÔÊ¾Ê±¼äºÍµçÑ¹Öµ
+	if(ucTimeCnt++ >=30)   //30sæ˜¾ç¤ºæ›´æ–°æ˜¾ç¤ºæ—¶é—´å’Œç”µå‹å€¼
 	{
 		ucTimeCnt = 0 ;
 		ACE_Date_Time tvTime(ACE_OS::gettimeofday()); 
 		SCanFrame sSendFrameTmp;
 		
-		/****·¢ËÍµ±Ç°Ê±¼ä****/
+		/****å‘é€å½“å‰æ—¶é—´****/
 		ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
 		Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  , BOARD_ADDR_HARD_CONTROL , &(sSendFrameTmp.ulCanId));
 		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_CHECK << 6 ) | CTRLBOARD_HEAD_TIMESHOW;
@@ -311,13 +311,13 @@ void CMacControl::SndLcdShow()
 		sSendFrameTmp.pCanData[2] = tvTime.year()&0xff;
 		sSendFrameTmp.pCanData[3] = tvTime.month();
 		sSendFrameTmp.pCanData[4] = tvTime.day();
-		//m3352 Ê±¼äÓë 6410Ê±¼äÓĞ²îÒì
+		//m3352 æ—¶é—´ä¸ 6410æ—¶é—´æœ‰å·®å¼‚
 		sSendFrameTmp.pCanData[5] = tvTime.hour();
 		sSendFrameTmp.pCanData[6] = tvTime.minute();
 		sSendFrameTmp.ucCanDataLen = 7;			
 		Can::CreateInstance()->Send(sSendFrameTmp);
 		
-		/****·¢ËÍÇ¿µçÑ¹Öµ****/
+		/****å‘é€å¼ºç”µå‹å€¼****/
 		ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
 		Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  , BOARD_ADDR_HARD_CONTROL , &(sSendFrameTmp.ulCanId));
 		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_CHECK << 6 ) | CTRLBOARD_HEAD_VOLTAGE;
@@ -325,7 +325,7 @@ void CMacControl::SndLcdShow()
 		sSendFrameTmp.ucCanDataLen = 2;			
 		Can::CreateInstance()->Send(sSendFrameTmp);	
 		
-		/****ĞÅºÅ»úIPµØÖ·****/		
+		/****ä¿¡å·æœºIPåœ°å€****/		
 		Byte pIp[4]      = {0};
 		CGbtMsgQueue::CreateInstance()->GetNetPara(pIp,NULL,NULL);
 		
@@ -349,7 +349,7 @@ void CMacControl::SndLcdShow()
 			uiOldPatternNo = pManakernel->m_pRunData->ucTimePatternId ;
 			uiOldFlashType = pManakernel->m_pRunData->flashType ;
 			uiOldbDegrade = pManakernel->bDegrade ;
-			/****·¢ËÍµ±Ç°¿ØÖÆ×´Ì¬ĞÅÏ¢****/
+			/****å‘é€å½“å‰æ§åˆ¶çŠ¶æ€ä¿¡æ¯****/
 			SCanFrame sSendFrameTmp;		
 			ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
 			Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P  , BOARD_ADDR_HARD_CONTROL , &(sSendFrameTmp.ulCanId));

@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   ComFunc.cpp
 Date:       2013-9-25
-Description:Í¨ÓÃ´¦Àíº¯Êı
+Description:é€šç”¨å¤„ç†å‡½æ•°
 Version:    V1.0
 History:    201310081456  yiodng testmem()
 ***************************************************************/
@@ -16,10 +16,10 @@ History:    201310081456  yiodng testmem()
 
 /**************************************************************
 Function:       IsLeapYear
-Description:    ÅĞ¶ÏÊÇ·ñÊ±ÈóÄê
-Input:          ucYear  Äê·İ              
-Output:         ÎŞ
-Return:         false-·ÇÈóÄê true-ÈóÄê
+Description:    åˆ¤æ–­æ˜¯å¦æ—¶æ¶¦å¹´
+Input:          ucYear  å¹´ä»½              
+Output:         æ— 
+Return:         false-éæ¶¦å¹´ true-æ¶¦å¹´
 ***************************************************************/
 bool IsLeapYear(Uint ucYear)
 {
@@ -32,12 +32,12 @@ bool IsLeapYear(Uint ucYear)
 
 /**************************************************************
 Function:       IsRightDate
-Description:    ÅĞ¶ÏÈÕÆÚµ½ºÏ·¨ĞÔ
-Input:          ucYear  Äê·İ
-				ucMonth ÔÂ·İ 
-				ucDay   ÈÕÆÚ             
-Output:         ÎŞ
-Return:         false-·ÇÈóÄê true-ÈóÄê
+Description:    åˆ¤æ–­æ—¥æœŸåˆ°åˆæ³•æ€§
+Input:          ucYear  å¹´ä»½
+				ucMonth æœˆä»½ 
+				ucDay   æ—¥æœŸ             
+Output:         æ— 
+Return:         false-éæ¶¦å¹´ true-æ¶¦å¹´
 ***************************************************************/
 bool IsRightDate(Uint ucYear,Byte ucMonth,Byte ucDay)
 {
@@ -55,7 +55,7 @@ bool IsRightDate(Uint ucYear,Byte ucMonth,Byte ucDay)
 	switch ( ucMonth )
 	{
 		case 2:
-			if ( IsLeapYear(ucYear) )  //ÈòÄê
+			if ( IsLeapYear(ucYear) )  //é—°å¹´
 			{
 				ucDay = 29;
 			}
@@ -90,11 +90,11 @@ bool IsRightDate(Uint ucYear,Byte ucMonth,Byte ucDay)
 
 /**************************************************************
 Function:       getCurrTime
-Description:    »ñÈ¡µ±Ç°Ê±¼ä£¬Õâ¸öÊ±¼ä»ñÈ¡º¯ÊıÖ÷ÒªÓÃÓÚĞÅºÅ»ú¶¨Ê±Æ÷£¬
-				±ÜÃâĞŞ¸ÄÊ±¼äµ½Ê±ºòÔì³É¶¨Ê±Æ÷Í£Ö¹
-Input:          ÎŞ   
-Output:         ÎŞ
-Return:         ACEÊ±¼ä
+Description:    è·å–å½“å‰æ—¶é—´ï¼Œè¿™ä¸ªæ—¶é—´è·å–å‡½æ•°ä¸»è¦ç”¨äºä¿¡å·æœºå®šæ—¶å™¨ï¼Œ
+				é¿å…ä¿®æ”¹æ—¶é—´åˆ°æ—¶å€™é€ æˆå®šæ—¶å™¨åœæ­¢
+Input:          æ—    
+Output:         æ— 
+Return:         ACEæ—¶é—´
 ***************************************************************/
 ACE_Time_Value getCurrTime()
 {
@@ -108,10 +108,10 @@ ACE_Time_Value getCurrTime()
 
 /**************************************************************
 Function:       GetCurTime
-Description:    »ñÈ¡µ±Ç°Ê±¼ä£¬ÓÃÓÚ³ı¶¨Ê±Æ÷Ê±¼ä»ñÈ¡ÍâÆäËûµØ·½
-Input:          ÎŞ   
-Output:         ÎŞ
-Return:         ACEÊ±¼ä
+Description:    è·å–å½“å‰æ—¶é—´ï¼Œç”¨äºé™¤å®šæ—¶å™¨æ—¶é—´è·å–å¤–å…¶ä»–åœ°æ–¹
+Input:          æ—    
+Output:         æ— 
+Return:         ACEæ—¶é—´
 ***************************************************************/
 ACE_Time_Value GetCurTime()
 {
@@ -134,10 +134,10 @@ ACE_Time_Value GetCurTime()
 
 /**************************************************************
 Function:       CopyFile
-Description:    ¸´ÖÆÎÄ¼ş
-Input:          ÎŞ   
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å¤åˆ¶æ–‡ä»¶
+Input:          æ—    
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CopyFile(char src[], char dest[])
 {
@@ -169,11 +169,11 @@ out:
 
 /**************************************************************
 Function:       CopyFile
-Description:    µ÷ÕûÎÄ¼şµÄ´óĞ¡£¬³¬¹ıiMaxFileLineÊ±£¬É¾³ıµôÒ»°ë£¬
-				·ÀÖ¹ÎÄ¼ş¹ı´ó
-Input:          ÎŞ   
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è°ƒæ•´æ–‡ä»¶çš„å¤§å°ï¼Œè¶…è¿‡iMaxFileLineæ—¶ï¼Œåˆ é™¤æ‰ä¸€åŠï¼Œ
+				é˜²æ­¢æ–‡ä»¶è¿‡å¤§
+Input:          æ—    
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void AdjustFileSize(char* file,int iMaxFileLine)
 {
@@ -229,10 +229,10 @@ void AdjustFileSize(char* file,int iMaxFileLine)
 
 /**************************************************************
 Function:       RecordTscStartTime
-Description:    ¼ÇÂ¼ÏµÍ³¿ªÊ¼ÔËĞĞÊ±¼ä£¬²¢Ğ´ÈëÈÕÖ¾			
-Input:          ÎŞ        
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®°å½•ç³»ç»Ÿå¼€å§‹è¿è¡Œæ—¶é—´ï¼Œå¹¶å†™å…¥æ—¥å¿—			
+Input:          æ—         
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void RecordTscStartTime()
 {
@@ -246,10 +246,10 @@ void RecordTscStartTime()
 
 /**************************************************************
 Function:       TestMem
-Description:    ²âÊÔÏµÍ³ÄÚ´æÎÈ¶¨ĞÔ	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æµ‹è¯•ç³»ç»Ÿå†…å­˜ç¨³å®šæ€§	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void TestMem(char* funName,int iLine)
 {
@@ -304,13 +304,13 @@ void TestMem(char* funName,int iLine)
 
 /**************************************************************
 Function:       CompareTime
-Description:    Ê±¼ä´óĞ¡±È½Ï
-Input:          ucHour1 £º±È½ÏÊ±¼ä1µÄĞ¡Ê±Öµ 
-			    ucMin1  £º±È½ÏÊ±¼ä1µÄ·ÖÖÓÖµ  
-			    ucHour1 £º±È½ÏÊ±¼ä2µÄĞ¡Ê±Öµ 
-			    ucMin1  £º±È½ÏÊ±¼ä2µÄ·ÖÖÓÖµ    
-Output:         ÎŞ
-Return:         0:time2±Ètime1Ğ¡   1£ºtime2±Ètime1´ó,»òÏàµÈ 
+Description:    æ—¶é—´å¤§å°æ¯”è¾ƒ
+Input:          ucHour1 ï¼šæ¯”è¾ƒæ—¶é—´1çš„å°æ—¶å€¼ 
+			    ucMin1  ï¼šæ¯”è¾ƒæ—¶é—´1çš„åˆ†é’Ÿå€¼  
+			    ucHour1 ï¼šæ¯”è¾ƒæ—¶é—´2çš„å°æ—¶å€¼ 
+			    ucMin1  ï¼šæ¯”è¾ƒæ—¶é—´2çš„åˆ†é’Ÿå€¼    
+Output:         æ— 
+Return:         0:time2æ¯”time1å°   1ï¼štime2æ¯”time1å¤§,æˆ–ç›¸ç­‰ 
 ***************************************************************/
 bool CompareTime(Byte ucHour1,Byte ucMin1,Byte ucHour2,Byte ucMin2)
 {
@@ -331,11 +331,11 @@ bool CompareTime(Byte ucHour1,Byte ucMin1,Byte ucHour2,Byte ucMin2)
 
 /**************************************************************
 Function:       GetEypDevID
-Description:    ¶Ô×Ö·û´®Òì»ò¼ÓÃÜ´¦Àí
-Input:          src £º´ı¼ÓÃÜ×Ö·û´®Ö¸Õë 
-			    dec  £º¼ÓÃÜºó×Ö·û´®Ö¸Õë 
-Output:         ÎŞ
-Return:         -1 -¼ÓÃÜ×Ö·û´®Ê§°Ü 0 - ¼ÓÃÜ×Ö´®´®³É¹¦
+Description:    å¯¹å­—ç¬¦ä¸²å¼‚æˆ–åŠ å¯†å¤„ç†
+Input:          src ï¼šå¾…åŠ å¯†å­—ç¬¦ä¸²æŒ‡é’ˆ 
+			    dec  ï¼šåŠ å¯†åå­—ç¬¦ä¸²æŒ‡é’ˆ 
+Output:         æ— 
+Return:         -1 -åŠ å¯†å­—ç¬¦ä¸²å¤±è´¥ 0 - åŠ å¯†å­—ä¸²ä¸²æˆåŠŸ
 ***************************************************************/
 int GetEypChar(char *src ,char *dec)
 {  
@@ -345,7 +345,7 @@ int GetEypChar(char *src ,char *dec)
    int i=0; 
    while(*p!='\0') 
    { 
-     dec[i]=0x01 ^ *p; /* Òì»ò´¦Àí¼ÓÃÜ*/
+     dec[i]=0x01 ^ *p; /* å¼‚æˆ–å¤„ç†åŠ å¯†*/
      p++; 
      i++; 
   } 
@@ -357,10 +357,10 @@ int GetEypChar(char *src ,char *dec)
 /**************************************************************
 
 Function:       GetStrHwAddr
-Description:    »ñÈ¡Íø¿¨ÎïÀíµØÖ·×Ö·û´®
-Input:          StrHwAddr £ºÍø¿¨ÎïÀíµØÖ·×Ö·û´® 
-Output:         ÎŞ
-Return:         -1 »ñÈ¡Ê§°Ü  0 -»ñÈ¡³É¹¦
+Description:    è·å–ç½‘å¡ç‰©ç†åœ°å€å­—ç¬¦ä¸²
+Input:          StrHwAddr ï¼šç½‘å¡ç‰©ç†åœ°å€å­—ç¬¦ä¸² 
+Output:         æ— 
+Return:         -1 è·å–å¤±è´¥  0 -è·å–æˆåŠŸ
 ***************************************************************/
 int GetStrHwAddr(char * strHwAddr)
 {
@@ -386,10 +386,10 @@ int GetStrHwAddr(char * strHwAddr)
 
 /**************************************************************
 Function:       SaveEnyDevId
-Description:    ±£´æÉèÖÃÉè±¸ID¼ÓÃÜ´æ´¢
-Input:          SysEnyDevId £ºÏµÍ³¼ÓÃÜIDÖ¸Õë 
-Output:         ÎŞ
-Return:         -1 - ²úÉú¼ÓÃÜÉè±¸IDÊ§°Ü 0 -²úÉú¼ÓÃÜÉè±¸ID³É¹¦
+Description:    ä¿å­˜è®¾ç½®è®¾å¤‡IDåŠ å¯†å­˜å‚¨
+Input:          SysEnyDevId ï¼šç³»ç»ŸåŠ å¯†IDæŒ‡é’ˆ 
+Output:         æ— 
+Return:         -1 - äº§ç”ŸåŠ å¯†è®¾å¤‡IDå¤±è´¥ 0 -äº§ç”ŸåŠ å¯†è®¾å¤‡IDæˆåŠŸ
 ***************************************************************/
 int GetSysEnyDevId(char *SysEnyDevId)
 {
@@ -405,10 +405,10 @@ int GetSysEnyDevId(char *SysEnyDevId)
 }
 /**************************************************************
 Function:       GetMainBroadCdKey
-Description:    ±£´æÉèÖÃÉè±¸ID¼ÓÃÜ´æ´¢
-Input:          CdKey £ºÏµÍ³¼ÓÃÜIDÖ¸Õë 
-Output:         ÎŞ
-Return:         -1 - ²úÉú¼ÓÃÜÉè±¸IDÊ§°Ü 0 -²úÉú¼ÓÃÜÉè±¸ID³É¹¦
+Description:    ä¿å­˜è®¾ç½®è®¾å¤‡IDåŠ å¯†å­˜å‚¨
+Input:          CdKey ï¼šç³»ç»ŸåŠ å¯†IDæŒ‡é’ˆ 
+Output:         æ— 
+Return:         -1 - äº§ç”ŸåŠ å¯†è®¾å¤‡IDå¤±è´¥ 0 -äº§ç”ŸåŠ å¯†è®¾å¤‡IDæˆåŠŸ
 ***************************************************************/
 int GetMainBroadCdKey(char *CdKey)
 {
@@ -424,10 +424,10 @@ int GetMainBroadCdKey(char *CdKey)
 }
 /**************************************************************
 Function:      VaildSN
-Description:    ¶ÔºËĞÄ°åµÄĞòÁĞºÅÓëÏµÍ³µÄĞòÁĞºÅ½øĞĞ¶Ô±È
-Input:          ÎŞ 
-Output:         ÎŞ
-Return:         1 - ºÏ·¨ 0 -·Ç·¨
+Description:    å¯¹æ ¸å¿ƒæ¿çš„åºåˆ—å·ä¸ç³»ç»Ÿçš„åºåˆ—å·è¿›è¡Œå¯¹æ¯”
+Input:          æ—  
+Output:         æ— 
+Return:         1 - åˆæ³• 0 -éæ³•
 ***************************************************************/
 bool VaildSN()
 {
@@ -451,10 +451,10 @@ bool VaildSN()
 }
 /**************************************************************
 Function:      ReadTscSN
-Description:    ¶ÁÈ¡ÏµÍ³µÄĞòÁĞºÅ
-Input:          ÎŞ 
-Output:         ½«8¸ö×Ö½ÚµÄĞòÁĞºÅ±£´æµ½cdkey Ö¸Õë ÖĞ
-Return:         ÎŞ
+Description:    è¯»å–ç³»ç»Ÿçš„åºåˆ—å·
+Input:          æ—  
+Output:         å°†8ä¸ªå­—èŠ‚çš„åºåˆ—å·ä¿å­˜åˆ°cdkey æŒ‡é’ˆ ä¸­
+Return:         æ— 
 ***************************************************************/
 void ReadTscSN(char *cdkey)
 {
@@ -480,10 +480,10 @@ void ReadTscSN(char *cdkey)
 
 /**************************************************************
 Function:       RecordTscStartTime
-Description:    ¼ÇÂ¼ÏµÍ³¿ªÊ¼ÔËĞĞÊ±¼ä£¬²¢Ğ´ÈëÈÕÖ¾			
-Input:          ÎŞ        
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®°å½•ç³»ç»Ÿå¼€å§‹è¿è¡Œæ—¶é—´ï¼Œå¹¶å†™å…¥æ—¥å¿—			
+Input:          æ—         
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void RecordTscSN()
 {

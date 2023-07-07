@@ -2,35 +2,35 @@
 #define _MAINBOARDLED_H_
 
 #include "ComStruct.h"
-#define MAXLED 10   //×î´óLEDµÆÏÔÊ¾ÊýÄ¿ ADD:20141106
+#define MAXLED 10   //æœ€å¤§LEDç¯æ˜¾ç¤ºæ•°ç›® ADD:20141106
 
 
-/*********LEDµÆÌõÏÔÊ¾×´Ì¬Ã¶¾Ù********20141106*/
+/*********LEDç¯æ¡æ˜¾ç¤ºçŠ¶æ€æžšä¸¾********20141106*/
 enum{
 
-		LED_STATUS_MAINTAIN = 0x0 ,  // ±£³ÖÔ­ÏÈÏÔÊ¾²»±ä
-		LED_STATUS_OFF      = 0x1 ,  //LEDµÆÏ¨Ãð
-		LED_STATUS_ON       = 0x2 ,  //LEDµÆÁÁ
-		LED_STATUS_FLASH    = 0x3    //LEDµÆÉÁË¸
+		LED_STATUS_MAINTAIN = 0x0 ,  // ä¿æŒåŽŸå…ˆæ˜¾ç¤ºä¸å˜
+		LED_STATUS_OFF      = 0x1 ,  //LEDç¯ç†„ç­
+		LED_STATUS_ON       = 0x2 ,  //LEDç¯äº®
+		LED_STATUS_FLASH    = 0x3    //LEDç¯é—ªçƒ
 
 };
 
 
 
-/*********Ä£¿éLEDµÆÃ¶¾Ù*******************20141106*/
+/*********æ¨¡å—LEDç¯æžšä¸¾*******************20141106*/
 
 enum{
 
-		LED_RADIATOR    = 0x0 ,  // É¢ÈÈÆ÷LEDµÆ
-		LED_HEATER      = 0x1 ,  //¼ÓÈÈÆ÷LEDµÆ
-		LED_ILLUMINATOR = 0x2 ,  //ÕÕÃ÷Æ÷LEDµÆ
-		LED_NETWORK     = 0x3 ,  //ÍøÂçLEDµÆ
-		LED_3G    		= 0x4 ,  //3G  LEDµÆ
-		LED_MSG         = 0x5 ,  //¶ÌÐÅMSG LEDµÆ
-		LED_CAM         = 0x6 ,  //CAM LEDµÆ		
-		LED_WIRELESSBUTTON       = 0x7 ,  //ÎÞÏßÊÖ¿ØLED
-		LED_GPS         = 0x8 ,   //GPSLEDµÆ
-		LED_YWFLASH     = 0x9    //»ÆÉÁÆ÷LEDµÆ		
+		LED_RADIATOR    = 0x0 ,  // æ•£çƒ­å™¨LEDç¯
+		LED_HEATER      = 0x1 ,  //åŠ çƒ­å™¨LEDç¯
+		LED_ILLUMINATOR = 0x2 ,  //ç…§æ˜Žå™¨LEDç¯
+		LED_NETWORK     = 0x3 ,  //ç½‘ç»œLEDç¯
+		LED_3G    		= 0x4 ,  //3G  LEDç¯
+		LED_MSG         = 0x5 ,  //çŸ­ä¿¡MSG LEDç¯
+		LED_CAM         = 0x6 ,  //CAM LEDç¯		
+		LED_WIRELESSBUTTON       = 0x7 ,  //æ— çº¿æ‰‹æŽ§LED
+		LED_GPS         = 0x8 ,   //GPSLEDç¯
+		LED_YWFLASH     = 0x9    //é»„é—ªå™¨LEDç¯		
 
 };
 

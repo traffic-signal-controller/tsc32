@@ -27,8 +27,8 @@ class Can
 public:
 	static Can* CreateInstance();
 	
-	static void* RunCanRecv(void* arg); // ADD: CAN数据接收线程函数 20130701 1101 
-	static void* DealCanData(void* arg) ; //ADD:CAN数据接收线程函数 20130701 1121
+	static void* RunCanRecv(void* arg); // ADD: CAN鏁版嵁鎺ユ敹绾跨▼鍑芥暟 20130701 1101 
+	static void* DealCanData(void* arg) ; //ADD:CAN鏁版嵁鎺ユ敹绾跨▼鍑芥暟 20130701 1121
 
 	void InitCan();
 	int GetHandle();

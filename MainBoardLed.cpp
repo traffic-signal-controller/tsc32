@@ -3,7 +3,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   MainBoardLed.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úÖ÷°åÖ¸Ê¾µÆºÍLEDÏÔÊ¾°åµÆÎÄ¼ş
+Description:ä¿¡å·æœºä¸»æ¿æŒ‡ç¤ºç¯å’ŒLEDæ˜¾ç¤ºæ¿ç¯æ–‡ä»¶
 Version:    V1.0
 History:
 ***************************************************************/
@@ -32,17 +32,17 @@ enum
 
 /**************************************************************
 Function:       CMainBoardLed
-Description:    CMainBoardLed ¹¹Ôìº¯Êı
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed æ„é€ å‡½æ•°
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CMainBoardLed::CMainBoardLed()
 {	
 	for(Byte LedIndex = 0 ; LedIndex < MAXLED ;LedIndex++)
 		LedBoardStaus[LedIndex] = LED_STATUS_OFF;
 	
-	LedBoardStaus[LED_YWFLASH] = LED_STATUS_ON;//»ÆÉÁÆ÷×÷Îª»ù±¾Ä£¿éÄ¬ÈÏµãÁÁ
+	LedBoardStaus[LED_YWFLASH] = LED_STATUS_ON;//é»„é—ªå™¨ä½œä¸ºåŸºæœ¬æ¨¡å—é»˜è®¤ç‚¹äº®
 	can1Bool = true;
 	can0Bool = true;
 
@@ -55,10 +55,10 @@ CMainBoardLed::CMainBoardLed()
 }
 /**************************************************************
 Function:       ~CMainBoardLed
-Description:    CMainBoardLed Îö¹¹º¯Êı
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed ææ„å‡½æ•°
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CMainBoardLed::~CMainBoardLed()
 {
@@ -68,10 +68,10 @@ CMainBoardLed::~CMainBoardLed()
 }
 /**************************************************************
 Function:       CreateInstance
-Description:    CMainBoardLed ´´½¨µ¥Àı¶ÔÏó
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed åˆ›å»ºå•ä¾‹å¯¹è±¡
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CMainBoardLed* CMainBoardLed::CreateInstance()
 {
@@ -82,10 +82,10 @@ CMainBoardLed* CMainBoardLed::CreateInstance()
 
 
 /****************
-*ÉèÖÃMODEÖ¸Ê¾µÆÏÔÊ¾×´Ì¬, Ê¹ÓÃMainBackup ÀàÖĞµÄ·½·¨
-		ĞŞÕı:	  ÂÌ£ºÕı³£     0 0
-                  »Æ£º½µ¼¶»ÆÉÁ 0 1
-                  ºì£ºÎŞ·¨¹¤×÷ 1 0
+*è®¾ç½®MODEæŒ‡ç¤ºç¯æ˜¾ç¤ºçŠ¶æ€, ä½¿ç”¨MainBackup ç±»ä¸­çš„æ–¹æ³•
+		ä¿®æ­£:	  ç»¿ï¼šæ­£å¸¸     0 0
+                  é»„ï¼šé™çº§é»„é—ª 0 1
+                  çº¢ï¼šæ— æ³•å·¥ä½œ 1 0
 ***************************************************************/
 void CMainBoardLed::DoModeLed(bool bLed3Value,bool bLed4Value)
 {
@@ -104,8 +104,8 @@ void CMainBoardLed::DoModeLed(bool bLed3Value,bool bLed4Value)
 }
 
 /***********
-*ÉèÖÃTSC/PSCÖ¸Ê¾µÆÏÔÊ¾×´Ì¬,  
-*Ê¹ÓÃMainBackup ÀàÖĞµÄ·½·¨
+*è®¾ç½®TSC/PSCæŒ‡ç¤ºç¯æ˜¾ç¤ºçŠ¶æ€,  
+*ä½¿ç”¨MainBackup ç±»ä¸­çš„æ–¹æ³•
 ***********/
 void CMainBoardLed::DoTscPscLed(bool bValue)
 {
@@ -116,8 +116,8 @@ void CMainBoardLed::DoTscPscLed(bool bValue)
 }
 
 /***********
-*ÉèÖÃAutoÖ¸Ê¾µÆÏÔÊ¾×´Ì¬,  
-*Ê¹ÓÃMainBackup ÀàÖĞµÄ·½·¨
+*è®¾ç½®AutoæŒ‡ç¤ºç¯æ˜¾ç¤ºçŠ¶æ€,  
+*ä½¿ç”¨MainBackup ç±»ä¸­çš„æ–¹æ³•
 **************/
 void CMainBoardLed::DoAutoLed(bool bValue)
 {
@@ -128,8 +128,8 @@ void CMainBoardLed::DoAutoLed(bool bValue)
 }
 
 /*****
-*	ÏµÍ³×Ô¶¯ÔËĞĞ
-*	linux ÏµÍ³ÔËĞĞ
+*	ç³»ç»Ÿè‡ªåŠ¨è¿è¡Œ
+*	linux ç³»ç»Ÿè¿è¡Œ
 ******/
 void CMainBoardLed::DoRunLed()
 {
@@ -139,10 +139,10 @@ void CMainBoardLed::DoRunLed()
 
 /**************************************************************
 Function:       DoCan1Led
-Description:    CMainBoardLed ÉèÖÃCanÖ¸Ê¾µÆÏÔÊ¾×´Ì¬, CAN×ÜÏßÊÕ·¢Ê±ÁÁ,Ê¹ÓÃNLED2 IO¿Ú
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed è®¾ç½®CanæŒ‡ç¤ºç¯æ˜¾ç¤ºçŠ¶æ€, CANæ€»çº¿æ”¶å‘æ—¶äº®,ä½¿ç”¨NLED2 IOå£
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CMainBoardLed::DoCan0Led()
 {
@@ -163,10 +163,10 @@ void CMainBoardLed::DoCan0Led()
 }
 /**************************************************************
 Function:       DoCan1Led
-Description:    CMainBoardLed can1 Ö¸Ê¾µÆ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed can1 æŒ‡ç¤ºç¯
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CMainBoardLed::DoCan1Led()
 {
@@ -187,18 +187,18 @@ void CMainBoardLed::DoCan1Led()
 }
 /**************************************************************
 Function:       IsEthLinkUp
-Description:    CMainBoardLed Íø¿ÚµÆÁÁ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed ç½‘å£ç¯äº®
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 bool CMainBoardLed::IsEthLinkUp()
 {
 	Byte rusult = 0 ;
-	FILE *fpsys = NULL ;             //¶¨Òå¹ÜµÀ·û¾ä±ú
-	fpsys = popen("ifconfig eth0|grep -c RUNNING", "r");  //´ò¿ª¹ÜµÀ,Ö´ĞĞ½Å±¾»òÃüÁî
-	fread(&rusult, 1 , 1,fpsys) ;            //¶ÁÈ¡¹ÜµÀ·û,»ñµÃÖ´ĞĞ½á¹û
-	pclose(fpsys);                     //¹Ø±Õ¹ÜµÀ·û¾ä±ú
+	FILE *fpsys = NULL ;             //å®šä¹‰ç®¡é“ç¬¦å¥æŸ„
+	fpsys = popen("ifconfig eth0|grep -c RUNNING", "r");  //æ‰“å¼€ç®¡é“,æ‰§è¡Œè„šæœ¬æˆ–å‘½ä»¤
+	fread(&rusult, 1 , 1,fpsys) ;            //è¯»å–ç®¡é“ç¬¦,è·å¾—æ‰§è¡Œç»“æœ
+	pclose(fpsys);                     //å…³é—­ç®¡é“ç¬¦å¥æŸ„
 	fpsys = NULL;
 	if(rusult ==(Byte)'1')
 	{
@@ -214,10 +214,10 @@ bool CMainBoardLed::IsEthLinkUp()
 }
 /**************************************************************
 Function:       DoLedBoardShow
-Description:    CMainBoardLed  LEDÃæ°åµÆÁÁ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed  LEDé¢æ¿ç¯äº®
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CMainBoardLed::DoLedBoardShow()
 {
@@ -235,10 +235,10 @@ void CMainBoardLed::DoLedBoardShow()
 
 /**************************************************************
 Function:       SetLedBoardShow
-Description:    CMainBoardLed ÉèÖÃledÃæ°åµÆÁÁ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CMainBoardLed è®¾ç½®ledé¢æ¿ç¯äº®
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CMainBoardLed::SetLedBoardShow()
 {		
@@ -268,11 +268,11 @@ void CMainBoardLed::SetLedBoardShow()
 
 /**************************************************************
 Function:       SetSignalLed
-Description:   ÉèÖÃµ¥¶ÀµÄÏÔÊ¾µÆ°åLEDµÆ×´Ì¬
-Input:           LedIndex - Ä£¿éLEDµÆË÷Òı
-			LedStatus - Ö¸¶¨LEDµÆ×´Ì¬
-Output:         ÎŞ
-Return:         ÎŞ
+Description:   è®¾ç½®å•ç‹¬çš„æ˜¾ç¤ºç¯æ¿LEDç¯çŠ¶æ€
+Input:           LedIndex - æ¨¡å—LEDç¯ç´¢å¼•
+			LedStatus - æŒ‡å®šLEDç¯çŠ¶æ€
+Output:         æ— 
+Return:         æ— 
 Date:           20141106
 ***************************************************************/
 
@@ -287,10 +287,10 @@ void CMainBoardLed::SetSignalLed(Byte LedIndex ,Byte LedStatus)
 /****************************************************************
 *
 Function:       CMainBoardLed::RecvMainBdLedCan
-Description:    ¶Ô´ÓµÆÌõCANÊı¾İ½øĞĞ´¦Àí
-Input:            Can×ÜÏß½ÓÊÕµ½µÄµÆÌõÊı¾İÖ¡
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å¯¹ä»ç¯æ¡CANæ•°æ®è¿›è¡Œå¤„ç†
+Input:            Canæ€»çº¿æ¥æ”¶åˆ°çš„ç¯æ¡æ•°æ®å¸§
+Output:         æ— 
+Return:         æ— 
 Date:           20141023
 *****************************************************************/
 void CMainBoardLed::RecvMainBdLedCan(SCanFrame sRecvCanTmp)

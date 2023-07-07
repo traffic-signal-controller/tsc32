@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   WatchDog.cpp
 Date:       2013-1-1
-Description:¿´ÃÅ¹·Éè±¸ÎÄ¼þ²Ù×÷ÎÄ¼þ
+Description:çœ‹é—¨ç‹—è®¾å¤‡æ–‡ä»¶æ“ä½œæ–‡ä»¶
 Version:    V1.0
 History:    
 ***************************************************************/
@@ -12,10 +12,10 @@ History:
 
 /**************************************************************
 Function:       WatchDog::WatchDog
-Description:    WatchDogÀà¹¹Ôìº¯Êý£¬³õÊ¼»¯¿´ÃÅ¹·²ÎÊý				
-Input:          ÎÞ              
-Output:         ÎÞ
-Return:         ÎÞ
+Description:    WatchDogç±»æž„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–çœ‹é—¨ç‹—å‚æ•°				
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 WatchDog::WatchDog()
 {
@@ -25,10 +25,10 @@ WatchDog::WatchDog()
 
 /**************************************************************
 Function:       WatchDog::~WatchDog
-Description:    WatchDogÀàÎö¹¹º¯Êý	
-Input:          ÎÞ              
-Output:         ÎÞ
-Return:         ÎÞ
+Description:    WatchDogç±»æžæž„å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 WatchDog::~WatchDog()
 {
@@ -37,10 +37,10 @@ WatchDog::~WatchDog()
 
 /**************************************************************
 Function:       WatchDog::CreateInstance
-Description:    ´´½¨	WatchDog¾²Ì¬¶ÔÏó
-Input:          ÎÞ              
-Output:         ÎÞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»º	WatchDogé™æ€å¯¹è±¡
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 WatchDog* WatchDog::CreateInstance()
 {
@@ -52,10 +52,10 @@ WatchDog* WatchDog::CreateInstance()
 
 /**************************************************************
 Function:       WatchDog::OpenWatchdog
-Description:    ´ò¿ª¿´ÃÅ¹·Éè±¸ÎÄ¼þ
-Input:          ÎÞ              
-Output:         ÎÞ
-Return:         ÎÞ
+Description:    æ‰“å¼€çœ‹é—¨ç‹—è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void WatchDog::OpenWatchdog()
 {
@@ -67,7 +67,7 @@ void WatchDog::OpenWatchdog()
 	ioctl(m_watchdogFd, WDIOC_GETTIMEOUT, &timeout);
 	ACE_DEBUG((LM_DEBUG,"%s:%d The timeout was is %d seconds\n\n",__FILE__,__LINE__,timeout));
 	
-	//ÏÂÃæÎªforlinuxºËÐÄ°åÀïµÄ´úÂë
+	//ä¸‹é¢ä¸ºforlinuxæ ¸å¿ƒæ¿é‡Œçš„ä»£ç 
 	//m_watchdogFd = open(DEV_WATCHDOG, O_WRONLY, 0);
 #endif
 }
@@ -75,10 +75,10 @@ void WatchDog::OpenWatchdog()
 
 /**************************************************************
 Function:       WatchDog::CloseWatchdog
-Description:    ¹Ø±Õ¿´ÃÅ¹·Éè±¸ÎÄ¼þ
-Input:          ÎÞ              
-Output:         ÎÞ
-Return:         ÎÞ
+Description:    å…³é—­çœ‹é—¨ç‹—è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void WatchDog::CloseWatchdog()
 {
@@ -93,17 +93,17 @@ void WatchDog::CloseWatchdog()
 
 /**************************************************************
 Function:       WatchDog::FillWatchdog
-Description:    Î¹¹·²Ù×÷£¬Èç¹ûÊäÈë×Ö·û¡®V¡¯£¬¿ÉÒÔ¹Ø±Õ¿´ÃÅ¹·£¨À©Õ¹£©
-Input:          ÎÞ              
-Output:         ÎÞ
-Return:         ÎÞ
+Description:    å–‚ç‹—æ“ä½œï¼Œå¦‚æžœè¾“å…¥å­—ç¬¦â€˜Vâ€™ï¼Œå¯ä»¥å…³é—­çœ‹é—¨ç‹—ï¼ˆæ‰©å±•ï¼‰
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void WatchDog::FillWatchdog(char cData)
 {
 #ifndef WINDOWS
 	if(m_watchdogFd > 0)
 	{
-		write(m_watchdogFd, &cData, sizeof(cData)); //Î¹¹·²Ù×÷£¬Èç¹ûÊäÈë×Ö·û¡®V¡¯£¬¿ÉÒÔ¹Ø±Õ¿´ÃÅ¹·
+		write(m_watchdogFd, &cData, sizeof(cData)); //å–‚ç‹—æ“ä½œï¼Œå¦‚æžœè¾“å…¥å­—ç¬¦â€˜Vâ€™ï¼Œå¯ä»¥å…³é—­çœ‹é—¨ç‹—
 		//ACE_DEBUG((LM_DEBUG,"%s:%d filldog\n",__FILE__,__LINE__));
 	}
 #endif

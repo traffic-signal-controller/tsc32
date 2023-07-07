@@ -59,20 +59,20 @@ const Ushort LARGE_BUF_SIZE     = 1024;
 const Ushort MAX_STRING_LEN     = 255;
 const Ushort MAX_MODULE_COUNT   = 16;
 const Ushort MAX_PLAN_COUNT     = 40;
-const Ushort MAX_STAGE_COUNT    = 16;   /*·½°¸µÄ×î´ó½×¶ÎÊı*/
-const Ushort MAX_PHASE_COUNT    = 32;   /*×î´óÏàÎ»Êı*/
-const Byte  MAX_STAGEFACT_CNT  = 30;   //Í³¼ÆĞÅÏ¢ 30Ìì
+const Ushort MAX_STAGE_COUNT    = 16;   /*æ–¹æ¡ˆçš„æœ€å¤§é˜¶æ®µæ•°*/
+const Ushort MAX_PHASE_COUNT    = 32;   /*æœ€å¤§ç›¸ä½æ•°*/
+const Byte  MAX_STAGEFACT_CNT  = 30;   //ç»Ÿè®¡ä¿¡æ¯ 30å¤©
 
 
 
 /*
-	Ä£¿éÀàĞÍÃ¶¾Ù
+	æ¨¡å—ç±»å‹æšä¸¾
 */
 enum
 {
-    MODULE_OTHER        = 1,        //ÆäËûÀàĞÍ
-    MODULE_HARDWARE     = 2,        //Ó²¼şÄ£¿é
-    MODULE_SOFTWARE     = 3        //Èí¼şÄ£¿é
+    MODULE_OTHER        = 1,        //å…¶ä»–ç±»å‹
+    MODULE_HARDWARE     = 2,        //ç¡¬ä»¶æ¨¡å—
+    MODULE_SOFTWARE     = 3        //è½¯ä»¶æ¨¡å—
 };
 
 
@@ -81,56 +81,56 @@ enum
  
 enum
 {
-    TBL_SYSTEM,			 //ÏµÍ³±í
-    TBL_CONSTANT,        //³£Á¿±í
-    TBL_MODULE,			 //Ä£¿é±í
-    TBL_PLAN,			 //Ê±»ùµ÷¶È±í
-    TBL_SCHEDULE,  		 //Ê±¶Î±í
-    TBL_PHASE,			 //ÏàÎ»±í
-    TBL_COLLISION,       //ÏàÎ»³åÍ»±í
-    TBL_DETECTOR,        //¼ì²âÆ÷±í
-    TBL_CHANNEL,         //Í¨µÀ±í
-    TBL_PATTERN,         //·½°¸±í
-    TBL_STAGEPATTERN,    //½×¶ÎÅäÊ±±í
-    TBL_OVERLAPPHASE,    //¸úËæÏàÎ»±í
-    TBL_EVENTTYPE,       //ÊÂ¼şÀàĞÍ±í
-    TBL_EVENTLOG,        //ÊÂ¼şÈÕÖ¾±í
-	TBL_VEHICLESTAT,     //³µÁ¾Í³¼Æ ´Ó´ËÒÔÏÂ¾ùÎªÀ©Õ¹±í
-	TBL_CNTDOWNDEV,      //µ¹¼ÆÊ±ÅäÖÃ
-	TBL_SPECFUN,         //ÌØÊâ¹¦ÄÜÅäÖÃ±í
-	TBL_DET_EXTEND,      //¼ì²âÆ÷À©Õ¹±í
-	TBL_STAGE_FACTTIME,  //¼ÇÂ¼¸÷¸ö½×¶ÎµÄÊ±¼ä
-	TBL_ADAPT_STAGETIME, //×ÔÊÊÓ¦¿ØÖÆÉú³ÉµÄ¸÷¸ö½×¶ÎÊ±¼ä
-	TBL_PHASE2DIREC,     //ÏàÎ»Óë·½Ïò¶ÔÓ¦±í
-	TBL_ADAPT_PARA,      //×ÔÊÊÓ¦¿ØÖÆ²ÎÊı
-   	TBL_LAMP_CHECK,      //µÆÅİÍ¨µÀ¼ì²â±í
-    TABLE_COUNT          //ĞÅºÅ¼°ÏµÍ³±íÊıÁ¿
+    TBL_SYSTEM,			 //ç³»ç»Ÿè¡¨
+    TBL_CONSTANT,        //å¸¸é‡è¡¨
+    TBL_MODULE,			 //æ¨¡å—è¡¨
+    TBL_PLAN,			 //æ—¶åŸºè°ƒåº¦è¡¨
+    TBL_SCHEDULE,  		 //æ—¶æ®µè¡¨
+    TBL_PHASE,			 //ç›¸ä½è¡¨
+    TBL_COLLISION,       //ç›¸ä½å†²çªè¡¨
+    TBL_DETECTOR,        //æ£€æµ‹å™¨è¡¨
+    TBL_CHANNEL,         //é€šé“è¡¨
+    TBL_PATTERN,         //æ–¹æ¡ˆè¡¨
+    TBL_STAGEPATTERN,    //é˜¶æ®µé…æ—¶è¡¨
+    TBL_OVERLAPPHASE,    //è·Ÿéšç›¸ä½è¡¨
+    TBL_EVENTTYPE,       //äº‹ä»¶ç±»å‹è¡¨
+    TBL_EVENTLOG,        //äº‹ä»¶æ—¥å¿—è¡¨
+	TBL_VEHICLESTAT,     //è½¦è¾†ç»Ÿè®¡ ä»æ­¤ä»¥ä¸‹å‡ä¸ºæ‰©å±•è¡¨
+	TBL_CNTDOWNDEV,      //å€’è®¡æ—¶é…ç½®
+	TBL_SPECFUN,         //ç‰¹æ®ŠåŠŸèƒ½é…ç½®è¡¨
+	TBL_DET_EXTEND,      //æ£€æµ‹å™¨æ‰©å±•è¡¨
+	TBL_STAGE_FACTTIME,  //è®°å½•å„ä¸ªé˜¶æ®µçš„æ—¶é—´
+	TBL_ADAPT_STAGETIME, //è‡ªé€‚åº”æ§åˆ¶ç”Ÿæˆçš„å„ä¸ªé˜¶æ®µæ—¶é—´
+	TBL_PHASE2DIREC,     //ç›¸ä½ä¸æ–¹å‘å¯¹åº”è¡¨
+	TBL_ADAPT_PARA,      //è‡ªé€‚åº”æ§åˆ¶å‚æ•°
+   	TBL_LAMP_CHECK,      //ç¯æ³¡é€šé“æ£€æµ‹è¡¨
+    TABLE_COUNT          //ä¿¡å·åŠç³»ç»Ÿè¡¨æ•°é‡
 };
 
 /*
-	ÏµÍ³±íĞÅÏ¢½á¹¹Ìå
+	ç³»ç»Ÿè¡¨ä¿¡æ¯ç»“æ„ä½“
 */
 typedef struct
 {
-    int     iTblId;       //ĞòºÅ
-    int     iFieldCount;  //±í×Ö¶ÎÊı
-    char*   sTblName;     //±íÃû
-    char**  sFieldName;   //±í×Ö¶ÎÃû
+    int     iTblId;       //åºå·
+    int     iFieldCount;  //è¡¨å­—æ®µæ•°
+    char*   sTblName;     //è¡¨å
+    char**  sFieldName;   //è¡¨å­—æ®µå
 }PACKED TableDesc;
 
 /*
-	Êı¾İ¿â±í´¦ÀíÄ£°åÀà
+	æ•°æ®åº“è¡¨å¤„ç†æ¨¡æ¿ç±»
 */
 template <class TD, class TC>
 class DbArray
 {
 public:
-    DbArray(void)      				//Ä¬ÈÏ¹¹Ôìº¯Êı
+    DbArray(void)      				//é»˜è®¤æ„é€ å‡½æ•°
     {
         m_uCount = 0; 
         m_pData = NULL;
     };
-    ~DbArray(void)                  //Îö¹¹º¯Êı
+    ~DbArray(void)                  //ææ„å‡½æ•°
     {
         if (NULL != m_pData)
         {
@@ -140,7 +140,7 @@ public:
         m_pData     = NULL;
         m_uCount    = 0;
     };
-    DbArray(const TD* pData, TC uCount)   //´ø²Î¹¹Ôìº¯Êı
+    DbArray(const TD* pData, TC uCount)   //å¸¦å‚æ„é€ å‡½æ•°
     {
         m_uCount   = 0;
         m_pData    = NULL;
@@ -159,7 +159,7 @@ public:
         }
     };
     
-    DbArray(DbArray& dbArray)               //¸´ÖÆ¹¹Ôìº¯Êı
+    DbArray(DbArray& dbArray)               //å¤åˆ¶æ„é€ å‡½æ•°
     {
         m_uCount   = 0;
         m_pData    = NULL;
@@ -183,14 +183,14 @@ public:
     };
     
     
-    TD* GetData(TC& uCount)    //´ø²ÎÊı¾İ»ñÈ¡º¯Êı
+    TD* GetData(TC& uCount)    //å¸¦å‚æ•°æ®è·å–å‡½æ•°
     {
         uCount = m_uCount;
         return m_pData;
     };
     
     
-    TD* GetData()              //ÎŞ²ÎÊı¾İ»ñÈ¡º¯Êı
+    TD* GetData()              //æ— å‚æ•°æ®è·å–å‡½æ•°
     {
         return m_pData;
     }
@@ -200,7 +200,7 @@ public:
     };
     
     
-    bool SetData(const TD* pData, TC uCount)   //Êı¾İÉèÖÃº¯Êı
+    bool SetData(const TD* pData, TC uCount)   //æ•°æ®è®¾ç½®å‡½æ•°
     {
         if (NULL != m_pData)
         {
@@ -231,7 +231,7 @@ public:
     };
     
     
-    bool SetString(const char* sString)     //×Ö·û´®ÉèÖÃº¯Êı
+    bool SetString(const char* sString)     //å­—ç¬¦ä¸²è®¾ç½®å‡½æ•°
     {
         if (1 != sizeof(TD))
         {
@@ -250,7 +250,7 @@ public:
     };
     
     
-    bool AllocData(TC uCount)                   //¿Õ¼ä·ÖÅäº¯Êı
+    bool AllocData(TC uCount)                   //ç©ºé—´åˆ†é…å‡½æ•°
     {
         if (NULL != m_pData)
         {
@@ -281,7 +281,7 @@ public:
     };
 
 
-    DbArray &operator = (DbArray& dbArray)    //ÔËËã·ûÖØÔØ
+    DbArray &operator = (DbArray& dbArray)    //è¿ç®—ç¬¦é‡è½½
     {
         if (NULL != m_pData)
         {
@@ -315,238 +315,238 @@ public:
     TD*     m_pData;
 };
 
-typedef DbArray<Char, Ushort>       DbString;      //¹¹Ôì¶ÔÏó
+typedef DbArray<Char, Ushort>       DbString;      //æ„é€ å¯¹è±¡
 
-typedef DbArray<Byte, Byte>         DbByteArray;   //¹¹Ôì¶ÔÏó
+typedef DbArray<Byte, Byte>         DbByteArray;   //æ„é€ å¯¹è±¡
 
 
 /*
-ÃèÊö:¹«¹²ÅäÖÃÏà¹Ø¶ÔÏó±í 0x81-0x84
-ËµÃ÷:C2.2    °üº¬ÁËÊµÏÖ´ó¶àÊıÉè±¸ÀàĞÍµÄÅäÖÃ¹¦ÄÜµÄ¹«ÓÃ¶ÔÏó
+æè¿°:å…¬å…±é…ç½®ç›¸å…³å¯¹è±¡è¡¨ 0x81-0x84
+è¯´æ˜:C2.2    åŒ…å«äº†å®ç°å¤§å¤šæ•°è®¾å¤‡ç±»å‹çš„é…ç½®åŠŸèƒ½çš„å…¬ç”¨å¯¹è±¡
 */
 typedef struct
 {
-    Ushort usDevicId;       /*0x81 ¹«¹²Éè±¸Ê¶±ğ²ÎÊı*/
-    Byte  ucMaxModule;     /*0x82 ¹«¹²Ä£¿é±íµÄ×î´óĞĞÊı*/
-    Ushort usSynchTime;     /*0x83 ¹«¹²Í¬²½Ê±¼ä*/
-    Ushort usSynchFlag;     /*0x84 ¹«¹²Í¬²½±êÖ¾*/
+    Ushort usDevicId;       /*0x81 å…¬å…±è®¾å¤‡è¯†åˆ«å‚æ•°*/
+    Byte  ucMaxModule;     /*0x82 å…¬å…±æ¨¡å—è¡¨çš„æœ€å¤§è¡Œæ•°*/
+    Ushort usSynchTime;     /*0x83 å…¬å…±åŒæ­¥æ—¶é—´*/
+    Ushort usSynchFlag;     /*0x84 å…¬å…±åŒæ­¥æ ‡å¿—*/
 }PACKED TblCommonPara;
 
 /*
-ÃèÊö:Ä£¿é²ÎÊı±í 0x86
-ËµÃ÷:C2.3
-    º¬ÓĞÈí¼şºÏÓ²¼ş³§ÉÌµÄĞÅÏ¢£¬Ã¿¸ö¹ØÁªÄ£¿éµÄĞÍºÅ¡¢°æ±¾£¬
-    ÒÔ¼°Ä£¿éÊ¹Ó²¼ş²úÆ·»¹ÊÇÈí¼ş²úÆ·µÄ¶¨ÒåĞÅÏ¢
+æè¿°:æ¨¡å—å‚æ•°è¡¨ 0x86
+è¯´æ˜:C2.3
+    å«æœ‰è½¯ä»¶åˆç¡¬ä»¶å‚å•†çš„ä¿¡æ¯ï¼Œæ¯ä¸ªå…³è”æ¨¡å—çš„å‹å·ã€ç‰ˆæœ¬ï¼Œ
+    ä»¥åŠæ¨¡å—ä½¿ç¡¬ä»¶äº§å“è¿˜æ˜¯è½¯ä»¶äº§å“çš„å®šä¹‰ä¿¡æ¯
 */
 typedef struct
 {
-    Byte       ucModuleId;                 /*Ä£¿é±íË÷Òı,1-16*/
-    DbString    strDevNode;                 /*Ä£¿éÉè±¸½Úµã*/
-    DbString    strCompany;                 /*Ä£¿éÖÆÔìÉÌ*/
-    DbString    strModel;                   /*Ä£¿éĞÍºÅ*/
-    DbString    strVersion;                 /*Ä£¿é°æ±¾*/
-    Byte       ucType;                     /*Ä£¿éÀàĞÍ,¼ûÃ¶¾ÙenModuleType*/
+    Byte       ucModuleId;                 /*æ¨¡å—è¡¨ç´¢å¼•,1-16*/
+    DbString    strDevNode;                 /*æ¨¡å—è®¾å¤‡èŠ‚ç‚¹*/
+    DbString    strCompany;                 /*æ¨¡å—åˆ¶é€ å•†*/
+    DbString    strModel;                   /*æ¨¡å—å‹å·*/
+    DbString    strVersion;                 /*æ¨¡å—ç‰ˆæœ¬*/
+    Byte       ucType;                     /*æ¨¡å—ç±»å‹,è§æšä¸¾enModuleType*/
 }Module;
-typedef DbArray<Module, Byte>     TblModule;  //¶¨ÒåÄ£¿éÊı¾İ±í´¦ÀíÀà
+typedef DbArray<Module, Byte>     TblModule;  //å®šä¹‰æ¨¡å—æ•°æ®è¡¨å¤„ç†ç±»
 
 /*
-ÃèÊö:¹«¹²Ê±¼ä²ÎÊı 0x86-0x8C
-ËµÃ÷:C3.1
-    °üº¬ÁËÊµÏÖ´ó¶àÊıÉè±¸ÀàĞÍµÄÊ±¼äÏà¹Ø¹¦ÄÜµÄ¹²ÓÃ¶ÔÏó
+æè¿°:å…¬å…±æ—¶é—´å‚æ•° 0x86-0x8C
+è¯´æ˜:C3.1
+    åŒ…å«äº†å®ç°å¤§å¤šæ•°è®¾å¤‡ç±»å‹çš„æ—¶é—´ç›¸å…³åŠŸèƒ½çš„å…±ç”¨å¯¹è±¡
 */
 typedef struct
 {
-    Ulong       ulUtc;                      /*0x86 UTCÊ±¼ä,´Ó1970-01-01 00:00:00ÖÁ½ñµÄÃëÊı*/
-    Long        lZone;                      /*0x87 Ê±Çø,ÓÚUTCÊ±¼äµÄÏà²îµÄÃëÊı*/
-    Ulong       ulLocal;                    /*0x88 ±¾µØÊ±¼ä*/
-    Byte       ucMaxPlanCnt;               /*0x89 µ÷¶È¼Æ»®±íµÄ×î´óĞĞÊı*/
-    Byte       ucMaxScheduleCnt;           /*0x8A Ê±¶Î±íµÄ×î´óÊı*/
-    Byte       ucMaxEvtCount;              /*0x8B Ê±¶Î±í×î´óÊ±¶ÎÊı(ÊÂ¼ş)*/
-    Byte       ucActiveSheduleNo;          /*0x8C »î¶¯Ê±¶Î±íµÄ±àºÅ*/
+    Ulong       ulUtc;                      /*0x86 UTCæ—¶é—´,ä»1970-01-01 00:00:00è‡³ä»Šçš„ç§’æ•°*/
+    Long        lZone;                      /*0x87 æ—¶åŒº,äºUTCæ—¶é—´çš„ç›¸å·®çš„ç§’æ•°*/
+    Ulong       ulLocal;                    /*0x88 æœ¬åœ°æ—¶é—´*/
+    Byte       ucMaxPlanCnt;               /*0x89 è°ƒåº¦è®¡åˆ’è¡¨çš„æœ€å¤§è¡Œæ•°*/
+    Byte       ucMaxScheduleCnt;           /*0x8A æ—¶æ®µè¡¨çš„æœ€å¤§æ•°*/
+    Byte       ucMaxEvtCount;              /*0x8B æ—¶æ®µè¡¨æœ€å¤§æ—¶æ®µæ•°(äº‹ä»¶)*/
+    Byte       ucActiveSheduleNo;          /*0x8C æ´»åŠ¨æ—¶æ®µè¡¨çš„ç¼–å·*/
 }PACKED TblTimePara;
 
 /*
-ÃèÊö:Ê±»ùµ÷¶È±í 0x8D
-ËµÃ÷:C3.2
+æè¿°:æ—¶åŸºè°ƒåº¦è¡¨ 0x8D
+è¯´æ˜:C3.2
 */
 typedef struct
 {
-    Byte       ucId;                       /*µ÷¶È¼Æ»®ºÅ,1-40*/
-    Ushort      usMonthFlag;                /*µ÷¶ÈÔÂ£¬bit1ÖÁbit12·Ö±ğ¶ÔÓ¦1µ½12¸öÔÂ*/
-    Byte       ucWeekFlag;                 /*µ÷¶ÈÌì£¬bit1ÖÁbit7¶ÔÓ¦ÖÜÒ»ÖÁÖÜÌì*/
-    Ulong       ulDayFlag;                  /*µ÷¶ÈÌì£¬bit1ÖÁbit7¶ÔÓ¦1ºÅÖÁ31ºÅ*/
-    Byte       ucScheduleId;               /*Ê±¶Î±íºÅ*/
+    Byte       ucId;                       /*è°ƒåº¦è®¡åˆ’å·,1-40*/
+    Ushort      usMonthFlag;                /*è°ƒåº¦æœˆï¼Œbit1è‡³bit12åˆ†åˆ«å¯¹åº”1åˆ°12ä¸ªæœˆ*/
+    Byte       ucWeekFlag;                 /*è°ƒåº¦å¤©ï¼Œbit1è‡³bit7å¯¹åº”å‘¨ä¸€è‡³å‘¨å¤©*/
+    Ulong       ulDayFlag;                  /*è°ƒåº¦å¤©ï¼Œbit1è‡³bit7å¯¹åº”1å·è‡³31å·*/
+    Byte       ucScheduleId;               /*æ—¶æ®µè¡¨å·*/
 }PACKED Plan;
-typedef DbArray<Plan, Byte>       TblPlan; //¶¨ÒåÊ±»ùµ÷¶È±í´¦ÀíÀà
+typedef DbArray<Plan, Byte>       TblPlan; //å®šä¹‰æ—¶åŸºè°ƒåº¦è¡¨å¤„ç†ç±»
 
 /*
-ÃèÊö:Ê±¶Î±í   0x8E
-ËµÃ÷:C3.3
+æè¿°:æ—¶æ®µè¡¨   0x8E
+è¯´æ˜:C3.3
 */
 typedef struct
 {
-    Byte       ucScheduleId;               /*Ê±¶Î±íºÅ*/
-    Byte       ucEvtId;                    /*Ê±¶ÎÊÂ¼şºÅ*/
-    Byte       ucBgnHour;                  /*¿ªÊ¼Ö´ĞĞµÄÕûµãÊı*/
-    Byte       ucBgnMinute;                /*¿ªÊ¼Ö´ĞĞµÄÕû·ÖÊı*/
-    Byte       ucCtrlMode;                 /*¿ØÖÆ·½Ê½£¬¼ûÃ¶¾ÙenControlMode*/
-    Byte       ucPatternNo;                /*ÅäÊ±·½°¸ºÅ*/
-    Byte       ucAuxOut;                   /*¸¨Öú¹¦ÄÜÊä³ö*/
-    Byte       ucSpecialOut;               /*ÌØÊâ¹¦ÄÜÊä³ö*/
+    Byte       ucScheduleId;               /*æ—¶æ®µè¡¨å·*/
+    Byte       ucEvtId;                    /*æ—¶æ®µäº‹ä»¶å·*/
+    Byte       ucBgnHour;                  /*å¼€å§‹æ‰§è¡Œçš„æ•´ç‚¹æ•°*/
+    Byte       ucBgnMinute;                /*å¼€å§‹æ‰§è¡Œçš„æ•´åˆ†æ•°*/
+    Byte       ucCtrlMode;                 /*æ§åˆ¶æ–¹å¼ï¼Œè§æšä¸¾enControlMode*/
+    Byte       ucPatternNo;                /*é…æ—¶æ–¹æ¡ˆå·*/
+    Byte       ucAuxOut;                   /*è¾…åŠ©åŠŸèƒ½è¾“å‡º*/
+    Byte       ucSpecialOut;               /*ç‰¹æ®ŠåŠŸèƒ½è¾“å‡º*/
 }PACKED Schedule;
-typedef DbArray<Schedule, Ushort>       TblSchedule;  //¶¨ÒåÊ±¶Î±í´¦ÀíÀà
+typedef DbArray<Schedule, Ushort>       TblSchedule;  //å®šä¹‰æ—¶æ®µè¡¨å¤„ç†ç±»
 
 
 /*
-ÃèÊö:ÊÂ¼ş²ÎÊı±í
-ËµÃ÷:C4.1
+æè¿°:äº‹ä»¶å‚æ•°è¡¨
+è¯´æ˜:C4.1
 */
 typedef struct
 {
-    Byte   ucMaxEvtType;                   /*0x8F ÊÂ¼şÀàĞÍ±íµÄ×î´óĞĞÊı*/
-    Byte   ucMaxLogLine;                   /*0x90 ÊÂ¼şÈÕÖ¾±íµÄ×î´óĞĞÊı*/
+    Byte   ucMaxEvtType;                   /*0x8F äº‹ä»¶ç±»å‹è¡¨çš„æœ€å¤§è¡Œæ•°*/
+    Byte   ucMaxLogLine;                   /*0x90 äº‹ä»¶æ—¥å¿—è¡¨çš„æœ€å¤§è¡Œæ•°*/
 }PACKED TblEventPara;
 
 
 /*
-ÃèÊö:ÊÂ¼şÀàĞÍ±í 0x91
-ËµÃ÷:C4.2
+æè¿°:äº‹ä»¶ç±»å‹è¡¨ 0x91
+è¯´æ˜:C4.2
 
 */
 typedef struct
 {
-    Byte       ucEvtTypeId;                /*ÊÂ¼şÀàĞÍ±àºÅ*/
-    Ulong       ulClearTime;                /*ÊÂ¼şÀàĞÍµÄÇå³ıÊ±¼ä*/
-    DbString    strEvtDesc;                 /*ÊÂ¼şÀàĞÍÃèÊö*/
-    Byte       ucLogCount;                 /*¸ÃÀàÊÂ¼şÔÚÊÂ¼şÈÕÖ¾±íÖĞµÄĞĞÊı*/
+    Byte       ucEvtTypeId;                /*äº‹ä»¶ç±»å‹ç¼–å·*/
+    Ulong       ulClearTime;                /*äº‹ä»¶ç±»å‹çš„æ¸…é™¤æ—¶é—´*/
+    DbString    strEvtDesc;                 /*äº‹ä»¶ç±»å‹æè¿°*/
+    Byte       ucLogCount;                 /*è¯¥ç±»äº‹ä»¶åœ¨äº‹ä»¶æ—¥å¿—è¡¨ä¸­çš„è¡Œæ•°*/
 }EventType;
-typedef DbArray<EventType, Byte>   TblEventType;  //¶¨ÒåÈÕÖ¾ÀàĞÍ´¦ÀíÀà
+typedef DbArray<EventType, Byte>   TblEventType;  //å®šä¹‰æ—¥å¿—ç±»å‹å¤„ç†ç±»
 
 
 
 /*
-ÃèÊö:ÊÂ¼şÈÕÖ¾±í 0x92
-ËµÃ÷:C4.3
+æè¿°:äº‹ä»¶æ—¥å¿—è¡¨ 0x92
+è¯´æ˜:C4.3
 */
 typedef struct
 {
-    Byte       ucEventId;                  /*ÊÂ¼ş±àºÅ*/
-    Byte       ucEvtType;                  /*ÊÂ¼şÀàĞÍ*/
-    Ulong       ulHappenTime;               /*ÊÂ¼ş·¢ÉúµÄÊ±¼ä*/
-    Ulong       ulEvtValue;                 /*ÊÂ¼şÖµ*/
+    Byte       ucEventId;                  /*äº‹ä»¶ç¼–å·*/
+    Byte       ucEvtType;                  /*äº‹ä»¶ç±»å‹*/
+    Ulong       ulHappenTime;               /*äº‹ä»¶å‘ç”Ÿçš„æ—¶é—´*/
+    Ulong       ulEvtValue;                 /*äº‹ä»¶å€¼*/
 }PACKED EventLog;
-typedef DbArray<EventLog, unsigned int>     TblEventLog; //¶¨ÒåÈÕÖ¾´¦ÀíÀà
+typedef DbArray<EventLog, unsigned int>     TblEventLog; //å®šä¹‰æ—¥å¿—å¤„ç†ç±»
 
 
 
 typedef struct
 {
-	Ulong       ulId;                       /*±àºÅ*/
-	Byte       ucDetId;                    /*¼ì²âÆ÷id*/
-	Ulong       ulCarTotal;                 /*³µÁ¾×ÜÁ÷Á¿ÅÅ¶Ó³¤¶È*/
-	Byte       ucOccupancy;                /*Õ¼ÓĞÂÊ*/
-	Ulong       ulAddtime;                 /*¼ÇÂ¼Ìí¼ÓµÄÊ±¼ä*/
+	Ulong       ulId;                       /*ç¼–å·*/
+	Byte       ucDetId;                    /*æ£€æµ‹å™¨id*/
+	Ulong       ulCarTotal;                 /*è½¦è¾†æ€»æµé‡æ’é˜Ÿé•¿åº¦*/
+	Byte       ucOccupancy;                /*å æœ‰ç‡*/
+	Ulong       ulAddtime;                 /*è®°å½•æ·»åŠ çš„æ—¶é—´*/
 }PACKED VehicleStat;
-typedef DbArray<VehicleStat, Ulong>    TblVehicleStat;  //¶¨Òå³µÁ¾Í³¼ÆÀà
+typedef DbArray<VehicleStat, Ulong>    TblVehicleStat;  //å®šä¹‰è½¦è¾†ç»Ÿè®¡ç±»
 
 /*
-ÃèÊö:ÏàÎ»Ïà¹Ø²ÎÊı±í
-ËµÃ÷:C5.1
+æè¿°:ç›¸ä½ç›¸å…³å‚æ•°è¡¨
+è¯´æ˜:C5.1
 */
 typedef struct
 {
-    Byte       ucMaxPhaseCount;            /*0x93 ÏàÎ»±íµÄ×î´óĞĞÊı*/
-    Byte       ucMaxPhaseGrp;              /*0x94 ÏàÎ»×´Ì¬×éµÄ×î´óÊıÁ¿*/
+    Byte       ucMaxPhaseCount;            /*0x93 ç›¸ä½è¡¨çš„æœ€å¤§è¡Œæ•°*/
+    Byte       ucMaxPhaseGrp;              /*0x94 ç›¸ä½çŠ¶æ€ç»„çš„æœ€å¤§æ•°é‡*/
 }PACKED PhasePara;
 
 
 /*
-ÃèÊö:ÏàÎ»Ïà¹Ø²ÎÊı±í  0x95
-ËµÃ÷:C5.2
+æè¿°:ç›¸ä½ç›¸å…³å‚æ•°è¡¨  0x95
+è¯´æ˜:C5.2
 */
 typedef struct
 {
-    Byte       ucPhaseId;                  /*ÏàÎ»ºÅ*/
-    Byte       ucPedestrianGreen;          /*ĞĞÈËÂÌµÆÊ±¼ä*/
-    Byte       ucPedestrianClear;          /*ĞĞÈËÇå¿ÕÊ±¼ä*/
-    Byte       ucMinGreen;                 /*×îĞ¡ÂÌµÆÊ±¼ä*/
-    Byte       ucGreenDelayUnit;           /*µ¥Î»ÂÌµÆÑÓ³¤Ê±¼ä*/
-    Byte       ucMaxGreen1;                /*×î´óÂÌµÆÊ±¼ä1*/
-    Byte       ucMaxGreen2;                /*×î´óÂÌµÆÊ±¼ä2*/
-    Byte       ucFixGreen;                 /*µ¯ĞÔÏàÎ»¹Ì¶¨ÂÌµÆÊ±¼ä*/
-    Byte       ucGreenFlash;               /*ÂÌÉÁÊ±¼ä*/
-    Byte       ucPhaseTypeFlag;            /*ÏàÎ»ÀàĞÍ*/
-    Byte       ucPhaseOption;              /*ÏàÎ»Ñ¡Ïî¹¦ÄÜ*/
-    Byte       ucExtend;                   /*À©Õ¹×Ö¶Î*/
+    Byte       ucPhaseId;                  /*ç›¸ä½å·*/
+    Byte       ucPedestrianGreen;          /*è¡Œäººç»¿ç¯æ—¶é—´*/
+    Byte       ucPedestrianClear;          /*è¡Œäººæ¸…ç©ºæ—¶é—´*/
+    Byte       ucMinGreen;                 /*æœ€å°ç»¿ç¯æ—¶é—´*/
+    Byte       ucGreenDelayUnit;           /*å•ä½ç»¿ç¯å»¶é•¿æ—¶é—´*/
+    Byte       ucMaxGreen1;                /*æœ€å¤§ç»¿ç¯æ—¶é—´1*/
+    Byte       ucMaxGreen2;                /*æœ€å¤§ç»¿ç¯æ—¶é—´2*/
+    Byte       ucFixGreen;                 /*å¼¹æ€§ç›¸ä½å›ºå®šç»¿ç¯æ—¶é—´*/
+    Byte       ucGreenFlash;               /*ç»¿é—ªæ—¶é—´*/
+    Byte       ucPhaseTypeFlag;            /*ç›¸ä½ç±»å‹*/
+    Byte       ucPhaseOption;              /*ç›¸ä½é€‰é¡¹åŠŸèƒ½*/
+    Byte       ucExtend;                   /*æ‰©å±•å­—æ®µ*/
 }PACKED Phase;
-typedef DbArray<Phase, Byte>   TblPhase; //¶¨ÒåÏàÎ»²ÎÊı´¦ÀíÀà
+typedef DbArray<Phase, Byte>   TblPhase; //å®šä¹‰ç›¸ä½å‚æ•°å¤„ç†ç±»
 
 
 /*
-ÃèÊö:ÏàÎ»Êä³ö×´Ì¬±í 0x96
-ËµÃ÷:C5.3
+æè¿°:ç›¸ä½è¾“å‡ºçŠ¶æ€è¡¨ 0x96
+è¯´æ˜:C5.3
 */
 typedef struct
 {
-    Byte       ucId;                       /*Ë÷Òı*/
-    Byte       ucRedOut;                   /*ÏàÎ»µÄºìµÆÊä³ö×´Ì¬*/
-    Byte       ucYellowOut;                /*ÏàÎ»µÄ»ÆµÆÊä³ö×´Ì¬*/
-    Byte       ucGreenOut;                 /*ÏàÎ»µÄÂÌµÆÊä³ö×´Ì¬*/
+    Byte       ucId;                       /*ç´¢å¼•*/
+    Byte       ucRedOut;                   /*ç›¸ä½çš„çº¢ç¯è¾“å‡ºçŠ¶æ€*/
+    Byte       ucYellowOut;                /*ç›¸ä½çš„é»„ç¯è¾“å‡ºçŠ¶æ€*/
+    Byte       ucGreenOut;                 /*ç›¸ä½çš„ç»¿ç¯è¾“å‡ºçŠ¶æ€*/
 }PACKED PhaseSignal;
 
-typedef DbArray<PhaseSignal, Byte>   TblPhaseSignal; //¶¨ÒåÏàÎ»Êä³ö×´Ì¬´¦ÀíÀà
+typedef DbArray<PhaseSignal, Byte>   TblPhaseSignal; //å®šä¹‰ç›¸ä½è¾“å‡ºçŠ¶æ€å¤„ç†ç±»
 
 
 /*
-ÃèÊö:ÏàÎ»³åÍ»±í 0x97
-ËµÃ÷:C5.4
+æè¿°:ç›¸ä½å†²çªè¡¨ 0x97
+è¯´æ˜:C5.4
 
 */
 typedef struct
 {
-    Byte    ucPhaseId;         /*ÏàÎ»ºÅ*/
-    Uint32  usCollisionFlag ;    /*³åÍ»ÏàÎ»*/
+    Byte    ucPhaseId;         /*ç›¸ä½å·*/
+    Uint32  usCollisionFlag ;    /*å†²çªç›¸ä½*/
 }PACKED Collision;
 typedef DbArray<Collision, Byte>   TblCollision;
 
 
 
 /*
-ÃèÊö:¼ì²âÆ÷²ÎÊı
-ËµÃ÷:C6.1
+æè¿°:æ£€æµ‹å™¨å‚æ•°
+è¯´æ˜:C6.1
 */
 typedef struct
 {
-    Byte       ucMaxDetCount;          /*0x98 ¼ì²âÆ÷µÄ×î´óÊıÁ¿*/
-    Byte       uMaxDetGrpCount;        /*0x99 ¼ì²âÆ÷×´Ì¬×éµÄ×î´óÊı*/
-    Byte       ucDataSeqNo;            /*0x9A ¼ì²âÆ÷Êı¾İÁ÷Ë®ºÅ*/
-    Byte       ucDataCycle;            /*0x9B Êı¾İ²É¼¯ÖÜÆÚ*/
-    Byte       uDetCount;              /*0x9C »î¶¯¼ì²âÆ÷µÄ¸öÊı*/
-    Byte       ucPulseSeqNo;           /*0x9D Âö³åÊı¾İÁ÷Ë®ºÅ*/
-    Byte       ucPulseCycle;           /*0x9E Âö³åÊı¾İ²É¼¯ÖÜÆÚ*/
+    Byte       ucMaxDetCount;          /*0x98 æ£€æµ‹å™¨çš„æœ€å¤§æ•°é‡*/
+    Byte       uMaxDetGrpCount;        /*0x99 æ£€æµ‹å™¨çŠ¶æ€ç»„çš„æœ€å¤§æ•°*/
+    Byte       ucDataSeqNo;            /*0x9A æ£€æµ‹å™¨æ•°æ®æµæ°´å·*/
+    Byte       ucDataCycle;            /*0x9B æ•°æ®é‡‡é›†å‘¨æœŸ*/
+    Byte       uDetCount;              /*0x9C æ´»åŠ¨æ£€æµ‹å™¨çš„ä¸ªæ•°*/
+    Byte       ucPulseSeqNo;           /*0x9D è„‰å†²æ•°æ®æµæ°´å·*/
+    Byte       ucPulseCycle;           /*0x9E è„‰å†²æ•°æ®é‡‡é›†å‘¨æœŸ*/
 }PACKED DetectorPara;
 
 
 /*
-ÃèÊö:³µÁ¾¼ì²âÆ÷±í 0x9F
-ËµÃ÷:C6.2
+æè¿°:è½¦è¾†æ£€æµ‹å™¨è¡¨ 0x9F
+è¯´æ˜:C6.2
 */
 typedef struct
 {
-    Byte       ucDetectorId;       /*¼ì²âÆ÷ID*/
-    Byte       ucPhaseId;          /*¼à²âÆ÷¶ÔÓ¦µÄÏàÎ»*/
-    Byte       ucDetFlag;          /*¼ì²âÆ÷ÀàĞÍ±êÊ¶*/
-    Byte       ucDirect;           /*¼ì²âÆ÷·½Ïò*/
-    Byte       ucValidTime;        /*¼ì²âÆ÷ÓĞĞ§Ê±¼ä*/
-    Byte       ucOptionFlag;       /*¼ì²âÆ÷Ñ¡Ïî²ÎÊı*/
-    Ushort      usSaturationFlow;   /*±¥ºÍÁ÷Á¿*/
-    Byte       ucSaturationOccupy; /*±¥ºÍÕ¼ÓĞÂÊ*/
+    Byte       ucDetectorId;       /*æ£€æµ‹å™¨ID*/
+    Byte       ucPhaseId;          /*ç›‘æµ‹å™¨å¯¹åº”çš„ç›¸ä½*/
+    Byte       ucDetFlag;          /*æ£€æµ‹å™¨ç±»å‹æ ‡è¯†*/
+    Byte       ucDirect;           /*æ£€æµ‹å™¨æ–¹å‘*/
+    Byte       ucValidTime;        /*æ£€æµ‹å™¨æœ‰æ•ˆæ—¶é—´*/
+    Byte       ucOptionFlag;       /*æ£€æµ‹å™¨é€‰é¡¹å‚æ•°*/
+    Ushort      usSaturationFlow;   /*é¥±å’Œæµé‡*/
+    Byte       ucSaturationOccupy; /*é¥±å’Œå æœ‰ç‡*/
 }PACKED Detector;
-typedef DbArray<Detector, Byte>   TblDetector;  //¶¨Òå³µÁ¾¼ì²âÆ÷±í´¦ÀíÀà
+typedef DbArray<Detector, Byte>   TblDetector;  //å®šä¹‰è½¦è¾†æ£€æµ‹å™¨è¡¨å¤„ç†ç±»
 
 
 /*
-*ĞÂÔö±í µ¹¼ÆÊ±ÅäÖÃ±í
+*æ–°å¢è¡¨ å€’è®¡æ—¶é…ç½®è¡¨
 */
 typedef struct
 {
@@ -555,249 +555,249 @@ typedef struct
 	Byte       ucOverlapPhase;       
 	Byte       ucMode;       
 }PACKED CntDownDev;
-typedef DbArray<CntDownDev, Byte>   TblCntDownDev; //¶¨Òåµ¹¼ÆÊ±Éè±¸Àà
+typedef DbArray<CntDownDev, Byte>   TblCntDownDev; //å®šä¹‰å€’è®¡æ—¶è®¾å¤‡ç±»
 
 /*
-ÃèÊö:ĞÂÔö±í ¼ì²âÆ÷À©Õ¹±í
+æè¿°:æ–°å¢è¡¨ æ£€æµ‹å™¨æ‰©å±•è¡¨
 */
 typedef struct
 {
-	Byte       ucId;          //¼ì²âÆ÷ºÅ
-	Byte       ucSensi;       //ÁéÃô¶È
-	Byte       ucGrpNo;       //¼ì²âÆ÷×éºÅ
-	Byte       ucPro;         //È¨Öµ
-	Byte       ucOcuDefault;  //Õ¼ÓĞÂÊÄ¬ÈÏÖµ
-	Ushort      usCarFlow;     //³µÁ÷Á¿Ä¬ÈÏÖµ
-	Byte       ucFrency ;      //ÏßÈ¦Õñµ´ÆµÂÊ  ADD:20120807 10 12
-	Byte       ucGrpData ;     //ÏßÈ¦°ó¶¨Öµ
-	Ushort     ucGrpDistns ;   //ÏßÈ¦°ó¶¨¾àÀë
+	Byte       ucId;          //æ£€æµ‹å™¨å·
+	Byte       ucSensi;       //çµæ•åº¦
+	Byte       ucGrpNo;       //æ£€æµ‹å™¨ç»„å·
+	Byte       ucPro;         //æƒå€¼
+	Byte       ucOcuDefault;  //å æœ‰ç‡é»˜è®¤å€¼
+	Ushort      usCarFlow;     //è½¦æµé‡é»˜è®¤å€¼
+	Byte       ucFrency ;      //çº¿åœˆæŒ¯è¡é¢‘ç‡  ADD:20120807 10 12
+	Byte       ucGrpData ;     //çº¿åœˆç»‘å®šå€¼
+	Ushort     ucGrpDistns ;   //çº¿åœˆç»‘å®šè·ç¦»
 }PACKED DetExtend;
 
-typedef DbArray<DetExtend, Byte>  TblDetExtend;  //¶¨Òå¼ì²âÆ÷À©Õ¹±íÀà
+typedef DbArray<DetExtend, Byte>  TblDetExtend;  //å®šä¹‰æ£€æµ‹å™¨æ‰©å±•è¡¨ç±»
 
 /*
-ÃèÊö:ĞÂÔö±í ×ÔÊÊÓ¦²ÎÊıÖµ±í
+æè¿°:æ–°å¢è¡¨ è‡ªé€‚åº”å‚æ•°å€¼è¡¨
 */
 typedef struct
 {
-	Byte       ucType;         //×ÔÊÊÓ¦ÀàĞÍ
-	Byte       ucFirstPro;     //µÚÒ»¸öÖÜÆÚµÄÈ¨Öµ
-	Byte       ucSecPro;       //µÚ¶ş¸öÖÜÆÚµÄÈ¨Öµ
-	Byte       ucThirdPro;     //µÚÈı¸öÖÜÆÚµÄÈ¨Öµ
-	Byte       ucOcuPro;       //Õ¼ÓĞÂÊÈ¨Öµ
-	Byte       ucCarFlowPro;   //³µÁ÷Á¿È¨Öµ
-	Byte       ucSmoothPara;   //Æ½»¬Æ½¾ù·¨²ÎÊı
+	Byte       ucType;         //è‡ªé€‚åº”ç±»å‹
+	Byte       ucFirstPro;     //ç¬¬ä¸€ä¸ªå‘¨æœŸçš„æƒå€¼
+	Byte       ucSecPro;       //ç¬¬äºŒä¸ªå‘¨æœŸçš„æƒå€¼
+	Byte       ucThirdPro;     //ç¬¬ä¸‰ä¸ªå‘¨æœŸçš„æƒå€¼
+	Byte       ucOcuPro;       //å æœ‰ç‡æƒå€¼
+	Byte       ucCarFlowPro;   //è½¦æµé‡æƒå€¼
+	Byte       ucSmoothPara;   //å¹³æ»‘å¹³å‡æ³•å‚æ•°
 }PACKED AdaptPara;
 
-typedef DbArray<AdaptPara, Byte>  TblAdaptPara;  //¶¨Òå×ÔÊÊÓ¦Àà
+typedef DbArray<AdaptPara, Byte>  TblAdaptPara;  //å®šä¹‰è‡ªé€‚åº”ç±»
 
 /*
-ÃèÊö:¼ì²âÆ÷×´Ì¬±í 0xA0
-ËµÃ÷:C6.3
+æè¿°:æ£€æµ‹å™¨çŠ¶æ€è¡¨ 0xA0
+è¯´æ˜:C6.3
 */
 typedef struct
 {
-    Byte       ucId;               /*¼ì²âÆ÷×´Ì¬±íĞĞºÅ*/
-    Byte       ucStatus;           /*¼ì²âÆ÷×´Ì¬*/
-    Byte       ucAlarm;            /*¼ì²âÆ÷¹ÊÕÏ*/
+    Byte       ucId;               /*æ£€æµ‹å™¨çŠ¶æ€è¡¨è¡Œå·*/
+    Byte       ucStatus;           /*æ£€æµ‹å™¨çŠ¶æ€*/
+    Byte       ucAlarm;            /*æ£€æµ‹å™¨æ•…éšœ*/
 }PACKED DetectorStatus;
-typedef DbArray<DetectorStatus, Byte>  TblDetectorSts; //¶¨Òå¼ì²âÆ÷×´Ì¬´¦ÀíÀà
+typedef DbArray<DetectorStatus, Byte>  TblDetectorSts; //å®šä¹‰æ£€æµ‹å™¨çŠ¶æ€å¤„ç†ç±»
 
 /*
-ÃèÊö:¼ì²âÆ÷Êı¾İ²É¼¯±í 0xA1
-ËµÃ÷:C6.4
+æè¿°:æ£€æµ‹å™¨æ•°æ®é‡‡é›†è¡¨ 0xA1
+è¯´æ˜:C6.4
 */
 typedef struct
 {
-    Byte       ucDectorId;         /*¼ì²âÆ÷±àºÅ*/
-    Byte       ucVehCount;         /*×ÜÁ÷Á¿»òÖĞĞÍ³µµÄ×ÜÊı*/
-    Byte       ucLargeCount;       /*´óĞÍ³µµÄÊıÁ¿*/
-    Byte       ucSmallCount;       /*Ğ¡ĞÍ³µµÄÊıÁ¿*/
-    Byte       ucOccupy;           /*Õ¼ÓĞÂÊ*/
-    Byte       ucVelocity;         /*ËÙ¶È*/
-    Byte       ucVehLeng;          /*³µÉí³¤¶È*/
+    Byte       ucDectorId;         /*æ£€æµ‹å™¨ç¼–å·*/
+    Byte       ucVehCount;         /*æ€»æµé‡æˆ–ä¸­å‹è½¦çš„æ€»æ•°*/
+    Byte       ucLargeCount;       /*å¤§å‹è½¦çš„æ•°é‡*/
+    Byte       ucSmallCount;       /*å°å‹è½¦çš„æ•°é‡*/
+    Byte       ucOccupy;           /*å æœ‰ç‡*/
+    Byte       ucVelocity;         /*é€Ÿåº¦*/
+    Byte       ucVehLeng;          /*è½¦èº«é•¿åº¦*/
 }PACKED DetectorData;
 typedef DbArray<DetectorData, Byte>  TblDetectorData;
 
 /*
-ÃèÊö:¼ì²âÆ÷¹ÊÕÏ±¨¾¯±í 0xA2
-ËµÃ÷:C6.5
+æè¿°:æ£€æµ‹å™¨æ•…éšœæŠ¥è­¦è¡¨ 0xA2
+è¯´æ˜:C6.5
 */
 typedef struct
 {
 
-    Byte       ucDetectorId;           /*¼ì²âÆ÷±àºÅ*/
-    Byte       ucDetAlmFlag;           /*¼ì²âÆ÷¹ÊÕÏ×´Ì¬*/
-    Byte       ucLoopAlmFlag;          /*ÏßÈ¦±¨¾¯×´Ì¬*/
+    Byte       ucDetectorId;           /*æ£€æµ‹å™¨ç¼–å·*/
+    Byte       ucDetAlmFlag;           /*æ£€æµ‹å™¨æ•…éšœçŠ¶æ€*/
+    Byte       ucLoopAlmFlag;          /*çº¿åœˆæŠ¥è­¦çŠ¶æ€*/
 }PACKED DetAlmSts;
 typedef DbArray<DetAlmSts, Byte>  TblDetAlmSts;
 
 /*
-ÃèÊö:µ¥ÔªÏà¹Ø²ÎÊı±í
-ËµÃ÷:C7.1
+æè¿°:å•å…ƒç›¸å…³å‚æ•°è¡¨
+è¯´æ˜:C7.1
 */
 typedef struct
 {
-    Byte       ucFlsTimeWhenStart;     /*0xA3 Æô¶¯Ê±µÄÉÁ¹âÊ±¼ä*/
-    Byte       ucAllRedTimeWhenStart;  /*0xA4 Æô¶¯Ê±µÄÈ«ºìÊ±¼ä*/
-    Byte       ucCtrlSts;              /*0xA5 µ±Ç°ĞÅºÅ»úµÄ¿ØÖÆ×´Ì¬*/
-    Byte       ucFlashCtrlMode;        /*0xA6 µ±Ç°µÄÉÁ¹â¿ØÖÆÄ£Ê½*/
-    Byte       ucAlarm2;               /*0xA7 ĞÅºÅ»ú±¨¾¯2*/
-    Byte       ucAlarm1;               /*0xA8 ĞÅºÅ»ú±¨¾¯1*/
-    Byte       ucAlmSts;               /*0xA9 ĞÅºÅ»ú±¨¾¯ÕªÒª*/
-    Byte       ucRemoteCtrlFlag;       /*0xAA Ô¶³Ì¿ØÖÆ±êÊ¶*/
-    Byte       ucFlashFreq;            /*0xAB ÉÁ¹âÆµÂÊ*/
-    Ulong       ulBrtCtrlStrTime;       /*0xAC »Ô¶È¿ØÖÆ¿ªÊ¼Ê±¼ä*/
-    Ulong       ulBrtCtrlEndTime;       /*0xAD »Ò¶È¿ØÖÆ½áÊøÊ±¼ä*/
+    Byte       ucFlsTimeWhenStart;     /*0xA3 å¯åŠ¨æ—¶çš„é—ªå…‰æ—¶é—´*/
+    Byte       ucAllRedTimeWhenStart;  /*0xA4 å¯åŠ¨æ—¶çš„å…¨çº¢æ—¶é—´*/
+    Byte       ucCtrlSts;              /*0xA5 å½“å‰ä¿¡å·æœºçš„æ§åˆ¶çŠ¶æ€*/
+    Byte       ucFlashCtrlMode;        /*0xA6 å½“å‰çš„é—ªå…‰æ§åˆ¶æ¨¡å¼*/
+    Byte       ucAlarm2;               /*0xA7 ä¿¡å·æœºæŠ¥è­¦2*/
+    Byte       ucAlarm1;               /*0xA8 ä¿¡å·æœºæŠ¥è­¦1*/
+    Byte       ucAlmSts;               /*0xA9 ä¿¡å·æœºæŠ¥è­¦æ‘˜è¦*/
+    Byte       ucRemoteCtrlFlag;       /*0xAA è¿œç¨‹æ§åˆ¶æ ‡è¯†*/
+    Byte       ucFlashFreq;            /*0xAB é—ªå…‰é¢‘ç‡*/
+    Ulong       ulBrtCtrlStrTime;       /*0xAC è¾‰åº¦æ§åˆ¶å¼€å§‹æ—¶é—´*/
+    Ulong       ulBrtCtrlEndTime;       /*0xAD ç°åº¦æ§åˆ¶ç»“æŸæ—¶é—´*/
 }PACKED TblCtrlUnitPara;
 
 /*
-ÃèÊö:µÆ¿Ø¶Ë¿Ú²ÎÊı
-ËµÃ÷:C8.1
+æè¿°:ç¯æ§ç«¯å£å‚æ•°
+è¯´æ˜:C8.1
 */
 typedef struct
 {
-    Byte       ucMaxChannel;           /*0xAEĞÅºÅ»úÖ§³ÖµÄ×î´óÍ¨µÀÊı*/
-    Byte       ucChnGrpCount;          /*0xAFÍ¨µÀ×éÊı*/
+    Byte       ucMaxChannel;           /*0xAEä¿¡å·æœºæ”¯æŒçš„æœ€å¤§é€šé“æ•°*/
+    Byte       ucChnGrpCount;          /*0xAFé€šé“ç»„æ•°*/
 }PACKED TblChannelPara;
 
 /*
-ÃèÊö:µÆ¿Ø¶Ë¿Ú²ÎÊı 0xB0
-ËµÃ÷:C8.2
+æè¿°:ç¯æ§ç«¯å£å‚æ•° 0xB0
+è¯´æ˜:C8.2
 */
 typedef struct
 {
-    Byte       ucChannelId;            /*Í¨µÀºÅ*/
-    Byte       ucCtrlSrc;              /*Í¨µÀ¿ØÖÆµÄĞÅºÅÔ´£¬¼´ÏàÎ»ºÅ*/
-    Byte       ucAutoFlsCtrlFlag;      /*×Ô¶¯ÉÁ¹âµÄ¿ØÖÆÄ£Ê½Ê±µÄÍ¨µÀ×´Ì¬*/
-    Byte       ucCtrlType;             /*Í¨µÀ¿ØÖÆÀàĞÍ*/
+    Byte       ucChannelId;            /*é€šé“å·*/
+    Byte       ucCtrlSrc;              /*é€šé“æ§åˆ¶çš„ä¿¡å·æºï¼Œå³ç›¸ä½å·*/
+    Byte       ucAutoFlsCtrlFlag;      /*è‡ªåŠ¨é—ªå…‰çš„æ§åˆ¶æ¨¡å¼æ—¶çš„é€šé“çŠ¶æ€*/
+    Byte       ucCtrlType;             /*é€šé“æ§åˆ¶ç±»å‹*/
 }PACKED Channel;
 typedef DbArray<Channel, Byte>   TblChannel;
 
 /*
-ÃèÊö:Í¨µÀÊä³ö×´Ì¬±í 0xB1
-ËµÃ÷:C8.3
+æè¿°:é€šé“è¾“å‡ºçŠ¶æ€è¡¨ 0xB1
+è¯´æ˜:C8.3
 */
 typedef struct
 {
-    Byte   ucId;                       /*Í¨µÀ×´Ì¬±íĞĞºÅ£¬1£¬2*/
-    Byte   ucRedSts;                   /*ºìµÆ×´Ì¬*/
-    Byte   ucYellowSts;                /*»ÆµÆ×´Ì¬*/
-    Byte   ucGreenSts;                 /*ÂÌµÆ×´Ì¬*/
+    Byte   ucId;                       /*é€šé“çŠ¶æ€è¡¨è¡Œå·ï¼Œ1ï¼Œ2*/
+    Byte   ucRedSts;                   /*çº¢ç¯çŠ¶æ€*/
+    Byte   ucYellowSts;                /*é»„ç¯çŠ¶æ€*/
+    Byte   ucGreenSts;                 /*ç»¿ç¯çŠ¶æ€*/
 }PACKED ChannelStatus;
 typedef DbArray<ChannelStatus, Byte>   TblChannelSts;
 
 /*
-ÃèÊö:¿ØÖÆ²ÎÊı±í
-ËµÃ÷:C9.1
+æè¿°:æ§åˆ¶å‚æ•°è¡¨
+è¯´æ˜:C9.1
 */
 typedef struct
 {
-    Byte   ucPatternCount;             /*0xB2 ÅäÊ±·½°¸Êı*/
-    Byte   ucMaxStgPatternCount;       /*0xB3 ×î´ó½×¶ÎÅäÊ±±í´óĞ¡*/
-    Byte   ucMaxStageCount;            /*0xB4 ×î´ó½×¶ÎÊı*/
-    Byte   ucManuCtrlFlag;             /*0xB5 ÊÖ¶¯¿ØÖÆ·½°¸±êÖ¾*/
-    Byte   ucSysCtrlFlag;              /*0xB6 ÏµÍ³¿ØÖÆ·½°¸±êÊ¶*/
-    Byte   ucCtrlMode;                 /*0xB7 ¿ØÖÆ·½Ê½*/
-    Byte   ucGlobalCycle;              /*0xB8 ¹«¹²ÖÜÆÚÊ±³¤*/
-    Byte   ucPhaseOffset;              /*0xB9 Ğ­µ÷ÏàÎ»²î*/
-    Byte   ucStageSts;                 /*0xBA ½×¶Î×´Ì¬*/
-    Byte   ucStepCmd;                  /*0xBB ²½½øÖ¸Áî*/
-    Byte   ucDegradeMode;              /*0xBC ½µ¼¶Ä£Ê½*/
-    Byte   ucDegradePattern[14];       /*0xBD ½µ¼¶»ù×¼·½°¸±í*/
-    Byte   ucStageTime[MAX_STAGE_COUNT];/*0xBE µ±Ç°·½°¸¸÷½×¶ÎµÄÊ±³¤*/
-    Byte   ucGreenTime[MAX_STAGE_COUNT];/*0xBF µ±Ç°·½°¸¸÷¸ö¹Ø¼üÏàÎ»µÄµÄÂÌµÆÊ±³¤*/
+    Byte   ucPatternCount;             /*0xB2 é…æ—¶æ–¹æ¡ˆæ•°*/
+    Byte   ucMaxStgPatternCount;       /*0xB3 æœ€å¤§é˜¶æ®µé…æ—¶è¡¨å¤§å°*/
+    Byte   ucMaxStageCount;            /*0xB4 æœ€å¤§é˜¶æ®µæ•°*/
+    Byte   ucManuCtrlFlag;             /*0xB5 æ‰‹åŠ¨æ§åˆ¶æ–¹æ¡ˆæ ‡å¿—*/
+    Byte   ucSysCtrlFlag;              /*0xB6 ç³»ç»Ÿæ§åˆ¶æ–¹æ¡ˆæ ‡è¯†*/
+    Byte   ucCtrlMode;                 /*0xB7 æ§åˆ¶æ–¹å¼*/
+    Byte   ucGlobalCycle;              /*0xB8 å…¬å…±å‘¨æœŸæ—¶é•¿*/
+    Byte   ucPhaseOffset;              /*0xB9 åè°ƒç›¸ä½å·®*/
+    Byte   ucStageSts;                 /*0xBA é˜¶æ®µçŠ¶æ€*/
+    Byte   ucStepCmd;                  /*0xBB æ­¥è¿›æŒ‡ä»¤*/
+    Byte   ucDegradeMode;              /*0xBC é™çº§æ¨¡å¼*/
+    Byte   ucDegradePattern[14];       /*0xBD é™çº§åŸºå‡†æ–¹æ¡ˆè¡¨*/
+    Byte   ucStageTime[MAX_STAGE_COUNT];/*0xBE å½“å‰æ–¹æ¡ˆå„é˜¶æ®µçš„æ—¶é•¿*/
+    Byte   ucGreenTime[MAX_STAGE_COUNT];/*0xBF å½“å‰æ–¹æ¡ˆå„ä¸ªå…³é”®ç›¸ä½çš„çš„ç»¿ç¯æ—¶é•¿*/
 }PACKED CtrlPara;
 
 
 /*
-ÃèÊö:ÅäÊ±·½°¸±í
-ËµÃ÷:C9.2
+æè¿°:é…æ—¶æ–¹æ¡ˆè¡¨
+è¯´æ˜:C9.2
 */
 typedef struct
 {
-    Byte   ucPatternId;                 /*·½°¸ºÅ*/
-    Byte   ucCycleTime;                 /*ÖÜÆÚÊ±³¤*/
-    Byte   ucOffset;                    /*ÏàÎ»²î*/
-    Byte   ucCoorPhase;                /*Ğ­µ÷ÏàÎ»*/
-    Byte   ucStagePatternId;           /*½×¶ÎÅäÊ±±íºÅ*/
+    Byte   ucPatternId;                 /*æ–¹æ¡ˆå·*/
+    Byte   ucCycleTime;                 /*å‘¨æœŸæ—¶é•¿*/
+    Byte   ucOffset;                    /*ç›¸ä½å·®*/
+    Byte   ucCoorPhase;                /*åè°ƒç›¸ä½*/
+    Byte   ucStagePatternId;           /*é˜¶æ®µé…æ—¶è¡¨å·*/
 }PACKED Pattern;
 typedef DbArray<Pattern, Byte>  TblPattern;
 
 
 /*
-ÃèÊö:½×¶ÎÅäÊ±±í
-ËµÃ÷:C9.3
+æè¿°:é˜¶æ®µé…æ—¶è¡¨
+è¯´æ˜:C9.3
 */
 typedef struct
 {
-    Byte   ucStagePatternId;       /*½×¶ÎÅäÊ±·½°¸ºÅ*/
-    Byte   ucStageNo;              /*½×¶ÎºÅ*/
-    Uint32  usAllowPhase;           /*·ÅĞĞÏàÎ»*/
-    Byte   ucGreenTime;            /*½×¶ÎÂÌµÆÊ±¼ä*/
-    Byte   ucYellowTime;           /*½×¶ÎÂÌ»ÆµÆÊ±¼ä*/
-    Byte   ucRedTime;              /*½×¶ÎºìµÆÊ±¼ä*/
-    Byte   ucOption;               /*½×¶ÎÑ¡Ïî²ÎÊı*/
+    Byte   ucStagePatternId;       /*é˜¶æ®µé…æ—¶æ–¹æ¡ˆå·*/
+    Byte   ucStageNo;              /*é˜¶æ®µå·*/
+    Uint32  usAllowPhase;           /*æ”¾è¡Œç›¸ä½*/
+    Byte   ucGreenTime;            /*é˜¶æ®µç»¿ç¯æ—¶é—´*/
+    Byte   ucYellowTime;           /*é˜¶æ®µç»¿é»„ç¯æ—¶é—´*/
+    Byte   ucRedTime;              /*é˜¶æ®µçº¢ç¯æ—¶é—´*/
+    Byte   ucOption;               /*é˜¶æ®µé€‰é¡¹å‚æ•°*/
 }PACKED StagePattern;
 typedef DbArray<StagePattern, Ushort>  TblStagePattern;
 
 
 /*
-¸úËæÏàÎ»Ïà¹Ø²ÎÊı
-ÃèÊö:¸úËæÏàÎ»±í
-ËµÃ÷:C13.1
+è·Ÿéšç›¸ä½ç›¸å…³å‚æ•°
+æè¿°:è·Ÿéšç›¸ä½è¡¨
+è¯´æ˜:C13.1
 */
 typedef struct
 {
-    Byte ucOverlapPhaseId;          /*¸úËæÏàÎ»±íºÅ*/
-    Byte ucOperateType;            /*²Ù×÷ÀàĞÍ*/
-    Byte ucIncldPhaseCnt;          /*°üº¬ÏàÎ»µÄ¸öÊı*/
-    Byte ucIncldPhase[MAX_PHASE_COUNT];/*°üº¬ÏàÎ»*/
-    Byte ucAdjustPhaseCnt;             /*ĞŞÕıÏàÎ»µÄ¸öÊı*/
-    Byte ucAdjustPhase[MAX_PHASE_COUNT];/*ĞŞÕıÏàÎ»*/
-    Byte ucTailGreen;                  /*Î²²¿ÂÌµÆ*/
-    Byte ucTailYellow;                  /*Î²²¿»ÆµÆ*/
-    Byte ucTailRed;                    /*Î²²¿ºìµÆ*/
+    Byte ucOverlapPhaseId;          /*è·Ÿéšç›¸ä½è¡¨å·*/
+    Byte ucOperateType;            /*æ“ä½œç±»å‹*/
+    Byte ucIncldPhaseCnt;          /*åŒ…å«ç›¸ä½çš„ä¸ªæ•°*/
+    Byte ucIncldPhase[MAX_PHASE_COUNT];/*åŒ…å«ç›¸ä½*/
+    Byte ucAdjustPhaseCnt;             /*ä¿®æ­£ç›¸ä½çš„ä¸ªæ•°*/
+    Byte ucAdjustPhase[MAX_PHASE_COUNT];/*ä¿®æ­£ç›¸ä½*/
+    Byte ucTailGreen;                  /*å°¾éƒ¨ç»¿ç¯*/
+    Byte ucTailYellow;                  /*å°¾éƒ¨é»„ç¯*/
+    Byte ucTailRed;                    /*å°¾éƒ¨çº¢ç¯*/
 }PACKED OverlapPhase;
 typedef DbArray<OverlapPhase, Byte>  TblOverlapPhase;
 
 /*
-*ĞÅºÅ»úÌØÊâ¹¦ÄÜÅäÖÃ±í
+*ä¿¡å·æœºç‰¹æ®ŠåŠŸèƒ½é…ç½®è¡¨
 */
 typedef struct
 {
-	Byte ucFunType ;  //¹¦ÄÜÀàĞÍ
-	Byte ucValue   ;  //Öµ ²»Í¬µÄ¹¦ÄÜÀàĞÍ¶ÔÓ¦²»Í¬µÄÖµ
+	Byte ucFunType ;  //åŠŸèƒ½ç±»å‹
+	Byte ucValue   ;  //å€¼ ä¸åŒçš„åŠŸèƒ½ç±»å‹å¯¹åº”ä¸åŒçš„å€¼
 }PACKED SpecFun;
 typedef DbArray<SpecFun, Byte>  TblSpecFun;
 
 /*
-*ĞÅºÅ»úµÄ½×¶ÎÂÌµÆÊ±¼ä ×ÔÊÊÓ¦¿ØÖÆ
+*ä¿¡å·æœºçš„é˜¶æ®µç»¿ç¯æ—¶é—´ è‡ªé€‚åº”æ§åˆ¶
 */
 typedef struct
 {
-	Ulong      uiAddTime;        //¼ÇÂ¼µÄÊ±¼ä
-	Byte      ucStageCnt;       //½×¶Î¸öÊı
-	DbString   sStageGreenTime;  //¸÷¸ö½×¶ÎµÄÂÌµÆÊ±¼ä
+	Ulong      uiAddTime;        //è®°å½•çš„æ—¶é—´
+	Byte      ucStageCnt;       //é˜¶æ®µä¸ªæ•°
+	DbString   sStageGreenTime;  //å„ä¸ªé˜¶æ®µçš„ç»¿ç¯æ—¶é—´
 }StageFactTime;
 typedef DbArray<StageFactTime, Ulong> TblStageFactTime;
 
 /*
-*×ÔÊÊÓ¦¿ØÖÆÉú³ÉµÄ½×¶ÎÂÌµÆÊ±¼ä
+*è‡ªé€‚åº”æ§åˆ¶ç”Ÿæˆçš„é˜¶æ®µç»¿ç¯æ—¶é—´
 */
 typedef struct
 {
-	Byte      ucId;             //±íid
-	Byte      ucWeekType;       //ĞÇÆÚ
-	Byte      ucHour;           //Ê±
-	Byte      ucMin;            //·Ö
-	Byte      ucStageCnt;       //½×¶Î¸öÊı
-	DbString   sStageGreenTime;  //¸÷¸ö½×¶ÎµÄÂÌµÆÊ±¼ä
+	Byte      ucId;             //è¡¨id
+	Byte      ucWeekType;       //æ˜ŸæœŸ
+	Byte      ucHour;           //æ—¶
+	Byte      ucMin;            //åˆ†
+	Byte      ucStageCnt;       //é˜¶æ®µä¸ªæ•°
+	DbString   sStageGreenTime;  //å„ä¸ªé˜¶æ®µçš„ç»¿ç¯æ—¶é—´
 }AdaptStageTime;
 typedef DbArray<AdaptStageTime, Byte> TblAdaptStageTime;
 
 /*
-*·½ÏòÓëÏàÎ»¶ÔÓ¦±í
+*æ–¹å‘ä¸ç›¸ä½å¯¹åº”è¡¨
 */
 typedef struct 
 {
@@ -809,13 +809,13 @@ typedef struct
 typedef DbArray<PhaseToDirec, Byte> TblPhaseToDirec;
 
 /*
-Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í  ADD:2013 0801 0901
+é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨  ADD:2013 0801 0901
 
 */
 typedef struct
 {	
-	Byte ucSubChannelId;		//Í¨µÀµÄ×ÓÂ·ºÅ	 Ä¿Ç°4°åÅäÖÃ¹²48Â·	1---48
-	Byte ucIsCheck; 			//ÊÇ·ñĞèÒª½øĞĞµÆÅİ¼ì²â 0-²»ĞèÒª 1-ĞèÒª
+	Byte ucSubChannelId;		//é€šé“çš„å­è·¯å·	 ç›®å‰4æ¿é…ç½®å…±48è·¯	1---48
+	Byte ucIsCheck; 			//æ˜¯å¦éœ€è¦è¿›è¡Œç¯æ³¡æ£€æµ‹ 0-ä¸éœ€è¦ 1-éœ€è¦
 }PACKED ChannelChk;
 typedef DbArray<ChannelChk,Byte>TblChannelChk;
 
@@ -827,7 +827,7 @@ typedef DbArray<ChannelChk,Byte>TblChannelChk;
 #endif
 
 /*
-	Êı¾İ¿â±í¼¯ºÏ´¦ÀíÀà
+	æ•°æ®åº“è¡¨é›†åˆå¤„ç†ç±»
 */
 class CSqliteRst
 {
@@ -836,9 +836,9 @@ public:
     ~CSqliteRst();
     void Clear();
 public:
-    char**  m_ppResult;  //Êı¾İ¿â±í²éÑ¯½á¹û¼¯
-    int     m_iRow;      //±íĞĞÊı
-    int     m_iColum;    //±íÁĞÊı
+    char**  m_ppResult;  //æ•°æ®åº“è¡¨æŸ¥è¯¢ç»“æœé›†
+    int     m_iRow;      //è¡¨è¡Œæ•°
+    int     m_iColum;    //è¡¨åˆ—æ•°
 };
 
 class CGbtTscDb
@@ -847,177 +847,177 @@ public:
     CGbtTscDb();
     ~CGbtTscDb();
 
-    /*³õÊ¼»¯Êı¾İ¿â*/
+    /*åˆå§‹åŒ–æ•°æ®åº“*/
     bool InitDb(const char* pDbPath);
-    /*¹Ø±ÕÊı¾İ¿â*/
+    /*å…³é—­æ•°æ®åº“*/
     void CloseDb();
-    /*²åÈëÄ¬ÈÏÊı¾İ*/
+    /*æ’å…¥é»˜è®¤æ•°æ®*/
 	void InitDefaultData(); //ADD:20141209
-/***********************Ä£¿é±í´¦Àíº¯Êı***************************/
-    /*²éÑ¯È«²¿*/
+/***********************æ¨¡å—è¡¨å¤„ç†å‡½æ•°***************************/
+    /*æŸ¥è¯¢å…¨éƒ¨*/
     bool QueryModule(TblModule& tblModule);
 
-   /*¸ù¾İÄ£¿é±íID²éÑ¯*/
+   /*æ ¹æ®æ¨¡å—è¡¨IDæŸ¥è¯¢*/
     bool QueryModule(Byte uModuleId, Module& sModule);
 
-    /*¸ù¾İÉú²úÉÌ²éÑ¯*/
+    /*æ ¹æ®ç”Ÿäº§å•†æŸ¥è¯¢*/
     bool QueryModule(const char* sCompany, TblModule& tblModule);
 
-    /*Ìí¼ÓÄ£¿é±í*/
+    /*æ·»åŠ æ¨¡å—è¡¨*/
     bool AddModule(Byte uModuleId, Module& sModule);
 
-    /*ĞŞ¸ÄÄ£¿é±í*/
+    /*ä¿®æ”¹æ¨¡å—è¡¨*/
     bool ModModule(Byte uModuleId, Module& sModule);
 
-    /*É¾³ıÄ£¿é±í*/
+    /*åˆ é™¤æ¨¡å—è¡¨*/
     bool DelModule(Byte uModuleId);
 
-    /*¼ì²éÄ£¿é±í*/
+    /*æ£€æŸ¥æ¨¡å—è¡¨*/
     bool IsModuleValid(Byte ucModuleId, Module& sModule);
 
-/***********************×ÔÊÊÓ¦¿ØÖÆµÄ½×¶ÎÂÌµÆÊı¾İ´¦Àíº¯Êı***************************/
-	/*²éÑ¯È«²¿½×¶ÎÂÌµÆ±í*/
+/***********************è‡ªé€‚åº”æ§åˆ¶çš„é˜¶æ®µç»¿ç¯æ•°æ®å¤„ç†å‡½æ•°***************************/
+	/*æŸ¥è¯¢å…¨éƒ¨é˜¶æ®µç»¿ç¯è¡¨*/
 	bool QueryStageFactTime(TblStageFactTime& tblStageFactTime);
 
-	/*²éÑ¯ÌØ¶¨Ê±¼ä¶ÎÀïµÄ½×¶ÎÂÌµÆ±í*/
+	/*æŸ¥è¯¢ç‰¹å®šæ—¶é—´æ®µé‡Œçš„é˜¶æ®µç»¿ç¯è¡¨*/
 	bool QueryStageFactTime(TblStageFactTime& tblStageFactTime,Ulong ulStartTime,Ulong ulEndTime);
 
-	/*Ìí¼Ó½×¶ÎÂÌµÆ±í*/
+	/*æ·»åŠ é˜¶æ®µç»¿ç¯è¡¨*/
 	bool AddStageFactTime(StageFactTime& sStageFactTime);
 
-	/*É¾³ı½×¶ÎÂÌµÆ±í*/
+	/*åˆ é™¤é˜¶æ®µç»¿ç¯è¡¨*/
 	bool DeleteStageFactTime(Ulong ulAddTime);
 
-/*********************×ÔÊÊÓ¦×ÔÑ§Ï°Éú³ÉµÄ½×¶ÎÊ±¼ä±í´¦Àíº¯Êı***********************/
-	/*²éÑ¯È«²¿×ÔÊÊÓ¦½×¶ÎÂÌµÆ±í*/
+/*********************è‡ªé€‚åº”è‡ªå­¦ä¹ ç”Ÿæˆçš„é˜¶æ®µæ—¶é—´è¡¨å¤„ç†å‡½æ•°***********************/
+	/*æŸ¥è¯¢å…¨éƒ¨è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨*/
 	bool QueryAdaptStageTime(TblAdaptStageTime& tblAdaptStageTime);
 
-	/*¸ù¾İĞÇÆÚ²éÑ¯È«²¿½×¶ÎÂÌµÆ±í*/
+	/*æ ¹æ®æ˜ŸæœŸæŸ¥è¯¢å…¨éƒ¨é˜¶æ®µç»¿ç¯è¡¨*/
 	bool QueryAdaptStageTime(TblAdaptStageTime& tblAdaptStageTime,Byte ucWeekType);
 
-	/*¸ù¾İucid²éÑ¯¼ÇÂ¼*/
+	/*æ ¹æ®ucidæŸ¥è¯¢è®°å½•*/
 	bool QueryAdaptStageTime(Byte ucId, AdaptStageTime& sAdaptStageTime);
 
-	/*¸ù¾İucidĞŞ¸Ä¼ÇÂ¼*/
+	/*æ ¹æ®ucidä¿®æ”¹è®°å½•*/
 	bool ModAdaptStageTime(AdaptStageTime& sAdaptStageTime);
 
-	/*Ìí¼Ó×ÔÊÊÓ¦½×¶ÎÂÌµÆ±í*/
+	/*æ·»åŠ è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨*/
 	bool AddAdaptStageTime(AdaptStageTime& sAdaptStageTime);
 
-	/*É¾³ıÈ«²¿×ÔÊÊÓ¦½×¶ÎÂÌµÆ±í*/
+	/*åˆ é™¤å…¨éƒ¨è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨*/
 	bool DeleteAdaptStageTime();
 
-/*****************µ÷¶È¼Æ»®±í´¦Àíº¯Êı*****************************/
-    /*²éÑ¯Ê±»ùµ÷¶È±íµ÷¶È¼Æ»®±í*/
+/*****************è°ƒåº¦è®¡åˆ’è¡¨å¤„ç†å‡½æ•°*****************************/
+    /*æŸ¥è¯¢æ—¶åŸºè°ƒåº¦è¡¨è°ƒåº¦è®¡åˆ’è¡¨*/
     bool QueryPlan(TblPlan& tblPlan);
     
-    /*¸ù¾İ¼Æ»®ºÅ²éÑ¯µ÷¶È¼Æ»®*/
+    /*æ ¹æ®è®¡åˆ’å·æŸ¥è¯¢è°ƒåº¦è®¡åˆ’*/
     bool QueryPlan(Byte uPlanId, Plan& sPlan);
     
-    /*Ìí¼ÓÊ±»ùµ÷¶È±í,µ÷¶È¼Æ»®±í*/
-    bool AddPlan(Byte ucPlanId, /*µ÷¶È¼Æ»®ºÅ*/
-                 Plan& sPlan);    /*µ÷¶È¼Æ»®±í*/
+    /*æ·»åŠ æ—¶åŸºè°ƒåº¦è¡¨,è°ƒåº¦è®¡åˆ’è¡¨*/
+    bool AddPlan(Byte ucPlanId, /*è°ƒåº¦è®¡åˆ’å·*/
+                 Plan& sPlan);    /*è°ƒåº¦è®¡åˆ’è¡¨*/
 
-    /*É¾³ıÊ±»ùµ÷¶È±í*/
+    /*åˆ é™¤æ—¶åŸºè°ƒåº¦è¡¨*/
     bool DelPlan(Byte ucPlanId);
 
 	bool DelPlan();
 
-    /*ĞŞ¸ÄÊ±»ùµ÷¶È±í*/
+    /*ä¿®æ”¹æ—¶åŸºè°ƒåº¦è¡¨*/
     bool ModPlan(Byte ucPlanId, Plan& sPlan);
 
-    /*¼ì²éÊ±»ùµ÷¶È±í*/
+    /*æ£€æŸ¥æ—¶åŸºè°ƒåº¦è¡¨*/
     bool IsPlanValid(Byte ucPlanId,Plan& sPlan);
 
-/*************************Ê±¶Î±í**********************************/
-    /*²éÑ¯Ê±¶Î±í*/
+/*************************æ—¶æ®µè¡¨**********************************/
+    /*æŸ¥è¯¢æ—¶æ®µè¡¨*/
     bool QuerySchedule(TblSchedule& tblSchedule);
 
-    /*¸ù¾İÊ±¶ÎºÅ²éÑ¯Ê±¶Î±í*/
+    /*æ ¹æ®æ—¶æ®µå·æŸ¥è¯¢æ—¶æ®µè¡¨*/
     bool QuerySchedule(Byte uScheduleId, TblSchedule& tblSchedule);
 
 
-    /*¸ù¾İÊ±¶ÎºÅºÍÊÂ¼şºÅ²éÑ¯Ê±¶Î±í*/
+    /*æ ¹æ®æ—¶æ®µå·å’Œäº‹ä»¶å·æŸ¥è¯¢æ—¶æ®µè¡¨*/
     bool QuerySchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule);
 
-    /*Ìí¼ÓÊ±¶Î±í*/
+    /*æ·»åŠ æ—¶æ®µè¡¨*/
     bool AddSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule);
 
-    /*ĞŞ¸ÄÊ±¶Î±í*/
+    /*ä¿®æ”¹æ—¶æ®µè¡¨*/
     bool ModSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule);
 
-    /*É¾³ıÊ±¶Î±í*/
+    /*åˆ é™¤æ—¶æ®µè¡¨*/
     bool DelSchedule(Byte uScheduleId, Byte uEvtId);
 
-    /*¸ù¾İÊ±¶ÎºÅÉ¾³ıÊ±¶Î±í*/
+    /*æ ¹æ®æ—¶æ®µå·åˆ é™¤æ—¶æ®µè¡¨*/
     bool DelSchedule(Byte uScheduleId);
 
-     /*É¾³ıÊ±¶Î±í*/
+     /*åˆ é™¤æ—¶æ®µè¡¨*/
     bool DelSchedule();
 
     bool IsScheduleValid(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule);
     
-/*****************ÏàÎ»±í´¦Àíº¯Êı*****************************/
-    /*²éÑ¯ËùÓĞµÄÏàÎ»*/
+/*****************ç›¸ä½è¡¨å¤„ç†å‡½æ•°*****************************/
+    /*æŸ¥è¯¢æ‰€æœ‰çš„ç›¸ä½*/
     bool QueryPhase(TblPhase& tblPhase);
 
-    /*¸ù¾İÏàÎ»ºÅ²éÑ¯*/
+    /*æ ¹æ®ç›¸ä½å·æŸ¥è¯¢*/
     bool QueryPhase(Byte uPhaseId, Phase& sPhase);
     
-    /*Ìí¼ÓÏàÎ»*/
+    /*æ·»åŠ ç›¸ä½*/
     bool AddPhase(Byte uPhaseId, Phase& sPhase);  
     
-    /*ĞŞ¸ÄÏàÎ»±í*/
+    /*ä¿®æ”¹ç›¸ä½è¡¨*/
     bool ModPhase(Byte uPhaseId, Phase& sPhase);
 
-    /*É¾³ıÏàÎ»±í*/
+    /*åˆ é™¤ç›¸ä½è¡¨*/
     bool DelPhase(Byte uPhaseId);
 	bool DelPhase();
     bool IsPhaseValid(Byte uPhaseId, Phase& sPhase);
     
-/*********************ÏàÎ»³åÍ»±í´¦Àíº¯Êı******************************************/
-    /*²éÑ¯ËùÓĞµÄÏàÎ»³åÍ»*/
+/*********************ç›¸ä½å†²çªè¡¨å¤„ç†å‡½æ•°******************************************/
+    /*æŸ¥è¯¢æ‰€æœ‰çš„ç›¸ä½å†²çª*/
     bool QueryCollision(TblCollision& tblCollision);
 
-    /*¸ù¾İÏàÎ»ºÅ²éÑ¯*/
+    /*æ ¹æ®ç›¸ä½å·æŸ¥è¯¢*/
     bool QueryCollision(Byte uPhaseId, Collision& sCollision);
     
-    /*Ìí¼ÓÏàÎ»³åÍ»*/
+    /*æ·»åŠ ç›¸ä½å†²çª*/
     bool AddCollision(Byte uPhaseId, Collision& sCollision);  
     
-    /*ĞŞ¸ÄÏàÎ»³åÍ»±í*/
+    /*ä¿®æ”¹ç›¸ä½å†²çªè¡¨*/
     bool ModCollision(Byte uPhaseId, Collision& sCollision);
 
-    /*É¾³ıÏàÎ»³åÍ»±í*/
+    /*åˆ é™¤ç›¸ä½å†²çªè¡¨*/
     bool DelCollision(Byte uPhaseId);
 
     bool IsCollisionValid(Byte uPhaseId, Collision& sCollision);
-/**********************¼ì²âÆ÷²ÎÊı±í´¦Àíº¯Êı*************************************/
-    /*²éÑ¯¼ì²âÆ÷²ÎÊı*/
+/**********************æ£€æµ‹å™¨å‚æ•°è¡¨å¤„ç†å‡½æ•°*************************************/
+    /*æŸ¥è¯¢æ£€æµ‹å™¨å‚æ•°*/
     bool QueryDetPara(DetectorPara& detPara);
 
 public:
-/******************************¼ì²âÆ÷±í´¦Àíº¯Êı*************************************/
-    /*²éÑ¯ËùÓĞ¼ì²âÆ÷*/
+/******************************æ£€æµ‹å™¨è¡¨å¤„ç†å‡½æ•°*************************************/
+    /*æŸ¥è¯¢æ‰€æœ‰æ£€æµ‹å™¨*/
     bool QueryDetector(TblDetector& tblDetector);
 
-    /*¸ù¾İ¼ì²âÆ÷ºÅ²éÑ¯*/
+    /*æ ¹æ®æ£€æµ‹å™¨å·æŸ¥è¯¢*/
     bool QueryDetector(Byte uDetectorId, Detector& sDetector);
     
-    /*Ìí¼Ó¼ì²âÆ÷*/
+    /*æ·»åŠ æ£€æµ‹å™¨*/
     bool AddDetector(Byte uDetectorId, Detector& sDetector);  
     
-    /*ĞŞ¸Ä¼ì²âÆ÷±í*/
+    /*ä¿®æ”¹æ£€æµ‹å™¨è¡¨*/
     bool ModDetector(Byte uDetectorId, Detector& sDetector);
 
-    /*É¾³ı¼ì²âÆ÷±í*/
+    /*åˆ é™¤æ£€æµ‹å™¨è¡¨*/
     bool DelDetector(Byte uDetectorId);
 
 	bool DelDetector();
 
     bool IsDetectorValid(Byte uDetectorId, Detector& sDetector);
 
-/********************************µ¹¼ÆÊ±ÅäÖÃ±í´¦Àíº¯Êı************************************/
+/********************************å€’è®¡æ—¶é…ç½®è¡¨å¤„ç†å‡½æ•°************************************/
 	bool QueryCntDownDev(Byte ucDevId, CntDownDev& sCntDownDev);
 
 	bool QueryCntDownDev(TblCntDownDev& tblCntDownDev);
@@ -1028,7 +1028,7 @@ public:
 
 	bool ModCntDownDev(Byte ucDevId, CntDownDev& sCntDownDev);
 
-/*******************************ÌØÊâ¹¦ÄÜ¿ªÆôÅäÖÃ±í´¦Àíº¯Êı******************************/
+/*******************************ç‰¹æ®ŠåŠŸèƒ½å¼€å¯é…ç½®è¡¨å¤„ç†å‡½æ•°******************************/
 	bool QuerySpecFun(SpecFun& sSpecFun);
 
 	bool QuerySpecFun(TblSpecFun& tblSpecFun);
@@ -1037,7 +1037,7 @@ public:
 
 	bool ModSpecFun(Byte ucFunType,Byte ucValue);
 
-/*******************************¼ì²âÆ÷À©Õ¹±í´¦Àíº¯Êı***********************************/
+/*******************************æ£€æµ‹å™¨æ‰©å±•è¡¨å¤„ç†å‡½æ•°***********************************/
 	bool QueryDetExtend(DetExtend& sDetExtend);
 
 	bool QueryDetExtend(Byte uDetId, DetExtend& sDetExtend);
@@ -1048,7 +1048,7 @@ public:
 
 	bool ModDetExtend(Byte uDetExtendId, DetExtend& sDetExtend);
 
-/*****************************×ÔÊÊÓ¦²ÎÊı±í´¦Àíº¯Êı**********************************/
+/*****************************è‡ªé€‚åº”å‚æ•°è¡¨å¤„ç†å‡½æ•°**********************************/
 	bool QueryAdaptPara(TblAdaptPara& tblAdaptPara);
 	
 	bool QueryAdaptPara(AdaptPara& sAdaptPara);
@@ -1057,63 +1057,63 @@ public:
 
 	bool ModAdaptPara(AdaptPara& sAdaptPara);
 
-/********************************Í¨µÀ±í´¦Àíº¯Êı*****************************************/
-    /*²éÑ¯ËùÓĞµÄÍ¨µÀ*/
+/********************************é€šé“è¡¨å¤„ç†å‡½æ•°*****************************************/
+    /*æŸ¥è¯¢æ‰€æœ‰çš„é€šé“*/
     bool QueryChannel(TblChannel& tblChannel);
 
-    /*¸ù¾İÍ¨µÀºÅ²éÑ¯*/
+    /*æ ¹æ®é€šé“å·æŸ¥è¯¢*/
     bool QueryChannel(Byte uChannelId, Channel& sChannel);
     
-    /*Ìí¼ÓÍ¨µÀ*/
+    /*æ·»åŠ é€šé“*/
     bool AddChannel(Byte uChannelId, Channel& sChannel);  
 
-    /*ĞŞ¸ÄÍ¨µÀ±í*/
+    /*ä¿®æ”¹é€šé“è¡¨*/
     bool ModChannel(Byte uChannelId, Channel& sChannel);
 
-    /*É¾³ıÏàÎ»³åÍ»±í*/
+    /*åˆ é™¤ç›¸ä½å†²çªè¡¨*/
     bool DelChannel(Byte uChannelId);
 
 	bool DelChannel();
 
     bool IsChannelValid(Byte uChannelId, Channel& sChannel);
-/********************************ÅäÊ±·½°¸±í´¦Àíº¯Êı*****************************************/
-    /*²éÑ¯ËùÓĞµÄÅäÊ±·½°¸*/
+/********************************é…æ—¶æ–¹æ¡ˆè¡¨å¤„ç†å‡½æ•°*****************************************/
+    /*æŸ¥è¯¢æ‰€æœ‰çš„é…æ—¶æ–¹æ¡ˆ*/
     bool QueryPattern(TblPattern& tblPattern);
 
-    /*¸ù¾İ·½°¸ºÅ²éÑ¯*/
+    /*æ ¹æ®æ–¹æ¡ˆå·æŸ¥è¯¢*/
     bool QueryPattern(Byte uPatternId, Pattern& sPattern);
     
-    /*Ìí¼ÓÅäÊ±·½°¸*/
+    /*æ·»åŠ é…æ—¶æ–¹æ¡ˆ*/
     bool AddPattern(Byte uPatternId, Pattern& sPattern);  
     
-    /*ĞŞ¸ÄÅäÊ±·½°¸±í*/
+    /*ä¿®æ”¹é…æ—¶æ–¹æ¡ˆè¡¨*/
     bool ModPattern(Byte uPatternId, Pattern& sPattern);
 
-    /*É¾³ıÏàÎ»³åÍ»±í*/
+    /*åˆ é™¤ç›¸ä½å†²çªè¡¨*/
     bool DelPattern(Byte uPatternId);
 	bool DelPattern();
     bool IsPatternValid(Byte uPatternId, Pattern& sPattern);  
 
-/********************************½×¶ÎÅäÊ±±í´¦Àíº¯Êı*****************************************/
-    /*²éÑ¯ËùÓĞµÄ½×¶ÎÅäÊ±*/
+/********************************é˜¶æ®µé…æ—¶è¡¨å¤„ç†å‡½æ•°*****************************************/
+    /*æŸ¥è¯¢æ‰€æœ‰çš„é˜¶æ®µé…æ—¶*/
     bool QueryStagePattern(TblStagePattern& tblStage);
 
-    /*¸ù¾İ½×¶ÎÅäÊ±ºÅ²éÑ¯*/
+    /*æ ¹æ®é˜¶æ®µé…æ—¶å·æŸ¥è¯¢*/
     bool QueryStagePattern(Byte uStagePatternId, TblStagePattern& tblStage);
 
-    /*¸ù¾İ½×¶ÎÅäÊ±ºÅºÍ½×¶ÎºÅ²éÑ¯*/
+    /*æ ¹æ®é˜¶æ®µé…æ—¶å·å’Œé˜¶æ®µå·æŸ¥è¯¢*/
     bool QueryStagePattern(Byte uStagePatternId, Byte uStageNo, StagePattern& sStage);
     
-    /*Ìí¼Ó½×¶ÎÅäÊ±·½°¸*/
+    /*æ·»åŠ é˜¶æ®µé…æ—¶æ–¹æ¡ˆ*/
     bool AddStagePattern(Byte uStagePatternId, Byte uStageNo, StagePattern& sStage);  
     
-    /*ĞŞ¸Ä½×¶ÎÅäÊ±±í*/
+    /*ä¿®æ”¹é˜¶æ®µé…æ—¶è¡¨*/
     bool ModStagePattern(Byte uStagePatternId, Byte uStageNo, StagePattern& sStage);
 
-    /*É¾³ı½×¶ÎÅäÊ±±í*/
+    /*åˆ é™¤é˜¶æ®µé…æ—¶è¡¨*/
     bool DelStagePattern(Byte uStagePatternId);
 
-     /*É¾³ı½×¶ÎÅäÊ±±í*/
+     /*åˆ é™¤é˜¶æ®µé…æ—¶è¡¨*/
     bool DelStagePattern(Byte uStagePatternId, Byte uStageNo);
 
 	bool DelStagePattern();
@@ -1121,87 +1121,87 @@ public:
     bool IsStagePatternValid(Byte uStagePatternId, Byte uStageNo, StagePattern& sStage);
     
     
-/********************************¸úËæÏàÎ»±í´¦Àíº¯Êı*****************************************/
-    /*²éÑ¯ËùÓĞµÄ¸úËæÏàÎ»*/
+/********************************è·Ÿéšç›¸ä½è¡¨å¤„ç†å‡½æ•°*****************************************/
+    /*æŸ¥è¯¢æ‰€æœ‰çš„è·Ÿéšç›¸ä½*/
     bool QueryOverlapPhase(TblOverlapPhase& tblFollow);
 
-    /*¸ù¾İÏàÎ»ºÅ²éÑ¯*/
+    /*æ ¹æ®ç›¸ä½å·æŸ¥è¯¢*/
     bool QueryOverlapPhase(Byte uOverlapPhase, OverlapPhase& sOverlapPhase);
     
-    /*Ìí¼Ó¸úËæÏàÎ»*/
+    /*æ·»åŠ è·Ÿéšç›¸ä½*/
     bool AddOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhase);  
     
-    /*ĞŞ¸Ä¸úËæÏàÎ»*/
+    /*ä¿®æ”¹è·Ÿéšç›¸ä½*/
     bool ModOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhase);
 
-    /*É¾³ı¸úËæÏàÎ»±í*/
+    /*åˆ é™¤è·Ÿéšç›¸ä½è¡¨*/
     bool DelOverlapPhase(Byte uOverlapPhaseId);
 
 	bool DelOverlapPhase();
 
     bool IsOverlapPhaseValid(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhase);
     
-/********************************ÊÂ¼şÀàĞÍ±í´¦Àíº¯Êı*****************************************/
-    /*²éÑ¯ÊÂ¼şÀàĞÍ±í*/
+/********************************äº‹ä»¶ç±»å‹è¡¨å¤„ç†å‡½æ•°*****************************************/
+    /*æŸ¥è¯¢äº‹ä»¶ç±»å‹è¡¨*/
     bool QueryEventType(TblEventType& tblEvtType);
 
-    /*¸ù¾İÊÂ¼şÀàĞÍºÅ²éÑ¯*/
+    /*æ ¹æ®äº‹ä»¶ç±»å‹å·æŸ¥è¯¢*/
     bool QueryEventType(Byte uEvtTypeId, EventType& sEvtType);
     
-    /*Ìí¼ÓÊÂ¼şÀàĞÍ±í*/
+    /*æ·»åŠ äº‹ä»¶ç±»å‹è¡¨*/
     bool AddEventType(Byte uEvtTypeId, EventType& sEvtType);  
     
-    /*ĞŞ¸ÄÊÂ¼şÀàĞÍ±í*/
+    /*ä¿®æ”¹äº‹ä»¶ç±»å‹è¡¨*/
     bool ModEventType(Byte uEvtTypeId, EventType& sEvtType);
 
-    /*É¾³ıÊÂ¼şÀàĞÍ±í*/
+    /*åˆ é™¤äº‹ä»¶ç±»å‹è¡¨*/
     bool DelEventType(Byte uEvtTypeId);
 
-    /*É¾³ıÊÂ¼şÀàĞÍ±í*/
+    /*åˆ é™¤äº‹ä»¶ç±»å‹è¡¨*/
     bool DelEventType();
     
     
-/********************************ÊÂ¼şÈÕÖ¾±í´¦Àíº¯Êı*****************************************/
-    /*²éÑ¯ÊÂ¼şÈÕÖ¾±í*/
+/********************************äº‹ä»¶æ—¥å¿—è¡¨å¤„ç†å‡½æ•°*****************************************/
+    /*æŸ¥è¯¢äº‹ä»¶æ—¥å¿—è¡¨*/
     bool QueryEventLog(TblEventLog& tblLog);
 
-    /*¸ù¾İÊÂ¼şÀàĞÍºÅ²éÑ¯*/
+    /*æ ¹æ®äº‹ä»¶ç±»å‹å·æŸ¥è¯¢*/
     bool QueryEventLog(Byte uEvtTypeId, TblEventLog& tblLog);
 
-    /*¸ù¾İÈÕÖ¾ID²éÑ¯*/
+    /*æ ¹æ®æ—¥å¿—IDæŸ¥è¯¢*/
     bool QueryEventLog(Byte uEvtLogId, EventLog& sEvtLog);
 
-	/*»ñÈ¡ÈÕÖ¾±íµÄ×î´óĞĞÊıÒÔ¼°Ê±¼ä×îĞ¡µÄid*/
+	/*è·å–æ—¥å¿—è¡¨çš„æœ€å¤§è¡Œæ•°ä»¥åŠæ—¶é—´æœ€å°çš„id*/
 	bool GetLogMaxMin(Uint32* pMaxId, Uint32* pMinId);
     
-    /*Ìí¼ÓÊÂ¼şÈÕÖ¾*/
+    /*æ·»åŠ äº‹ä»¶æ—¥å¿—*/
     bool AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong uEvtValue);
 
-    /*¸ù¾İÊÂ¼şÀàĞÍÉ¾³ıÊÂ¼şÈÕÖ¾±í*/
+    /*æ ¹æ®äº‹ä»¶ç±»å‹åˆ é™¤äº‹ä»¶æ—¥å¿—è¡¨*/
     bool DelEventLog(Byte uEvtTypeId);
 
-    /*É¾³ıÈÕÖ¾*/
+    /*åˆ é™¤æ—¥å¿—*/
     bool DelEventLog();
-	 /*É¾³ıÈÕÖ¾*/
+	 /*åˆ é™¤æ—¥å¿—*/
 	bool DelEventLog(Byte uEvtTypeId ,Uint uStartTime ,Uint uEndTime) ;
 
-/******************************Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í******************************/
+/******************************é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨******************************/
 
-/*²éÑ¯Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í*/
+/*æŸ¥è¯¢é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨*/
 bool QueryChannelChk(TblChannelChk & tblChanChk);//(TblEventType& tblEvtType)
 
-/*É¾³ıÍ¨µÀµÆÅİ¼ì²âÅäÖÃ±í*/
+/*åˆ é™¤é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨*/
 bool DelChannelChk();
 
-/*Ìí¼ÓÍ¨µÀµÆÅİ¼ì²âÅäÖÃ±í*/
+/*æ·»åŠ é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨*/
 bool AddChannelChk(Byte uChanChkId, ChannelChk& sChannelChk);
 
-/*ĞŞ¸ÄÍ¨µÀµÆÅİ¼ì²âÅäÖÃ±í*/
+/*ä¿®æ”¹é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨*/
 bool ModChannelChk(Byte uChanChkId, ChannelChk& sChannelChk);
 
 /******************************************************************************/
 
-/******************************³µÁ¾Í³¼Æ±í´¦Àíº¯Êı***************************************/
+/******************************è½¦è¾†ç»Ÿè®¡è¡¨å¤„ç†å‡½æ•°***************************************/
     bool AddVehicleStat(Byte ucDetId , Ulong ulCarTotal , Byte ucOccupancy);
 
 	bool DelVehicleStat(Ulong ulId);
@@ -1210,7 +1210,7 @@ bool ModChannelChk(Byte uChanChkId, ChannelChk& sChannelChk);
 
 	bool QueryVehicleStat(TblVehicleStat& tblVehicleStat);
 
-/****************************ÏàÎ»Óë·½Ïò¶ÔÓ¦±í´¦Àíº¯Êı*******************************/
+/****************************ç›¸ä½ä¸æ–¹å‘å¯¹åº”è¡¨å¤„ç†å‡½æ•°*******************************/
 	bool QueryPhaseToDirec(TblPhaseToDirec& tblPhaseToDirec);
 
 	bool QueryPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec);
@@ -1221,126 +1221,126 @@ bool ModChannelChk(Byte uChanChkId, ChannelChk& sChannelChk);
 
 	bool DelPhaseToDirec();
 
-   /*»ñÈ¡¹«¹²ÅäÖÃÏà¹Ø*/
+   /*è·å–å…¬å…±é…ç½®ç›¸å…³*/
     bool GetCommonPara(Ushort& usDeviceId, Byte& ucMaxModule, Byte& usSynchTime, Ushort& usSynchFlag);
    
-    /*ĞŞ¸Ä¹«¹²ÅäÖÃ²ÎÊı*/
+    /*ä¿®æ”¹å…¬å…±é…ç½®å‚æ•°*/
     bool SetCommonPara(Ushort* usDeviceId, Byte* ucMaxModule, Byte* usSynchTime, Ushort* usSynchFlag);
 
-    /*»ñÈ¡¹«¹²Ê±¼ä²ÎÊı*/
+    /*è·å–å…¬å…±æ—¶é—´å‚æ•°*/
     bool GetCommTimePara(Long& lZone, Byte& ucMaxPlanCnt, Byte& ucMaxScheduleCnt, Byte& ucMaxEvtCount);
     
-    /*ĞŞ¸Ä¹«¹²Ê±¼ä²ÎÊı*/
+    /*ä¿®æ”¹å…¬å…±æ—¶é—´å‚æ•°*/
     bool SetCommTimePara(Long* lZone, Byte* ucMaxPlanCnt, Byte* ucMaxScheduleCnt, Byte* ucMaxEvtCount);
     
-    /*»ñÈ¡ÊÂ¼ş²ÎÊı*/
+    /*è·å–äº‹ä»¶å‚æ•°*/
     bool GetEventPara(Byte& ucMaxEvtType, Byte& ucMaxLogCount);
     
-    /*ÉèÖÃÊÂ¼ş²ÎÊı*/
+    /*è®¾ç½®äº‹ä»¶å‚æ•°*/
     bool SetEventPara(Byte* ucMaxEvtType, Byte* ucMaxLogCount);
 
-    /*»ñÈ¡ÏàÎ»²ÎÊı*/
+    /*è·å–ç›¸ä½å‚æ•°*/
     bool GetPhasePara(Byte& ucMaxPhaseCount);
 
-    /*ÉèÖÃÏàÎ»²ÎÊı*/
+    /*è®¾ç½®ç›¸ä½å‚æ•°*/
     bool SetPhasePara(Byte& ucMaxPhaseCount);
 
-    /*»ñÈ¡µÆ¿Ø²ÎÊı*/
+    /*è·å–ç¯æ§å‚æ•°*/
     bool GetChannelPara(Byte& ucMaxChannel);
 
-    /*ÉèÖÃµÆ¿Ø²ÎÊı*/
+    /*è®¾ç½®ç¯æ§å‚æ•°*/
     bool SetChannelPara(Byte& ucMaxChannel);   
     
-   /*»ñÈ¡¿ØÖÆµ¥ÔªÏà¹Ø²ÎÊı*/
+   /*è·å–æ§åˆ¶å•å…ƒç›¸å…³å‚æ•°*/
     bool GetUnitCtrlPara(Byte& ucFlsTimeWhenStart, Byte& ucAllRedTimeWhenStart, Byte& ucRemoteCtrlFlag, Byte& ucFlashFreq);
     
-    /*ÉèÖÃ¿ØÖÆµ¥ÔªÏà¹Ø²ÎÊı*/
+    /*è®¾ç½®æ§åˆ¶å•å…ƒç›¸å…³å‚æ•°*/
     bool SetUnitCtrlPara(Byte* ucFlsTimeWhenStart, Byte* ucAllRedTimeWhenStart, Byte* ucRemoteCtrlFlag, Byte* ucFlashFreq);
   
-    /*»ñÈ¡ÅäÊ±·½°¸²ÎÊı*/
+    /*è·å–é…æ—¶æ–¹æ¡ˆå‚æ•°*/
     bool GetPatternPara(Byte& ucMaxPatternCount, Byte& ucMaxStgPatternCount, Byte& ucMaxStageCount);
     
-    /*ÉèÖÃÅäÊ±·½°¸²ÎÊı*/
+    /*è®¾ç½®é…æ—¶æ–¹æ¡ˆå‚æ•°*/
     bool SetPatternPara(Byte* ucMaxPatternCount, Byte* ucMaxStgPatternCount, Byte* ucMaxStageCount);
   
-    /*»ñÈ¡¹«¹²ÖÜÆÚÊ±³¤*/
+    /*è·å–å…¬å…±å‘¨æœŸæ—¶é•¿*/
     bool GetGlobalCycle(Byte& ucGlobalCycle);
    
-    /*ÉèÖÃ¹«¹²ÖÜÆÚÊ±³¤*/
+    /*è®¾ç½®å…¬å…±å‘¨æœŸæ—¶é•¿*/
     bool SetGlobalCycle(Byte ucGlobalCycle);
 
-    /*»ñÈ¡Ğ­µ÷ÏàÎ»²î*/
+    /*è·å–åè°ƒç›¸ä½å·®*/
     bool GetCoorPhaseOffset(Byte& ucPhaseOffset);
 
-    /*ÉèÖÃĞ­µ÷ÏàÎ»²î*/
+    /*è®¾ç½®åè°ƒç›¸ä½å·®*/
     bool SetCoorPhaseOffset(Byte& ucPhaseOffset);
     
-    /*»ñÈ¡½µ¼¶ÅäÖÃ*/
+    /*è·å–é™çº§é…ç½®*/
     bool GetDegradeCfg(Byte& ucDegradeMode, Byte& ucDegradePattern);
 
-    /*»ñÈ¡½µ¼¶»ù×¼·½°¸*/
+    /*è·å–é™çº§åŸºå‡†æ–¹æ¡ˆ*/
     bool GetDegradePattern(DbByteArray& tblDegrade);
 
-    /*¸ù¾İ·½°¸ºÅ»ñÈ¡*/
+    /*æ ¹æ®æ–¹æ¡ˆå·è·å–*/
     bool GetDegradePattern(Byte ucDegradeMode, Byte& ucDegradePattern);
 
-    /*ÉèÖÃ½µ¼¶ÅäÖÃ*/
+    /*è®¾ç½®é™çº§é…ç½®*/
     bool SetDegradeMode(Byte ucDegradeMode);
 
-    /*ÉèÖÃ½µ¼¶»ù×¼·½°¸*/
+    /*è®¾ç½®é™çº§åŸºå‡†æ–¹æ¡ˆ*/
     bool SetDegradePattern(DbByteArray& tblDegrade);
 
-    /*ÉèÖÃ½µ¼¶»ù×¼·½°¸*/
+    /*è®¾ç½®é™çº§åŸºå‡†æ–¹æ¡ˆ*/
     bool SetDegradePattern(Byte ucDegradeMode, Byte ucDegradePattern);
 
-    /*»ñÈ¡¿ØÖÆÖ÷»ú²ÎÊı*/
+    /*è·å–æ§åˆ¶ä¸»æœºå‚æ•°*/
     bool GetCtrlMasterOptFlag(Byte& ucCtrlOptFlag);
     
-    /*ÉèÖÃ¿ØÖÆÖ÷»ú²ÎÊı*/
+    /*è®¾ç½®æ§åˆ¶ä¸»æœºå‚æ•°*/
     bool SetCtrlMasterOptFlag(Byte ucCtrlOptFlag);
     
-     /*»ñÈ¡¶àÂ·¿ÚĞÅºÅ»ú²ÎÊı*/
+     /*è·å–å¤šè·¯å£ä¿¡å·æœºå‚æ•°*/
     bool GetMultiCtrlPara(Ushort& usBaseAddr, Byte& ucDevCount);
     
-    /*ÉèÖÃ¶àÂ·¿ÚĞÅºÅ»ú²ÎÊı*/
+    /*è®¾ç½®å¤šè·¯å£ä¿¡å·æœºå‚æ•°*/
     bool SetMultiCtrlPara(Ushort* usBaseAddr, Byte* ucDevCount);
     
-    /*»ñÈ¡±£´æ¼ÓÃÜÑéÖ¤×Ö·û´®*/
+    /*è·å–ä¿å­˜åŠ å¯†éªŒè¯å­—ç¬¦ä¸²*/
     bool GetEypSerial(char * SysEypSerial);   //201310101344
-    /*ÉèÖÃ±£´æ¼ÓÃÜÑéÖ¤×Ö·û´®*/
+    /*è®¾ç½®ä¿å­˜åŠ å¯†éªŒè¯å­—ç¬¦ä¸²*/
     bool SetEypSerial();  //201310101350
 
-     /*²éÑ¯ÏµÍ³±í*/
+     /*æŸ¥è¯¢ç³»ç»Ÿè¡¨*/
     bool GetSystemData(const char* sField, Ulong& ulData);
 
-    /*ÉèÖÃÏµÍ³±í*/
+    /*è®¾ç½®ç³»ç»Ÿè¡¨*/
     bool SetSystemData(const char* sField, Ulong ulData);
 
-    /*²éÑ¯*/
+    /*æŸ¥è¯¢*/
     bool GetFieldData(const char* sTable, const char* sField, Ulong& ulData);
 
-    /*ÉèÖÃ*/
+    /*è®¾ç½®*/
     bool SetFieldData(const char* sTable, const char* sField, Ulong ulData);
 
-    /*²éÑ¯*/
+    /*æŸ¥è¯¢*/
     bool GetFieldSignData(const char* sTable, const char* sField, Long& lData);
 
-    /*ÉèÖÃ*/
+    /*è®¾ç½®*/
     bool SetFieldSignData(const char* sTable, const char* sField, Long lData);
 
 private:
-    /*²éÑ¯*/
+    /*æŸ¥è¯¢*/
     bool Query(const char* sSql, CSqliteRst& sRst);
-    /*É¾³ı¡¢ĞŞ¸ÄµÈ*/
+    /*åˆ é™¤ã€ä¿®æ”¹ç­‰*/
     bool ExecuteCmd(const char* sSql);
-    /*±íÊÇ·ñ´æÔÚ*/
+    /*è¡¨æ˜¯å¦å­˜åœ¨*/
     bool IsTableExist(const char* sTable);
     void AddDefault();
 
-    /*Ìí¼Ó¼ì²âÆ÷²ÎÊı*/
+    /*æ·»åŠ æ£€æµ‹å™¨å‚æ•°*/
     bool AddDetPara(DetectorPara& detPara);
 
-    /*¼ì²âÏµÍ³²ÎÊı*/
+    /*æ£€æµ‹ç³»ç»Ÿå‚æ•°*/
     bool IsSysParaValid(const char* sField, Ulong& ulValue);
 
     bool IsSysParaValid(const char* sField, Long& lValue);

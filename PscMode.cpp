@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   PscMode.cpp
 Date:       2013-1-1
-Description:ĞĞÈË°´Å¥Ä£Ê½´¦ÀíÎÄ¼ş¡£
+Description:è¡ŒäººæŒ‰é’®æ¨¡å¼å¤„ç†æ–‡ä»¶ã€‚
 Version:    V1.0
 History:
 ***************************************************************/
@@ -15,19 +15,19 @@ History:
 #include "MacControl.h"
 
 /*
-ĞĞÈË°´Å¥Ä£Ê½×´Ì¬ÀàĞÍÃ¶¾Ù
+è¡ŒäººæŒ‰é’®æ¨¡å¼çŠ¶æ€ç±»å‹æšä¸¾
 */
 enum
 {
-	PSC_STAND_STATUS     = 0 ,  //´ı»ú×´Ì¬
-	PSC_WAIT_PG_STATUS   = 1 ,  //µÈ´ıĞĞÈË×´Ì¬
-	PSC_PG_ENABLE_STATUS = 2 ,  //ĞĞÈË×´Ì¬
+	PSC_STAND_STATUS     = 0 ,  //å¾…æœºçŠ¶æ€
+	PSC_WAIT_PG_STATUS   = 1 ,  //ç­‰å¾…è¡ŒäººçŠ¶æ€
+	PSC_PG_ENABLE_STATUS = 2 ,  //è¡ŒäººçŠ¶æ€
 	PSC_NEXT_PG_STATUS   = 3 ,
 	PSC_OTHER_STATUS    
 };
 
 /*
-ĞĞÈË°´Å¥·Ö²¼Ã¶¾Ù
+è¡ŒäººæŒ‰é’®åˆ†å¸ƒæšä¸¾
 */
 enum
 {
@@ -40,10 +40,10 @@ enum
 
 /**************************************************************
 Function:       CPscMode::CPscMode
-Description:    CPscModeÀà¹¹Ôìº¯Êı
-Input:          ÎŞ                 
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CPscModeç±»æ„é€ å‡½æ•°
+Input:          æ—                  
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CPscMode::CPscMode()
 {	
@@ -55,10 +55,10 @@ CPscMode::CPscMode()
 
 /**************************************************************
 Function:       CPscMode::~CPscMode
-Description:    CPscModeÀàÎö¹¹º¯Êı
-Input:          ÎŞ               
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CPscModeç±»ææ„å‡½æ•°
+Input:          æ—                
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CPscMode::~CPscMode()
 {
@@ -69,10 +69,10 @@ CPscMode::~CPscMode()
 
 /**************************************************************
 Function:       CPscMode::CreateInstance
-Description:    ´´½¨	CPscMode¾²Ì¬¶ÔÏó
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»º	CPscModeé™æ€å¯¹è±¡
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CPscMode* CPscMode::CreateInstance()
 {
@@ -84,10 +84,10 @@ CPscMode* CPscMode::CreateInstance()
 
 /**************************************************************
 Function:       CPscMode::InitPara
-Description:    ³õÊ¼»¯ĞĞÈË°´Å¥Àà±äÁ¿³õÊ¼»¯
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    åˆå§‹åŒ–è¡ŒäººæŒ‰é’®ç±»å˜é‡åˆå§‹åŒ–
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CPscMode::InitPara()
 {
@@ -105,10 +105,10 @@ void CPscMode::InitPara()
 
 /**************************************************************
 Function:       CPscMode::DealButton
-Description:    »ñÈ¡ĞĞÈË°´Å¥°´¼ü×´Ì¬ 500ms²éÑ¯Ò»´Î
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è·å–è¡ŒäººæŒ‰é’®æŒ‰é”®çŠ¶æ€ 500msæŸ¥è¯¢ä¸€æ¬¡
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CPscMode::DealButton()
 {
@@ -182,7 +182,7 @@ void CPscMode::DealButton()
 			}
 
 			if (   ( m_bCrossStage1First  && !m_bStep1ToStep2 )
-				|| ( !m_bCrossStage1First && m_bStep1ToStep2  ) )  //ĞèÒªĞŞ¸Ä½×¶Î´ÎĞò
+				|| ( !m_bCrossStage1First && m_bStep1ToStep2  ) )  //éœ€è¦ä¿®æ”¹é˜¶æ®µæ¬¡åº
 			{
 				SScheduleTime sStageTmp;
 				sStageTmp = m_pWorkParaManager->m_pRunData->sScheduleTime[ucStageCross1];
@@ -198,7 +198,7 @@ void CPscMode::DealButton()
 		m_ucPscStatus = PSC_WAIT_PG_STATUS;
 	}
 
-	if ( !m_bStartCntCown )  //ÖÜÆÚÖØĞÂ¿ªÊ¼
+	if ( !m_bStartCntCown )  //å‘¨æœŸé‡æ–°å¼€å§‹
 	{
 		m_bStartCntCown = true;
 
@@ -212,10 +212,10 @@ void CPscMode::DealButton()
 
 /**************************************************************
 Function:       CPscMode::DecTime
-Description:    ĞĞÈË°´Å¥²½½øÊ±¼ä¹ÜÀí £¬ÔÚĞÅºÅ¼°´¦ÓÚ¹ı½ÖÄ£Ê½Ê±£¬1sµ÷ÓÃÒ»´Î
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è¡ŒäººæŒ‰é’®æ­¥è¿›æ—¶é—´ç®¡ç† ï¼Œåœ¨ä¿¡å·åŠå¤„äºè¿‡è¡—æ¨¡å¼æ—¶ï¼Œ1sè°ƒç”¨ä¸€æ¬¡
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CPscMode::DecTime()
 {
@@ -231,7 +231,7 @@ void CPscMode::DecTime()
 		|| ( ( CTRL_PANEL == m_pWorkParaManager->m_pRunData->uiCtrl ) &&   ( (SIGNALOFF == m_pWorkParaManager->m_pRunData->uiWorkStatus ) 
 		|| (ALLRED == m_pWorkParaManager->m_pRunData->uiWorkStatus)   || (FLASH == m_pWorkParaManager->m_pRunData->uiWorkStatus ) 
 			 ) ) ) 
-		//ÊÖ¶¯¿ØÖÆ»ò(Ãæ°å¹ØµÆ¡¢È«ºì¡¢»ÆÉÁ)
+		//æ‰‹åŠ¨æ§åˆ¶æˆ–(é¢æ¿å…³ç¯ã€å…¨çº¢ã€é»„é—ª)
 	{
 		return;
 	}
@@ -245,7 +245,7 @@ void CPscMode::DecTime()
 
 	if ( m_bStartCntCown 
 		&& m_pWorkParaManager->m_pRunData->ucElapseTime != m_pWorkParaManager->m_pRunData->ucStepTime - 1 )  
-		//±ÜÃâ¶ş´Î·¢ËÍµ¹¼ÆÊ±ĞÅÏ¢
+		//é¿å…äºŒæ¬¡å‘é€å€’è®¡æ—¶ä¿¡æ¯
 	{
 	}
 }
@@ -253,10 +253,10 @@ void CPscMode::DecTime()
 
 /**************************************************************
 Function:       CPscMode::GoNextStep
-Description:    ĞÅºÅµÆ½øÈëÏÂÒ»²½½ø
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·ç¯è¿›å…¥ä¸‹ä¸€æ­¥è¿›
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CPscMode::GoNextStep()
 {
@@ -269,7 +269,7 @@ void CPscMode::GoNextStep()
 	STscRunData* pRunData = m_pWorkParaManager->m_pRunData;
 
 	pRunData->ucStepNo++;
-		if ( pRunData->ucStepNo >= pRunData->ucStepNum )  //×ßÍêÒ»¸öÖÜÆÚ
+		if ( pRunData->ucStepNo >= pRunData->ucStepNum )  //èµ°å®Œä¸€ä¸ªå‘¨æœŸ
 		{
 			pRunData->ucStepNo = m_ucStandStep;
 
@@ -290,7 +290,7 @@ void CPscMode::GoNextStep()
 	CLampBoard::CreateInstance()->SetLamp(pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampOn
 		,pRunData->sStageStepInfo[pRunData->ucStepNo].ucLampFlash);
 
-	if ( ucNextStage != pRunData->ucStageNo )  //ÏàÎ»×éÇĞ»»
+	if ( ucNextStage != pRunData->ucStageNo )  //ç›¸ä½ç»„åˆ‡æ¢
 	{
 		pRunData->ucStageNo = ucNextStage;
 		PscSwitchStatus();
@@ -309,10 +309,10 @@ void CPscMode::GoNextStep()
 
 /**************************************************************
 Function:       CPscMode::PscSwitchStatus
-Description:    psc¸Ä±äĞĞÈË¹ı½Ö×´Ì¬
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    pscæ”¹å˜è¡Œäººè¿‡è¡—çŠ¶æ€
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CPscMode::PscSwitchStatus()
 {

@@ -14,10 +14,10 @@ typedef unsigned short UINT16;
 typedef unsigned char UINT8;
 
 
-#define SERIAL0  "/dev/ttyO0"    //串口0
-#define SERIAL1  "/dev/ttyO1"    //串口1
-#define SERIAL2  "/dev/ttyO2"    //串口2
-#define SERIAL3  "/dev/ttyO3"    //串口3
+#define SERIAL0  "/dev/ttyO0"    //涓插彛0
+#define SERIAL1  "/dev/ttyO1"    //涓插彛1
+#define SERIAL2  "/dev/ttyO2"    //涓插彛2
+#define SERIAL3  "/dev/ttyO3"    //涓插彛3
 #define SERIAL4  "/dev/ttyO4"	//485
 #define SERIAL5  "/dev/ttyO5"    //485
 
@@ -58,16 +58,17 @@ public:
 	* export serial fd to other program to perform 
 	* directly read, write to serial. 
 	*  
-	* @return serial's file description  */
+	* @return serial's file description  */
+
 		int getPortFd();
 private:
 	CSerialCtrl();
 	~CSerialCtrl();
 
-	//与GPS、GSM板通信
+	//	//涓嶨PS銆丟SM鏉块�氫俊
 	INT32  m_iSerial1fd;
 	INT32  m_iSerial2fd;
-	//与备份PIC通信，内容包括备份灯色，手控.
+	//涓庡浠絇IC閫氫俊锛屽唴瀹瑰寘鎷浠界伅鑹诧紝鎵嬫帶.
 	INT32  m_iSerial3fd;
 	INT32  m_iSerial4fd;
 	INT32  m_iSerial5fd;

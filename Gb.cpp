@@ -3,7 +3,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   Gb.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úÖ÷³ÌĞòÆô¶¯ÎÄ¼ş.
+Description:ä¿¡å·æœºä¸»ç¨‹åºå¯åŠ¨æ–‡ä»¶.
 Version:    V1.0
 History:
 ***************************************************************/
@@ -30,11 +30,11 @@ History:
 
 /**************************************************************
 Function:        main
-Description:    ÏµÍ³Èë¿Úº¯Êı¡£				
-Input:          argc - ²ÎÊı¸öÊı argv - ²ÎÊıÊı×é             
-Output:         ÎŞ
-Return:         -1  ³ÌĞòÆô¶¯Ê§°Ü
-				0   ³ÌĞòÆô¶¯³É¹¦
+Description:    ç³»ç»Ÿå…¥å£å‡½æ•°ã€‚				
+Input:          argc - å‚æ•°ä¸ªæ•° argv - å‚æ•°æ•°ç»„             
+Output:         æ— 
+Return:         -1  ç¨‹åºå¯åŠ¨å¤±è´¥
+				0   ç¨‹åºå¯åŠ¨æˆåŠŸ
 ***************************************************************/
 int main(int argc, char *argv[]) 
 {
@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
 
 /**************************************************************
 Function:        SignalMsgQueue
-Description:    ĞÅºÅ»ú¿ØÖÆÏûÏ¢¶ÓÁĞÏß³Ìº¯Êı¡£				
-Input:          arg - Ïß³Ìº¯Êı²ÎÊı        
-Output:         ÎŞ
+Description:    ä¿¡å·æœºæ§åˆ¶æ¶ˆæ¯é˜Ÿåˆ—çº¿ç¨‹å‡½æ•°ã€‚				
+Input:          arg - çº¿ç¨‹å‡½æ•°å‚æ•°        
+Output:         æ— 
 Return:         0
 ***************************************************************/
 static void* SignalMsgQueue(void *arg)
@@ -70,9 +70,9 @@ static void* SignalMsgQueue(void *arg)
 
 /**************************************************************
 Function:        GbtMsgQueue
-Description:    gbtÏûÏ¢´¦Àí¶ÓÁĞÏß³Ìº¯Êı¡£				
-Input:          arg - Ïß³Ìº¯Êı²ÎÊı        
-Output:         ÎŞ
+Description:    gbtæ¶ˆæ¯å¤„ç†é˜Ÿåˆ—çº¿ç¨‹å‡½æ•°ã€‚				
+Input:          arg - çº¿ç¨‹å‡½æ•°å‚æ•°        
+Output:         æ— 
 Return:         0
 ***************************************************************/
 static void* GbtMsgQueue(void* arg)
@@ -84,9 +84,9 @@ static void* GbtMsgQueue(void* arg)
 
 /**************************************************************
 Function:        RunGSM
-Description:    GSM¹¦ÄÜµ÷ÓÃÏß³Ìº¯Êı		
-Input:          arg - Ïß³Ìº¯Êı²ÎÊı        
-Output:         ÎŞ
+Description:    GSMåŠŸèƒ½è°ƒç”¨çº¿ç¨‹å‡½æ•°		
+Input:          arg - çº¿ç¨‹å‡½æ•°å‚æ•°        
+Output:         æ— 
 Return:         0
 ***************************************************************/
 
@@ -105,9 +105,9 @@ static void *RunGSM(void *arg)
 
 /**************************************************************
 Function:        RunGpsGSM
-Description:    GPSºÍGSM¹¦ÄÜµ÷ÓÃÏß³Ìº¯Êı		
-Input:          arg - Ïß³Ìº¯Êı²ÎÊı        
-Output:         ÎŞ
+Description:    GPSå’ŒGSMåŠŸèƒ½è°ƒç”¨çº¿ç¨‹å‡½æ•°		
+Input:          arg - çº¿ç¨‹å‡½æ•°å‚æ•°        
+Output:         æ— 
 Return:         0
 ***************************************************************/
 
@@ -127,9 +127,9 @@ static void *RunGps(void *arg)
 
 /**************************************************************
 Function:        RunWirelessBtnHandle
-Description:    ´¦ÀíÎŞÏßÊÖ¿Ø°´¼üÏß³Ìº¯Êı
-Input:          arg - Ïß³Ìº¯Êı²ÎÊı        
-Output:         ÎŞ
+Description:    å¤„ç†æ— çº¿æ‰‹æ§æŒ‰é”®çº¿ç¨‹å‡½æ•°
+Input:          arg - çº¿ç¨‹å‡½æ•°å‚æ•°        
+Output:         æ— 
 Return:         0
 Date:           20141117
 ***************************************************************/
@@ -137,17 +137,17 @@ Date:           20141117
 static void *RunWirelessBtnHandle(void *arg)
 {
 	CWirelessBtn *pWirelessBtn = CWirelessBtn::CreateInstance() ;
-	ACE_OS::sleep(20); //ÏÈµÈ´ıÆäËûÏß³ÌÔËĞĞ	
+	ACE_OS::sleep(20); //å…ˆç­‰å¾…å…¶ä»–çº¿ç¨‹è¿è¡Œ	
 	ACE_DEBUG((LM_DEBUG,"\n%s:%d ***THREAD*** Begin to run WirelessBtnHandle thread!\r\n",__FILE__,__LINE__));
 	while(true)
 	{
 		if(pWirelessBtn->GetbHandleWirelessBtnMsg())
 		{
-			pWirelessBtn->HandWirelessBtnMsg(); //´¦ÀíÎŞÏßÊÖ¿Ø°´¼ü
+			pWirelessBtn->HandWirelessBtnMsg(); //å¤„ç†æ— çº¿æ‰‹æ§æŒ‰é”®
 		}
 		else
 		{
-			ACE_OS::sleep(ACE_Time_Value(0,200000)); //Ë¯Ãß200ºÁÃë
+			ACE_OS::sleep(ACE_Time_Value(0,200000)); //ç¡çœ 200æ¯«ç§’
 		}
 		
 		//ACE_DEBUG((LM_DEBUG,"\n%s:%d wait run WirelessBtnHandle thread!\r\n",__FILE__,__LINE__));
@@ -158,10 +158,10 @@ static void *RunWirelessBtnHandle(void *arg)
 
 /**************************************************************
 Function:        BroadCast
-Description:    ¹ã²¥Ïß³Ìº¯Êı£¬»ØËÍ¹ã²¥ÏûÏ¢£¬°üÀ¨IPµØÖ·£¬ÏµÍ³¶Ë¿Ú£¬
-				ÏµÍ³°æ±¾ĞÅÏ¢¡£				
-Input:          arg - Ïß³Ìº¯Êı²ÎÊı        
-Output:         ÎŞ
+Description:    å¹¿æ’­çº¿ç¨‹å‡½æ•°ï¼Œå›é€å¹¿æ’­æ¶ˆæ¯ï¼ŒåŒ…æ‹¬IPåœ°å€ï¼Œç³»ç»Ÿç«¯å£ï¼Œ
+				ç³»ç»Ÿç‰ˆæœ¬ä¿¡æ¯ã€‚				
+Input:          arg - çº¿ç¨‹å‡½æ•°å‚æ•°        
+Output:         æ— 
 Return:         0
 ***************************************************************/
 static void* BroadCast(void* arg)
@@ -187,7 +187,7 @@ static void* BroadCast(void* arg)
 
 		if ( size > 0 )
 		{
-			//ĞÅºÅ»úip
+			//ä¿¡å·æœºip
 			pGbtMsgQueue->GetNetPara(pIp , NULL , NULL);
 			ACE_OS::memcpy(sBroadcastMessage , pIp , 4);
 			sBroadcastMessage[0] = pIp[0];
@@ -195,13 +195,13 @@ static void* BroadCast(void* arg)
 			sBroadcastMessage[2] = pIp[2];
 			sBroadcastMessage[3] = pIp[3];
 			ucSendCount += 4;
-			//ĞÅºÅ»ú¶Ë¿Ú
+			//ä¿¡å·æœºç«¯å£
 			(sBroadcastMessage+ucSendCount)[0] = (Byte)((iPort>>24)&0xFF);
 			(sBroadcastMessage+ucSendCount)[1] = (Byte)((iPort>>16)&0xFF);
 			(sBroadcastMessage+ucSendCount)[2] = (Byte)((iPort>>8)&0xFF);
 			(sBroadcastMessage+ucSendCount)[3] = (Byte)(iPort&0xFF);
 			ucSendCount += 4;
-			//ĞÅºÅ»ú°æ±¾
+			//ä¿¡å·æœºç‰ˆæœ¬
 			(sBroadcastMessage+ucSendCount)[0] = 0x2;
 			(sBroadcastMessage+ucSendCount)[1] = 0xF4;
 			(sBroadcastMessage+ucSendCount)[2] = 0xA;
@@ -216,23 +216,23 @@ static void* BroadCast(void* arg)
 
 /**************************************************************
 Function:       RunGb
-Description:    ĞÅºÅ»úÏµÍ³ºËĞÄÈë¿Úº¯Êı£¬°üº¬7¸öÖ÷Òª¹¤×÷Ïß³Ì			
-Input:          ÎŞ        
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºç³»ç»Ÿæ ¸å¿ƒå…¥å£å‡½æ•°ï¼ŒåŒ…å«7ä¸ªä¸»è¦å·¥ä½œçº¿ç¨‹			
+Input:          æ—         
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void RunGb()
 {
 	ACE_thread_t  tThreadId[9];
 	ACE_hthread_t hThreadHandle[9];
 
-	(CDbInstance::m_cGbtTscDb).InitDb(DB_NAME);  //Êı¾İ¿âÀà³õÊ¼»¯
+	(CDbInstance::m_cGbtTscDb).InitDb(DB_NAME);  //æ•°æ®åº“ç±»åˆå§‹åŒ–
 	
-	CManaKernel::CreateInstance()->InitWorkPara();  //³õÊ¼»¯ĞÅºÅ²ÎÊı
-	RecordTscStartTime();   //¼ÇÂ¼ÏµÍ³¿ªÆôÊ±¼ä
+	CManaKernel::CreateInstance()->InitWorkPara();  //åˆå§‹åŒ–ä¿¡å·å‚æ•°
+	RecordTscStartTime();   //è®°å½•ç³»ç»Ÿå¼€å¯æ—¶é—´
 	RecordTscSN();
 	/********************************************************************************/
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)SignalMsgQueue,  //¿ªÆôĞÅºÅºËĞÄ¿ØÖÆ¶ÓÁĞ
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)SignalMsgQueue,  //å¼€å¯ä¿¡å·æ ¸å¿ƒæ§åˆ¶é˜Ÿåˆ—
 							0,
 							THR_NEW_LWP | THR_JOINABLE,
 							&tThreadId[0],
@@ -246,7 +246,7 @@ void RunGb()
 	}
 	
 	/********************************************************************************/
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)GbtMsgQueue, //¿ªÆôÍ¨ĞÅgbt¶ÓÁĞ
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)GbtMsgQueue, //å¼€å¯é€šä¿¡gbté˜Ÿåˆ—
 							0,
 							THR_NEW_LWP | THR_JOINABLE,
 							&tThreadId[1],
@@ -260,7 +260,7 @@ void RunGb()
 	}
 
 	/********************************************************************************/
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)CGbtMsgQueue::RunGbtRecv, //¿ªÆôGbtµÄudpµÈ´ıÊı¾İÏß³Ì
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)CGbtMsgQueue::RunGbtRecv, //å¼€å¯Gbtçš„udpç­‰å¾…æ•°æ®çº¿ç¨‹
 							0,
 							THR_NEW_LWP | THR_JOINABLE,
 							&tThreadId[2],
@@ -274,7 +274,7 @@ void RunGb()
 	}
 	
 	/********************************************************************************/
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)Can::RunCanRecv, //¿ªÆôCAN×ÜÏßÊı¾İ½ÓÊÕÏß³Ì
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)Can::RunCanRecv, //å¼€å¯CANæ€»çº¿æ•°æ®æ¥æ”¶çº¿ç¨‹
 							0,
 							THR_NEW_LWP | THR_JOINABLE,
 							&tThreadId[3],
@@ -288,7 +288,7 @@ void RunGb()
 	}
 	
 	/********************************************************************************/
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)Can::DealCanData, //´¦ÀíCAN½ÓÊÕ¶ÓÁĞÊı¾İ
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)Can::DealCanData, //å¤„ç†CANæ¥æ”¶é˜Ÿåˆ—æ•°æ®
 							0,
 							THR_NEW_LWP | THR_JOINABLE,
 							&tThreadId[4],
@@ -302,7 +302,7 @@ void RunGb()
 	}
 
 	/********************************************************************************/
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)BroadCast, //¿ªÆô¹ã²¥ÏìÓ¦Ïß³Ì
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)BroadCast, //å¼€å¯å¹¿æ’­å“åº”çº¿ç¨‹
 		0,
 		THR_NEW_LWP | THR_JOINABLE,
 		&tThreadId[5],
@@ -316,13 +316,13 @@ void RunGb()
 	}	
 	
 	/********************************************************************************/
-	CTimerManager::CreateInstance()->CreateAllTimer();   //¿ªÆôËùÓĞµÄ¶¨Ê±Æ÷
+	CTimerManager::CreateInstance()->CreateAllTimer();   //å¼€å¯æ‰€æœ‰çš„å®šæ—¶å™¨
 	
 	/********************************************************************************/
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue )
 	{
 		
-		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGps, //¿ªÆôgpsĞ£Ê±Ïß³Ì
+		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGps, //å¼€å¯gpsæ ¡æ—¶çº¿ç¨‹
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[6],
@@ -338,7 +338,7 @@ void RunGb()
 	if ( 0 != CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_MSG_ALARM].ucValue )
 	{
 		
-		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGSM, //¿ªÆôGSMĞ£Ê±Ïß³Ì
+		if ( ACE_Thread::spawn((ACE_THR_FUNC)RunGSM, //å¼€å¯GSMæ ¡æ—¶çº¿ç¨‹
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[7],
@@ -352,7 +352,7 @@ void RunGb()
 		}
 	}
 
-	if ( ACE_Thread::spawn((ACE_THR_FUNC)RunWirelessBtnHandle, //ÎŞÏßÊÖ¿Ø°´¼ü´¦Àí
+	if ( ACE_Thread::spawn((ACE_THR_FUNC)RunWirelessBtnHandle, //æ— çº¿æ‰‹æ§æŒ‰é”®å¤„ç†
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[8],
@@ -364,7 +364,7 @@ void RunGb()
 		{
 			TscAceDebug((LM_DEBUG,"Error: MainBackup thread faild\n"));
 		}
- 	if ( ACE_Thread::spawn((ACE_THR_FUNC)MainBackup::Recevie, //±¸·İµ¥Æ¬»úµÄÊµÊ±Í¨ĞÅÏß³Ì
+ 	if ( ACE_Thread::spawn((ACE_THR_FUNC)MainBackup::Recevie, //å¤‡ä»½å•ç‰‡æœºçš„å®æ—¶é€šä¿¡çº¿ç¨‹
 								0,
 								THR_NEW_LWP | THR_JOINABLE,
 								&tThreadId[9],
@@ -377,7 +377,7 @@ void RunGb()
 			TscAceDebug((LM_DEBUG,"Error: MainBackup thread faild\n"));
 		}
 	
-	ACE_Thread::join(hThreadHandle[0]);   //»ØÊÕÏß³Ì×ÊÔ´
+	ACE_Thread::join(hThreadHandle[0]);   //å›æ”¶çº¿ç¨‹èµ„æº
 	ACE_Thread::join(hThreadHandle[1]);
 	ACE_Thread::join(hThreadHandle[2]);
 	ACE_Thread::join(hThreadHandle[3]);
@@ -395,16 +395,16 @@ void RunGb()
 		ACE_Thread::join(hThreadHandle[7]);
 	}	
 	
-	CDbInstance::m_cGbtTscDb.CloseDb();  //¹Ø±ÕÊı¾İ¿â	
+	CDbInstance::m_cGbtTscDb.CloseDb();  //å…³é—­æ•°æ®åº“	
 
 }
 
 /**************************************************************
 Function:       StartBeep
-Description:    ĞÅºÅ»úÏµÍ³¿ª»úÃù½Ğ1Ãë		
-Input:          ÎŞ        
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºç³»ç»Ÿå¼€æœºé¸£å«1ç§’		
+Input:          æ—         
+Output:         æ— 
+Return:         æ— 
 Date:           20150327
 ***************************************************************/
 

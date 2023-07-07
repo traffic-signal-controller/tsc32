@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   GbtTimer.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úgbtÏûÏ¢´¦Àí¶¨Ê±Æ÷£¬ÓÃÓÚ´¦Àí¶¨Ê±ÉÏ´«¶ÔÏó²Ù×÷¡£
+Description:ä¿¡å·æœºgbtæ¶ˆæ¯å¤„ç†å®šæ—¶å™¨ï¼Œç”¨äºå¤„ç†å®šæ—¶ä¸Šä¼ å¯¹è±¡æ“ä½œã€‚
 Version:    V1.0
 History:    
 ***************************************************************/
@@ -13,10 +13,10 @@ History:
 
 /**************************************************************
 Function:       CGbtTimer::CGbtTimer
-Description:    CGbtTimerÀà¹¹Ôìº¯Êı£¬ÓÃÓÚÀà³õÊ¼»¯´¦Àí				
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGbtTimerç±»æ„é€ å‡½æ•°ï¼Œç”¨äºç±»åˆå§‹åŒ–å¤„ç†				
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGbtTimer::CGbtTimer()
 {
@@ -29,10 +29,10 @@ CGbtTimer::CGbtTimer()
 
 /**************************************************************
 Function:       CGbtTimer::~CGbtTimer
-Description:    CGbtTimerÀà	Îö¹¹º¯Êı	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGbtTimerç±»	ææ„å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGbtTimer::~CGbtTimer()
 {
@@ -41,10 +41,10 @@ CGbtTimer::~CGbtTimer()
 
 /**************************************************************
 Function:       CGbtTimer::CreateInstance
-Description:    ´´½¨	CGbtTimer¾²Ì¬¶ÔÏó
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»º	CGbtTimeré™æ€å¯¹è±¡
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CGbtTimer* CGbtTimer::CreateInstance()
 {
@@ -56,17 +56,17 @@ CGbtTimer* CGbtTimer::CreateInstance()
 #ifdef GBT_TCP
 /**************************************************************
 Function:       CGbtTimer::TailorReport
-Description:    ¶¨ÖÆÖ÷¶¯ÉÏ±¨ĞÅÏ¢£¬°üº¬È¡Ïû£¬ÒÔtcp·½Ê½´«Êä
-Input:          ucGbtArrIndex ´ı´¦ÀígbtÏûÏ¢ÏÂ±ê
-				uBufCnt   ½ÓÊÕµ½µ½ÏûÏ¢³¤¶È
-				pBuf      ½ÓÊÕµ½µÄÏûÏ¢»º´æÖ¸Õë              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å®šåˆ¶ä¸»åŠ¨ä¸ŠæŠ¥ä¿¡æ¯ï¼ŒåŒ…å«å–æ¶ˆï¼Œä»¥tcpæ–¹å¼ä¼ è¾“
+Input:          ucGbtArrIndex å¾…å¤„ç†gbtæ¶ˆæ¯ä¸‹æ ‡
+				uBufCnt   æ¥æ”¶åˆ°åˆ°æ¶ˆæ¯é•¿åº¦
+				pBuf      æ¥æ”¶åˆ°çš„æ¶ˆæ¯ç¼“å­˜æŒ‡é’ˆ              
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtTimer::TailorReport(Byte ucGbtArrIndex , Uint uBufCnt , Byte* pBuf)
 {
-	Byte ucObjectNum   = pBuf[3];        //¶ÔÏóÊı
-	Byte ucRecvOptType = pBuf[0] & 0xf; //ÊÕµ½Ö¡µÄ²Ù×÷ÀàĞÍ
+	Byte ucObjectNum   = pBuf[3];        //å¯¹è±¡æ•°
+	Byte ucRecvOptType = pBuf[0] & 0xf; //æ”¶åˆ°å¸§çš„æ“ä½œç±»å‹
 	Byte ucBufIndex    = 1;
 	Byte ucObjectCmd   = 0;
 	Ushort usCycle     = 0;
@@ -93,14 +93,14 @@ void CGbtTimer::TailorReport(Byte ucGbtArrIndex , Uint uBufCnt , Byte* pBuf)
 				return;
 			}
 
-			if ( false == CreateReport(ucGbtArrIndex,ucObjectCmd,usCycle) )  //ÉÏ±¨ĞÅÏ¢¶¨ÖÆÓëÈ¡Ïû
+			if ( false == CreateReport(ucGbtArrIndex,ucObjectCmd,usCycle) )  //ä¸ŠæŠ¥ä¿¡æ¯å®šåˆ¶ä¸å–æ¶ˆ
 			{
 				SendErrMsg(ucGbtArrIndex);
 				return;
 			}
 		}
 
-		//ÕıÈ·µÄÓ¦´ğ
+		//æ­£ç¡®çš„åº”ç­”
 		if ( GBT_SET_REQ == ucRecvOptType )
 		{
 			Byte sSendMsg[4] = {0};
@@ -124,26 +124,26 @@ void CGbtTimer::TailorReport(Byte ucGbtArrIndex , Uint uBufCnt , Byte* pBuf)
 
 /**************************************************************
 Function:       CGbtTimer::TailorReport
-Description:    ¶¨ÖÆÖ÷¶¯ÉÏ±¨ĞÅÏ¢£¬°üº¬È¡Ïû£¬ÒÔudp·½Ê½´«Êä
-				ÀıÈç£º0x81 0xf7 0x0 0x2 0xf8 0x0 0xa 
-*                     0xa0 0x0 0x2 £¬ÖÆ¶¨0xf8ºÍ0xa0Á½¸ö¶ÔÏó×Ô¶¯ÉÏ´«
-				Ç°ÕßÉÏ´«ÆµÂÊ1sÒ»´Î£¬ºóÕß200msÒ»´Î¡£
-Input:          addrClient ¿Í»§¶ËµØÖ·
-				uBufCnt   ½ÓÊÕµ½µ½ÏûÏ¢³¤¶È
-				pBuf      ½ÓÊÕµ½µÄÏûÏ¢»º´æÖ¸Õë              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å®šåˆ¶ä¸»åŠ¨ä¸ŠæŠ¥ä¿¡æ¯ï¼ŒåŒ…å«å–æ¶ˆï¼Œä»¥udpæ–¹å¼ä¼ è¾“
+				ä¾‹å¦‚ï¼š0x81 0xf7 0x0 0x2 0xf8 0x0 0xa 
+*                     0xa0 0x0 0x2 ï¼Œåˆ¶å®š0xf8å’Œ0xa0ä¸¤ä¸ªå¯¹è±¡è‡ªåŠ¨ä¸Šä¼ 
+				å‰è€…ä¸Šä¼ é¢‘ç‡1sä¸€æ¬¡ï¼Œåè€…200msä¸€æ¬¡ã€‚
+Input:          addrClient å®¢æˆ·ç«¯åœ°å€
+				uBufCnt   æ¥æ”¶åˆ°åˆ°æ¶ˆæ¯é•¿åº¦
+				pBuf      æ¥æ”¶åˆ°çš„æ¶ˆæ¯ç¼“å­˜æŒ‡é’ˆ              
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtTimer::TailorReport(ACE_INET_Addr& addrClient, Uint uBufCnt , Byte* pBuf)
 {
-	Byte ucObjectNum   = pBuf[3];        //¶ÔÏóÊı
-	Byte ucRecvOptType = pBuf[0] & 0xf; //ÊÕµ½Ö¡µÄ²Ù×÷ÀàĞÍ
+	Byte ucObjectNum   = pBuf[3];        //å¯¹è±¡æ•°
+	Byte ucRecvOptType = pBuf[0] & 0xf; //æ”¶åˆ°å¸§çš„æ“ä½œç±»å‹
 	Byte ucBufIndex    = 1;
 	Byte ucObjectCmd   = 0;
 	Ushort usCycle     = 0;
 
 	ucBufIndex = 4;
-	if ( GBT_SET_REQ == ucRecvOptType || GBT_SET_REQ_NOACK == ucRecvOptType )  //ÉèÖÃ
+	if ( GBT_SET_REQ == ucRecvOptType || GBT_SET_REQ_NOACK == ucRecvOptType )  //è®¾ç½®
 	{
 		for ( Byte ucIndex=0; ucIndex<ucObjectNum; ucIndex++ )
 		{
@@ -164,14 +164,14 @@ void CGbtTimer::TailorReport(ACE_INET_Addr& addrClient, Uint uBufCnt , Byte* pBu
 				return;
 			}
 
-			if ( false == CreateReport(addrClient,ucObjectCmd,usCycle) )  //ÉÏ±¨ĞÅÏ¢¶¨ÖÆÓëÈ¡Ïû
+			if ( false == CreateReport(addrClient,ucObjectCmd,usCycle) )  //ä¸ŠæŠ¥ä¿¡æ¯å®šåˆ¶ä¸å–æ¶ˆ
 			{
 				SendErrMsg(addrClient);
 				return;
 			}
 		}
 
-		//ÕıÈ·µÄÓ¦´ğ
+		//æ­£ç¡®çš„åº”ç­”
 		if ( GBT_SET_REQ == ucRecvOptType )
 		{
 			CGbtMsgQueue* pGbtMsgQueue = CGbtMsgQueue::CreateInstance();
@@ -195,12 +195,12 @@ void CGbtTimer::TailorReport(ACE_INET_Addr& addrClient, Uint uBufCnt , Byte* pBu
 #ifdef GBT_TCP
 /**************************************************************
 Function:       CGbtTimer::CreateReport
-Description:    ´´½¨Ö÷¶¯ÉÏ±¨ĞÅÏ¢£¬°üº¬È¡Ïû£¬ÒÔtcp·½Ê½´«Êä				
-Input:          ucGbtArrIndex ´ı´¦ÀíÏûÏ¢ÏÂ±ê
-				ucObjectCmd   ÉÏ´«¶ÔÏó
-				usCycle       ÉÏ´«ÖÜÆÚ              
-Output:         ÎŞ
-Return:         false-Ê§°Ü true-³É¹¦
+Description:    åˆ›å»ºä¸»åŠ¨ä¸ŠæŠ¥ä¿¡æ¯ï¼ŒåŒ…å«å–æ¶ˆï¼Œä»¥tcpæ–¹å¼ä¼ è¾“				
+Input:          ucGbtArrIndex å¾…å¤„ç†æ¶ˆæ¯ä¸‹æ ‡
+				ucObjectCmd   ä¸Šä¼ å¯¹è±¡
+				usCycle       ä¸Šä¼ å‘¨æœŸ              
+Output:         æ— 
+Return:         false-å¤±è´¥ true-æˆåŠŸ
 ***************************************************************/
 bool CGbtTimer::CreateReport(Byte ucGbtArrIndex,Byte ucObjectCmd , Ushort usCycle)
 {
@@ -212,7 +212,7 @@ bool CGbtTimer::CreateReport(Byte ucGbtArrIndex,Byte ucObjectCmd , Ushort usCycl
 	{
 		if ( m_sReportInfo[ucIndex].usCycle > 0  )
 		{
-			if ( m_sReportInfo[ucIndex].ucCmd ==  ucObjectCmd  //ÖÜÆÚĞŞ¸Ä  °üº¬È¡Ïû
+			if ( m_sReportInfo[ucIndex].ucCmd ==  ucObjectCmd  //å‘¨æœŸä¿®æ”¹  åŒ…å«å–æ¶ˆ
 				&& m_sReportInfo[ucIndex].ucGbtDealDataIndex== ucGbtArrIndex )
 			{
 				m_sReportInfo[ucIndex].usCycle   = usCycle;
@@ -225,7 +225,7 @@ bool CGbtTimer::CreateReport(Byte ucGbtArrIndex,Byte ucObjectCmd , Ushort usCycl
 		}
 	}
 
-	if ( iNewIndex >= 0 && iNewIndex < MAX_REPORT_NUM ) //ĞÂµÄÉÏ±¨ĞÅÏ¢¶¨ÖÆ
+	if ( iNewIndex >= 0 && iNewIndex < MAX_REPORT_NUM ) //æ–°çš„ä¸ŠæŠ¥ä¿¡æ¯å®šåˆ¶
 	{
 		m_sReportInfo[iNewIndex].ucTick             = 0;
 		m_sReportInfo[iNewIndex].ucGbtDealDataIndex = ucGbtArrIndex;
@@ -241,12 +241,12 @@ bool CGbtTimer::CreateReport(Byte ucGbtArrIndex,Byte ucObjectCmd , Ushort usCycl
 
 /**************************************************************
 Function:       CGbtTimer::CreateReport
-Description:    ´´½¨Ö÷¶¯ÉÏ±¨ĞÅÏ¢£¬°üº¬È¡Ïû£¬ÒÔUDP·½Ê½´«Êä				
-Input:          addrClient ¿Í»§¶ËµØÖ·
-				ucObjectCmd   ÉÏ´«¶ÔÏó
-				usCycle       ÉÏ´«ÖÜÆÚ              
-Output:         ÎŞ
-Return:         false-Ê§°Ü true-³É¹¦
+Description:    åˆ›å»ºä¸»åŠ¨ä¸ŠæŠ¥ä¿¡æ¯ï¼ŒåŒ…å«å–æ¶ˆï¼Œä»¥UDPæ–¹å¼ä¼ è¾“				
+Input:          addrClient å®¢æˆ·ç«¯åœ°å€
+				ucObjectCmd   ä¸Šä¼ å¯¹è±¡
+				usCycle       ä¸Šä¼ å‘¨æœŸ              
+Output:         æ— 
+Return:         false-å¤±è´¥ true-æˆåŠŸ
 ***************************************************************/
 bool CGbtTimer::CreateReport(ACE_INET_Addr& addrClient,Byte ucObjectCmd , Ushort usCycle)
 {
@@ -258,7 +258,7 @@ bool CGbtTimer::CreateReport(ACE_INET_Addr& addrClient,Byte ucObjectCmd , Ushort
 	{
 		if ( m_sReportInfo[ucIndex].usCycle > 0  )
 		{
-			if ( m_sReportInfo[ucIndex].ucCmd ==  ucObjectCmd  //ÖÜÆÚĞŞ¸Ä  °üº¬È¡Ïû
+			if ( m_sReportInfo[ucIndex].ucCmd ==  ucObjectCmd  //å‘¨æœŸä¿®æ”¹  åŒ…å«å–æ¶ˆ
 				&& m_sReportInfo[ucIndex].addClient.get_ip_address() == addrClient.get_ip_address() )
 			{
 				m_sReportInfo[ucIndex].usCycle   = usCycle;
@@ -272,7 +272,7 @@ bool CGbtTimer::CreateReport(ACE_INET_Addr& addrClient,Byte ucObjectCmd , Ushort
 		}
 	}
 
-	if ( iNewIndex >= 0 && iNewIndex < MAX_REPORT_NUM ) //ĞÂµÄÉÏ±¨ĞÅÏ¢¶¨ÖÆ
+	if ( iNewIndex >= 0 && iNewIndex < MAX_REPORT_NUM ) //æ–°çš„ä¸ŠæŠ¥ä¿¡æ¯å®šåˆ¶
 	{
 		m_sReportInfo[iNewIndex].ucTick    = 0;
 		m_sReportInfo[iNewIndex].addClient = addrClient;
@@ -288,10 +288,10 @@ bool CGbtTimer::CreateReport(ACE_INET_Addr& addrClient,Byte ucObjectCmd , Ushort
 #ifdef GBT_TCP
 /**************************************************************
 Function:       CGbtTimer::SendErrMsg
-Description:    ·¢ËÍ´íÎóĞÅÏ¢£¬ÒÔtcp·½Ê½´«Êä				
-Input:          ucGbtArrIndex ´ı´¦ÀíÏûÏ¢ÏÂ±ê    
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å‘é€é”™è¯¯ä¿¡æ¯ï¼Œä»¥tcpæ–¹å¼ä¼ è¾“				
+Input:          ucGbtArrIndex å¾…å¤„ç†æ¶ˆæ¯ä¸‹æ ‡    
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtTimer::SendErrMsg(Byte ucGbtArrIndex)
 {
@@ -303,10 +303,10 @@ void CGbtTimer::SendErrMsg(Byte ucGbtArrIndex)
 #else
 /**************************************************************
 Function:       CGbtTimer::SendErrMsg
-Description:    ·¢ËÍ´íÎóĞÅÏ¢£¬ÒÔudp·½Ê½´«Êä				
-Input:          addrClient ¿Í»§¶ËµØÖ·    
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å‘é€é”™è¯¯ä¿¡æ¯ï¼Œä»¥udpæ–¹å¼ä¼ è¾“				
+Input:          addrClient å®¢æˆ·ç«¯åœ°å€    
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtTimer::SendErrMsg(ACE_INET_Addr& addrClient)
 {
@@ -321,9 +321,9 @@ void CGbtTimer::SendErrMsg(ACE_INET_Addr& addrClient)
 
 /**************************************************************
 Function:       CGbtTimer::SendErrMsg
-Description:    ¶¨Ê±Æ÷»Øµ÷º¯Êı£¬100msµ÷ÓÃÒ»´Î				
-Input:          tCurrentTime  µ±Ç°Ê±¼ä   
-Output:         ÎŞ
+Description:    å®šæ—¶å™¨å›è°ƒå‡½æ•°ï¼Œ100msè°ƒç”¨ä¸€æ¬¡				
+Input:          tCurrentTime  å½“å‰æ—¶é—´   
+Output:         æ— 
 Return:         0
 ***************************************************************/
 int CGbtTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /* = 0 */)

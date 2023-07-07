@@ -1,9 +1,9 @@
 #ifndef _GB_H_
 #define _GB_H_
 
-static void* SignalMsgQueue(void* arg);  //Æô¶¯ĞÅºÅ»ú¿ØÖÆÏûÏ¢¶ÓÁĞ
-static void* GbtMsgQueue(void* arg);     //Æô¶¯gbtÏûÏ¢´¦Àí¶ÓÁĞ
-static void* BroadCast(void* arg);       //¿ªÆô¹ã²¥Ïß³Ì 
+static void* SignalMsgQueue(void* arg);  //å¯åŠ¨ä¿¡å·æœºæ§åˆ¶æ¶ˆæ¯é˜Ÿåˆ—
+static void* GbtMsgQueue(void* arg);     //å¯åŠ¨gbtæ¶ˆæ¯å¤„ç†é˜Ÿåˆ—
+static void* BroadCast(void* arg);       //å¼€å¯å¹¿æ’­çº¿ç¨‹ 
 void RunGb();
 void StartBeep();
 

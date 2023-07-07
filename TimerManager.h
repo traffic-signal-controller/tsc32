@@ -7,10 +7,10 @@
 #include "WirelessButtons.h"
 //#include "ComDef.h"
 
-const int MAX_TIMER = 2;   //×î´óµÄ¶¨Ê±Æ÷ÊýÁ¿ 
+const int MAX_TIMER = 2;   //æœ€å¤§çš„å®šæ—¶å™¨æ•°é‡ 
 /*
-*¶ÔÕû¸öÏîÄ¿µÄ¶¨Ê±Æ÷µÄ¹ÜÀí£¬°üº¬³õÊ¼»¯½¨Á¢ÓëÉ¾³ý
-*µ¥¸öÊµÀý´æÔÚ
+*å¯¹æ•´ä¸ªé¡¹ç›®çš„å®šæ—¶å™¨çš„ç®¡ç†ï¼ŒåŒ…å«åˆå§‹åŒ–å»ºç«‹ä¸Žåˆ é™¤
+*å•ä¸ªå®žä¾‹å­˜åœ¨
 */
 class CTimerManager
 {

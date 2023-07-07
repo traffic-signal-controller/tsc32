@@ -1,10 +1,10 @@
 #include "IoOperate.h"
 /**************************************************************
 Function:        CIoOprate
-Description:     CIoOprateÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     CIoOprateç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CIoOprate::CIoOprate()
 {
@@ -12,10 +12,10 @@ CIoOprate::CIoOprate()
 }
 /**************************************************************
 Function:        ~CIoOprate
-Description:     CIoOprateÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     CIoOprateç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CIoOprate::~CIoOprate()
 {
@@ -23,16 +23,16 @@ CIoOprate::~CIoOprate()
 }
 /**************************************************************
 Function:        TscWrite
-Description:     CIoOprate  io ²Ù×÷Ğ´²Ù×÷£¬Ä¿Ç°ÒÑ¾­²»ÔÙÊ¹ÓÃ			
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     CIoOprate  io æ“ä½œå†™æ“ä½œï¼Œç›®å‰å·²ç»ä¸å†ä½¿ç”¨			
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 bool CIoOprate::TscWrite(int iDevFd , Byte* pWriteData , int iWriteCnt)
 {
-	int iReWriteCnt     = 0;    //ÖØ¸´Ğ´µÄ´ÎÊı
-	int iHaveWriteCnt   = 0;    //ÒÑ¾­Ğ´µÄ¸öÊı
-	int iWriteCntOnePer = 0;    //Ò»´ÎĞ´µÄ¸öÊı
+	int iReWriteCnt     = 0;    //é‡å¤å†™çš„æ¬¡æ•°
+	int iHaveWriteCnt   = 0;    //å·²ç»å†™çš„ä¸ªæ•°
+	int iWriteCntOnePer = 0;    //ä¸€æ¬¡å†™çš„ä¸ªæ•°
 
 	while ( iHaveWriteCnt < iWriteCnt )
 	{
@@ -61,16 +61,16 @@ bool CIoOprate::TscWrite(int iDevFd , Byte* pWriteData , int iWriteCnt)
 }
 /**************************************************************
 Function:        TscRead
-Description:     CIoOprate  io ¶ÁÈ¡²Ù×÷¡£Ä¿Ç°ÒÑ¾­²»ÔÙÊ¹ÓÃ		
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     CIoOprate  io è¯»å–æ“ä½œã€‚ç›®å‰å·²ç»ä¸å†ä½¿ç”¨		
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 bool CIoOprate::TscRead(int iDevFd , Byte* pReadData , int iReadCnt )
 {
-	int iReReadCnt   = 0;    //ÖØ¸´¶ÁÈ¡µÄ´ÎÊı
-	int iHaveReadCnt = 0;    //ÒÑ¾­¶ÁµÄ¸öÊı
-	int iReadCntOnePer = 0;  //Ò»´Î¶ÁÈ¡µÄ¸öÊı
+	int iReReadCnt   = 0;    //é‡å¤è¯»å–çš„æ¬¡æ•°
+	int iHaveReadCnt = 0;    //å·²ç»è¯»çš„ä¸ªæ•°
+	int iReadCntOnePer = 0;  //ä¸€æ¬¡è¯»å–çš„ä¸ªæ•°
 
 	while ( iHaveReadCnt < iReadCnt )
 	{

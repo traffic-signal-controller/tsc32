@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   TscTimer.cpp
 Date:       2013-1-1
-Description:ÐÅºÅ»ú¶¨Ê±Æ÷Ïà¹Ø²Ù×÷´¦Àí¡£
+Description:ä¿¡å·æœºå®šæ—¶å™¨ç›¸å…³æ“ä½œå¤„ç†ã€‚
 Version:    V1.0
 History:
 ***************************************************************/
@@ -42,16 +42,16 @@ static STscRunData* pRunData = pWorkParaManager->m_pRunData ;
 	
 /**************************************************************
 Function:       CTscTimer::CTscTimer
-Description:    CTscTimerÀà¹¹Ôìº¯Êý
+Description:    CTscTimerç±»æž„é€ å‡½æ•°
 Input:          ucMaxTick                 
-Output:         ÎÞ
-Return:         ÎÞ
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CTscTimer::CTscTimer(Byte ucMaxTick)
 {
 	m_ucTick    = 0;
 	m_ucMaxTick = ucMaxTick;
-	m_bWatchdog = true;    		//¿ªÆô¿´ÃÅ¹·
+	m_bWatchdog = true;    		//å¼€å¯çœ‹é—¨ç‹—
 	if ( m_bWatchdog )
 	{
 		WatchDog::CreateInstance()->OpenWatchdog();
@@ -62,10 +62,10 @@ CTscTimer::CTscTimer(Byte ucMaxTick)
 
 /**************************************************************
 Function:       CTscTimer::~CTscTimer
-Description:    CTscTimerÀàÎö¹¹º¯Êý
-Input:          ÎÞ               
-Output:         ÎÞ
-Return:         ÎÞ
+Description:    CTscTimerç±»æžæž„å‡½æ•°
+Input:          æ—                
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CTscTimer::~CTscTimer()
 {
@@ -75,10 +75,10 @@ CTscTimer::~CTscTimer()
 
 /**************************************************************
 Function:       CTscTimer::handle_timeout
-Description:    ÐÅºÅ»ú¶¨Ê±Æ÷¶¨Ê±»Øµ÷º¯Êý£¬100msÖ´ÐÐÒ»´Î¡£´¦ÀíÐÅºÅ»ú
-				¶àÊý¶¨Ê±¹¤×÷¡£
-Input:           Ä¬ÈÏ´¦Àí£¬ÓÃ»§ÎÞÐèÊäÈë              
-Output:         ÎÞ
+Description:    ä¿¡å·æœºå®šæ—¶å™¨å®šæ—¶å›žè°ƒå‡½æ•°ï¼Œ100msæ‰§è¡Œä¸€æ¬¡ã€‚å¤„ç†ä¿¡å·æœº
+				å¤šæ•°å®šæ—¶å·¥ä½œã€‚
+Input:           é»˜è®¤å¤„ç†ï¼Œç”¨æˆ·æ— éœ€è¾“å…¥              
+Output:         æ— 
 Return:         0
 ***************************************************************/
 int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /* = 0 */)
@@ -87,18 +87,18 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 
 	//if((pRunData->uiCtrl == CTRL_VEHACTUATED ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 	//	pDetector->SearchAllStatus();  //ADD: 2013 0723 1620		
-	//ÊÖ¿Ø°´Å¥Ã¿100msÕì²éÒ»´Î  // ADD:0514 9:42
+	//æ‰‹æŽ§æŒ‰é’®æ¯100msä¾¦æŸ¥ä¸€æ¬¡  // ADD:0514 9:42
 	//pMainBackup->DoManual();
 	//pMainBackup->Recevie();
 	
 	switch ( m_ucTick )
 	{
 	case 0: 
-		//ºËÐÄ°å·¢ËÍÐÄÌø¸ø£¬±¸·Ýµ¥Æ¬»ú¡£500ms   ¡£ÁíÍâ ÔÚcase 5µ÷ÓÃ
+		//æ ¸å¿ƒæ¿å‘é€å¿ƒè·³ç»™ï¼Œå¤‡ä»½å•ç‰‡æœºã€‚500ms   ã€‚å¦å¤– åœ¨case 5è°ƒç”¨
 		//ACE_OS::printf("%s:%d num =%d \n",__FILE__,__LINE__,num++);
 		pMainBackup->HeartBeat();
 		ChooseDecTime();
-		pLamp->SendLamp();//4	////4¸öµÆ¿Ø°åÐÅÏ¢·¢ËÍ	
+		pLamp->SendLamp();//4	////4ä¸ªç¯æŽ§æ¿ä¿¡æ¯å‘é€	
 		//pMainBoardLed->DoRunLed();  
 		if(pRunData->uiCtrl==CTRL_UTCS)
 			pRunData->uiUtcsHeartBeat++;
@@ -112,7 +112,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	case 2:		
 		
-		//ÊÖ¿Ø°´Å¥Ã¿100msÕì²éÒ»´Î  // ADD:0514 9:42
+		//æ‰‹æŽ§æŒ‰é’®æ¯100msä¾¦æŸ¥ä¸€æ¬¡  // ADD:0514 9:42
 		pMainBackup->DoManual();
 		
 		break;
@@ -124,8 +124,8 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		
 		if((CTRL_PREANALYSIS == pRunData->uiCtrl||pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 			{
-				pDetector->IsVehileHaveCar(); //Èç¹ûÓÐ³µÔòÔö¼Ó³¤²½·ÅÐÐÏàÎ»µÄÂÌµÆÊ±¼ä ×î´óÎª×î´óÂÌÊ±¼ä
-				pDetector->GetOccupy(); //»ñÈ¡Õ¼ÓÐÂÊºÍ³µÁ÷Á¿
+				pDetector->IsVehileHaveCar(); //å¦‚æžœæœ‰è½¦åˆ™å¢žåŠ é•¿æ­¥æ”¾è¡Œç›¸ä½çš„ç»¿ç¯æ—¶é—´ æœ€å¤§ä¸ºæœ€å¤§ç»¿æ—¶é—´
+				pDetector->GetOccupy(); //èŽ·å–å æœ‰çŽ‡å’Œè½¦æµé‡
 			}
 		break;
 
@@ -140,9 +140,9 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		
 		pPower->CheckVoltage();
 		break;
-	case 5://500ms Ö´ÐÐÒ»´Î
+	case 5://500ms æ‰§è¡Œä¸€æ¬¡
 		
-		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_FLASHOFF) //ÕâÀï2±íÊ¾ÉÁ¶ÏÊ½µ¹¼ÆÊ±
+		if( pWorkParaManager->m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue == COUNTDOWN_FLASHOFF) //è¿™é‡Œ2è¡¨ç¤ºé—ªæ–­å¼å€’è®¡æ—¶
 		{	
 			if ( (SIGNALOFF == pRunData->uiWorkStatus)|| (ALLRED== pRunData->uiWorkStatus) 
 			|| (FLASH   == pRunData->uiWorkStatus)|| (CTRL_MANUAL == pRunData->uiCtrl) 
@@ -194,13 +194,13 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		else
 		{
 			if(pWorkParaManager->m_pRunData->uiWorkStatus == STANDARD)
-				pLamp->SetLampChannelColor(0x3,0x3); //20150806 ºìÉ«µÆ×éÊ£3ÃëºìµÆÉÁ
+				pLamp->SetLampChannelColor(0x3,0x3); //20150806 çº¢è‰²ç¯ç»„å‰©3ç§’çº¢ç¯é—ª
 			pLamp->SendLamp(); 
 		}
 		
-		//pLamp->SendLamp();		//¸øËùÓÐµÆ¿Ø°å·¢ËÍµÆÉ«Êý¾Ý
+		//pLamp->SendLamp();		//ç»™æ‰€æœ‰ç¯æŽ§æ¿å‘é€ç¯è‰²æ•°æ®
 		//pMainBoardLed->DoRunLed();
-		//ºËÐÄ°å·¢ËÍÐÄÌø¸ø£¬±¸·Ýµ¥Æ¬»ú¡£500ms   ¡£ÁíÍâ ÔÚcase 1µ÷ÓÃ
+		//æ ¸å¿ƒæ¿å‘é€å¿ƒè·³ç»™ï¼Œå¤‡ä»½å•ç‰‡æœºã€‚500ms   ã€‚å¦å¤– åœ¨case 1è°ƒç”¨
 		pMainBackup->HeartBeat();
 		break;
 	case 6:
@@ -209,18 +209,18 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		//if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY || pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
 			//pDetector->SearchAllStatus(true,false);  //ADD: 2013 0723 1620
 		break;
-	case 7://700ms ·¢ËÍÐÄÌøÊý¾Ý¸øµçÔ´°å
+	case 7://700ms å‘é€å¿ƒè·³æ•°æ®ç»™ç”µæºæ¿
 		
 		
 		pPower->HeartBeat();
-		//ÊÖ¿Ø°´Å¥Ã¿100msÕì²éÒ»´Î  // ADD:0514 9:42
+		//æ‰‹æŽ§æŒ‰é’®æ¯100msä¾¦æŸ¥ä¸€æ¬¡  // ADD:0514 9:42
 		pMainBackup->DoManual();
 		break;
 
 	case 8:	
 		
 		//if((pRunData->uiCtrl == CTRL_VEHACTUATED || pRunData->uiCtrl == CTRL_MAIN_PRIORITY || pRunData->uiCtrl == CTRL_SECOND_PRIORITY ||pRunData->uiCtrl == CTRL_ACTIVATE )&&  pRunData->uiWorkStatus == STANDARD)
-		//	pDetector->IsVehileHaveCar(); //Èç¹ûÓÐ³µÔòÔö¼Ó³¤²½·ÅÐÐÏàÎ»µÄÂÌµÆÊ±¼ä ×î´óÎª×î´óÂÌÊ±¼ä
+		//	pDetector->IsVehileHaveCar(); //å¦‚æžœæœ‰è½¦åˆ™å¢žåŠ é•¿æ­¥æ”¾è¡Œç›¸ä½çš„ç»¿ç¯æ—¶é—´ æœ€å¤§ä¸ºæœ€å¤§ç»¿æ—¶é—´
 		
 		break;
 	case 9:
@@ -237,7 +237,7 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 		break;
 	}
 	m_ucTick++;
-	if ( m_ucTick >= m_ucMaxTick )  ////100ºÁÃë¶¨Ê±Æ÷,10´Î1Ãë
+	if ( m_ucTick >= m_ucMaxTick )  ////100æ¯«ç§’å®šæ—¶å™¨,10æ¬¡1ç§’
 	{
 		if ( m_bWatchdog )
 		{
@@ -252,12 +252,12 @@ int CTscTimer::handle_timeout(const ACE_Time_Value &tCurrentTime, const void * /
 
 /**************************************************************
 Function:       CTscTimer::ChooseDecTime
-Description:    Ñ¡ÔñÓÉPSC»òÕßTSC´¦ÀíDecTime²Ù×÷ 1ÃëÖÓÖ´ÐÐÒ»´Î 
-				ÔÚTSC¶¨Ê±Æ÷ÀïÃæ1ÃëÖÓÖ´ÐÐÒ»´Î £¬TSCÄ£Ê½ÏÂµ÷ÓÃ
-				DecTime¸Ä±ä²½³¤				
-Input:          ÎÞ              
-Output:         ÎÞ
-Return:         ÎÞ
+Description:    é€‰æ‹©ç”±PSCæˆ–è€…TSCå¤„ç†DecTimeæ“ä½œ 1ç§’é’Ÿæ‰§è¡Œä¸€æ¬¡ 
+				åœ¨TSCå®šæ—¶å™¨é‡Œé¢1ç§’é’Ÿæ‰§è¡Œä¸€æ¬¡ ï¼ŒTSCæ¨¡å¼ä¸‹è°ƒç”¨
+				DecTimeæ”¹å˜æ­¥é•¿				
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CTscTimer::ChooseDecTime()
 {
@@ -287,7 +287,7 @@ void CTscTimer::ChooseDecTime()
 		}
 		else if ( pWorkParaManager->m_bCycleBit || bPsc )
 		{
-			if ( !bPsc ) //ÊÖ¶¯Íêºó ÔÙ×ßÍêµ½ÏÂÒ»¸öÖÜÆÚ ÖØÐÂPSC
+			if ( !bPsc ) //æ‰‹åŠ¨å®ŒåŽ å†èµ°å®Œåˆ°ä¸‹ä¸€ä¸ªå‘¨æœŸ é‡æ–°PSC
 			{
 				CPscMode::CreateInstance()->InitPara();
 				bPsc = true;

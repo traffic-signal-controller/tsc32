@@ -4,10 +4,10 @@ GBT_DB::CGbtTscDb CDbInstance::m_cGbtTscDb;
 
 /**************************************************************
 Function:       CDbInstance::CDbInstance
-Description:    CDbInstanceÀà¹¹Ôìº¯Êı£¬ÓÃÓÚ³õÊ¼»¯Àà¡£				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CDbInstanceç±»æ„é€ å‡½æ•°ï¼Œç”¨äºåˆå§‹åŒ–ç±»ã€‚				
+Input:          æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CDbInstance::CDbInstance()
 {
@@ -16,10 +16,10 @@ CDbInstance::CDbInstance()
 
 /**************************************************************
 Function:       CDbInstance::~CDbInstance
-Description:    CDbInstanceÀàÎö¹¹º¯Êı¡£				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CDbInstanceç±»ææ„å‡½æ•°ã€‚				
+Input:          æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CDbInstance::~CDbInstance()
 {

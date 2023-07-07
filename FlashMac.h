@@ -1,18 +1,18 @@
 #ifndef _FLASHMAC_H_
 
-const int MAX_FRAME_LEN = 4;     			 //Ã¿´ÎÓëspi½»»¥µÄÊı¾İ³¤¶È
-const int MAX_DEFAULT_TEMPERATURE    = 50;   //×î¸ßÎÂ¶È
-const int MIN_DEFAULT_TEMPERATURE    = -10;  //×îµÍÎÂ¶È
-const int DROP_NORMAL_TEMPERATURE    = 30;   //½µÎÂµ½Ô¤¶¨µÄÎÂ¶È
-const int UP_NORMAL_TEMPERATURE      = 0;    //¼ÓÈÈµ½Ô¤¶¨µÄÎÂ¶È
+const int MAX_FRAME_LEN = 4;     			 //æ¯æ¬¡ä¸spiäº¤äº’çš„æ•°æ®é•¿åº¦
+const int MAX_DEFAULT_TEMPERATURE    = 50;   //æœ€é«˜æ¸©åº¦
+const int MIN_DEFAULT_TEMPERATURE    = -10;  //æœ€ä½æ¸©åº¦
+const int DROP_NORMAL_TEMPERATURE    = 30;   //é™æ¸©åˆ°é¢„å®šçš„æ¸©åº¦
+const int UP_NORMAL_TEMPERATURE      = 0;    //åŠ çƒ­åˆ°é¢„å®šçš„æ¸©åº¦
 
 
-//·çÉÈ²Ù×÷ÀàĞÍ
+//é£æ‰‡æ“ä½œç±»å‹
 enum
 {
-	FAN_HOT  = 0 , //¼ÓÈÈ
-	FAN_COLD = 1 , //É¢ÈÈ
-	FAN_NULL = 2 , //ÎŞ²Ù×÷
+	FAN_HOT  = 0 , //åŠ çƒ­
+	FAN_COLD = 1 , //æ•£çƒ­
+	FAN_NULL = 2 , //æ— æ“ä½œ
 	FAN_OTHER    
 };
 
@@ -30,61 +30,61 @@ public:
 	void SendRecordBoardMsg(Byte ucType);
 
 	
-	void FlashHeartBeat();					   //»ÆÉÁÆ÷ĞÄÌø¼ì²â  ADD: 0604 1646
-	void RecvFlashCan(SCanFrame sRecvCanTmp) ; //»ÆÉÁÆ÷CANÊı¾İ½ÓÊÕ´¦Àíº¯Êı ADD: 2013 0712 1530
+	void FlashHeartBeat();					   //é»„é—ªå™¨å¿ƒè·³æ£€æµ‹  ADD: 0604 1646
+	void RecvFlashCan(SCanFrame sRecvCanTmp) ; //é»„é—ªå™¨CANæ•°æ®æ¥æ”¶å¤„ç†å‡½æ•° ADD: 2013 0712 1530
 
-	void FlashCfgSet(); 				       //»ÆÉÁÆ÷ÅäÖÃÉèÖÃº¯Êı ADD: 0604 17 58
-	void FlashCfgGet(); 					   //»ÆÉÁÆ÷ÅäÖÃ»ñÈ¡º¯Êı ADD:0605 08 47
+	void FlashCfgSet(); 				       //é»„é—ªå™¨é…ç½®è®¾ç½®å‡½æ•° ADD: 0604 17 58
+	void FlashCfgGet(); 					   //é»„é—ªå™¨é…ç½®è·å–å‡½æ•° ADD:0605 08 47
 
-	void FlashForceStart(Byte ucType);  	   // »ÆÉÁÆ÷Ç¿ÖÆ»ÆÉÁ   ADD:0605 08 49
-	void FlashForceEnd();   				   //»ÆÉ½Æ÷ÍË³öÇ¿ÖÆ»ÆÉÁ  ADD:0605 08 50
+	void FlashForceStart(Byte ucType);  	   // é»„é—ªå™¨å¼ºåˆ¶é»„é—ª   ADD:0605 08 49
+	void FlashForceEnd();   				   //é»„å±±å™¨é€€å‡ºå¼ºåˆ¶é»„é—ª  ADD:0605 08 50
 	void FlashGetVer();
 
-	bool m_bGetHardwareFlash;  //»ñÈ¡ Ó²¼ş»ÆÉÁ
-	bool m_bGetColdFan;        //»ñÈ¡ É¢ÈÈ·çÉÈ
-	bool m_bGetHotFan;         //»ñÈ¡ ¼ÓÈÈ·çÉÈ
+	bool m_bGetHardwareFlash;  //è·å– ç¡¬ä»¶é»„é—ª
+	bool m_bGetColdFan;        //è·å– æ•£çƒ­é£æ‰‡
+	bool m_bGetHotFan;         //è·å– åŠ çƒ­é£æ‰‡
 
-	bool m_bGetForDoor;        //Ç°ÃÅ´ò¿ª
-	bool m_bGetAfterDoor;      //ºóÃÅ´ò¿ª
+	bool m_bGetForDoor;        //å‰é—¨æ‰“å¼€
+	bool m_bGetAfterDoor;      //åé—¨æ‰“å¼€
 
-	bool m_bRecordSts;      //ÉÏÒ»´Î¼ÇÂ¼»ÆÉÁµÄÍ¨ĞÅ×´Ì¬
+	bool m_bRecordSts;      //ä¸Šä¸€æ¬¡è®°å½•é»„é—ªçš„é€šä¿¡çŠ¶æ€
 
-	bool m_bPowerType;         //¹©µçÀàĞÍ true:½»Á÷µç false:Ì«ÑôÄÜ
-	int  m_iVoltage;           //µçÑ¹
-	int  m_iTemperature;       //ÎÂ¶È
+	bool m_bPowerType;         //ä¾›ç”µç±»å‹ true:äº¤æµç”µ false:å¤ªé˜³èƒ½
+	int  m_iVoltage;           //ç”µå‹
+	int  m_iTemperature;       //æ¸©åº¦
 
-	/****	ÉèÖÃ»ÆÉÁÆ÷ÅäÖÃÊı¾İÏî    ********/
-	Byte m_ucSetDutyCycle;  //Õ¼¿Õ±È
-	Byte m_ucSetFlashRate;  //»ÆÉÁÆµÂÊ
-	Byte m_ucSetSyType;   //»ÆÉÁÍ¬²½·½Ê½
-	Byte m_ucSetFlashStatus ; //»ÆÉÁÀàĞÍ
+	/****	è®¾ç½®é»„é—ªå™¨é…ç½®æ•°æ®é¡¹    ********/
+	Byte m_ucSetDutyCycle;  //å ç©ºæ¯”
+	Byte m_ucSetFlashRate;  //é»„é—ªé¢‘ç‡
+	Byte m_ucSetSyType;   //é»„é—ªåŒæ­¥æ–¹å¼
+	Byte m_ucSetFlashStatus ; //é»„é—ªç±»å‹
 		
 	
-	/****	»ñÈ¡»ÆÉÁÆ÷ÅäÖÃÊı¾İÏî	********/
-	Byte m_ucGetDutyCycle;	//Õ¼¿Õ±È
-	Byte m_ucGetFlashRate;	//»ÆÉÁÆµÂÊ
-	Byte m_ucGetSyType;   //»ÆÉÁÍ¬²½·½Ê½
-	Byte m_ucFlashStatus ; //»ÆÉÁÀàĞÍ
-	Byte m_ucFlashVer[5] ; //»ÆÉÁÆ÷°æ±¾
+	/****	è·å–é»„é—ªå™¨é…ç½®æ•°æ®é¡¹	********/
+	Byte m_ucGetDutyCycle;	//å ç©ºæ¯”
+	Byte m_ucGetFlashRate;	//é»„é—ªé¢‘ç‡
+	Byte m_ucGetSyType;   //é»„é—ªåŒæ­¥æ–¹å¼
+	Byte m_ucFlashStatus ; //é»„é—ªç±»å‹
+	Byte m_ucFlashVer[5] ; //é»„é—ªå™¨ç‰ˆæœ¬
 
 private:
 	CFlashMac();
 	~CFlashMac();
 
-	Byte m_ucErrCheckCnt;   	//Á¬Ğø½ÓÊÜµ½Ğ£Ñé´íÎóµÄ´ÎÊı
-	Byte m_ucRightCnt;      	//Á¬Ğø½ÓÊÜµ½ÕıÈ·Êı¾İµÄ´ÎÊı
+	Byte m_ucErrCheckCnt;   	//è¿ç»­æ¥å—åˆ°æ ¡éªŒé”™è¯¯çš„æ¬¡æ•°
+	Byte m_ucRightCnt;      	//è¿ç»­æ¥å—åˆ°æ­£ç¡®æ•°æ®çš„æ¬¡æ•°
 
-	bool m_bSetHardwareFlash;  //ÉèÖÃ Ó²¼ş»ÆÉÁ
-	Byte m_ucSetFanSts;        //·çÉÈ×´Ì¬
-	Byte m_ucLastSetFanSts;    //·çÉÈÉÏ´ÎµÄ×´Ì¬
+	bool m_bSetHardwareFlash;  //è®¾ç½® ç¡¬ä»¶é»„é—ª
+	Byte m_ucSetFanSts;        //é£æ‰‡çŠ¶æ€
+	Byte m_ucLastSetFanSts;    //é£æ‰‡ä¸Šæ¬¡çš„çŠ¶æ€
 
-	Byte  m_ucSetColdCnt;        //ÉèÖÃ É¢ÈÈ·çÉÈµÄ´ÎÊı Á¬Ğø
-	Byte  m_ucSetHotCnt;         //ÉèÖÃ ¼ÓÈÈ·çÉÈµÄ´ÎÊı Á¬Ğø
-	Byte  m_ucSetNullFanCnt;     //·çÉÈ²»Æğ×÷ÓÃ
+	Byte  m_ucSetColdCnt;        //è®¾ç½® æ•£çƒ­é£æ‰‡çš„æ¬¡æ•° è¿ç»­
+	Byte  m_ucSetHotCnt;         //è®¾ç½® åŠ çƒ­é£æ‰‡çš„æ¬¡æ•° è¿ç»­
+	Byte  m_ucSetNullFanCnt;     //é£æ‰‡ä¸èµ·ä½œç”¨
 
-	int  m_iDevFd;             //Éè±¸fd
-	int  m_iMaxTemperature;    //×î¸ßÎÂ¶È
-	int  m_iMinTemperature;    //×îµÍÎÂ¶È
+	int  m_iDevFd;             //è®¾å¤‡fd
+	int  m_iMaxTemperature;    //æœ€é«˜æ¸©åº¦
+	int  m_iMinTemperature;    //æœ€ä½æ¸©åº¦
 
 	STscConfig* m_pTscCfg;
 };

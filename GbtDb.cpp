@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   GbtDb.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»ú´¦ÀíÓëÊı¾İ¿â½»»¥ÓĞ¹ØµÄ²Ù×÷
+Description:ä¿¡å·æœºå¤„ç†ä¸æ•°æ®åº“äº¤äº’æœ‰å…³çš„æ“ä½œ
 Version:    V1.0
 History:
 ***************************************************************/
@@ -19,14 +19,14 @@ History:
 #include "Dbinstance.h"
 
 #ifndef SHORT_FILE
-#define SHORT_FILE "GbtDb.cpp" //MOD: 201309231000ÕûÀíË³Ğò
+#define SHORT_FILE "GbtDb.cpp" //MOD: 201309231000æ•´ç†é¡ºåº
 #endif
 
-namespace GBT_DB  //¶¨ÒåÈ«¾ÖÊı¾İ¿âÃüÃû¿Õ¼ä
+namespace GBT_DB  //å®šä¹‰å…¨å±€æ•°æ®åº“å‘½åç©ºé—´
 {
 	CGbtTscDb*  m_gTscDb = NULL;
 	
-/***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±íÃû×Ö·ûÊı×é*******************/
+/***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨åå­—ç¬¦æ•°ç»„*******************/
 	char* Table_Name[]   = {(char*)"Tbl_System",
                          (char*)"Tbl_Constant",
                          (char*)"Tbl_Module", 
@@ -51,9 +51,9 @@ namespace GBT_DB  //¶¨ÒåÈ«¾ÖÊı¾İ¿âÃüÃû¿Õ¼ä
 						 (char*)"Tbl_AdaptPara" ,
 						 (char *)"Tbl_LampCheck"   //ADD:2013 0801 0940
 						};
-/***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±íÃû×Ö·ûÊı×é*******************/
+/***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨åå­—ç¬¦æ•°ç»„*******************/
 
-/***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±íµÄ×Ö¶ÎÃû×Ö·ûÊı×é*******************/
+/***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨çš„å­—æ®µåå­—ç¬¦æ•°ç»„*******************/
 char* Tbl_LampCheck[] ={
 						(char *)"ucId",
 						(char *)"ucFlag"	};
@@ -196,10 +196,10 @@ char* Tbl_AdaptPara[] = {(char*)"ucType",
 						 (char*)"ucCarFlowPro",
 						 (char*)"ucSmoothPara"
 						};
-/***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±íµÄ×Ö¶ÎÃû×Ö·ûÊı×é*******************/
+/***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨çš„å­—æ®µåå­—ç¬¦æ•°ç»„*******************/
 
 
-/***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±íµÄ´´½¨Óï·¨×Ö·û*******************/
+/***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨çš„åˆ›å»ºè¯­æ³•å­—ç¬¦*******************/
 char* Table_Script[] = {
 (char*)"create table Tbl_System(\n\
 usDeviceId int not null,\n\
@@ -409,9 +409,9 @@ ulEventTime varchar(20))",
 
 (char *) "create table  Tbl_LampCheck( ucId tinyint primary key, ucFlag tinyint not null default(0))"
  }; 
- /***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±íµÄ´´½¨Óï·¨×Ö·û*******************/
+ /***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨çš„åˆ›å»ºè¯­æ³•å­—ç¬¦*******************/
  
- /***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±í½á¹¹ÃèÊöÊı×é*********************/
+ /***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨ç»“æ„æè¿°æ•°ç»„*********************/
 TableDesc Table_Desc[] = {{TBL_SYSTEM,0,Table_Name[TBL_SYSTEM],NULL},
                           {TBL_CONSTANT, 0, Table_Name[TBL_CONSTANT], NULL},
                           {TBL_MODULE,6,Table_Name[TBL_MODULE],Tbl_Module},
@@ -438,9 +438,9 @@ TableDesc Table_Desc[] = {{TBL_SYSTEM,0,Table_Name[TBL_SYSTEM],NULL},
                          };
 
 TableDesc* m_gTableDesc = Table_Desc;
-/***************¶¨ÒåĞÅºÅ»úÊı¾İ¿â°üº¬µÄËùÓĞ±í½á¹¹ÃèÊöÊı×é*********************/
+/***************å®šä¹‰ä¿¡å·æœºæ•°æ®åº“åŒ…å«çš„æ‰€æœ‰è¡¨ç»“æ„æè¿°æ•°ç»„*********************/
 
-/****************¶¨ÒåGBT±íÊı¾İ½»»»º¯ÊıÖ¸Õë£¬Êı¾İ±íº¯Êı******************/
+/****************å®šä¹‰GBTè¡¨æ•°æ®äº¤æ¢å‡½æ•°æŒ‡é’ˆï¼Œæ•°æ®è¡¨å‡½æ•°******************/
 typedef int (* EXCHANGEFUN)(int iOprType, Byte uIdxFst, Byte uIdxSnd, Byte uSubId, Byte* pData, int uDataSize, Byte& uErrorSts, Byte& uErrorIdx);
 
 typedef struct
@@ -502,15 +502,15 @@ ExchangeFunGrp gGroupExchange[] =
     {0xC6, ExchangeMaxOverlapPhase},
     {0xC7, ExchangeMaxOverlapPhaseGrp},
     {0xC8, ExchangeOverlapPhase},
-	//ÒÔÏÂÎªÀ©Õ¹¶ÔÏó
-	{0xf1, ExchangeCntDownDev},    //µ¹¼ÆÊ±Éè±¸±í
-	{0xfa, ExchangePhaseToDirec},  //ÏàÎ»Óë·½Ïò¶ÔÓ¦±í
-	{0xfb, ExchangeAdaptPara},     //×ÔÊÊÓ¦²ÎÊıÖµ
-	{0xfc, ExchangeDetExtend},     //¼ì²âÆ÷À©Õ¹±í
-	{0xfd, ExchangeAdaptStage},     //×ÔÊÊÓ¦×ÔÑ§Ï°Éú³ÉµÄ½×¶ÎÊ±¼ä
-    {0xff, ExchangeChannelChk}      //Í¨µÀµÆÅİ¼ì²âÅäÖÃ
+	//ä»¥ä¸‹ä¸ºæ‰©å±•å¯¹è±¡
+	{0xf1, ExchangeCntDownDev},    //å€’è®¡æ—¶è®¾å¤‡è¡¨
+	{0xfa, ExchangePhaseToDirec},  //ç›¸ä½ä¸æ–¹å‘å¯¹åº”è¡¨
+	{0xfb, ExchangeAdaptPara},     //è‡ªé€‚åº”å‚æ•°å€¼
+	{0xfc, ExchangeDetExtend},     //æ£€æµ‹å™¨æ‰©å±•è¡¨
+	{0xfd, ExchangeAdaptStage},     //è‡ªé€‚åº”è‡ªå­¦ä¹ ç”Ÿæˆçš„é˜¶æ®µæ—¶é—´
+    {0xff, ExchangeChannelChk}      //é€šé“ç¯æ³¡æ£€æµ‹é…ç½®
 };
-/****************¶¨ÒåGBT±íÊı¾İ½»»»º¯ÊıÖ¸Õë£¬Êı¾İ±íº¯Êı******************/
+/****************å®šä¹‰GBTè¡¨æ•°æ®äº¤æ¢å‡½æ•°æŒ‡é’ˆï¼Œæ•°æ®è¡¨å‡½æ•°******************/
 
 
 #define GET_CONST_CONST(FIELD, VALUE)\
@@ -534,13 +534,13 @@ ExchangeFunGrp gGroupExchange[] =
 
 /**************************************************************
 Function:       GetFieldsValue
-Description:    ´Ó×Ö·û´®ÖĞ·ÖÀë³öĞèÒªµ½×Ö·û			
-Input:          sConstant  -- ´ı·ÖÀëµ½×Ö·û³¤³£Á¿  
-				uSplit   --   ·ÖÀë×Ö·û    
-				sValue   --   ½á¹û±£´æÖ¸Õë     
-				uValSize  --  ·ÖÀë¶Ô±È´ÎÊı   
-Output:         ÎŞ
-Return:         ·ÖÀëµÃµ½×Ö½ÚÊı
+Description:    ä»å­—ç¬¦ä¸²ä¸­åˆ†ç¦»å‡ºéœ€è¦åˆ°å­—ç¬¦			
+Input:          sConstant  -- å¾…åˆ†ç¦»åˆ°å­—ç¬¦é•¿å¸¸é‡  
+				uSplit   --   åˆ†ç¦»å­—ç¬¦    
+				sValue   --   ç»“æœä¿å­˜æŒ‡é’ˆ     
+				uValSize  --  åˆ†ç¦»å¯¹æ¯”æ¬¡æ•°   
+Output:         æ— 
+Return:         åˆ†ç¦»å¾—åˆ°å­—èŠ‚æ•°
 ***************************************************************/
 Byte GetFieldsValue(const char* sConstant, const char uSplit, Byte* sValue, Byte uValSize)
 {
@@ -575,17 +575,17 @@ Byte GetFieldsValue(const char* sConstant, const char uSplit, Byte* sValue, Byte
 
 /**************************************************************
 Function:       ExchangeData
-Description:    Êı¾İ¿âÓÚÉÏÎ»»úÊı¾İ½»»»·ÖÀë´¦Àí			
-Input:          iOprType -- Êı¾İ´¦ÀíÀàĞÍ£¬²éÑ¯»òÕßÉèÖÃ
-				uObjId  -- Êı¾İ¿âgbt¶ÔÏó±êÖ¾  
-				uIdxFst   --  Í·Ë÷ÒıÖµ  
-				uIdxSnd   --  ´ÎË÷ÒıÖµ     
-				uSubId  --    ×Ó¶ÔÏóÖµ  
-				pData   --     ½»»»ÖµÖ¸Õë 
-				uDataSize --  Êı¾İ´óĞ¡
-Output:         uErrorSts -- Êı¾İ´¦Àí´íÎó×´Ì¬
-				uErrorIdx -- Êı¾İ´¦Àí´íÎóË÷Òı
-Return:         -1 - º¯Êı´¦Àí´íÎó  
+Description:    æ•°æ®åº“äºä¸Šä½æœºæ•°æ®äº¤æ¢åˆ†ç¦»å¤„ç†			
+Input:          iOprType -- æ•°æ®å¤„ç†ç±»å‹ï¼ŒæŸ¥è¯¢æˆ–è€…è®¾ç½®
+				uObjId  -- æ•°æ®åº“gbtå¯¹è±¡æ ‡å¿—  
+				uIdxFst   --  å¤´ç´¢å¼•å€¼  
+				uIdxSnd   --  æ¬¡ç´¢å¼•å€¼     
+				uSubId  --    å­å¯¹è±¡å€¼  
+				pData   --     äº¤æ¢å€¼æŒ‡é’ˆ 
+				uDataSize --  æ•°æ®å¤§å°
+Output:         uErrorSts -- æ•°æ®å¤„ç†é”™è¯¯çŠ¶æ€
+				uErrorIdx -- æ•°æ®å¤„ç†é”™è¯¯ç´¢å¼•
+Return:         -1 - å‡½æ•°å¤„ç†é”™è¯¯  
 ***************************************************************/
 int ExchangeData(int iOprType,
                 Byte uObjId, 
@@ -613,10 +613,10 @@ int ExchangeData(int iOprType,
 
 /**************************************************************
 Function:       CSqliteRst::CSqliteRst
-Description:    CSqliteRstÊı¾İ¿â½á¹û¼¯Àà¹¹Ôìº¯Êı				
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CSqliteRstæ•°æ®åº“ç»“æœé›†ç±»æ„é€ å‡½æ•°				
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CSqliteRst::CSqliteRst() : m_ppResult(NULL) , m_iRow(0) , m_iColum(0)
 {
@@ -625,10 +625,10 @@ CSqliteRst::CSqliteRst() : m_ppResult(NULL) , m_iRow(0) , m_iColum(0)
 
 /**************************************************************
 Function:       CSqliteRst::~CSqliteRst
-Description:    CSqliteRstÀà	Îö¹¹º¯Êı	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CSqliteRstç±»	ææ„å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CSqliteRst::~CSqliteRst()
 {
@@ -638,10 +638,10 @@ CSqliteRst::~CSqliteRst()
 
 /**************************************************************
 Function:       CSqliteRst::Clear
-Description:    ÊÍ·ÅÊı¾İ¿â±íÊı¾İ¼¯	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    é‡Šæ”¾æ•°æ®åº“è¡¨æ•°æ®é›†	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CSqliteRst::Clear()
 {
@@ -656,10 +656,10 @@ void CSqliteRst::Clear()
 
 /**************************************************************
 Function:       CGbtTscDb::CGbtTscDb
-Description:    CGbtTscDbĞÅºÅ»úÊı¾İ¿â´¦ÀíÀà¹¹Ôìº¯Êı	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGbtTscDbä¿¡å·æœºæ•°æ®åº“å¤„ç†ç±»æ„é€ å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGbtTscDb::CGbtTscDb() : m_pSqlite(NULL)
 {
@@ -668,10 +668,10 @@ CGbtTscDb::CGbtTscDb() : m_pSqlite(NULL)
 
 /**************************************************************
 Function:       CGbtTscDb::~CGbtTscDb
-Description:    CGbtTscDbÀà	Îö¹¹º¯Êı	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CGbtTscDbç±»	ææ„å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CGbtTscDb::~CGbtTscDb()
 {
@@ -681,10 +681,10 @@ CGbtTscDb::~CGbtTscDb()
 
 /**************************************************************
 Function:       CGbtTscDb::InitDb
-Description:    ĞÅºÅ»úÊı¾İ¿â³õÊ¼»¯
-Input:          sDbPath - Êı¾İ¿âÎÄ¼ş´æ·ÅÂ·¾¶              
-Output:         ÎŞ
-Return:         true - ³õÊ¼»¯³É¹¦  false -³õÊ¼»¯Ê§°Ü
+Description:    ä¿¡å·æœºæ•°æ®åº“åˆå§‹åŒ–
+Input:          sDbPath - æ•°æ®åº“æ–‡ä»¶å­˜æ”¾è·¯å¾„              
+Output:         æ— 
+Return:         true - åˆå§‹åŒ–æˆåŠŸ  false -åˆå§‹åŒ–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::InitDb(const char* sDbPath)
 {   
@@ -699,7 +699,7 @@ bool CGbtTscDb::InitDb(const char* sDbPath)
 		return false;
     }
 	
-    for (int i = 0; i < TABLE_COUNT; i++)        //³õÊ¼»¯Êı¾İ¿â±í
+    for (int i = 0; i < TABLE_COUNT; i++)        //åˆå§‹åŒ–æ•°æ®åº“è¡¨
     {
         if (!IsTableExist(Table_Desc[i].sTblName))
         {
@@ -709,7 +709,7 @@ bool CGbtTscDb::InitDb(const char* sDbPath)
             }
         }
     }
-   // AddDefault();     //Ìí¼Ó²¿·ÖÊı¾İ¿â±íÄ¬ÈÏÖµ
+   // AddDefault();     //æ·»åŠ éƒ¨åˆ†æ•°æ®åº“è¡¨é»˜è®¤å€¼
     InitDefaultData(); //ADD:20141209
     m_gTscDb = this;
 	return true;
@@ -718,10 +718,10 @@ bool CGbtTscDb::InitDb(const char* sDbPath)
 
 /**************************************************************
 Function:       CGbtTscDb::CloseDb
-Description:    ¹Ø±ÕĞÅºÅ»úÊı¾İ¿â
-Input:          ÎŞ            
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å…³é—­ä¿¡å·æœºæ•°æ®åº“
+Input:          æ—             
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtTscDb::CloseDb()
 {
@@ -736,10 +736,10 @@ void CGbtTscDb::CloseDb()
 
 /**************************************************************
 Function:       CGbtTscDb::IsTableExist
-Description:    ÅĞ¶ÏÊı¾İ¿â±íÊı¾İÊÇ·ñ´æÔÚ
-Input:          sTable  -- ±íÃû³Æ            
-Output:         ÎŞ
-Return:         true - ±í´æÔÚ false -±í²»´æÔÚ»òÕßÎŞÊı¾İ¼ÇÂ¼
+Description:    åˆ¤æ–­æ•°æ®åº“è¡¨æ•°æ®æ˜¯å¦å­˜åœ¨
+Input:          sTable  -- è¡¨åç§°            
+Output:         æ— 
+Return:         true - è¡¨å­˜åœ¨ false -è¡¨ä¸å­˜åœ¨æˆ–è€…æ— æ•°æ®è®°å½•
 ***************************************************************/
 bool CGbtTscDb::IsTableExist(const char* sTable)
 {
@@ -839,7 +839,7 @@ void CGbtTscDb::InitDefaultData()
         }
     }
 
-	/********************Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í*****************************/
+	/********************é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨*****************************/
 	(CDbInstance::m_cGbtTscDb).QueryChannelChk(tblChannelChk);
 	if(0 == tblChannelChk.GetCount())
 	{
@@ -850,7 +850,7 @@ void CGbtTscDb::InitDefaultData()
 			(CDbInstance::m_cGbtTscDb).AddChannelChk(sChannelChk.ucSubChannelId,sChannelChk);
 		}
 	}
-	/**************Ìí¼ÓÄ¬ÈÏµ÷¶È¼Æ»®²ÎÊı***********/
+	/**************æ·»åŠ é»˜è®¤è°ƒåº¦è®¡åˆ’å‚æ•°***********/
 	(CDbInstance::m_cGbtTscDb).QueryPlan(tblPlan);
 	if ( 0 == tblPlan.GetCount() )
 	{
@@ -862,7 +862,7 @@ void CGbtTscDb::InitDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddPlan(1,sPlan);   
 	}
 
-	/**************Ìí¼ÓÄ¬ÈÏÊ±¶Î±íÊı¾İ***********/
+	/**************æ·»åŠ é»˜è®¤æ—¶æ®µè¡¨æ•°æ®***********/
 	(CDbInstance::m_cGbtTscDb).QuerySchedule(tblSchedule);
 	if ( 0 == tblSchedule.GetCount() )
 	{
@@ -902,13 +902,13 @@ void CGbtTscDb::InitDefaultData()
 	
 	}
 
-	/**************½×¶ÎÅäÊ±·½°¸±í***********/
+	/**************é˜¶æ®µé…æ—¶æ–¹æ¡ˆè¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryStagePattern(tblStage);
 	if ( 0 == tblStage.GetCount() )
-	{  //½×¶ÎÅäÊ±1 Ê®×ÖÂ·¿Ú
+	{  //é˜¶æ®µé…æ—¶1 åå­—è·¯å£
 		sStage.ucStagePatternId = 1;      
 		sStage.ucStageNo        = 1;            
-		sStage.usAllowPhase     = 32771; //±±×óÖ± Î÷ÈËĞĞ
+		sStage.usAllowPhase     = 32771; //åŒ—å·¦ç›´ è¥¿äººè¡Œ
 		sStage.ucGreenTime      = 15;           
 		sStage.ucYellowTime     = 3;         
 		sStage.ucRedTime        = 0;             
@@ -917,24 +917,24 @@ void CGbtTscDb::InitDefaultData()
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 2;            
-		sStage.usAllowPhase     = 56;  //¶«×óÖ±±±ÈËĞĞ
+		sStage.usAllowPhase     = 56;  //ä¸œå·¦ç›´åŒ—äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 3;            
-		sStage.usAllowPhase     = 896; //ÄÏ×óÖ± ¶«ÈËĞĞ
+		sStage.usAllowPhase     = 896; //å—å·¦ç›´ ä¸œäººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 4;            
-		sStage.usAllowPhase     = 14336; //Î÷×óÖ±ÄÏÈËĞĞ
+		sStage.usAllowPhase     = 14336; //è¥¿å·¦ç›´å—äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
-      //½×¶ÎÅäÊ±2 Ê®×ÖÂ·¿Ú			
+      //é˜¶æ®µé…æ—¶2 åå­—è·¯å£			
 	
 		sStage.ucStagePatternId = 2;      
 		sStage.ucStageNo        = 1;            
-		sStage.usAllowPhase     = 257; //ÄÏ±±×ó
+		sStage.usAllowPhase     = 257; //å—åŒ—å·¦
 		sStage.ucGreenTime      = 20;           
 		sStage.ucYellowTime     = 3;         
 		sStage.ucRedTime        = 0;             
@@ -943,24 +943,24 @@ void CGbtTscDb::InitDefaultData()
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 2;            
-		sStage.usAllowPhase     = 33410;  //ÄÏ±±Ö± ¶«Î÷ÈËĞĞ
+		sStage.usAllowPhase     = 33410;  //å—åŒ—ç›´ ä¸œè¥¿äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 3;            
-		sStage.usAllowPhase     = 4112; //¶«Î÷×ó
+		sStage.usAllowPhase     = 4112; //ä¸œè¥¿å·¦
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 4;            
-		sStage.usAllowPhase     = 10280; //¶«Î÷Ö± ÄÏ±±ÈËĞĞ
+		sStage.usAllowPhase     = 10280; //ä¸œè¥¿ç›´ å—åŒ—äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
- 		//¶¡×ÖÂ·¿Ú¶«Î÷±±
+ 		//ä¸å­—è·¯å£ä¸œè¥¿åŒ—
 		sStage.ucStagePatternId = 3;      
 		sStage.ucStageNo        = 1;            
-		sStage.usAllowPhase     = 8224; //¶«Î÷Ö±
+		sStage.usAllowPhase     = 8224; //ä¸œè¥¿ç›´
 		sStage.ucGreenTime      = 20;           
 		sStage.ucYellowTime     = 3;         
 		sStage.ucRedTime        = 0;             
@@ -969,18 +969,18 @@ void CGbtTscDb::InitDefaultData()
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 2;            
-		sStage.usAllowPhase     = 12288;  //Î÷×óÖ±
+		sStage.usAllowPhase     = 12288;  //è¥¿å·¦ç›´
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 3;            
-		sStage.usAllowPhase     = 1; //±±×ó±ß
+		sStage.usAllowPhase     = 1; //åŒ—å·¦è¾¹
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
-		//Ä¬ÈÏ¿ª»ú¼ì²âÃ¿¿é°åµÆÉ«·½°¸
+		//é»˜è®¤å¼€æœºæ£€æµ‹æ¯å—æ¿ç¯è‰²æ–¹æ¡ˆ
 		sStage.ucStagePatternId = 15;      
 		sStage.ucStageNo        = 1;            
-		sStage.usAllowPhase     = 15; //µÚÒ»¿é°å ±±×óÖ±ÓÒÈËĞĞ
+		sStage.usAllowPhase     = 15; //ç¬¬ä¸€å—æ¿ åŒ—å·¦ç›´å³äººè¡Œ
 		sStage.ucGreenTime      = 7;           
 		sStage.ucYellowTime     = 3;         
 		sStage.ucRedTime        = 0;             
@@ -989,43 +989,43 @@ void CGbtTscDb::InitDefaultData()
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 2;            
-		sStage.usAllowPhase     = 240;  //µÚ¶ş¿é°å¶«×óÖ±ÓÒÈËĞĞ
+		sStage.usAllowPhase     = 240;  //ç¬¬äºŒå—æ¿ä¸œå·¦ç›´å³äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 3;            
-		sStage.usAllowPhase     = 3840; //µÚÈı¿é°åÄÏ×óÖ±ÓÒÈËĞĞ
+		sStage.usAllowPhase     = 3840; //ç¬¬ä¸‰å—æ¿å—å·¦ç›´å³äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 		sStage.ucStageNo        = 4;            
-		sStage.usAllowPhase     = 61440;  //µÚËÄ¿é°åÎ÷×óÖ±ÓÒÈËĞĞ
+		sStage.usAllowPhase     = 61440;  //ç¬¬å››å—æ¿è¥¿å·¦ç›´å³äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 5;            
-		sStage.usAllowPhase     = 983040; //¶ş´Î¹ı½Ö±±¶«ÄÏÎ÷
+		sStage.usAllowPhase     = 983040; //äºŒæ¬¡è¿‡è¡—åŒ—ä¸œå—è¥¿
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 			sStage.ucStageNo    = 6;            
-		sStage.usAllowPhase     = 15728640; //µ÷Í·±±¶«ÄÏÎ÷
+		sStage.usAllowPhase     = 15728640; //è°ƒå¤´åŒ—ä¸œå—è¥¿
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 		sStage.ucStageNo        = 7;            
-		sStage.usAllowPhase     = 251658240;  //ÌØÊâ±±¶«ÄÏÎ÷
+		sStage.usAllowPhase     = 251658240;  //ç‰¹æ®ŠåŒ—ä¸œå—è¥¿
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		sStage.ucStageNo        = 8;            
-		sStage.usAllowPhase     = 4026531840; //ÆäËû±±¶«ÄÏÎ÷
+		sStage.usAllowPhase     = 4026531840; //å…¶ä»–åŒ—ä¸œå—è¥¿
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 
 		
 
-		//Ä¬ÈÏÈËĞĞ¹ı½Ö ·½°¸16
+		//é»˜è®¤äººè¡Œè¿‡è¡— æ–¹æ¡ˆ16
 		sStage.ucStagePatternId = 16;      
 		sStage.ucStageNo        = 1;            
-		sStage.usAllowPhase     = 8224; //¶«Î÷Ö±
+		sStage.usAllowPhase     = 8224; //ä¸œè¥¿ç›´
 		sStage.ucGreenTime      = 15;           
 		sStage.ucYellowTime     = 3;         
 		sStage.ucRedTime        = 0;             
@@ -1036,13 +1036,13 @@ void CGbtTscDb::InitDefaultData()
 		sStage.ucStageNo        = 2;  
 		sStage.ucGreenTime      = 15;           
 		sStage.ucYellowTime     = 0;  
-		sStage.usAllowPhase     = 32896;  //ÄÏ±±ÈËĞĞ
+		sStage.usAllowPhase     = 32896;  //å—åŒ—äººè¡Œ
 		(CDbInstance::m_cGbtTscDb).AddStagePattern(sStage.ucStagePatternId,
 			sStage.ucStageNo, sStage);
 		
 	}
 
-	/**************ÏàÎ»±í***********/
+	/**************ç›¸ä½è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryPhase(tblPhase);
 	if ( 0 == tblPhase.GetCount() )
 	{
@@ -1055,7 +1055,7 @@ void CGbtTscDb::InitDefaultData()
 		sPhase.ucMaxGreen2       = 60;                
 		sPhase.ucFixGreen        = 7;                 
 		sPhase.ucGreenFlash      = 2; 
-		sPhase.ucPhaseTypeFlag   = 32;    //32 µ¯ĞÔÏàÎ»0x40´ı¶¨ÏàÎ»0x80¹Ì¶¨ÏàÎ»
+		sPhase.ucPhaseTypeFlag   = 32;    //32 å¼¹æ€§ç›¸ä½0x40å¾…å®šç›¸ä½0x80å›ºå®šç›¸ä½
 		sPhase.ucPhaseOption     = 0;               
 		sPhase.ucExtend          = 0;
 		sPhase.ucPedestrianGreen = 0; 
@@ -1065,18 +1065,18 @@ void CGbtTscDb::InitDefaultData()
 			sPhase.ucPhaseId = i; 
 			
 			if (i==4 ||i==8 || i==12 || i==16||i==17 ||i==18 || i==19 ||i==20) 
-			{  //Ä¬ÈÏÈËĞĞÏàÎ» 4 8 12 16 21 22 23 24
+			{  //é»˜è®¤äººè¡Œç›¸ä½ 4 8 12 16 21 22 23 24
 				sPhase.ucPhaseOption = 2; 
 			}
 			else
 			{				
-				sPhase.ucPhaseOption = 1; //Ä¬ÈÏÏàÎ»ÆôÓÃ£¬0ÎªÎ´Öª
+				sPhase.ucPhaseOption = 1; //é»˜è®¤ç›¸ä½å¯ç”¨ï¼Œ0ä¸ºæœªçŸ¥
 			}					
 			(CDbInstance::m_cGbtTscDb).AddPhase(sPhase.ucPhaseId, sPhase);
 		}
 	}
 
-	/**************Í¨µÀ±í***********/
+	/**************é€šé“è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryChannel(tblChannel);
 	ACE_OS::memset(&sChannel,0,sizeof(GBT_DB::Channel));
 	sChannel.ucCtrlType = 1;
@@ -1097,7 +1097,7 @@ void CGbtTscDb::InitDefaultData()
 		}
 	}
 	
-	/**************************Ìí¼ÓÄ¬ÈÏÓ²¼şÄ£¿é************************/
+	/**************************æ·»åŠ é»˜è®¤ç¡¬ä»¶æ¨¡å—************************/
 	(CDbInstance::m_cGbtTscDb).QueryModule(tblModule);
 
 	if ( 0 == tblModule.GetCount() )
@@ -1130,7 +1130,7 @@ void CGbtTscDb::InitDefaultData()
 		(CDbInstance::m_cGbtTscDb).ModModule(sModule.ucModuleId,  sModule);
 	}
 
-	/************************Ìí¼ÓÄ¬ÈÏÌØ¶¨¹¦ÄÜ**************************/
+	/************************æ·»åŠ é»˜è®¤ç‰¹å®šåŠŸèƒ½**************************/
 	(CDbInstance::m_cGbtTscDb).QuerySpecFun(tblSpecFun);
 
 	if ( tblSpecFun.GetCount() == 0 )
@@ -1177,22 +1177,22 @@ void CGbtTscDb::InitDefaultData()
 	}
 
 
-	/*******************¡¤Ìí¼ÓÄ¬ÈÏ·½ÏòÓÚÏàÎ»¶ÔÓ¦²ÎÊı*******************/
+	/*******************Â·æ·»åŠ é»˜è®¤æ–¹å‘äºç›¸ä½å¯¹åº”å‚æ•°*******************/
 	(CDbInstance::m_cGbtTscDb).QueryPhaseToDirec(tblPhaseToDirec);
 
 	if ( tblPhaseToDirec.GetCount() == 0 )
 	{
-		//Ä¬ÈÏÌí¼Ó32¸ö·½Ïò¶ÔÓ¦32¸öÏàÎ»ºÍ32¸öÍ¨µÀ
-		//ÏÂÃæÃ¿ÅÅÊÇÒ»¸ö·½ÏòµÄ³µµÀ·½ÏòID,·Ö±ğÊÇ
-		//×ó,  Ö±, ÓÒ, ÈËĞĞ, ¶ş´Î¹ı½Ö, µ÷Í·,ÆäËû, ÌØÊâ
-		Byte direcId[32] = {0x1,0x2,0x4,0x8,       //±±×óÖ±ÓÒÈËĞĞ  
-						    0x41,0x42,0x44,0x48,   //¶«×óÖ±ÓÒÈËĞĞ
-						    0x81,0x82,0x84,0x88,   //ÄÏ×óÖ±ÓÒÈËĞĞ
-						    0xc1,0xc2,0xc4,0xc8,   //Î÷×óÓÒÖ®ÈËĞĞ
-						    0x18,0x58,0x98,0xd8,   //±±¶«ÄÏÎ÷¶ş´Î¹ı½							
-							0x0,0x40,0x80,0xc0,    //±±¶«ÄÏÎ÷µ÷Í·
-							0x7,0x47,0x87,0xc7,    //±±¶«ÄÏÎ÷ÌØÊâ,Êµ¼ÊÉÏ¶ÔÓ¦µÄÊÇ±±¶«ÄÏÎ÷µÄ×óÖ±ÓÒÖ±ĞĞ·½ÏòID
-							0x5,0x45,0x85,0xc5} ;   //±±¶«ÄÏÎ÷ÆäËû
+		//é»˜è®¤æ·»åŠ 32ä¸ªæ–¹å‘å¯¹åº”32ä¸ªç›¸ä½å’Œ32ä¸ªé€šé“
+		//ä¸‹é¢æ¯æ’æ˜¯ä¸€ä¸ªæ–¹å‘çš„è½¦é“æ–¹å‘ID,åˆ†åˆ«æ˜¯
+		//å·¦,  ç›´, å³, äººè¡Œ, äºŒæ¬¡è¿‡è¡—, è°ƒå¤´,å…¶ä»–, ç‰¹æ®Š
+		Byte direcId[32] = {0x1,0x2,0x4,0x8,       //åŒ—å·¦ç›´å³äººè¡Œ  
+						    0x41,0x42,0x44,0x48,   //ä¸œå·¦ç›´å³äººè¡Œ
+						    0x81,0x82,0x84,0x88,   //å—å·¦ç›´å³äººè¡Œ
+						    0xc1,0xc2,0xc4,0xc8,   //è¥¿å·¦å³ä¹‹äººè¡Œ
+						    0x18,0x58,0x98,0xd8,   //åŒ—ä¸œå—è¥¿äºŒæ¬¡è¿‡?						
+							0x0,0x40,0x80,0xc0,    //åŒ—ä¸œå—è¥¿è°ƒå¤´
+							0x7,0x47,0x87,0xc7,    //åŒ—ä¸œå—è¥¿ç‰¹æ®Š,å®é™…ä¸Šå¯¹åº”çš„æ˜¯åŒ—ä¸œå—è¥¿çš„å·¦ç›´å³ç›´è¡Œæ–¹å‘ID
+							0x5,0x45,0x85,0xc5} ;   //åŒ—ä¸œå—è¥¿å…¶ä»–
 						
 		               
 		for (Byte i=0; i<MAX_PHASE; i++)
@@ -1205,7 +1205,7 @@ void CGbtTscDb::InitDefaultData()
 		}
 	}
 
-	/**************¸úËæÏàÎ»±í***********/
+	/**************è·Ÿéšç›¸ä½è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryOverlapPhase(tblOverlapPhase);
 	ACE_OS::memset(&sOverlapPhase,0,sizeof(GBT_DB::OverlapPhase));
 	if ( 0 == tblOverlapPhase.GetCount() )
@@ -1220,7 +1220,7 @@ void CGbtTscDb::InitDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddOverlapPhase(sOverlapPhase.ucOverlapPhaseId,sOverlapPhase);
 	}
 
-	/**************³åÍ»ÏàÎ»±í***********/
+	/**************å†²çªç›¸ä½è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryCollision(tblCollision);
 	ACE_OS::memset(&sCollision , 0 , sizeof(GBT_DB::Collision) );
 	if ( 0 == tblCollision.GetCount() )
@@ -1233,17 +1233,17 @@ void CGbtTscDb::InitDefaultData()
 		}
 	}
 
-	/*******************Ìí¼ÓÄ¬ÈÏ¼ì²âÆ÷²ÎÊı*******************/
+	/*******************æ·»åŠ é»˜è®¤æ£€æµ‹å™¨å‚æ•°*******************/
 	(CDbInstance::m_cGbtTscDb).QueryDetector(tblDetector);
 	if ( tblDetector.GetCount() == 0 )
 	{			
 		sDetector.ucPhaseId = 1 ;
 		sDetector.ucDirect = 1 ;
 		sDetector.ucDetFlag = 129 ;
-	(CDbInstance::m_cGbtTscDb).AddDetector(1,sDetector); // Ä¬ÈÏÌí¼ÓÒ»¸ö¼ì²âÆ÷
+	(CDbInstance::m_cGbtTscDb).AddDetector(1,sDetector); // é»˜è®¤æ·»åŠ ä¸€ä¸ªæ£€æµ‹å™¨
 		
 }
-   	/*******************Ìí¼ÓÄ¬ÈÏµ¹¼ÆÊ±Éè±¸±í*******************/
+   	/*******************æ·»åŠ é»˜è®¤å€’è®¡æ—¶è®¾å¤‡è¡¨*******************/
 	(CDbInstance::m_cGbtTscDb).QueryCntDownDev(tblCntdownDev);
 	if (tblCntdownDev.GetCount() == 0 )
 	{	
@@ -1253,7 +1253,7 @@ void CGbtTscDb::InitDefaultData()
 			sCntDownDev.usPhase = index+1 ;
 			sCntDownDev.ucOverlapPhase = 0 ;
 			sCntDownDev.ucMode= 0x57 ;
-			(CDbInstance::m_cGbtTscDb).AddCntDownDev(sCntDownDev); // Ä¬ÈÏÌí¼ÓÒ»¸ö¼ì²âÆ÷
+			(CDbInstance::m_cGbtTscDb).AddCntDownDev(sCntDownDev); // é»˜è®¤æ·»åŠ ä¸€ä¸ªæ£€æµ‹å™¨
 		}
 	
 	}
@@ -1263,10 +1263,10 @@ void CGbtTscDb::InitDefaultData()
 
 /**************************************************************
 Function:       CGbtTscDb::Query
-Description:    Êı¾İ±í²éÑ¯
-Input:          sSql  -- Êı¾İ²éÑ¯Óï¾ä            
-Output:         sRst  -- Êı¾İ²éÑ¯½á¹û±£´æ¶ÔÏó
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ•°æ®è¡¨æŸ¥è¯¢
+Input:          sSql  -- æ•°æ®æŸ¥è¯¢è¯­å¥            
+Output:         sRst  -- æ•°æ®æŸ¥è¯¢ç»“æœä¿å­˜å¯¹è±¡
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::Query(const char* sSql, CSqliteRst& sRst)
 {
@@ -1297,10 +1297,10 @@ bool CGbtTscDb::Query(const char* sSql, CSqliteRst& sRst)
 
 /**************************************************************
 Function:       CGbtTscDb::ExecuteCmd
-Description:    Ö´ĞĞÊı¾İ¿âsqlÓï¾ä
-Input:          sSql  -- Êı¾İ²éÑ¯Óï¾ä            
-Output:         ÎŞ
-Return:         true - Óï¾äÖ´ĞĞ³É¹¦ false -Óï¾äÖ´ĞĞÊ§°Ü
+Description:    æ‰§è¡Œæ•°æ®åº“sqlè¯­å¥
+Input:          sSql  -- æ•°æ®æŸ¥è¯¢è¯­å¥            
+Output:         æ— 
+Return:         true - è¯­å¥æ‰§è¡ŒæˆåŠŸ false -è¯­å¥æ‰§è¡Œå¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ExecuteCmd(const char *sSql)
 {
@@ -1329,10 +1329,10 @@ bool CGbtTscDb::ExecuteCmd(const char *sSql)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPlan
-Description:    ²éÑ¯¼Æ»®·½°¸±í£¬²¢±£´æµ½½á¹¹ÌåÖĞ
-Input:          ÎŞ            
-Output:         tblPlan  -- ¼Æ»®·½°¸Àà¶ÔÏó
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢è®¡åˆ’æ–¹æ¡ˆè¡¨ï¼Œå¹¶ä¿å­˜åˆ°ç»“æ„ä½“ä¸­
+Input:          æ—             
+Output:         tblPlan  -- è®¡åˆ’æ–¹æ¡ˆç±»å¯¹è±¡
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPlan(TblPlan& tblPlan)
 {
@@ -1385,10 +1385,10 @@ bool CGbtTscDb::QueryPlan(TblPlan& tblPlan)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPlan
-Description:    ¸ù¾İ¼Æ»®IDHºÅ²éÑ¯¼Æ»®·½°¸±í£¬²¢±£´æµ½½á¹¹ÌåÖĞ
-Input:          uPlanId  -- ¼Æ»®·½°¸ºÅ            
-Output:         sPlan  --   ±£´æ¼Æ»®·½°¸½á¹¹Ìå
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®è®¡åˆ’IDHå·æŸ¥è¯¢è®¡åˆ’æ–¹æ¡ˆè¡¨ï¼Œå¹¶ä¿å­˜åˆ°ç»“æ„ä½“ä¸­
+Input:          uPlanId  -- è®¡åˆ’æ–¹æ¡ˆå·            
+Output:         sPlan  --   ä¿å­˜è®¡åˆ’æ–¹æ¡ˆç»“æ„ä½“
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPlan(Byte uPlanId, Plan& sPlan)
 {
@@ -1427,11 +1427,11 @@ bool CGbtTscDb::QueryPlan(Byte uPlanId, Plan& sPlan)
 
 /**************************************************************
 Function:       CGbtTscDb::AddPlan
-Description:    Ìí¼Óµ÷¶È¼Æ»®±í
-Input:          uPlanId  -- ¼Æ»®·½°¸ºÅ  
-				sPlan  --   ´ıÌí¼Ó·½°¸½á¹¹Ìå          
-Output:         ÎŞ
-Return:         true - Ìí¼Ó³É¹¦ false -Ìí¼ÓÊ§°Ü
+Description:    æ·»åŠ è°ƒåº¦è®¡åˆ’è¡¨
+Input:          uPlanId  -- è®¡åˆ’æ–¹æ¡ˆå·  
+				sPlan  --   å¾…æ·»åŠ æ–¹æ¡ˆç»“æ„ä½“          
+Output:         æ— 
+Return:         true - æ·»åŠ æˆåŠŸ false -æ·»åŠ å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddPlan(Byte ucPlanId, Plan& sPlan)   
 {
@@ -1468,10 +1468,10 @@ bool CGbtTscDb::AddPlan(Byte ucPlanId, Plan& sPlan)
 
 /**************************************************************
 Function:       CGbtTscDb::DelPlan
-Description:    É¾³ıÊ±»ùµ÷¶È±í
-Input:          uPlanId  -- ¼Æ»®·½°¸ºÅ      
-Output:         ÎŞ
-Return:         true - É¾³ı³É¹¦ false -É¾³ıÊ§°Ü
+Description:    åˆ é™¤æ—¶åŸºè°ƒåº¦è¡¨
+Input:          uPlanId  -- è®¡åˆ’æ–¹æ¡ˆå·      
+Output:         æ— 
+Return:         true - åˆ é™¤æˆåŠŸ false -åˆ é™¤å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelPlan(Byte ucPlanId)
 {
@@ -1493,10 +1493,10 @@ bool CGbtTscDb::DelPlan(Byte ucPlanId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelPlan
-Description:    É¾³ıÈ«²¿Ê±»ùµ÷¶È±í
-Input:          ÎŞ     
-Output:         ÎŞ
-Return:         true - É¾³ı³É¹¦ false -É¾³ıÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨æ—¶åŸºè°ƒåº¦è¡¨
+Input:          æ—      
+Output:         æ— 
+Return:         true - åˆ é™¤æˆåŠŸ false -åˆ é™¤å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelPlan()
 {
@@ -1515,11 +1515,11 @@ bool CGbtTscDb::DelPlan()
 
 /**************************************************************
 Function:       CGbtTscDb::ModPlan
-Description:    ĞŞ¸ÄÊ±»ùµ÷¶È±í¼ÇÂ¼£¬Èô²»´æÔÚÔòÌí¼Ó
-Input:          uPlanId  -- ¼Æ»®·½°¸ºÅ  
-				sPlan  --   ´ıĞŞ¸Ä·½°¸½á¹¹Ìå        
-Output:         ÎŞ
-Return:         true - ĞŞ¸Ä³É¹¦ false -ĞŞ¸ÄÊ§°Ü
+Description:    ä¿®æ”¹æ—¶åŸºè°ƒåº¦è¡¨è®°å½•ï¼Œè‹¥ä¸å­˜åœ¨åˆ™æ·»åŠ 
+Input:          uPlanId  -- è®¡åˆ’æ–¹æ¡ˆå·  
+				sPlan  --   å¾…ä¿®æ”¹æ–¹æ¡ˆç»“æ„ä½“        
+Output:         æ— 
+Return:         true - ä¿®æ”¹æˆåŠŸ false -ä¿®æ”¹å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModPlan(Byte ucPlanId, Plan& sPlan)
 {
@@ -1556,11 +1556,11 @@ bool CGbtTscDb::ModPlan(Byte ucPlanId, Plan& sPlan)
 
 /**************************************************************
 Function:       CGbtTscDb::IsPlanValid
-Description:    ÅĞ¶Ï·½°¸ºÅÊÇ·ñºÏ·¨
-Input:          uPlanId  -- ¼Æ»®·½°¸ºÅ  
-				sPlan  --   ·½°¸½á¹¹Ìå        
-Output:         ÎŞ
-Return:         true - ºÏ·¨ false -²»ºÏ·¨
+Description:    åˆ¤æ–­æ–¹æ¡ˆå·æ˜¯å¦åˆæ³•
+Input:          uPlanId  -- è®¡åˆ’æ–¹æ¡ˆå·  
+				sPlan  --   æ–¹æ¡ˆç»“æ„ä½“        
+Output:         æ— 
+Return:         true - åˆæ³• false -ä¸åˆæ³•
 ***************************************************************/
 bool CGbtTscDb::IsPlanValid(Byte ucPlanId, Plan& sPlan)
 {
@@ -1571,10 +1571,10 @@ bool CGbtTscDb::IsPlanValid(Byte ucPlanId, Plan& sPlan)
 
 /**************************************************************
 Function:       CGbtTscDb::QuerySchedule
-Description:    ²éÑ¯Ê±¶Î±í£¬²¢±£´æ²éÑ¯½á¹û
-Input:          tblSchedule -- Ê±¶Î±í¶ÔÏó   
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢æ—¶æ®µè¡¨ï¼Œå¹¶ä¿å­˜æŸ¥è¯¢ç»“æœ
+Input:          tblSchedule -- æ—¶æ®µè¡¨å¯¹è±¡   
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QuerySchedule(TblSchedule& tblSchedule)
 {
@@ -1630,11 +1630,11 @@ bool CGbtTscDb::QuerySchedule(TblSchedule& tblSchedule)
 
 /**************************************************************
 Function:       CGbtTscDb::QuerySchedule
-Description:    ¸ù¾İÊ±¶ÎºÅ²éÑ¯Ê±¶Î±í£¬²¢±£´æ²éÑ¯½á¹û
-Input:          uScheduleId -- Ê±¶Î±íºÅ
-				tblSchedule -- Ê±¶Î±í¶ÔÏó   
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®æ—¶æ®µå·æŸ¥è¯¢æ—¶æ®µè¡¨ï¼Œå¹¶ä¿å­˜æŸ¥è¯¢ç»“æœ
+Input:          uScheduleId -- æ—¶æ®µè¡¨å·
+				tblSchedule -- æ—¶æ®µè¡¨å¯¹è±¡   
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QuerySchedule(Byte uScheduleId, TblSchedule& tblSchedule)
 {
@@ -1693,12 +1693,12 @@ bool CGbtTscDb::QuerySchedule(Byte uScheduleId, TblSchedule& tblSchedule)
 
 /**************************************************************
 Function:       CGbtTscDb::QuerySchedule
-Description:    ¸ù¾İÊ±¶ÎºÅºÍÊÂ¼şºÅ²éÑ¯Ê±¶Î±í£¬²¢±£´æ²éÑ¯½á¹û
-Input:          uScheduleId -- Ê±¶Î±íºÅ
-				uEvtId      -- ÊÂ¼şºÅ
-				sSchedule -- Ê±¶Î±í¼ÇÂ¼½á¹¹Ìå   
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®æ—¶æ®µå·å’Œäº‹ä»¶å·æŸ¥è¯¢æ—¶æ®µè¡¨ï¼Œå¹¶ä¿å­˜æŸ¥è¯¢ç»“æœ
+Input:          uScheduleId -- æ—¶æ®µè¡¨å·
+				uEvtId      -- äº‹ä»¶å·
+				sSchedule -- æ—¶æ®µè¡¨è®°å½•ç»“æ„ä½“   
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QuerySchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
 {
@@ -1743,12 +1743,12 @@ bool CGbtTscDb::QuerySchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule
 
 /**************************************************************
 Function:       CGbtTscDb::AddSchedule
-Description:    Ìí¼ÓÊ±¶Î±í
-Input:          uScheduleId -- Ê±¶Î±íºÅ
-				uEvtId      -- ÊÂ¼şºÅ
-				sSchedule --   Ê±¶Î±í¼ÇÂ¼½á¹¹Ìå   
-Output:         ÎŞ
-Return:         true - Ìí¼Ó³É¹¦ false -Ìí¼ÓÊ§°Ü
+Description:    æ·»åŠ æ—¶æ®µè¡¨
+Input:          uScheduleId -- æ—¶æ®µè¡¨å·
+				uEvtId      -- äº‹ä»¶å·
+				sSchedule --   æ—¶æ®µè¡¨è®°å½•ç»“æ„ä½“   
+Output:         æ— 
+Return:         true - æ·»åŠ æˆåŠŸ false -æ·»åŠ å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
 {
@@ -1759,7 +1759,7 @@ bool CGbtTscDb::AddSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
         ACE_DEBUG ((LM_DEBUG, "%s:%04d\tSchedule invalid\n", SHORT_FILE, __LINE__));
         return false;
     }
-	if ( 0 == uEvtId ) //ÊÂ¼şidÎª0²»´¦Àí
+	if ( 0 == uEvtId ) //äº‹ä»¶idä¸º0ä¸å¤„ç†
 	{
 		return true;
 	}
@@ -1791,12 +1791,12 @@ bool CGbtTscDb::AddSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
 
 /**************************************************************
 Function:       CGbtTscDb::ModSchedule
-Description:    ĞŞ¸ÄÊ±¶Î±í
-Input:          uScheduleId -- Ê±¶Î±íºÅ
-				uEvtId      -- ÊÂ¼şºÅ
-				sSchedule --   Ê±¶Î±í¼ÇÂ¼½á¹¹Ìå   
-Output:         ÎŞ
-Return:         true - ĞŞ¸Ä³É¹¦ false -ĞŞ¸ÄÊ§°Ü
+Description:    ä¿®æ”¹æ—¶æ®µè¡¨
+Input:          uScheduleId -- æ—¶æ®µè¡¨å·
+				uEvtId      -- äº‹ä»¶å·
+				sSchedule --   æ—¶æ®µè¡¨è®°å½•ç»“æ„ä½“   
+Output:         æ— 
+Return:         true - ä¿®æ”¹æˆåŠŸ false -ä¿®æ”¹å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
 {
@@ -1842,11 +1842,11 @@ bool CGbtTscDb::ModSchedule(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
 
 /**************************************************************
 Function:       CGbtTscDb::DelSchedule
-Description:    É¾³ıÊ±¶Î±í
-Input:          uScheduleId -- Ê±¶Î±íºÅ
-				uEvtId      -- ÊÂ¼şºÅ
-Output:         ÎŞ
-Return:         true - É¾³ı³É¹¦ false -É¾³ıÊ§°Ü
+Description:    åˆ é™¤æ—¶æ®µè¡¨
+Input:          uScheduleId -- æ—¶æ®µè¡¨å·
+				uEvtId      -- äº‹ä»¶å·
+Output:         æ— 
+Return:         true - åˆ é™¤æˆåŠŸ false -åˆ é™¤å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelSchedule(Byte uScheduleId, Byte uEvtId)
 {
@@ -1869,10 +1869,10 @@ bool CGbtTscDb::DelSchedule(Byte uScheduleId, Byte uEvtId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelSchedule
-Description:    ¸ù¾İÊ±¶ÎºÅÉ¾³ıÊ±¶Î±í
-Input:          uScheduleId -- Ê±¶Î±íºÅ
-Output:         ÎŞ
-Return:         true - É¾³ı³É¹¦ false -É¾³ıÊ§°Ü
+Description:    æ ¹æ®æ—¶æ®µå·åˆ é™¤æ—¶æ®µè¡¨
+Input:          uScheduleId -- æ—¶æ®µè¡¨å·
+Output:         æ— 
+Return:         true - åˆ é™¤æˆåŠŸ false -åˆ é™¤å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelSchedule(Byte uScheduleId)
 {
@@ -1893,10 +1893,10 @@ bool CGbtTscDb::DelSchedule(Byte uScheduleId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelSchedule
-Description:    É¾³ıÈ«²¿Ê±¶Î±í
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ı³É¹¦ false -É¾³ıÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨æ—¶æ®µè¡¨
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æˆåŠŸ false -åˆ é™¤å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelSchedule()
 {
@@ -1915,12 +1915,12 @@ bool CGbtTscDb::DelSchedule()
 
 /**************************************************************
 Function:       CGbtTscDb::IsScheduleValid
-Description:    ÅĞ¶ÏÊäÊ±¶Î±íÊı¾İÊÇ·ñºÏ·¨
-Input:          uScheduleId -- Ê±¶Î±íºÅ
-				uEvtId      -- ÊÂ¼şºÅ
-				sSchedule --   Ê±¶Î±í¼ÇÂ¼½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ÊäÈëºÏ·¨ false -ÊäÈë²»ºÏ·¨
+Description:    åˆ¤æ–­è¾“æ—¶æ®µè¡¨æ•°æ®æ˜¯å¦åˆæ³•
+Input:          uScheduleId -- æ—¶æ®µè¡¨å·
+				uEvtId      -- äº‹ä»¶å·
+				sSchedule --   æ—¶æ®µè¡¨è®°å½•ç»“æ„ä½“
+Output:         æ— 
+Return:         true - è¾“å…¥åˆæ³• false -è¾“å…¥ä¸åˆæ³•
 ***************************************************************/
 bool CGbtTscDb::IsScheduleValid(Byte uScheduleId, Byte uEvtId, Schedule& sSchedule)
 {
@@ -1958,10 +1958,10 @@ bool CGbtTscDb::IsScheduleValid(Byte uScheduleId, Byte uEvtId, Schedule& sSchedu
  
 /**************************************************************
 Function:       CGbtTscDb::QueryModule
-Description:    ĞÅºÅ»úÄ£¿é²éÑ¯£¬²¢±£´æ
-Input:          tblModule -- Ä£¿éÀà¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    ä¿¡å·æœºæ¨¡å—æŸ¥è¯¢ï¼Œå¹¶ä¿å­˜
+Input:          tblModule -- æ¨¡å—ç±»å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryModule(TblModule& tblModule)
 {
@@ -2031,11 +2031,11 @@ bool CGbtTscDb::QueryModule(TblModule& tblModule)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryModule
-Description:    ¸ù¾İĞÅºÅ»úÄ£¿é±íID²éÑ¯£¬²¢±£´æ
-Input:          uModuleId -- Ä£¿éID
-				sModule   -- Ä£¿é½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®ä¿¡å·æœºæ¨¡å—è¡¨IDæŸ¥è¯¢ï¼Œå¹¶ä¿å­˜
+Input:          uModuleId -- æ¨¡å—ID
+				sModule   -- æ¨¡å—ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryModule(Byte uModuleId, Module& sModule)
 {
@@ -2093,11 +2093,11 @@ bool CGbtTscDb::QueryModule(Byte uModuleId, Module& sModule)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryModule
-Description:    ¸ù¾İÉú²úÉÌ²éÑ¯Ä£¿é£¬²¢±£´æ
-Input:          sCompany -- Éú²úÉÌÃû³Æ×Ö·û´®
-				tblModule   -- Ä£¿éÀà¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®ç”Ÿäº§å•†æŸ¥è¯¢æ¨¡å—ï¼Œå¹¶ä¿å­˜
+Input:          sCompany -- ç”Ÿäº§å•†åç§°å­—ç¬¦ä¸²
+				tblModule   -- æ¨¡å—ç±»å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryModule(const char* sCompany, TblModule& tblModule)
 {
@@ -2169,11 +2169,11 @@ bool CGbtTscDb::QueryModule(const char* sCompany, TblModule& tblModule)
 
 /**************************************************************
 Function:       CGbtTscDb::AddModule
-Description:    Ìí¼ÓÄ£¿é±í£¬²¢±£´æ
-Input:          uModuleId -- Ä£¿éIDºÅ
-				sModule   -- ´ı±£´æÄ£¿é½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼Ó³É¹¦ false -Ìí¼ÓÊ§°Ü
+Description:    æ·»åŠ æ¨¡å—è¡¨ï¼Œå¹¶ä¿å­˜
+Input:          uModuleId -- æ¨¡å—IDå·
+				sModule   -- å¾…ä¿å­˜æ¨¡å—ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æˆåŠŸ false -æ·»åŠ å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddModule(Byte uModuleId, Module& sModule)
 {
@@ -2214,11 +2214,11 @@ bool CGbtTscDb::AddModule(Byte uModuleId, Module& sModule)
 
 /**************************************************************
 Function:       CGbtTscDb::ModModule
-Description:    ĞŞ¸ÄÄ£¿é±í£¬²¢±£´æ
-Input:          uModuleId -- Ä£¿éIDºÅ
-				sModule   -- ´ı±£´æÄ£¿é½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸Ä³É¹¦ false -ĞŞ¸ÄÊ§°Ü
+Description:    ä¿®æ”¹æ¨¡å—è¡¨ï¼Œå¹¶ä¿å­˜
+Input:          uModuleId -- æ¨¡å—IDå·
+				sModule   -- å¾…ä¿å­˜æ¨¡å—ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æˆåŠŸ false -ä¿®æ”¹å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModModule(Byte uModuleId, Module& sModule)
 {
@@ -2264,10 +2264,10 @@ bool CGbtTscDb::ModModule(Byte uModuleId, Module& sModule)
 
 /**************************************************************
 Function:       CGbtTscDb::DelModule
-Description:    ¸ù¾İÄ£¿éIDºÅÉ¾³ıÄ£¿é±í¼ÇÂ¼
-Input:          uModuleId -- Ä£¿éIDºÅ
-Output:         ÎŞ
-Return:         true - É¾³ı³É¹¦ false -É¾³ıÊ§°Ü
+Description:    æ ¹æ®æ¨¡å—IDå·åˆ é™¤æ¨¡å—è¡¨è®°å½•
+Input:          uModuleId -- æ¨¡å—IDå·
+Output:         æ— 
+Return:         true - åˆ é™¤æˆåŠŸ false -åˆ é™¤å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelModule(Byte uModuleId)
 {
@@ -2288,11 +2288,11 @@ bool CGbtTscDb::DelModule(Byte uModuleId)
 
 /**************************************************************
 Function:       CGbtTscDb::IsModuleValid
-Description:    ÅĞ¶ÏÄ£¿éÊı¾İÊÇ·ñºÏ·¨
-Input:          uModuleId -- Ä£¿éIDºÅ
-				sModule   -- Ä£¿é½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - Êı¾İĞ£ÑéºÏ·¨ false -Êı¾İĞ£Ñé·Ç·¨
+Description:    åˆ¤æ–­æ¨¡å—æ•°æ®æ˜¯å¦åˆæ³•
+Input:          uModuleId -- æ¨¡å—IDå·
+				sModule   -- æ¨¡å—ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æ•°æ®æ ¡éªŒåˆæ³• false -æ•°æ®æ ¡éªŒéæ³•
 ***************************************************************/
 bool CGbtTscDb::IsModuleValid(Byte uModuleId, Module& sModule)
 {
@@ -2310,10 +2310,10 @@ bool CGbtTscDb::IsModuleValid(Byte uModuleId, Module& sModule)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryStageFactTime
-Description:    ²éÑ¯È«²¿½×¶ÎÂÌµÆ±í£¬²¢±£´æ
-Input:          tblStageFactTime -- ½×¶ÎÂÌµÆÀà¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢å…¨éƒ¨é˜¶æ®µç»¿ç¯è¡¨ï¼Œå¹¶ä¿å­˜
+Input:          tblStageFactTime -- é˜¶æ®µç»¿ç¯ç±»å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryStageFactTime(TblStageFactTime& tblStageFactTime)
 {
@@ -2370,12 +2370,12 @@ bool CGbtTscDb::QueryStageFactTime(TblStageFactTime& tblStageFactTime)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryStageFactTime
-Description:    ²éÑ¯ÌØ¶¨Ê±¼ä¶ÎÀïµÄ½×¶ÎÂÌµÆ±í
-Input:          tblStageFactTime -- ½×¶ÎÂÌµÆÀà¶ÔÏó
-				ulStartTime      -- ÆğÊ¼Ê±¼ä
-				ulEndTime        -- ½áÊøÊ±¼ä
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢ç‰¹å®šæ—¶é—´æ®µé‡Œçš„é˜¶æ®µç»¿ç¯è¡¨
+Input:          tblStageFactTime -- é˜¶æ®µç»¿ç¯ç±»å¯¹è±¡
+				ulStartTime      -- èµ·å§‹æ—¶é—´
+				ulEndTime        -- ç»“æŸæ—¶é—´
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryStageFactTime(TblStageFactTime& tblStageFactTime,Ulong ulStartTime,Ulong ulEndTime)
 {
@@ -2435,10 +2435,10 @@ bool CGbtTscDb::QueryStageFactTime(TblStageFactTime& tblStageFactTime,Ulong ulSt
 
 /**************************************************************
 Function:       CGbtTscDb::AddStageFactTime
-Description:    Ìí¼Ó½×¶ÎÂÌµÆ±í
-Input:          sStageFactTime  -- ½×¶ÎÂÌµÆ½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ é˜¶æ®µç»¿ç¯è¡¨
+Input:          sStageFactTime  -- é˜¶æ®µç»¿ç¯ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddStageFactTime(StageFactTime& sStageFactTime)
 {
@@ -2447,7 +2447,7 @@ bool CGbtTscDb::AddStageFactTime(StageFactTime& sStageFactTime)
 	CSqliteRst  qryRst;
 	char   sSql[LARGE_BUF_SIZE] = {0};
 
-	//ÅĞ¶Ï×îĞ¡µÄÈÕÆÚ ´æ´¢µÄ×î³¤1¸öÔÂ
+	//åˆ¤æ–­æœ€å°çš„æ—¥æœŸ å­˜å‚¨çš„æœ€é•¿1ä¸ªæœˆ
 	ACE_OS::sprintf(sSql, "select MIN(%s) from %s", 
 						  Table_Desc[TBL_STAGE_FACTTIME].sFieldName[0],
 					      Table_Desc[TBL_STAGE_FACTTIME].sTblName);
@@ -2495,10 +2495,10 @@ bool CGbtTscDb::AddStageFactTime(StageFactTime& sStageFactTime)
 
 /**************************************************************
 Function:       CGbtTscDb::DeleteStageFactTime
-Description:    É¾³ı½×¶ÎÂÌµÆ±í
-Input:          ulAddTime  -- ½×¶ÎÂÌµÆÊ±¼ä
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤é˜¶æ®µç»¿ç¯è¡¨
+Input:          ulAddTime  -- é˜¶æ®µç»¿ç¯æ—¶é—´
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DeleteStageFactTime(Ulong ulAddTime)
 {
@@ -2521,10 +2521,10 @@ bool CGbtTscDb::DeleteStageFactTime(Ulong ulAddTime)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryAdaptStageTime
-Description:    ²éÑ¯È«²¿×ÔÊÊÓ¦½×¶ÎÂÌµÆ±í
-Input:          tblAdaptStageTime  -- ×ÔÊÊÓ¦½×¶ÎÂÌµÆ±íÀà¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æŸ¥è¯¢å…¨éƒ¨è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨
+Input:          tblAdaptStageTime  -- è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨ç±»å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryAdaptStageTime(TblAdaptStageTime& tblAdaptStageTime)
 {
@@ -2581,11 +2581,11 @@ bool CGbtTscDb::QueryAdaptStageTime(TblAdaptStageTime& tblAdaptStageTime)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryAdaptStageTime
-Description:    ¸ù¾İĞÇÆÚ²éÑ¯È«²¿½×¶ÎÂÌµÆ±í
-Input:          tblAdaptStageTime  -- ×ÔÊÊÓ¦½×¶ÎÂÌµÆ±íÀà¶ÔÏó
-				ucWeekType  -- ĞÇÆÚ
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®æ˜ŸæœŸæŸ¥è¯¢å…¨éƒ¨é˜¶æ®µç»¿ç¯è¡¨
+Input:          tblAdaptStageTime  -- è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨ç±»å¯¹è±¡
+				ucWeekType  -- æ˜ŸæœŸ
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryAdaptStageTime(TblAdaptStageTime& tblAdaptStageTime,Byte ucWeekType)
 {
@@ -2645,10 +2645,10 @@ bool CGbtTscDb::QueryAdaptStageTime(TblAdaptStageTime& tblAdaptStageTime,Byte uc
 
 /**************************************************************
 Function:       CGbtTscDb::AddAdaptStageTime
-Description:    Ìí¼Ó×ÔÊÊÓ¦½×¶ÎÂÌµÆ±íÊı¾İ¼ÇÂ¼
-Input:          sAdaptStageTime  -- ×ÔÊÊÓ¦½×¶ÎÂÌµÆ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨æ•°æ®è®°å½•
+Input:          sAdaptStageTime  -- è‡ªé€‚åº”é˜¶æ®µç»¿ç¯ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddAdaptStageTime(AdaptStageTime& sAdaptStageTime)
 {
@@ -2679,11 +2679,11 @@ bool CGbtTscDb::AddAdaptStageTime(AdaptStageTime& sAdaptStageTime)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryAdaptStageTime
-Description:    ¸ù¾İucid²éÑ¯×ÔÊÊÓ¦½×¶ÎÂÌµÆ±íÊı¾İ¼ÇÂ¼
-Input:          ucId  -- IDºÅ
-				sAdaptStageTime  -- ×ÔÊÊÓ¦½×¶ÎÂÌµÆ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®ucidæŸ¥è¯¢è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨æ•°æ®è®°å½•
+Input:          ucId  -- IDå·
+				sAdaptStageTime  -- è‡ªé€‚åº”é˜¶æ®µç»¿ç¯ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryAdaptStageTime(Byte ucId, AdaptStageTime& sAdaptStageTime)
 {
@@ -2728,10 +2728,10 @@ bool CGbtTscDb::QueryAdaptStageTime(Byte ucId, AdaptStageTime& sAdaptStageTime)
 
 /**************************************************************
 Function:       CGbtTscDb::ModAdaptStageTime
-Description:    ĞŞ¸Ä×ÔÊÊÓ¦½×¶ÎÂÌµÆ±íÊı¾İ¼ÇÂ¼
-Input:          sAdaptStageTime  -- ×ÔÊÊÓ¦½×¶ÎÂÌµÆ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦ false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    ä¿®æ”¹è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨æ•°æ®è®°å½•
+Input:          sAdaptStageTime  -- è‡ªé€‚åº”é˜¶æ®µç»¿ç¯ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModAdaptStageTime(AdaptStageTime& sAdaptStageTime)
 {
@@ -2770,10 +2770,10 @@ bool CGbtTscDb::ModAdaptStageTime(AdaptStageTime& sAdaptStageTime)
 
 /**************************************************************
 Function:       CGbtTscDb::DeleteAdaptStageTime
-Description:    É¾³ıÈ«²¿×ÔÊÊÓ¦½×¶ÎÂÌµÆ±í
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨è‡ªé€‚åº”é˜¶æ®µç»¿ç¯è¡¨
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DeleteAdaptStageTime()
 {
@@ -2790,10 +2790,10 @@ bool CGbtTscDb::DeleteAdaptStageTime()
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPhase
-Description:    ÏàÎ»²éÑ¯
-Input:          tblPhase  -- ÏàÎ»±íÀà¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    ç›¸ä½æŸ¥è¯¢
+Input:          tblPhase  -- ç›¸ä½è¡¨ç±»å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPhase(TblPhase& tblPhase)
 {
@@ -2852,11 +2852,11 @@ bool CGbtTscDb::QueryPhase(TblPhase& tblPhase)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPhase
-Description:    ¸ù¾İÏàÎ»IDºÅÏàÎ»²éÑ¯
-Input:          uPhaseId  -- ÏàÎ»ID
-				sPhase   -- ÏàÎ»½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®ç›¸ä½IDå·ç›¸ä½æŸ¥è¯¢
+Input:          uPhaseId  -- ç›¸ä½ID
+				sPhase   -- ç›¸ä½ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPhase(Byte uPhaseId, Phase& sPhase)
 {
@@ -2902,11 +2902,11 @@ bool CGbtTscDb::QueryPhase(Byte uPhaseId, Phase& sPhase)
   
 /**************************************************************
 Function:       CGbtTscDb::AddPhase
-Description:    Ìí¼ÓÏàÎ»±í¼ÇÂ¼
-Input:          uPhaseId  -- ÏàÎ»ID
-				sPhase   -- ´ıÌí¼ÓÏàÎ»½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ ç›¸ä½è¡¨è®°å½•
+Input:          uPhaseId  -- ç›¸ä½ID
+				sPhase   -- å¾…æ·»åŠ ç›¸ä½ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddPhase(Byte uPhaseId, Phase& sPhase)
 {
@@ -2953,11 +2953,11 @@ bool CGbtTscDb::AddPhase(Byte uPhaseId, Phase& sPhase)
    
 /**************************************************************
 Function:       CGbtTscDb::ModPhase
-Description:    ĞŞ¸ÄÏàÎ»±í¼ÇÂ¼Êı¾İ
-Input:          uPhaseId  -- ÏàÎ»ID
-				sPhase   -- ´ıĞŞ¸ÄÏàÎ»½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦ false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    ä¿®æ”¹ç›¸ä½è¡¨è®°å½•æ•°æ®
+Input:          uPhaseId  -- ç›¸ä½ID
+				sPhase   -- å¾…ä¿®æ”¹ç›¸ä½ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModPhase(Byte uPhaseId, Phase& sPhase)
 {
@@ -3000,10 +3000,10 @@ bool CGbtTscDb::ModPhase(Byte uPhaseId, Phase& sPhase)
 
 /**************************************************************
 Function:       CGbtTscDb::DelPhase
-Description:    ¸ù¾İÏàÎ»IDºÅÉ¾³ıÏàÎ»±í¼ÇÂ¼Êı¾İ
-Input:          uPhaseId  -- ÏàÎ»ID
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®ç›¸ä½IDå·åˆ é™¤ç›¸ä½è¡¨è®°å½•æ•°æ®
+Input:          uPhaseId  -- ç›¸ä½ID
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelPhase(Byte uPhaseId)
 {
@@ -3022,10 +3022,10 @@ bool CGbtTscDb::DelPhase(Byte uPhaseId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelPhase
-Description:    É¾³ıÈ«²¿ÏàÎ»±í¼ÇÂ¼Êı¾İ
-Input:          uPhaseId  -- ÏàÎ»ID
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨ç›¸ä½è¡¨è®°å½•æ•°æ®
+Input:          uPhaseId  -- ç›¸ä½ID
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelPhase()
 {
@@ -3042,11 +3042,11 @@ bool CGbtTscDb::DelPhase()
 
 /**************************************************************
 Function:       CGbtTscDb::IsPhaseValid
-Description:    ÅĞ¶ÏÏàÎ»±íÊı¾İºÏ·¨ĞÔ
-Input:          uPhaseId  -- ÏàÎ»ID
-				sPhase    -- ÏàÎ»Êı¾İ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Êı¾İºÏ·¨ false -Êı¾İ·Ç·¨
+Description:    åˆ¤æ–­ç›¸ä½è¡¨æ•°æ®åˆæ³•æ€§
+Input:          uPhaseId  -- ç›¸ä½ID
+				sPhase    -- ç›¸ä½æ•°æ®ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ•°æ®åˆæ³• false -æ•°æ®éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsPhaseValid(Byte uPhaseId, Phase& sPhase)
 {
@@ -3057,10 +3057,10 @@ bool CGbtTscDb::IsPhaseValid(Byte uPhaseId, Phase& sPhase)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryCollision
-Description:    ²éÑ¯ÏàÎ»³åÍ»±íÊı¾İ
-Input:          tblCollision  -- ÏàÎ»³åÍ»±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯ Êı¾İ³É¹¦false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æŸ¥è¯¢ç›¸ä½å†²çªè¡¨æ•°æ®
+Input:          tblCollision  -- ç›¸ä½å†²çªè¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢ æ•°æ®æˆåŠŸfalse -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryCollision(TblCollision& tblCollision)
 {
@@ -3108,7 +3108,7 @@ bool CGbtTscDb::QueryCollision(TblCollision& tblCollision)
     return true;
 }
 
-/*0—6¨´0—00‰60ˆ3¨¤0ˆ20†30†20‡30…5¨¦0ˆ50…4*/
+/*??Ã¹??????Ã ??????????Ã©????*/
 bool CGbtTscDb::QueryCollision(Byte uPhaseId, Collision& sCollision)
 {
      char   sSql[SMALL_BUF_SIZE];
@@ -3143,11 +3143,11 @@ bool CGbtTscDb::QueryCollision(Byte uPhaseId, Collision& sCollision)
     
 /**************************************************************
 Function:       CGbtTscDb::AddCollision
-Description:    ¸ù¾İÏàÎ»IDºÅÌí¼ÓÏàÎ»³åÍ»±íÊı¾İ
-Input:          uPhaseId  -- ³åÍ»ÏàÎ»IDºÅ
-				sCollision --³åÍ»ÏàÎ»½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦  false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ ¹æ®ç›¸ä½IDå·æ·»åŠ ç›¸ä½å†²çªè¡¨æ•°æ®
+Input:          uPhaseId  -- å†²çªç›¸ä½IDå·
+				sCollision --å†²çªç›¸ä½ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ  false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddCollision(Byte uPhaseId, Collision& sCollision)
 {
@@ -3175,11 +3175,11 @@ bool CGbtTscDb::AddCollision(Byte uPhaseId, Collision& sCollision)
     
 /**************************************************************
 Function:       CGbtTscDb::ModCollision
-Description:    ĞŞ¸ÄÏàÎ»³åÍ»±íÊı¾İ
-Input:          uPhaseId  -- ³åÍ»ÏàÎ»IDºÅ
-				sCollision --³åÍ»ÏàÎ»½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦  false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    ä¿®æ”¹ç›¸ä½å†²çªè¡¨æ•°æ®
+Input:          uPhaseId  -- å†²çªç›¸ä½IDå·
+				sCollision --å†²çªç›¸ä½ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ  false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModCollision(Byte uPhaseId, Collision& sCollision)
 {
@@ -3211,10 +3211,10 @@ bool CGbtTscDb::ModCollision(Byte uPhaseId, Collision& sCollision)
 
 /**************************************************************
 Function:       CGbtTscDb::DelCollision
-Description:    ¸ù¾İ³åÍ»ÏàÎ»IDHºÅÉ¾³ıÏàÎ»³åÍ»±íÊı¾İ¼ÇÂ¼
-Input:          uPhaseId  -- ³åÍ»ÏàÎ»IDºÅ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦  false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®å†²çªç›¸ä½IDHå·åˆ é™¤ç›¸ä½å†²çªè¡¨æ•°æ®è®°å½•
+Input:          uPhaseId  -- å†²çªç›¸ä½IDå·
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ  false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelCollision(Byte uPhaseId)
 {
@@ -3242,10 +3242,10 @@ bool CGbtTscDb::IsCollisionValid(Byte uPhaseId, Collision& sCollision)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryDetPara
-Description:    ²éÑ¯¼ì²âÆ÷²ÎÊı
-Input:          detPara  -- ¼ì²âÆ÷²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯²ÎÊı³É¹¦  false -²éÑ¯²ÎÊıÊ§°Ü
+Description:    æŸ¥è¯¢æ£€æµ‹å™¨å‚æ•°
+Input:          detPara  -- æ£€æµ‹å™¨å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢å‚æ•°æˆåŠŸ  false -æŸ¥è¯¢å‚æ•°å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryDetPara(DetectorPara& detPara)
 {
@@ -3276,10 +3276,10 @@ bool CGbtTscDb::QueryDetPara(DetectorPara& detPara)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryDetector
-Description:    ²éÑ¯¼ì²âÆ÷ÅäÖÃ²ÎÊı
-Input:          tblDetector  -- ¼ì²âÆ÷ÅäÖÃ²ÎÊı±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢æ£€æµ‹å™¨é…ç½®å‚æ•°
+Input:          tblDetector  -- æ£€æµ‹å™¨é…ç½®å‚æ•°è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryDetector(TblDetector& tblDetector)
 {
@@ -3333,11 +3333,11 @@ bool CGbtTscDb::QueryDetector(TblDetector& tblDetector)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryDetector
-Description:    ¸ù¾İ¼ì²âÆ÷IDºÅ²éÑ¯¼ì²âÆ÷ÅäÖÃ²ÎÊı
-Input:          uDetectorId  -- ¼ì²âÆ÷IDºÅ
-				sDetector    -- ¼ì²âÆ÷²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®æ£€æµ‹å™¨IDå·æŸ¥è¯¢æ£€æµ‹å™¨é…ç½®å‚æ•°
+Input:          uDetectorId  -- æ£€æµ‹å™¨IDå·
+				sDetector    -- æ£€æµ‹å™¨å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryDetector(Byte uDetectorId, Detector& sDetector)
 {
@@ -3379,11 +3379,11 @@ bool CGbtTscDb::QueryDetector(Byte uDetectorId, Detector& sDetector)
     
 /**************************************************************
 Function:       CGbtTscDb::AddDetector
-Description:    ¸ù¾İ¼ì²âÆ÷IDºÅÌí¼Ó¼ì²âÆ÷ÅäÖÃ²ÎÊı
-Input:          uDetectorId  -- ¼ì²âÆ÷IDºÅ
-				sDetector    -- ¼ì²âÆ÷²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦  false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ ¹æ®æ£€æµ‹å™¨IDå·æ·»åŠ æ£€æµ‹å™¨é…ç½®å‚æ•°
+Input:          uDetectorId  -- æ£€æµ‹å™¨IDå·
+				sDetector    -- æ£€æµ‹å™¨å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ  false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddDetector(Byte uDetectorId, Detector& sDetector)
 {
@@ -3422,11 +3422,11 @@ bool CGbtTscDb::AddDetector(Byte uDetectorId, Detector& sDetector)
     
 /**************************************************************
 Function:       CGbtTscDb::ModDetector
-Description:    ¸ù¾İ¼ì²âÆ÷IDºÅĞŞ¸Ä¼ì²âÆ÷ÅäÖÃ²ÎÊı
-Input:          uDetectorId  -- ¼ì²âÆ÷IDºÅ
-				sDetector    -- ¼ì²âÆ÷²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦  false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    æ ¹æ®æ£€æµ‹å™¨IDå·ä¿®æ”¹æ£€æµ‹å™¨é…ç½®å‚æ•°
+Input:          uDetectorId  -- æ£€æµ‹å™¨IDå·
+				sDetector    -- æ£€æµ‹å™¨å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ  false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModDetector(Byte uDetectorId, Detector& sDetector)
 {
@@ -3465,11 +3465,11 @@ bool CGbtTscDb::ModDetector(Byte uDetectorId, Detector& sDetector)
 
 /**************************************************************
 Function:       CGbtTscDb::DelDetector
-Description:    ¸ù¾İ¼ì²âÆ÷IDºÅÉ¾³ı¼ì²âÆ÷ÅäÖÃ²ÎÊı
-Input:          uDetectorId  -- ¼ì²âÆ÷IDºÅ
-				sDetector    -- ¼ì²âÆ÷²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦  false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®æ£€æµ‹å™¨IDå·åˆ é™¤æ£€æµ‹å™¨é…ç½®å‚æ•°
+Input:          uDetectorId  -- æ£€æµ‹å™¨IDå·
+				sDetector    -- æ£€æµ‹å™¨å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ  false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelDetector(Byte uDetectorId)
 {
@@ -3490,10 +3490,10 @@ bool CGbtTscDb::DelDetector(Byte uDetectorId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelDetector
-Description:    ÅĞ¶Ï¼ì²âÆ÷±íÊı¾İºÏ·¨ĞÔ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦  false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ¤æ–­æ£€æµ‹å™¨è¡¨æ•°æ®åˆæ³•æ€§
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ  false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelDetector()
 {
@@ -3512,11 +3512,11 @@ bool CGbtTscDb::DelDetector()
 
 /**************************************************************
 Function:       CGbtTscDb::IsDetectorValid
-Description:    É¾³ıÈ«²¿¼ì²âÆ÷ÅäÖÃ²ÎÊı±í¼ÇÂ¼
-Input:          uDetectorId  -- ¼ì²âÆ÷IDºÅ
-				sDetector    -- ¼ì²âÆ÷²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Êı¾İºÏ·¨  false -Êı¾İ·Ç·¨
+Description:    åˆ é™¤å…¨éƒ¨æ£€æµ‹å™¨é…ç½®å‚æ•°è¡¨è®°å½•
+Input:          uDetectorId  -- æ£€æµ‹å™¨IDå·
+				sDetector    -- æ£€æµ‹å™¨å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ•°æ®åˆæ³•  false -æ•°æ®éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsDetectorValid(Byte uDetectorId, Detector& sDetector)
 {
@@ -3539,10 +3539,10 @@ bool CGbtTscDb::IsDetectorValid(Byte uDetectorId, Detector& sDetector)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryDetExtend
-Description:    ²éÑ¯¼ì²âÆ÷À©Õ¹ÅäÖÃ±íÊı¾İ
-Input:          tblDetExtend -- ¼ì²âÆ÷À©Õ¹ÅäÖÃ±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢æ£€æµ‹å™¨æ‰©å±•é…ç½®è¡¨æ•°æ®
+Input:          tblDetExtend -- æ£€æµ‹å™¨æ‰©å±•é…ç½®è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryDetExtend(TblDetExtend& tblDetExtend)
 {
@@ -3594,10 +3594,10 @@ bool CGbtTscDb::QueryDetExtend(TblDetExtend& tblDetExtend)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryDetExtend
-Description:    ¸ù¾İÀ©Õ¹½á¹¹Ìå²éÑ¯¼ì²âÆ÷À©Õ¹ÅäÖÃ±íÊı¾İ
-Input:          sDetExtend -- ¼ì²âÆ÷À©Õ¹ÅäÖÃ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®æ‰©å±•ç»“æ„ä½“æŸ¥è¯¢æ£€æµ‹å™¨æ‰©å±•é…ç½®è¡¨æ•°æ®
+Input:          sDetExtend -- æ£€æµ‹å™¨æ‰©å±•é…ç½®ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryDetExtend(DetExtend& sDetExtend)
 {
@@ -3638,11 +3638,11 @@ bool CGbtTscDb::QueryDetExtend(DetExtend& sDetExtend)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryDetExtend
-Description:    ¸ù¾İÀ©Õ¹IDºÅ²éÑ¯¼ì²âÆ÷À©Õ¹ÅäÖÃ±íÊı¾İ
-Input:          uDetId    -- À©Õ¹IDºÅ
-				sDetExtend -- ¼ì²âÆ÷À©Õ¹ÅäÖÃ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®æ‰©å±•IDå·æŸ¥è¯¢æ£€æµ‹å™¨æ‰©å±•é…ç½®è¡¨æ•°æ®
+Input:          uDetId    -- æ‰©å±•IDå·
+				sDetExtend -- æ£€æµ‹å™¨æ‰©å±•é…ç½®ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryDetExtend(Byte uDetId, DetExtend& sDetExtend)
 {
@@ -3683,10 +3683,10 @@ bool CGbtTscDb::QueryDetExtend(Byte uDetId, DetExtend& sDetExtend)
 
 /**************************************************************
 Function:       CGbtTscDb::AddDetExtend
-Description:    Ìí¼Ó¼ì²âÆ÷À©Õ¹ÅäÖÃ±íÊı¾İ
-Input:         	sDetExtend -- ¼ì²âÆ÷À©Õ¹ÅäÖÃ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÀ©Õ¹ÅäÖÃ¼ÇÂ¼³É¹¦  false -Ìí¼ÓÊ§°Ü
+Description:    æ·»åŠ æ£€æµ‹å™¨æ‰©å±•é…ç½®è¡¨æ•°æ®
+Input:         	sDetExtend -- æ£€æµ‹å™¨æ‰©å±•é…ç½®ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ‰©å±•é…ç½®è®°å½•æˆåŠŸ  false -æ·»åŠ å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddDetExtend(DetExtend sDetExtend)
 {
@@ -3725,11 +3725,11 @@ bool CGbtTscDb::AddDetExtend(DetExtend sDetExtend)
 
 /**************************************************************
 Function:       CGbtTscDb::ModDetExtend
-Description:    Ìí¼Ó¼ì²âÆ÷À©Õ¹ÅäÖÃ±íÊı¾İ
-Input:         	sDetExtend -- ¼ì²âÆ÷À©Õ¹ÅäÖÃ½á¹¹Ìå
-				uDetExtendId -- À©Õ¹ÅäÖÃIDHºÅ
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÀ©Õ¹ÅäÖÃ¼ÇÂ¼³É¹¦  false -ĞŞ¸ÄÊ§°Ü
+Description:    æ·»åŠ æ£€æµ‹å™¨æ‰©å±•é…ç½®è¡¨æ•°æ®
+Input:         	sDetExtend -- æ£€æµ‹å™¨æ‰©å±•é…ç½®ç»“æ„ä½“
+				uDetExtendId -- æ‰©å±•é…ç½®IDHå·
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ‰©å±•é…ç½®è®°å½•æˆåŠŸ  false -ä¿®æ”¹å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModDetExtend(Byte uDetExtendId, DetExtend& sDetExtend)
 {
@@ -3765,10 +3765,10 @@ bool CGbtTscDb::ModDetExtend(Byte uDetExtendId, DetExtend& sDetExtend)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryAdaptPara
-Description:    ²éÑ¯×ÔÊÊÓ¦²ÎÊı±íÊı¾İ
-Input:         	tblAdaptPara -- ×ÔÊÊÓ¦²ÎÊı±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æŸ¥è¯¢è‡ªé€‚åº”å‚æ•°è¡¨æ•°æ®
+Input:         	tblAdaptPara -- è‡ªé€‚åº”å‚æ•°è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryAdaptPara(TblAdaptPara& tblAdaptPara)
 {
@@ -3820,10 +3820,10 @@ bool CGbtTscDb::QueryAdaptPara(TblAdaptPara& tblAdaptPara)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryAdaptPara
-Description:    ¸ù¾İ×ÔÊÊÓ¦²ÎÊı½á¹¹ÌåÊı¾İ²éÑ¯×ÔÊÊÓ¦²ÎÊı±íÊı¾İ
-Input:         	sAdaptPara -- ×ÔÊÊÓ¦²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®è‡ªé€‚åº”å‚æ•°ç»“æ„ä½“æ•°æ®æŸ¥è¯¢è‡ªé€‚åº”å‚æ•°è¡¨æ•°æ®
+Input:         	sAdaptPara -- è‡ªé€‚åº”å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryAdaptPara(AdaptPara& sAdaptPara)
 {
@@ -3866,10 +3866,10 @@ bool CGbtTscDb::QueryAdaptPara(AdaptPara& sAdaptPara)
 
 /**************************************************************
 Function:       CGbtTscDb::AddAdaptPara
-Description:    Ìí¼Ó×ÔÊÊÓ¦²ÎÊı±íÊı¾İ
-Input:         	sAdaptPara -- ×ÔÊÊÓ¦²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦  false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ è‡ªé€‚åº”å‚æ•°è¡¨æ•°æ®
+Input:         	sAdaptPara -- è‡ªé€‚åº”å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ  false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddAdaptPara(AdaptPara sAdaptPara)
 {
@@ -3903,10 +3903,10 @@ bool CGbtTscDb::AddAdaptPara(AdaptPara sAdaptPara)
 
 /**************************************************************
 Function:       CGbtTscDb::ModAdaptPara
-Description:    ĞŞ¸Ä×ÔÊÊÓ¦²ÎÊı±íÊı¾İ
-Input:         	sAdaptPara -- ´ıĞŞ¸Ä×ÔÊÊÓ¦²ÎÊı½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦  false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    ä¿®æ”¹è‡ªé€‚åº”å‚æ•°è¡¨æ•°æ®
+Input:         	sAdaptPara -- å¾…ä¿®æ”¹è‡ªé€‚åº”å‚æ•°ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ  false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModAdaptPara(AdaptPara& sAdaptPara)
 {
@@ -3940,10 +3940,10 @@ bool CGbtTscDb::ModAdaptPara(AdaptPara& sAdaptPara)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryCntDownDev
-Description:    µ¹¼ÆÊ±Éè±¸±íÊı¾İ²éÑ¯
-Input:         	tblCntDownDev -- µ¹¼ÆÊ±Éè±¸±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    å€’è®¡æ—¶è®¾å¤‡è¡¨æ•°æ®æŸ¥è¯¢
+Input:         	tblCntDownDev -- å€’è®¡æ—¶è®¾å¤‡è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryCntDownDev(TblCntDownDev& tblCntDownDev)
 {
@@ -3994,11 +3994,11 @@ bool CGbtTscDb::QueryCntDownDev(TblCntDownDev& tblCntDownDev)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryCntDownDev
-Description:    ¸ù¾İÉè±¸ºÅ²éÑ¯µ¹¼ÆÊ±Éè±¸±íÊı¾İ
-Input:         	ucDevId -- Éè±¸IDºÅ
-				sCntDownDev -- µ¹¼ÆÊ±Éè±¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®è®¾å¤‡å·æŸ¥è¯¢å€’è®¡æ—¶è®¾å¤‡è¡¨æ•°æ®
+Input:         	ucDevId -- è®¾å¤‡IDå·
+				sCntDownDev -- å€’è®¡æ—¶è®¾å¤‡ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryCntDownDev(Byte ucDevId, CntDownDev& sCntDownDev)
 {
@@ -4037,10 +4037,10 @@ bool CGbtTscDb::QueryCntDownDev(Byte ucDevId, CntDownDev& sCntDownDev)
 
 /**************************************************************
 Function:       CGbtTscDb::AddCntDownDev
-Description:    Ìí¼Óµ¹¼ÆÊ±Éè±¸±íÊı¾İ
-Input:         	sCntDownDev -- µ¹¼ÆÊ±Éè±¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦  false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ å€’è®¡æ—¶è®¾å¤‡è¡¨æ•°æ®
+Input:         	sCntDownDev -- å€’è®¡æ—¶è®¾å¤‡ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ  false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddCntDownDev(CntDownDev& sCntDownDev)
 {
@@ -4067,10 +4067,10 @@ bool CGbtTscDb::AddCntDownDev(CntDownDev& sCntDownDev)
 
 /**************************************************************
 Function:       CGbtTscDb::DelCntDownDev
-Description:    ¸ù¾İÉè±¸ºÅÉ¾³ıµ¹¼ÆÊ±Éè±¸±íÊı¾İ¼ÇÂ¼
-Input:         	ucDevId -- µ¹¼ÆÊ±Éè±¸ºÅ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦  false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®è®¾å¤‡å·åˆ é™¤å€’è®¡æ—¶è®¾å¤‡è¡¨æ•°æ®è®°å½•
+Input:         	ucDevId -- å€’è®¡æ—¶è®¾å¤‡å·
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ  false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelCntDownDev(Byte ucDevId)
 {
@@ -4091,11 +4091,11 @@ bool CGbtTscDb::DelCntDownDev(Byte ucDevId)
 
 /**************************************************************
 Function:       CGbtTscDb::ModCntDownDev
-Description:    ¸ù¾İÉè±¸ºÅĞŞ¸Äµ¹¼ÆÊ±Éè±¸±íÊı¾İ¼ÇÂ¼
-Input:         	ucDevId -- µ¹¼ÆÊ±Éè±¸ºÅ
-				sCntDownDev -- µ¹¼ÆÊ±Éè±¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦  false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    æ ¹æ®è®¾å¤‡å·ä¿®æ”¹å€’è®¡æ—¶è®¾å¤‡è¡¨æ•°æ®è®°å½•
+Input:         	ucDevId -- å€’è®¡æ—¶è®¾å¤‡å·
+				sCntDownDev -- å€’è®¡æ—¶è®¾å¤‡ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ  false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModCntDownDev(Byte ucDevId, CntDownDev& sCntDownDev)
 {
@@ -4125,10 +4125,10 @@ bool CGbtTscDb::ModCntDownDev(Byte ucDevId, CntDownDev& sCntDownDev)
 
 /**************************************************************
 Function:       CGbtTscDb::QuerySpecFun
-Description:    ¸ù¾İÌØÊâ¹¦ÄÜ½á¹¹Ìå²éÑ¯ÌØÊâ¹¦ÄÜ±í
-Input:         	sSpecFun -- ÌØÊâ¹¦ÄÜ½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®ç‰¹æ®ŠåŠŸèƒ½ç»“æ„ä½“æŸ¥è¯¢ç‰¹æ®ŠåŠŸèƒ½è¡¨
+Input:         	sSpecFun -- ç‰¹æ®ŠåŠŸèƒ½ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QuerySpecFun(SpecFun& sSpecFun)
 {
@@ -4165,10 +4165,10 @@ bool CGbtTscDb::QuerySpecFun(SpecFun& sSpecFun)
 
 /**************************************************************
 Function:       CGbtTscDb::QuerySpecFun
-Description:    ²éÑ¯È«²¿ÌØÊâ¹¦ÄÜ±íÊı¾İ
-Input:         	tblSpecFun -- ÌØÊâ¹¦ÄÜ±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æŸ¥è¯¢å…¨éƒ¨ç‰¹æ®ŠåŠŸèƒ½è¡¨æ•°æ®
+Input:         	tblSpecFun -- ç‰¹æ®ŠåŠŸèƒ½è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QuerySpecFun(TblSpecFun& tblSpecFun)
 {
@@ -4217,10 +4217,10 @@ bool CGbtTscDb::QuerySpecFun(TblSpecFun& tblSpecFun)
 
 /**************************************************************
 Function:       CGbtTscDb::AddSpecFun
-Description:    Ìí¼ÓÌØÊâ¹¦ÄÜ±íÊı¾İ
-Input:         	tblSpecFun -- ÌØÊâ¹¦ÄÜ±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦  false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ ç‰¹æ®ŠåŠŸèƒ½è¡¨æ•°æ®
+Input:         	tblSpecFun -- ç‰¹æ®ŠåŠŸèƒ½è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ  false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddSpecFun(Byte ucFunType,Byte ucValue)
 {
@@ -4244,11 +4244,11 @@ bool CGbtTscDb::AddSpecFun(Byte ucFunType,Byte ucValue)
 
 /**************************************************************
 Function:       CGbtTscDb::ModSpecFun
-Description:    ¸ù¾İÌØÊâ¹¦ÄÜÀàĞÍĞŞ¸ÄÌØÊâ¹¦ÄÜ±íÊı¾İ
-Input:         	ucFunType -- ÌØÊâ¹¦ÄÜÀàĞÍ
-				ucValue   -- ĞŞ¸ÄÖµ
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦  false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    æ ¹æ®ç‰¹æ®ŠåŠŸèƒ½ç±»å‹ä¿®æ”¹ç‰¹æ®ŠåŠŸèƒ½è¡¨æ•°æ®
+Input:         	ucFunType -- ç‰¹æ®ŠåŠŸèƒ½ç±»å‹
+				ucValue   -- ä¿®æ”¹å€¼
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ  false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModSpecFun(Byte ucFunType,Byte ucValue)
 {
@@ -4279,10 +4279,10 @@ bool CGbtTscDb::ModSpecFun(Byte ucFunType,Byte ucValue)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryChannel
-Description:    ĞÅºÅ»úÍ¨µÀ²éÑ¯
-Input:         	tblChannel -- Í¨µÀÊı¾İ±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    ä¿¡å·æœºé€šé“æŸ¥è¯¢
+Input:         	tblChannel -- é€šé“æ•°æ®è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryChannel(TblChannel& tblChannel)
 {
@@ -4332,11 +4332,11 @@ bool CGbtTscDb::QueryChannel(TblChannel& tblChannel)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryChannel
-Description:    ¸ù¾İÍ¨µÀIDHºÅĞÅºÅ»úÍ¨µÀ²éÑ¯
-Input:         	uChannelId -- Í¨µÀIDºÅ
-				sChannel   -- Í¨µÀ½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®é€šé“IDHå·ä¿¡å·æœºé€šé“æŸ¥è¯¢
+Input:         	uChannelId -- é€šé“IDå·
+				sChannel   -- é€šé“ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryChannel(Byte uChannelId, Channel& sChannel)
 {
@@ -4374,11 +4374,11 @@ bool CGbtTscDb::QueryChannel(Byte uChannelId, Channel& sChannel)
     
 /**************************************************************
 Function:       CGbtTscDb::AddChannel
-Description:    Ìí¼ÓĞÅºÅ»úÍ¨µÀ±í¼ÇÂ¼Êı¾İ
-Input:         	uChannelId -- Í¨µÀIDºÅ
-				sChannel   -- Í¨µÀ½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦  false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ ä¿¡å·æœºé€šé“è¡¨è®°å½•æ•°æ®
+Input:         	uChannelId -- é€šé“IDå·
+				sChannel   -- é€šé“ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ  false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddChannel(Byte uChannelId, Channel& sChannel)
 {
@@ -4409,11 +4409,11 @@ bool CGbtTscDb::AddChannel(Byte uChannelId, Channel& sChannel)
     
 /**************************************************************
 Function:       CGbtTscDb::ModChannel
-Description:    ĞŞ¸ÄĞÅºÅ»úÍ¨µÀ±í¼ÇÂ¼Êı¾İ
-Input:         	uChannelId -- Í¨µÀIDºÅ
-				sChannel   -- ´ıĞŞ¸ÄÍ¨µÀ½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦  false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    ä¿®æ”¹ä¿¡å·æœºé€šé“è¡¨è®°å½•æ•°æ®
+Input:         	uChannelId -- é€šé“IDå·
+				sChannel   -- å¾…ä¿®æ”¹é€šé“ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ  false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModChannel(Byte uChannelId, Channel& sChannel)
 {
@@ -4447,10 +4447,10 @@ bool CGbtTscDb::ModChannel(Byte uChannelId, Channel& sChannel)
 
 /**************************************************************
 Function:       CGbtTscDb::DelChannel
-Description:    ¸ù¾İÍ¨µÀIDºÅÉ¾³ıĞÅºÅ»úÍ¨µÀ±í¼ÇÂ¼Êı¾İ
-Input:         	uChannelId -- Í¨µÀIDºÅ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦  false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®é€šé“IDå·åˆ é™¤ä¿¡å·æœºé€šé“è¡¨è®°å½•æ•°æ®
+Input:         	uChannelId -- é€šé“IDå·
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ  false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelChannel(Byte uChannelId)
 {
@@ -4471,10 +4471,10 @@ bool CGbtTscDb::DelChannel(Byte uChannelId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelChannel
-Description:    É¾³ıÈ«²¿ĞÅºÅ»úÍ¨µÀ±í¼ÇÂ¼Êı¾İ
-Input:         	ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦  false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨ä¿¡å·æœºé€šé“è¡¨è®°å½•æ•°æ®
+Input:         	æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ  false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelChannel()
 {
@@ -4492,11 +4492,11 @@ bool CGbtTscDb::DelChannel()
 
 /**************************************************************
 Function:       CGbtTscDb::IsChannelValid
-Description:    ÅĞ¶ÏĞÅºÅ¼°Í¨µÀÊı¾İºÏ·¨ĞÔ
-Input:         	uChannelId -- Í¨µÀIDºÅ
-				sChannel   -- ´ıĞŞ¸ÄÍ¨µÀ½á¹¹ÌåÊı¾İ
-Output:         ÎŞ
-Return:         true - Êı¾İºÏ·¨ false -Êı¾İ·Ç·¨
+Description:    åˆ¤æ–­ä¿¡å·åŠé€šé“æ•°æ®åˆæ³•æ€§
+Input:         	uChannelId -- é€šé“IDå·
+				sChannel   -- å¾…ä¿®æ”¹é€šé“ç»“æ„ä½“æ•°æ®
+Output:         æ— 
+Return:         true - æ•°æ®åˆæ³• false -æ•°æ®éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsChannelValid(Byte uChannelId, Channel& sChannel)
 {
@@ -4520,10 +4520,10 @@ bool CGbtTscDb::IsChannelValid(Byte uChannelId, Channel& sChannel)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPattern
-Description:    ²éÑ¯ÅäÊ±·½°¸
-Input:          tblPattern  -- ÅäÊ±·½°¸±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢é…æ—¶æ–¹æ¡ˆ
+Input:          tblPattern  -- é…æ—¶æ–¹æ¡ˆè¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPattern(TblPattern& tblPattern)
 {
@@ -4574,11 +4574,11 @@ bool CGbtTscDb::QueryPattern(TblPattern& tblPattern)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPattern
-Description:    ¸ù¾İÅäÊ±·½°¸ºÅ²éÑ¯ÅäÊ±·½°¸±íÊı¾İ
-Input:          uPatternId  -- ÅäÊ±·½°¸ºÅ
-				sPattern    -- ÅäÊ±·½°¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®é…æ—¶æ–¹æ¡ˆå·æŸ¥è¯¢é…æ—¶æ–¹æ¡ˆè¡¨æ•°æ®
+Input:          uPatternId  -- é…æ—¶æ–¹æ¡ˆå·
+				sPattern    -- é…æ—¶æ–¹æ¡ˆç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPattern(Byte uPatternId, Pattern& sPattern)
 {
@@ -4616,11 +4616,11 @@ bool CGbtTscDb::QueryPattern(Byte uPatternId, Pattern& sPattern)
     
 /**************************************************************
 Function:       CGbtTscDb::AddPattern
-Description:    ¸ù¾İÅäÊ±·½°¸ºÅÌí¼ÓÅäÊ±·½°¸±íÊı¾İ
-Input:          uPatternId  -- ÅäÊ±·½°¸ºÅ
-				sPattern    -- ÅäÊ±·½°¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ ¹æ®é…æ—¶æ–¹æ¡ˆå·æ·»åŠ é…æ—¶æ–¹æ¡ˆè¡¨æ•°æ®
+Input:          uPatternId  -- é…æ—¶æ–¹æ¡ˆå·
+				sPattern    -- é…æ—¶æ–¹æ¡ˆç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddPattern(Byte uPatternId, Pattern& sPattern)
 {
@@ -4653,11 +4653,11 @@ bool CGbtTscDb::AddPattern(Byte uPatternId, Pattern& sPattern)
     
 /**************************************************************
 Function:       CGbtTscDb::ModPattern
-Description:    ¸ù¾İÅäÊ±·½°¸ºÅĞŞ¸ÄÅäÊ±·½°¸±íÊı¾İ
-Input:          uPatternId  -- ÅäÊ±·½°¸ºÅ
-				sPattern    -- ÅäÊ±·½°¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦ false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    æ ¹æ®é…æ—¶æ–¹æ¡ˆå·ä¿®æ”¹é…æ—¶æ–¹æ¡ˆè¡¨æ•°æ®
+Input:          uPatternId  -- é…æ—¶æ–¹æ¡ˆå·
+				sPattern    -- é…æ—¶æ–¹æ¡ˆç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModPattern(Byte uPatternId, Pattern& sPattern)
 {
@@ -4692,11 +4692,11 @@ bool CGbtTscDb::ModPattern(Byte uPatternId, Pattern& sPattern)
 
 /**************************************************************
 Function:       CGbtTscDb::DelPattern
-Description:    ¸ù¾İÅäÊ±·½°¸ºÅÉ¾³ıÅäÊ±·½°¸±íÊı¾İ
-Input:          uPatternId  -- ÅäÊ±·½°¸ºÅ
-				sPattern    -- ÅäÊ±·½°¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®é…æ—¶æ–¹æ¡ˆå·åˆ é™¤é…æ—¶æ–¹æ¡ˆè¡¨æ•°æ®
+Input:          uPatternId  -- é…æ—¶æ–¹æ¡ˆå·
+				sPattern    -- é…æ—¶æ–¹æ¡ˆç»“æ„ä½“
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelPattern(Byte uPatternId)
 {
@@ -4716,10 +4716,10 @@ bool CGbtTscDb::DelPattern(Byte uPatternId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelPattern
-Description:    É¾³ıÈ«²¿ÅäÊ±·½°¸±íÊı¾İ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨é…æ—¶æ–¹æ¡ˆè¡¨æ•°æ®
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelPattern()
 {
@@ -4737,11 +4737,11 @@ bool CGbtTscDb::DelPattern()
 
 /**************************************************************
 Function:       CGbtTscDb::IsPatternValid
-Description:    ÅĞ¶ÏÅäÊ±·½°¸Êı¾İºÏ·¨ĞÔ
-Input:          uPatternId  -- ÅäÊ±·½°¸ºÅ
-				sPattern    -- ÅäÊ±·½°¸½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Êı¾İºÏ·¨ false -Êı¾İ·Ç·¨
+Description:    åˆ¤æ–­é…æ—¶æ–¹æ¡ˆæ•°æ®åˆæ³•æ€§
+Input:          uPatternId  -- é…æ—¶æ–¹æ¡ˆå·
+				sPattern    -- é…æ—¶æ–¹æ¡ˆç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ•°æ®åˆæ³• false -æ•°æ®éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsPatternValid(Byte uPatternId, Pattern& sPattern)
 {
@@ -4763,10 +4763,10 @@ bool CGbtTscDb::IsPatternValid(Byte uPatternId, Pattern& sPattern)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryStagePattern
-Description:    ²éÑ¯½×¶ÎÅäÊ±±íÊı¾İ
-Input:          tblStagePattern  -- ½×¶ÎÅäÊ±±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æŸ¥è¯¢é˜¶æ®µé…æ—¶è¡¨æ•°æ®
+Input:          tblStagePattern  -- é˜¶æ®µé…æ—¶è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryStagePattern(TblStagePattern& tblStagePattern)
 {
@@ -4820,11 +4820,11 @@ bool CGbtTscDb::QueryStagePattern(TblStagePattern& tblStagePattern)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryStagePattern
-Description:    ¸ù¾İ½×¶ÎÅäÊ±ºÅ²éÑ¯½×¶ÎÅäÊ±±íÊı¾İ
-Input:          uStagePatternId  -- ½×¶ÎÅäÊ±ºÅ
-				tblStagePattern  -- ½×¶ÎÅäÊ±±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®é˜¶æ®µé…æ—¶å·æŸ¥è¯¢é˜¶æ®µé…æ—¶è¡¨æ•°æ®
+Input:          uStagePatternId  -- é˜¶æ®µé…æ—¶å·
+				tblStagePattern  -- é˜¶æ®µé…æ—¶è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, TblStagePattern& tblStagePattern)
 {
@@ -4879,12 +4879,12 @@ bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, TblStagePattern& tblStag
 
 /**************************************************************
 Function:       CGbtTscDb::QueryStagePattern
-Description:    ¸ù¾İ½×¶ÎÅäÊ±±íºÅ£¬½×¶ÎºÅ²éÑ¯½×¶ÎÅäÊ±±íÊı¾İ
-Input:          uStagePatternId  -- ½×¶ÎÅäÊ±ºÅ
-				uStageNo         -- ½×¶ÎºÅ
-				sStagePattern    -- ½×¶ÎÅäÊ±½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®é˜¶æ®µé…æ—¶è¡¨å·ï¼Œé˜¶æ®µå·æŸ¥è¯¢é˜¶æ®µé…æ—¶è¡¨æ•°æ®
+Input:          uStagePatternId  -- é˜¶æ®µé…æ—¶å·
+				uStageNo         -- é˜¶æ®µå·
+				sStagePattern    -- é˜¶æ®µé…æ—¶ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, Byte uStageNo, StagePattern& sStagePattern)
 {
@@ -4928,18 +4928,18 @@ bool CGbtTscDb::QueryStagePattern(Byte uStagePatternId, Byte uStageNo, StagePatt
 
 /**************************************************************
 Function:       CGbtTscDb::AddStagePattern
-Description:    Ìí¼Ó½×¶ÎÅäÊ±±íÊı¾İ¼ÇÂ¼
-Input:          uStagePatternId  -- ½×¶ÎÅäÊ±ºÅ
-				uStageNo         -- ½×¶ÎºÅ
-				sStagePattern    -- ½×¶ÎÅäÊ±½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ é˜¶æ®µé…æ—¶è¡¨æ•°æ®è®°å½•
+Input:          uStagePatternId  -- é˜¶æ®µé…æ—¶å·
+				uStageNo         -- é˜¶æ®µå·
+				sStagePattern    -- é˜¶æ®µé…æ—¶ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddStagePattern(Byte uStagePatternId, Byte uStageNo, StagePattern& sStagePattern)
 {
     char   sSql[LARGE_BUF_SIZE];
 
-	if ( 0 == uStageNo )  //½×¶ÎºÅ²»ÄÜÎª0
+	if ( 0 == uStageNo )  //é˜¶æ®µå·ä¸èƒ½ä¸º0
 	{
 		return true;
 	}
@@ -4977,12 +4977,12 @@ bool CGbtTscDb::AddStagePattern(Byte uStagePatternId, Byte uStageNo, StagePatter
 
 /**************************************************************
 Function:       CGbtTscDb::ModStagePattern
-Description:    ¸ù¾İ½×¶ÎÅäÊ±ºÅ£¬½×¶ÎºÅĞŞ¸ÄÅäÊ±±íÊı¾İ¼ÇÂ¼
-Input:          uStagePatternId  -- ½×¶ÎÅäÊ±ºÅ
-				uStageNo         -- ½×¶ÎºÅ
-				sStagePattern    -- ½×¶ÎÅäÊ±½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦ false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    æ ¹æ®é˜¶æ®µé…æ—¶å·ï¼Œé˜¶æ®µå·ä¿®æ”¹é…æ—¶è¡¨æ•°æ®è®°å½•
+Input:          uStagePatternId  -- é˜¶æ®µé…æ—¶å·
+				uStageNo         -- é˜¶æ®µå·
+				sStagePattern    -- é˜¶æ®µé…æ—¶ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModStagePattern(Byte uStagePatternId, Byte uStageNo, StagePattern& sStage)
 {
@@ -5019,10 +5019,10 @@ bool CGbtTscDb::ModStagePattern(Byte uStagePatternId, Byte uStageNo, StagePatter
 
 /**************************************************************
 Function:       CGbtTscDb::DelStagePattern
-Description:    ¸ù¾İ½×¶ÎÅäÊ±ºÅÉ¾³ıÅäÊ±±íÊı¾İ¼ÇÂ¼
-Input:          uStagePatternId  -- ½×¶ÎÅäÊ±ºÅ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®é˜¶æ®µé…æ—¶å·åˆ é™¤é…æ—¶è¡¨æ•°æ®è®°å½•
+Input:          uStagePatternId  -- é˜¶æ®µé…æ—¶å·
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelStagePattern(Byte uStagePatternId)
 {
@@ -5043,11 +5043,11 @@ bool CGbtTscDb::DelStagePattern(Byte uStagePatternId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelStagePattern
-Description:    ¸ù¾İ½×¶ÎÅäÊ±ºÅ£¬½×¶ÎºÅÉ¾³ıÅäÊ±±íÊı¾İ¼ÇÂ¼
-Input:          uStagePatternId  -- ½×¶ÎÅäÊ±ºÅ
-				uStageNo         -- ½×¶ÎºÅ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®é˜¶æ®µé…æ—¶å·ï¼Œé˜¶æ®µå·åˆ é™¤é…æ—¶è¡¨æ•°æ®è®°å½•
+Input:          uStagePatternId  -- é˜¶æ®µé…æ—¶å·
+				uStageNo         -- é˜¶æ®µå·
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelStagePattern(Byte uStagePatternId, Byte uStageNo)
 {
@@ -5070,10 +5070,10 @@ bool CGbtTscDb::DelStagePattern(Byte uStagePatternId, Byte uStageNo)
 
 /**************************************************************
 Function:       CGbtTscDb::DelStagePattern
-Description:    É¾³ıÈ«²¿ÅäÊ±±íÊı¾İ¼ÇÂ¼
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨é…æ—¶è¡¨æ•°æ®è®°å½•
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelStagePattern()
 {
@@ -5091,12 +5091,12 @@ bool CGbtTscDb::DelStagePattern()
 
 /**************************************************************
 Function:       CGbtTscDb::IsStagePatternValid
-Description:    ÅĞ¶Ï½×¶ÎÅäÊ±Êı¾İºÏ·¨ĞÔ
-Input:          uStagePatternId  -- ½×¶ÎÅäÊ±ºÅ
-				uStageNo         -- ½×¶ÎºÅ
-				sStagePattern    -- ½×¶ÎÅäÊ±½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Êı¾İºÏ·¨ false -Êı¾İ·Ç·¨
+Description:    åˆ¤æ–­é˜¶æ®µé…æ—¶æ•°æ®åˆæ³•æ€§
+Input:          uStagePatternId  -- é˜¶æ®µé…æ—¶å·
+				uStageNo         -- é˜¶æ®µå·
+				sStagePattern    -- é˜¶æ®µé…æ—¶ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ•°æ®åˆæ³• false -æ•°æ®éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsStagePatternValid(Byte uStagePatternId, Byte uStageNo, StagePattern& sStage)
 {
@@ -5111,10 +5111,10 @@ bool CGbtTscDb::IsStagePatternValid(Byte uStagePatternId, Byte uStageNo, StagePa
 
 /**************************************************************
 Function:       CGbtTscDb::QueryOverlapPhase
-Description:    ²éÑ¯¸úËæÏàÎ»
-Input:         tblOverlapPhase -- ¸úËæÏàÎ»±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢è·Ÿéšç›¸ä½
+Input:         tblOverlapPhase -- è·Ÿéšç›¸ä½è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryOverlapPhase(TblOverlapPhase& tblOverlapPhase)
 {
@@ -5172,11 +5172,11 @@ bool CGbtTscDb::QueryOverlapPhase(TblOverlapPhase& tblOverlapPhase)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryOverlapPhase
-Description:    ¸ù¾İÏàÎ»IDºÅ²éÑ¯¸úËæÏàÎ»±íÊı¾İ
-Input:         uOverlapPhaseId -- ¸úËæÏàÎ»ID
-				sOverlapPhase -- ¸úËæÏàÎ»½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    æ ¹æ®ç›¸ä½IDå·æŸ¥è¯¢è·Ÿéšç›¸ä½è¡¨æ•°æ®
+Input:         uOverlapPhaseId -- è·Ÿéšç›¸ä½ID
+				sOverlapPhase -- è·Ÿéšç›¸ä½ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhase)
 {
@@ -5223,11 +5223,11 @@ bool CGbtTscDb::QueryOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPh
     
 /**************************************************************
 Function:       CGbtTscDb::AddOverlapPhase
-Description:    ¸ù¾İÏàÎ»IDºÅÌí¼Ó¸úËæÏàÎ»±íÊı¾İ
-Input:          uOverlapPhaseId -- ¸úËæÏàÎ»ID
-				sOverlapPhase -- ¸úËæÏàÎ»½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ ¹æ®ç›¸ä½IDå·æ·»åŠ è·Ÿéšç›¸ä½è¡¨æ•°æ®
+Input:          uOverlapPhaseId -- è·Ÿéšç›¸ä½ID
+				sOverlapPhase -- è·Ÿéšç›¸ä½ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhase)
 {
@@ -5294,11 +5294,11 @@ bool CGbtTscDb::AddOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhas
     
 /**************************************************************
 Function:       CGbtTscDb::ModOverlapPhase
-Description:    ¸ù¾İÏàÎ»IDºÅĞŞ¸Ä¸úËæÏàÎ»±íÊı¾İ
-Input:          uOverlapPhaseId -- ¸úËæÏàÎ»ID
-				sOverlapPhase -- ¸úËæÏàÎ»½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦ false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    æ ¹æ®ç›¸ä½IDå·ä¿®æ”¹è·Ÿéšç›¸ä½è¡¨æ•°æ®
+Input:          uOverlapPhaseId -- è·Ÿéšç›¸ä½ID
+				sOverlapPhase -- è·Ÿéšç›¸ä½ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhase)
 {
@@ -5358,10 +5358,10 @@ bool CGbtTscDb::ModOverlapPhase(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhas
 
 /**************************************************************
 Function:       CGbtTscDb::DelOverlapPhase
-Description:    ¸ù¾İÏàÎ»IDºÅÉ¾³ı¸úËæÏàÎ»±íÊı¾İ
-Input:          uOverlapPhaseId -- ¸úËæÏàÎ»ID
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®ç›¸ä½IDå·åˆ é™¤è·Ÿéšç›¸ä½è¡¨æ•°æ®
+Input:          uOverlapPhaseId -- è·Ÿéšç›¸ä½ID
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelOverlapPhase(Byte uOverlapPhaseId)
 {
@@ -5381,10 +5381,10 @@ bool CGbtTscDb::DelOverlapPhase(Byte uOverlapPhaseId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelOverlapPhase
-Description:    É¾³ıÈ«²¿¸úËæÏàÎ»±íÊı¾İ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨è·Ÿéšç›¸ä½è¡¨æ•°æ®
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelOverlapPhase()
 {
@@ -5403,11 +5403,11 @@ bool CGbtTscDb::DelOverlapPhase()
 
 /**************************************************************
 Function:       CGbtTscDb::IsOverlapPhaseValid
-Description:   ÅĞ¶Ï¸úËæÏàÎ»±íÊı¾İºÏ·¨ĞÔ
-Input:          uOverlapPhaseId -- ¸úËæÏàÎ»ID
-				sOverlapPhase -- ¸úËæÏàÎ»½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Êı¾İºÏ·¨ false -Êı¾İ·Ç·¨
+Description:   åˆ¤æ–­è·Ÿéšç›¸ä½è¡¨æ•°æ®åˆæ³•æ€§
+Input:          uOverlapPhaseId -- è·Ÿéšç›¸ä½ID
+				sOverlapPhase -- è·Ÿéšç›¸ä½ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ•°æ®åˆæ³• false -æ•°æ®éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsOverlapPhaseValid(Byte uOverlapPhaseId, OverlapPhase& sOverlapPhase)
 {
@@ -5417,10 +5417,10 @@ bool CGbtTscDb::IsOverlapPhaseValid(Byte uOverlapPhaseId, OverlapPhase& sOverlap
 
 /**************************************************************
 Function:       CGbtTscDb::QueryEventType
-Description:   ²éÑ¯ÈÕÖ¾ÀàĞÍ±í¼ÇÂ¼
-Input:          tblEvtType -- Êı¾İÀàĞÍ±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:   æŸ¥è¯¢æ—¥å¿—ç±»å‹è¡¨è®°å½•
+Input:          tblEvtType -- æ•°æ®ç±»å‹è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryEventType(TblEventType& tblEvtType)
 {
@@ -5477,11 +5477,11 @@ bool CGbtTscDb::QueryEventType(TblEventType& tblEvtType)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryEventType
-Description:   ¸ù¾İÈÕÖ¾ÀàĞÍID²éÑ¯ÈÕÖ¾ÀàĞÍ±í¼ÇÂ¼
-Input:          uEvtTypeId -- ÈÕÖ¾ÀàĞÍID
-				sEvtType   -- ÈÕÖ¾ÀàĞÍ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:   æ ¹æ®æ—¥å¿—ç±»å‹IDæŸ¥è¯¢æ—¥å¿—ç±»å‹è¡¨è®°å½•
+Input:          uEvtTypeId -- æ—¥å¿—ç±»å‹ID
+				sEvtType   -- æ—¥å¿—ç±»å‹ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryEventType(Byte uEvtTypeId, EventType& sEvtType)
 {
@@ -5525,11 +5525,11 @@ bool CGbtTscDb::QueryEventType(Byte uEvtTypeId, EventType& sEvtType)
     
 /**************************************************************
 Function:       CGbtTscDb::AddEventType
-Description:   Ìí¼ÓÈÕÖ¾ÀàĞÍ±í¼ÇÂ¼
-Input:          uEvtTypeId -- ÈÕÖ¾ÀàĞÍID
-				sEvtType   -- ÈÕÖ¾ÀàĞÍ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼Ó³É¹¦ false -Ìí¼ÓÊ§°Ü
+Description:   æ·»åŠ æ—¥å¿—ç±»å‹è¡¨è®°å½•
+Input:          uEvtTypeId -- æ—¥å¿—ç±»å‹ID
+				sEvtType   -- æ—¥å¿—ç±»å‹ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æˆåŠŸ false -æ·»åŠ å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddEventType(Byte uEvtTypeId, EventType& sEvtType)
 {
@@ -5556,11 +5556,11 @@ bool CGbtTscDb::AddEventType(Byte uEvtTypeId, EventType& sEvtType)
 
 /**************************************************************
 Function:       CGbtTscDb::ModEventType
-Description:    ¸ù¾İÈÕÖ¾ÀàĞÍIDºÅĞŞ¸ÄÈÕÖ¾ÀàĞÍ±í¼ÇÂ¼
-Input:          uEvtTypeId -- ÈÕÖ¾ÀàĞÍID
-				sEvtType   -- ÈÕÖ¾ÀàĞÍ½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼Ó³É¹¦ false -Ìí¼ÓÊ§°Ü
+Description:    æ ¹æ®æ—¥å¿—ç±»å‹IDå·ä¿®æ”¹æ—¥å¿—ç±»å‹è¡¨è®°å½•
+Input:          uEvtTypeId -- æ—¥å¿—ç±»å‹ID
+				sEvtType   -- æ—¥å¿—ç±»å‹ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æˆåŠŸ false -æ·»åŠ å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModEventType(Byte uEvtTypeId, EventType& sEvtType)
 {
@@ -5593,10 +5593,10 @@ bool CGbtTscDb::ModEventType(Byte uEvtTypeId, EventType& sEvtType)
 
 /**************************************************************
 Function:       CGbtTscDb::DelEventType
-Description:    ¸ù¾İÈÕÖ¾ÀàĞÍIDºÅÉ¾³ıÈÕÖ¾ÀàĞÍ±í¼ÇÂ¼
-Input:          uEvtTypeId -- ÈÕÖ¾ÀàĞÍID
-Output:         ÎŞ
-Return:         true - É¾³ı¼ÇÂ¼³É¹¦ false -É¾³ı¼ÇÂ¼Ê§°Ü
+Description:    æ ¹æ®æ—¥å¿—ç±»å‹IDå·åˆ é™¤æ—¥å¿—ç±»å‹è¡¨è®°å½•
+Input:          uEvtTypeId -- æ—¥å¿—ç±»å‹ID
+Output:         æ— 
+Return:         true - åˆ é™¤è®°å½•æˆåŠŸ false -åˆ é™¤è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelEventType(Byte uEvtTypeId)
 {
@@ -5617,10 +5617,10 @@ bool CGbtTscDb::DelEventType(Byte uEvtTypeId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelEventType
-Description:    É¾³ıÈ«²¿ÈÕÖ¾ÀàĞÍ±í¼ÇÂ¼
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ı¼ÇÂ¼³É¹¦ false -É¾³ı¼ÇÂ¼Ê§°Ü
+Description:    åˆ é™¤å…¨éƒ¨æ—¥å¿—ç±»å‹è¡¨è®°å½•
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤è®°å½•æˆåŠŸ false -åˆ é™¤è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelEventType()
 {
@@ -5638,12 +5638,12 @@ bool CGbtTscDb::DelEventType()
 
 /**************************************************************
 Function:       CGbtTscDb::DelEventType
-Description:    É¾³ıÈ«²¿ÈÕÖ¾ÀàĞÍ±í¼ÇÂ¼
-Input:          uEvtTypeId  - ÊÂ¼şÀàĞÍ
-				uStartTime  - ¿ªÊ¼Ê±¼ä
-				uEndTime    - ½áÊøÊ±¼ä
-Output:         ÎŞ
-Return:         true - É¾³ı¼ÇÂ¼³É¹¦ false -É¾³ı¼ÇÂ¼Ê§°Ü
+Description:    åˆ é™¤å…¨éƒ¨æ—¥å¿—ç±»å‹è¡¨è®°å½•
+Input:          uEvtTypeId  - äº‹ä»¶ç±»å‹
+				uStartTime  - å¼€å§‹æ—¶é—´
+				uEndTime    - ç»“æŸæ—¶é—´
+Output:         æ— 
+Return:         true - åˆ é™¤è®°å½•æˆåŠŸ false -åˆ é™¤è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelEventLog(Byte uEvtTypeId ,Uint uStartTime ,Uint uEndTime)
 {
@@ -5679,10 +5679,10 @@ bool CGbtTscDb::DelEventLog(Byte uEvtTypeId ,Uint uStartTime ,Uint uEndTime)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryEventLog
-Description:    ÊÂ¼şÈÕÖ¾±í¼ÇÂ¼²éÑ¯
-Input:          tblLog -- ÈÕÖ¾¼ÇÂ¼±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯¼ÇÂ¼³É¹¦ false -²éÑ¯¼ÇÂ¼Ê§°Ü
+Description:    äº‹ä»¶æ—¥å¿—è¡¨è®°å½•æŸ¥è¯¢
+Input:          tblLog -- æ—¥å¿—è®°å½•è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢è®°å½•æˆåŠŸ false -æŸ¥è¯¢è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryEventLog(TblEventLog& tblLog)
 {
@@ -5734,11 +5734,11 @@ bool CGbtTscDb::QueryEventLog(TblEventLog& tblLog)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryEventLog
-Description:    ¸ù¾İÊÂ¼şÀàĞÍ²éÑ¯ÊÂ¼şÈÕÖ¾±í¼ÇÂ¼
-Input:          uEvtTypeId -- ÈÕÖ¾ÀàĞÍIDºÅ
-				tblLog     -- ÈÕÖ¾±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯¼ÇÂ¼³É¹¦ false -²éÑ¯¼ÇÂ¼Ê§°Ü
+Description:    æ ¹æ®äº‹ä»¶ç±»å‹æŸ¥è¯¢äº‹ä»¶æ—¥å¿—è¡¨è®°å½•
+Input:          uEvtTypeId -- æ—¥å¿—ç±»å‹IDå·
+				tblLog     -- æ—¥å¿—è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢è®°å½•æˆåŠŸ false -æŸ¥è¯¢è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryEventLog(Byte uEvtTypeId, TblEventLog& tblLog)
 {
@@ -5791,11 +5791,11 @@ bool CGbtTscDb::QueryEventLog(Byte uEvtTypeId, TblEventLog& tblLog)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryEventLog
-Description:    ¸ù¾İÊÂ¼şIDHºÅ²éÑ¯ÊÂ¼şÈÕÖ¾±í¼ÇÂ¼
-Input:          uEvtLogId -- ÈÕÖ¾IDºÅ
-				sEvtLog   -- ÈÕÖ¾½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ²éÑ¯¼ÇÂ¼³É¹¦ false -²éÑ¯¼ÇÂ¼Ê§°Ü
+Description:    æ ¹æ®äº‹ä»¶IDHå·æŸ¥è¯¢äº‹ä»¶æ—¥å¿—è¡¨è®°å½•
+Input:          uEvtLogId -- æ—¥å¿—IDå·
+				sEvtLog   -- æ—¥å¿—ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æŸ¥è¯¢è®°å½•æˆåŠŸ false -æŸ¥è¯¢è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryEventLog(Byte uEvtLogId, EventLog& sEvtLog)
 {
@@ -5834,11 +5834,11 @@ bool CGbtTscDb::QueryEventLog(Byte uEvtLogId, EventLog& sEvtLog)
 
 /**************************************************************
 Function:       CGbtTscDb::GetLogMaxMin
-Description:    »ñÈ¡ÈÕÖ¾±í×î´óºÍ×îĞ¡ID
-Input:          ÎŞ
-Output:         pMaxId --×î´óÈÕÖ¾ºÅÊı¾İÖ¸Õë
-				pMinId --×îĞ¡ÈÕÖ¾ºÅÊı¾İÖ¸Õë
-Return:         true - ²éÑ¯³É¹¦ false -²éÑ¯Ê§°Ü
+Description:    è·å–æ—¥å¿—è¡¨æœ€å¤§å’Œæœ€å°ID
+Input:          æ— 
+Output:         pMaxId --æœ€å¤§æ—¥å¿—å·æ•°æ®æŒ‡é’ˆ
+				pMinId --æœ€å°æ—¥å¿—å·æ•°æ®æŒ‡é’ˆ
+Return:         true - æŸ¥è¯¢æˆåŠŸ false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetLogMaxMin(Uint32* pMaxId, Uint32* pMinId)
 {
@@ -5898,13 +5898,13 @@ bool CGbtTscDb::GetLogMaxMin(Uint32* pMaxId, Uint32* pMinId)
 
 /**************************************************************
 Function:       CGbtTscDb::AddEventLog
-Description:    Ìí¼ÓÈÕÖ¾±í¼ÇÂ¼
-Input:          pMaxId --×î´óÈÕÖ¾ºÅÊı¾İÖ¸Õë
-				pMinId --×îĞ¡ÈÕÖ¾ºÅÊı¾İÖ¸Õë
-				uEvtType -- ÈÕÖ¾ÀàĞÍ
-				uEvtValue-- ÈÕÖ¾Öµ
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÈÕÖ¾³É¹¦ false -Ìí¼ÓÈÕÖ¾Ê§°Ü
+Description:    æ·»åŠ æ—¥å¿—è¡¨è®°å½•
+Input:          pMaxId --æœ€å¤§æ—¥å¿—å·æ•°æ®æŒ‡é’ˆ
+				pMinId --æœ€å°æ—¥å¿—å·æ•°æ®æŒ‡é’ˆ
+				uEvtType -- æ—¥å¿—ç±»å‹
+				uEvtValue-- æ—¥å¿—å€¼
+Output:         æ— 
+Return:         true - æ·»åŠ æ—¥å¿—æˆåŠŸ false -æ·»åŠ æ—¥å¿—å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong uEvtValue)
 {	
@@ -5956,10 +5956,10 @@ bool CGbtTscDb::AddEventLog(Uint32* pMaxId, Uint32* pMinId, Byte uEvtType, Ulong
 
 /**************************************************************
 Function:       CGbtTscDb::DelEventLog
-Description:    ¸ù¾İÈÕÖ¾ÀàĞÍIDÉ¾³ı¶ÔÓ¦ÀàĞÍÈÕÖ¾±í¼ÇÂ¼
-Input:          uEvtTypeId  -- ÈÕÖ¾ÀàĞÍID
-Output:         ÎŞ
-Return:         true - É¾³ıÈÕÖ¾³É¹¦ false -É¾³ıÈÕÖ¾Ê§°Ü
+Description:    æ ¹æ®æ—¥å¿—ç±»å‹IDåˆ é™¤å¯¹åº”ç±»å‹æ—¥å¿—è¡¨è®°å½•
+Input:          uEvtTypeId  -- æ—¥å¿—ç±»å‹ID
+Output:         æ— 
+Return:         true - åˆ é™¤æ—¥å¿—æˆåŠŸ false -åˆ é™¤æ—¥å¿—å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelEventLog(Byte uEvtTypeId)
 {
@@ -5980,10 +5980,10 @@ bool CGbtTscDb::DelEventLog(Byte uEvtTypeId)
 
 /**************************************************************
 Function:       CGbtTscDb::DelEventLog
-Description:    É¾³ıÈ«²¿¶ÔÓ¦ÀàĞÍÈÕÖ¾±í¼ÇÂ¼
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÈÕÖ¾³É¹¦ false -É¾³ıÈÕÖ¾Ê§°Ü
+Description:    åˆ é™¤å…¨éƒ¨å¯¹åº”ç±»å‹æ—¥å¿—è¡¨è®°å½•
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ—¥å¿—æˆåŠŸ false -åˆ é™¤æ—¥å¿—å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelEventLog()
 {
@@ -6004,10 +6004,10 @@ bool CGbtTscDb::DelEventLog()
 
 /**************************************************************
 Function:       CGbtTscDb::QueryChannelChk
-Description:    ²éÑ¯Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í ADD:201308011101
-Input:          tblChanChk  -- Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯Êı¾İ³É¹¦ false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æŸ¥è¯¢é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨ ADD:201308011101
+Input:          tblChanChk  -- é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢æ•°æ®æˆåŠŸ false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryChannelChk(TblChannelChk & tblChanChk)
 {
@@ -6058,10 +6058,10 @@ bool CGbtTscDb::QueryChannelChk(TblChannelChk & tblChanChk)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryChannelChk
-Description:    É¾³ıÍ¨µÀµÆÅİ¼ì²âÅäÖÃ±í ADD:201308011401
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨ ADD:201308011401
+Input:          æ— 
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelChannelChk()
 {
@@ -6079,11 +6079,11 @@ bool CGbtTscDb::DelChannelChk()
 
 /**************************************************************
 Function:       CGbtTscDb::AddChannelChk
-Description:    Ìí¼ÓÍ¨µÀµÆÅİ¼ì²âÅäÖÃ±í ADD:201308011501
-Input:          uChanChkId  -- ĞÅºÅµÆÍ¨µÀIDºÅ
-				sChannelChk -- Í¨µÀµÆÅİ¼ì²â½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨ ADD:201308011501
+Input:          uChanChkId  -- ä¿¡å·ç¯é€šé“IDå·
+				sChannelChk -- é€šé“ç¯æ³¡æ£€æµ‹ç»“æ„ä½“
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddChannelChk(Byte uChanChkId, ChannelChk& sChannelChk)
 {
@@ -6110,11 +6110,11 @@ bool CGbtTscDb::AddChannelChk(Byte uChanChkId, ChannelChk& sChannelChk)
 
 /**************************************************************
 Function:       CGbtTscDb::ModChannelChk
-Description:    ĞŞ¸ÄÍ¨µÀµÆÅİ¼ì²âÅäÖÃ±í ADD:201308011548
-Input:          uChanChkId  -- ĞÅºÅµÆÍ¨µÀIDºÅ
-				sChannelChk -- Í¨µÀµÆÅİ¼ì²â½á¹¹Ìå
-Output:         ÎŞ
-Return:         true - ĞŞ¸ÄÊı¾İ³É¹¦ false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    ä¿®æ”¹é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨ ADD:201308011548
+Input:          uChanChkId  -- ä¿¡å·ç¯é€šé“IDå·
+				sChannelChk -- é€šé“ç¯æ³¡æ£€æµ‹ç»“æ„ä½“
+Output:         æ— 
+Return:         true - ä¿®æ”¹æ•°æ®æˆåŠŸ false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModChannelChk(Byte uChanChkId, ChannelChk& sChannelChk)
 {  
@@ -6140,12 +6140,12 @@ bool CGbtTscDb::ModChannelChk(Byte uChanChkId, ChannelChk& sChannelChk)
 
 /**************************************************************
 Function:       CGbtTscDb::AddVehicleStat
-Description:    Ìí¼Ó³µÁ¾Í³¼Æ¼ÇÂ¼
-Input:          ucDetId     - ¼ì²âÆ÷id
-*       		ulCarTotal  - ³µÁ÷Á¿
-*      		    ucOccupancy - Õ¼ÓĞÂÊ
-Output:         ÎŞ
-Return:         true - Ìí¼ÓÊı¾İ³É¹¦ false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ è½¦è¾†ç»Ÿè®¡è®°å½•
+Input:          ucDetId     - æ£€æµ‹å™¨id
+*       		ulCarTotal  - è½¦æµé‡
+*      		    ucOccupancy - å æœ‰ç‡
+Output:         æ— 
+Return:         true - æ·»åŠ æ•°æ®æˆåŠŸ false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddVehicleStat(Byte ucDetId,Ulong ulCarTotal , Byte ucOccupancy)
 {
@@ -6180,7 +6180,7 @@ bool CGbtTscDb::AddVehicleStat(Byte ucDetId,Ulong ulCarTotal , Byte ucOccupancy)
 	{
 		iCurId = iMaxId + 1;
 	}
-	else  //ĞèÒªÉ¾³ıÊı¾İ
+	else  //éœ€è¦åˆ é™¤æ•°æ®
 	{
 		ACE_OS::memset(sSql, 0, LARGE_BUF_SIZE);
 		ACE_OS::sprintf(sSql, "select %s from %s where %s=(select min(%s) from %s)"
@@ -6229,10 +6229,10 @@ bool CGbtTscDb::AddVehicleStat(Byte ucDetId,Ulong ulCarTotal , Byte ucOccupancy)
 
 /**************************************************************
 Function:       CGbtTscDb::DelVehicleStat
-Description:    ¸ù¾İulIdÉ¾³ı³µÁ¾¼ÇÂ¼
-Input:          ulId     - ³µÁ¾ulId
-Output:         ÎŞ
-Return:         true - É¾³ıÊı¾İ³É¹¦ false -É¾³ıÊı¾İÊ§°Ü
+Description:    æ ¹æ®ulIdåˆ é™¤è½¦è¾†è®°å½•
+Input:          ulId     - è½¦è¾†ulId
+Output:         æ— 
+Return:         true - åˆ é™¤æ•°æ®æˆåŠŸ false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelVehicleStat(Ulong ulId)
 {
@@ -6253,10 +6253,10 @@ bool CGbtTscDb::DelVehicleStat(Ulong ulId)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryVehileStat
-Description:    ²éÑ¯×î½üµÄ³µÁ¾¼ÇÂ¼
-Input:          ÎŞ
-Output:         sVehicleStat     - ³µÁ¾¼ÇÂ¼½á¹¹Ìå
-Return:         true - ²éÑ¯¼ÇÂ¼³É¹¦ false -²éÑ¯¼ÇÂ¼Ê§°Ü
+Description:    æŸ¥è¯¢æœ€è¿‘çš„è½¦è¾†è®°å½•
+Input:          æ— 
+Output:         sVehicleStat     - è½¦è¾†è®°å½•ç»“æ„ä½“
+Return:         true - æŸ¥è¯¢è®°å½•æˆåŠŸ false -æŸ¥è¯¢è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryVehileStat(VehicleStat& sVehicleStat)
 {
@@ -6298,10 +6298,10 @@ bool CGbtTscDb::QueryVehileStat(VehicleStat& sVehicleStat)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryVehileStat
-Description:    ²éÑ¯È«²¿µÄ³µÁ¾¼ÇÂ¼
-Input:          tblVehicleStat   -- ³µÁ¾¼ÇÂ¼±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ²éÑ¯¼ÇÂ¼³É¹¦ false -²éÑ¯¼ÇÂ¼Ê§°Ü
+Description:    æŸ¥è¯¢å…¨éƒ¨çš„è½¦è¾†è®°å½•
+Input:          tblVehicleStat   -- è½¦è¾†è®°å½•è¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - æŸ¥è¯¢è®°å½•æˆåŠŸ false -æŸ¥è¯¢è®°å½•å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryVehicleStat(TblVehicleStat& tblVehicleStat)
 {
@@ -6354,13 +6354,13 @@ bool CGbtTscDb::QueryVehicleStat(TblVehicleStat& tblVehicleStat)
 
 /**************************************************************
 Function:       CGbtTscDb::GetCommonPara
-Description:    »ñÈ¡¹«¹²ÅäÖÃÏà¹Ø²ÎÊı
-Input:          ÎŞ
-Output:         usDeviceId   -- Éè±¸ID
-				ucMaxModule  -- ×î´óÄ£¿éÊı
-				ucSynchTime  -- Í¬²½Ê±¼ä
-				usSynchFlag  -- Í¬²½±êÖ¾
-Return:         true - ²éÑ¯²ÎÊı³É¹¦ 
+Description:    è·å–å…¬å…±é…ç½®ç›¸å…³å‚æ•°
+Input:          æ— 
+Output:         usDeviceId   -- è®¾å¤‡ID
+				ucMaxModule  -- æœ€å¤§æ¨¡å—æ•°
+				ucSynchTime  -- åŒæ­¥æ—¶é—´
+				usSynchFlag  -- åŒæ­¥æ ‡å¿—
+Return:         true - æŸ¥è¯¢å‚æ•°æˆåŠŸ 
 ***************************************************************/
 bool CGbtTscDb::GetCommonPara(Ushort& usDeviceId, Byte& ucMaxModule, Byte& ucSynchTime, Ushort& usSynchFlag)
 {
@@ -6382,13 +6382,13 @@ bool CGbtTscDb::GetCommonPara(Ushort& usDeviceId, Byte& ucMaxModule, Byte& ucSyn
    
 /**************************************************************
 Function:       CGbtTscDb::SetCommonPara
-Description:    ÉèÖÃ¹«¹²ÅäÖÃÏà¹Ø²ÎÊı
-Input:          usDeviceId   -- Éè±¸IDÊı¾İÖ¸Õë
-				ucMaxModule  -- ×î´óÄ£¿éÊıÖ¸Õë
-				ucSynchTime  -- Í¬²½Ê±¼äÖ¸Õë
-				usSynchFlag  -- Í¬²½±êÖ¾Ö¸Õë
-Output:         ÎŞ
-Return:         true - ²éÑ¯²ÎÊı³É¹¦ 
+Description:    è®¾ç½®å…¬å…±é…ç½®ç›¸å…³å‚æ•°
+Input:          usDeviceId   -- è®¾å¤‡IDæ•°æ®æŒ‡é’ˆ
+				ucMaxModule  -- æœ€å¤§æ¨¡å—æ•°æŒ‡é’ˆ
+				ucSynchTime  -- åŒæ­¥æ—¶é—´æŒ‡é’ˆ
+				usSynchFlag  -- åŒæ­¥æ ‡å¿—æŒ‡é’ˆ
+Output:         æ— 
+Return:         true - æŸ¥è¯¢å‚æ•°æˆåŠŸ 
 ***************************************************************/
 bool CGbtTscDb::SetCommonPara(Ushort* usDeviceId, Byte* ucMaxModule, Byte* ucSynchTime, Ushort* usSynchFlag)
 {
@@ -6435,13 +6435,13 @@ bool CGbtTscDb::SetCommonPara(Ushort* usDeviceId, Byte* ucMaxModule, Byte* ucSyn
 
 /**************************************************************
 Function:       CGbtTscDb::GetCommTimePara
-Description:    »ñÈ¡¹«¹²Ê±¼ä²ÎÊı
-Input:          ÎŞ
-Output:         lZone  		 		-- Ê±Çø
-				ucMaxPlanCnt    	-- ×î´óÊ±»ùÊı
-				ucMaxScheduleCnt    -- ×î´óÊ±¶Î±íÊı
-				ucMaxEvtCount  		-- ×î´óÊÂ¼şÊı
-Return:         true - ²éÑ¯²ÎÊı³É¹¦ 
+Description:    è·å–å…¬å…±æ—¶é—´å‚æ•°
+Input:          æ— 
+Output:         lZone  		 		-- æ—¶åŒº
+				ucMaxPlanCnt    	-- æœ€å¤§æ—¶åŸºæ•°
+				ucMaxScheduleCnt    -- æœ€å¤§æ—¶æ®µè¡¨æ•°
+				ucMaxEvtCount  		-- æœ€å¤§äº‹ä»¶æ•°
+Return:         true - æŸ¥è¯¢å‚æ•°æˆåŠŸ 
 ***************************************************************/
 bool CGbtTscDb::GetCommTimePara(Long& lZone, Byte& ucMaxPlanCnt, Byte& ucMaxScheduleCnt, Byte& ucMaxEvtCount)
 {
@@ -6463,13 +6463,13 @@ bool CGbtTscDb::GetCommTimePara(Long& lZone, Byte& ucMaxPlanCnt, Byte& ucMaxSche
     
 /**************************************************************
 Function:       CGbtTscDb::SetCommTimePara
-Description:    ÉèÖÃ¹«¹²Ê±¼ä²ÎÊı
-Input:          lZone  		 		-- Ê±ÇøÊı¾İÖ¸Õë
-				ucMaxPlanCnt    	-- ×î´óÊ±»ùÊıÖ¸Õë
-				ucMaxScheduleCnt    -- ×î´óÊ±¶Î±íÊıÖ¸Õë
-				ucMaxEvtCount  		-- ×î´óÊÂ¼şÊıÖ¸Õë
-Output:         ÎŞ
-Return:         true - ÉèÖÃ¹«¹²Ê±¼ä²ÎÊı³É¹¦ 
+Description:    è®¾ç½®å…¬å…±æ—¶é—´å‚æ•°
+Input:          lZone  		 		-- æ—¶åŒºæ•°æ®æŒ‡é’ˆ
+				ucMaxPlanCnt    	-- æœ€å¤§æ—¶åŸºæ•°æŒ‡é’ˆ
+				ucMaxScheduleCnt    -- æœ€å¤§æ—¶æ®µè¡¨æ•°æŒ‡é’ˆ
+				ucMaxEvtCount  		-- æœ€å¤§äº‹ä»¶æ•°æŒ‡é’ˆ
+Output:         æ— 
+Return:         true - è®¾ç½®å…¬å…±æ—¶é—´å‚æ•°æˆåŠŸ 
 ***************************************************************/
 bool CGbtTscDb::SetCommTimePara(Long* lZone, Byte* ucMaxPlan, Byte* ucMaxSchedule, Byte* ucMaxScheduleEvt)
 {
@@ -6514,11 +6514,11 @@ bool CGbtTscDb::SetCommTimePara(Long* lZone, Byte* ucMaxPlan, Byte* ucMaxSchedul
 
 /**************************************************************
 Function:       CGbtTscDb::GetEventPara
-Description:    »ñÈ¡ÊÂ¼ş²ÎÊı
-Input:          ÎŞ	
-Output:         ucMaxEventType  -- ×î´óÊÂ¼şÀàĞÍ
-				ucMaxEventLog   -- ×î´óÈÕÖ¾Êı
-Return:         true - »ñÈ¡ÈÕÖ¾²ÎÊı³É¹¦ 
+Description:    è·å–äº‹ä»¶å‚æ•°
+Input:          æ— 	
+Output:         ucMaxEventType  -- æœ€å¤§äº‹ä»¶ç±»å‹
+				ucMaxEventLog   -- æœ€å¤§æ—¥å¿—æ•°
+Return:         true - è·å–æ—¥å¿—å‚æ•°æˆåŠŸ 
 ***************************************************************/
 bool CGbtTscDb::GetEventPara(Byte& ucMaxEventType, Byte& ucMaxEventLog)
 {
@@ -6535,11 +6535,11 @@ bool CGbtTscDb::GetEventPara(Byte& ucMaxEventType, Byte& ucMaxEventLog)
 
 /**************************************************************
 Function:       CGbtTscDb::SetEventPara
-Description:    ÉèÖÃÊÂ¼ş²ÎÊı
-Input:          ucMaxEventType  -- ×î´óÊÂ¼şÀàĞÍÊı¾İÖ¸Õë
-				ucMaxEventLog   -- ×î´óÈÕÖ¾ÊıÊı¾İÖ¸Õë
-Output:         ÎŞ
-Return:         true - ÉèÖÃÈÕÖ¾²ÎÊı³É¹¦  false -ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®äº‹ä»¶å‚æ•°
+Input:          ucMaxEventType  -- æœ€å¤§äº‹ä»¶ç±»å‹æ•°æ®æŒ‡é’ˆ
+				ucMaxEventLog   -- æœ€å¤§æ—¥å¿—æ•°æ•°æ®æŒ‡é’ˆ
+Output:         æ— 
+Return:         true - è®¾ç½®æ—¥å¿—å‚æ•°æˆåŠŸ  false -è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetEventPara(Byte* ucMaxEventType, Byte* ucMaxEventLog)
 {
@@ -6570,10 +6570,10 @@ bool CGbtTscDb::SetEventPara(Byte* ucMaxEventType, Byte* ucMaxEventLog)
 
 /**************************************************************
 Function:       CGbtTscDb::GetPhasePara
-Description:    »ñÈ¡ÏàÎ»²ÎÊı
-Input:          ÎŞ
-Output:         ucMaxPhaseCount --  ×î´óÏàÎ»Êı
-Return:         true - »ñÈ¡ÏàÎ»²ÎÊı³É¹¦ 
+Description:    è·å–ç›¸ä½å‚æ•°
+Input:          æ— 
+Output:         ucMaxPhaseCount --  æœ€å¤§ç›¸ä½æ•°
+Return:         true - è·å–ç›¸ä½å‚æ•°æˆåŠŸ 
 ***************************************************************/
 bool CGbtTscDb::GetPhasePara(Byte& ucMaxPhaseCount)
 {
@@ -6591,10 +6591,10 @@ bool CGbtTscDb::GetPhasePara(Byte& ucMaxPhaseCount)
 
 /**************************************************************
 Function:       CGbtTscDb::SetPhasePara
-Description:    ÉèÖÃÏàÎ»²ÎÊı
-Input:          ucMaxPhaseCount --  ×î´óÏàÎ»Êı
-Output:         ÎŞ
-Return:         true - ÉèÖÃÏàÎ»²ÎÊı³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®ç›¸ä½å‚æ•°
+Input:          ucMaxPhaseCount --  æœ€å¤§ç›¸ä½æ•°
+Output:         æ— 
+Return:         true - è®¾ç½®ç›¸ä½å‚æ•°æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetPhasePara(Byte& ucMaxPhaseCount)
 {
@@ -6603,10 +6603,10 @@ bool CGbtTscDb::SetPhasePara(Byte& ucMaxPhaseCount)
 
 /**************************************************************
 Function:       CGbtTscDb::GetChannelPara
-Description:    »ñÈ¡Í¨µÀ²ÎÊı
-Input:          ÎŞ
-Output:         ucMaxChannel --  ×î´óÍ¨µÀÊı
-Return:         true - »ñÈ¡Í¨µÀ²ÎÊı³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–é€šé“å‚æ•°
+Input:          æ— 
+Output:         ucMaxChannel --  æœ€å¤§é€šé“æ•°
+Return:         true - è·å–é€šé“å‚æ•°æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetChannelPara(Byte& ucMaxChannel)
 {
@@ -6624,10 +6624,10 @@ bool CGbtTscDb::GetChannelPara(Byte& ucMaxChannel)
 
 /**************************************************************
 Function:       CGbtTscDb::SetChannelPara
-Description:    ÉèÖÃÍ¨µÀ²ÎÊı
-Input:          ucMaxChannel --  ×î´óÍ¨µÀÊı
-Output:         ÎŞ
-Return:         true - ÉèÖÃÍ¨µÀ²ÎÊı³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®é€šé“å‚æ•°
+Input:          ucMaxChannel --  æœ€å¤§é€šé“æ•°
+Output:         æ— 
+Return:         true - è®¾ç½®é€šé“å‚æ•°æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetChannelPara(Byte& ucMaxChannel)
 {
@@ -6636,13 +6636,13 @@ bool CGbtTscDb::SetChannelPara(Byte& ucMaxChannel)
 
 /**************************************************************
 Function:       CGbtTscDb::GetUnitCtrlPara
-Description:    »ñÈ¡µ¥ÔªÅäÖÃ²ÎÊı
-Input:          ucFlsTimeWhenStart  -- ¿ª»ú»ÆÉÁÊ±¼ä
-				ucAllRedTimeWhenStart -- ¿ª»úÈ«ºìÊ±¼ä
-				ucRemoteCtrlFlag      -- Ô¶³Ì¿ØÖÆ±ê¼Ç
-				ucFlashFreq           -- »ÆÉÁÆµÂÊ
-Output:         ÎŞ
-Return:         true - »ñÈ¡µ¥Ôª²ÎÊı³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–å•å…ƒé…ç½®å‚æ•°
+Input:          ucFlsTimeWhenStart  -- å¼€æœºé»„é—ªæ—¶é—´
+				ucAllRedTimeWhenStart -- å¼€æœºå…¨çº¢æ—¶é—´
+				ucRemoteCtrlFlag      -- è¿œç¨‹æ§åˆ¶æ ‡è®°
+				ucFlashFreq           -- é»„é—ªé¢‘ç‡
+Output:         æ— 
+Return:         true - è·å–å•å…ƒå‚æ•°æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetUnitCtrlPara(Byte& ucFlsTimeWhenStart, Byte& ucAllRedTimeWhenStart, Byte& ucRemoteCtrlFlag, Byte& ucFlashFreq)
 {
@@ -6665,13 +6665,13 @@ bool CGbtTscDb::GetUnitCtrlPara(Byte& ucFlsTimeWhenStart, Byte& ucAllRedTimeWhen
     
 /**************************************************************
 Function:       CGbtTscDb::SetUnitCtrlPara
-Description:    ÉèÖÃµ¥ÔªÅäÖÃ²ÎÊı
-Input:          ÎŞ
-Output:         ucFlsTimeWhenStart  -- ¿ª»ú»ÆÉÁÊ±¼äÖ¸Õë
-				ucAllRedTimeWhenStart -- ¿ª»úÈ«ºìÊ±¼äÖ¸Õë
-				ucRemoteCtrlFlag      -- Ô¶³Ì¿ØÖÆ±ê¼ÇÖ¸Õë
-				ucFlashFreq           -- »ÆÉÁÆµÂÊÖ¸Õë
-Return:         true - ÉèÖÃµ¥Ôª²ÎÊı³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®å•å…ƒé…ç½®å‚æ•°
+Input:          æ— 
+Output:         ucFlsTimeWhenStart  -- å¼€æœºé»„é—ªæ—¶é—´æŒ‡é’ˆ
+				ucAllRedTimeWhenStart -- å¼€æœºå…¨çº¢æ—¶é—´æŒ‡é’ˆ
+				ucRemoteCtrlFlag      -- è¿œç¨‹æ§åˆ¶æ ‡è®°æŒ‡é’ˆ
+				ucFlashFreq           -- é»„é—ªé¢‘ç‡æŒ‡é’ˆ
+Return:         true - è®¾ç½®å•å…ƒå‚æ•°æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetUnitCtrlPara(Byte* ucFlsTimeWhenStart, Byte* ucAllRedTimeWhenStart, Byte* ucRemoteCtrlFlag, Byte* ucFlashFreq)
 {
@@ -6717,12 +6717,12 @@ bool CGbtTscDb::SetUnitCtrlPara(Byte* ucFlsTimeWhenStart, Byte* ucAllRedTimeWhen
 
 /**************************************************************
 Function:       CGbtTscDb::GetPatternPara
-Description:    »ñÈ¡ÅäÊ±·½°¸²ÎÊı
-Input:          ÎŞ
-Output:         ucMaxPattern  -- ×î´ó·½°¸Êı
-				ucMaxStagePattern -- ×î´ó½×¶ÎÅäÊ±Êı
-				ucMaxStage      -- ×î´ó½×¶ÎÊı
-Return:         true - »ñÈ¡ÅäÊ±·½°¸²ÎÊı³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–é…æ—¶æ–¹æ¡ˆå‚æ•°
+Input:          æ— 
+Output:         ucMaxPattern  -- æœ€å¤§æ–¹æ¡ˆæ•°
+				ucMaxStagePattern -- æœ€å¤§é˜¶æ®µé…æ—¶æ•°
+				ucMaxStage      -- æœ€å¤§é˜¶æ®µæ•°
+Return:         true - è·å–é…æ—¶æ–¹æ¡ˆå‚æ•°æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetPatternPara(Byte& ucMaxPattern, Byte& ucMaxStagePattern, Byte& ucMaxStage)
 {
@@ -6742,12 +6742,12 @@ bool CGbtTscDb::GetPatternPara(Byte& ucMaxPattern, Byte& ucMaxStagePattern, Byte
     
 /**************************************************************
 Function:       CGbtTscDb::SetPatternPara
-Description:    ÉèÖÃÅäÊ±·½°¸²ÎÊı
-Input:          ucMaxPattern  -- ×î´ó·½°¸ÊıÖ¸Õë
-				ucMaxStagePattern -- ×î´ó½×¶ÎÅäÊ±ÊıÖ¸Õë
-				ucMaxStage      -- ×î´ó½×¶ÎÊıÖ¸Õë
-Output:         ÎŞ
-Return:         true - ÉèÖÃÅäÊ±·½°¸²ÎÊı³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®é…æ—¶æ–¹æ¡ˆå‚æ•°
+Input:          ucMaxPattern  -- æœ€å¤§æ–¹æ¡ˆæ•°æŒ‡é’ˆ
+				ucMaxStagePattern -- æœ€å¤§é˜¶æ®µé…æ—¶æ•°æŒ‡é’ˆ
+				ucMaxStage      -- æœ€å¤§é˜¶æ®µæ•°æŒ‡é’ˆ
+Output:         æ— 
+Return:         true - è®¾ç½®é…æ—¶æ–¹æ¡ˆå‚æ•°æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetPatternPara(Byte* ucMaxPattern, Byte* ucMaxStagePattern, Byte* ucMaxStage)
 {
@@ -6786,10 +6786,10 @@ bool CGbtTscDb::SetPatternPara(Byte* ucMaxPattern, Byte* ucMaxStagePattern, Byte
 
 /**************************************************************
 Function:       CGbtTscDb::GetGlobalCycle
-Description:    »ñÈ¡¹«¹²ÖÜÆÚÊ±³¤
-Input:          ÎŞ
-Output:         ucGlobalCycle  --  ¹«¹²ÖÜÆÚÊ±³¤
-Return:         true - »ñÈ¡¹«¹²ÖÜÆÚÊ±³¤³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–å…¬å…±å‘¨æœŸæ—¶é•¿
+Input:          æ— 
+Output:         ucGlobalCycle  --  å…¬å…±å‘¨æœŸæ—¶é•¿
+Return:         true - è·å–å…¬å…±å‘¨æœŸæ—¶é•¿æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetGlobalCycle(Byte& ucGlobalCycle)
 {
@@ -6807,10 +6807,10 @@ bool CGbtTscDb::GetGlobalCycle(Byte& ucGlobalCycle)
    
 /**************************************************************
 Function:       CGbtTscDb::SetGlobalCycle
-Description:    ÉèÖÃ¹«¹²ÖÜÆÚÊ±³¤
-Input:          ucGlobalCycle  --  ¹«¹²ÖÜÆÚÊ±³¤
-Output:         ÎŞ
-Return:         true - ÉèÖÃ¹«¹²ÖÜÆÚÊ±³¤³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®å…¬å…±å‘¨æœŸæ—¶é•¿
+Input:          ucGlobalCycle  --  å…¬å…±å‘¨æœŸæ—¶é•¿
+Output:         æ— 
+Return:         true - è®¾ç½®å…¬å…±å‘¨æœŸæ—¶é•¿æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetGlobalCycle(Byte ucGlobalCycle)
 {
@@ -6819,10 +6819,10 @@ bool CGbtTscDb::SetGlobalCycle(Byte ucGlobalCycle)
 
 /**************************************************************
 Function:       CGbtTscDb::GetCoorPhaseOffset
-Description:    »ñÈ¡Ğ­Í¬ÏàÎ»²î
-Input:          ÎŞ
-Output:         ucPhaseOffset  --  Ğ­Í¬ÏàÎ»²î
-Return:         true - »ñÈ¡Ğ­Í¬ÏàÎ»²î³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–ååŒç›¸ä½å·®
+Input:          æ— 
+Output:         ucPhaseOffset  --  ååŒç›¸ä½å·®
+Return:         true - è·å–ååŒç›¸ä½å·®æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetCoorPhaseOffset(Byte& ucPhaseOffset)
 {
@@ -6840,10 +6840,10 @@ bool CGbtTscDb::GetCoorPhaseOffset(Byte& ucPhaseOffset)
 
 /**************************************************************
 Function:       CGbtTscDb::SetCoorPhaseOffset
-Description:    ÉèÖÃĞ­Í¬ÏàÎ»²î
-Input:          ucPhaseOffset  --  Ğ­Í¬ÏàÎ»²î
-Output:         ÎŞ
-Return:         true - ÉèÖÃĞ­Í¬ÏàÎ»²î³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®ååŒç›¸ä½å·®
+Input:          ucPhaseOffset  --  ååŒç›¸ä½å·®
+Output:         æ— 
+Return:         true - è®¾ç½®ååŒç›¸ä½å·®æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetCoorPhaseOffset(Byte& ucPhaseOffset)
 {
@@ -6852,11 +6852,11 @@ bool CGbtTscDb::SetCoorPhaseOffset(Byte& ucPhaseOffset)
 
 /**************************************************************
 Function:       CGbtTscDb::GetDegradeCfg
-Description:    »ñÈ¡½µ¼¶ÅäÖÃ
-Input:          ÎŞ
-Output:         ucDegradeMode  --  ½µ¼¶ÅäÖÃÄ£Ê½
-				ucDegradePattern  - ½µ¼¶ÅäÖÃ·½°¸
-Return:         true - »ñÈ¡½µ¼¶ÅäÖÃ³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–é™çº§é…ç½®
+Input:          æ— 
+Output:         ucDegradeMode  --  é™çº§é…ç½®æ¨¡å¼
+				ucDegradePattern  - é™çº§é…ç½®æ–¹æ¡ˆ
+Return:         true - è·å–é™çº§é…ç½®æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetDegradeCfg(Byte& ucDegradeMode, Byte& ucDegradePattern)
 {
@@ -6899,10 +6899,10 @@ bool CGbtTscDb::GetDegradeCfg(Byte& ucDegradeMode, Byte& ucDegradePattern)
 
 /**************************************************************
 Function:       CGbtTscDb::GetDegradePattern
-Description:    »ñÈ¡½µ¼¶ÅäÖÃ·½°¸±íÊı¾İ
-Input:          ÎŞ
-Output:         tblDegrade  -- ½µ¼¶·½°¸±í¶ÔÏó
-Return:         true - »ñÈ¡½µ¼¶ÅäÖÃ·½°¸±í³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–é™çº§é…ç½®æ–¹æ¡ˆè¡¨æ•°æ®
+Input:          æ— 
+Output:         tblDegrade  -- é™çº§æ–¹æ¡ˆè¡¨å¯¹è±¡
+Return:         true - è·å–é™çº§é…ç½®æ–¹æ¡ˆè¡¨æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetDegradePattern(DbByteArray& tblDegrade)
 {
@@ -6937,10 +6937,10 @@ bool CGbtTscDb::GetDegradePattern(DbByteArray& tblDegrade)
 
 /**************************************************************
 Function:       CGbtTscDb::GetDegradePattern
-Description:    ¸ù¾İ½µ¼¶Ä£Ê½»ñÈ¡½µ¼¶ÅäÖÃ·½°¸
-Input:          ucDegradeMode  -- ½µ¼¶Ä£Ê½
-Output:         ucDegradePattern  -- ½µ¼¶ÅäÖÃ·½°¸
-Return:         true - »ñÈ¡½µ¼¶ÅäÖÃ·½°¸  false - »ñÈ¡Ê§°Ü
+Description:    æ ¹æ®é™çº§æ¨¡å¼è·å–é™çº§é…ç½®æ–¹æ¡ˆ
+Input:          ucDegradeMode  -- é™çº§æ¨¡å¼
+Output:         ucDegradePattern  -- é™çº§é…ç½®æ–¹æ¡ˆ
+Return:         true - è·å–é™çº§é…ç½®æ–¹æ¡ˆ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetDegradePattern(Byte ucDegradeMode, Byte& ucDegradePattern)
 {
@@ -6964,10 +6964,10 @@ bool CGbtTscDb::GetDegradePattern(Byte ucDegradeMode, Byte& ucDegradePattern)
 
 /**************************************************************
 Function:       CGbtTscDb::SetDegradeMode
-Description:    ÉèÖÃ½µ¼¶ÅäÖÃÄ£Ê½
-Input:          ucDegradeMode  -- ½µ¼¶Ä£Ê½
-Output:         ÎŞ
-Return:         true - ÉèÖÃ½µ¼¶ÅäÖÃÄ£Ê½³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®é™çº§é…ç½®æ¨¡å¼
+Input:          ucDegradeMode  -- é™çº§æ¨¡å¼
+Output:         æ— 
+Return:         true - è®¾ç½®é™çº§é…ç½®æ¨¡å¼æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetDegradeMode(Byte ucDegradeMode)
 {
@@ -6985,10 +6985,10 @@ bool CGbtTscDb::SetDegradeMode(Byte ucDegradeMode)
 
 /**************************************************************
 Function:       CGbtTscDb::SetDegradePattern
-Description:    ÉèÖÃ½µ¼¶ÅäÖÃ·½°¸
-Input:          tblDegrade  -- ½µ¼¶·½°¸±í¶ÔÏó
-Output:         ÎŞ
-Return:         true - ÉèÖÃ½µ¼¶ÅäÖÃ·½°¸³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®é™çº§é…ç½®æ–¹æ¡ˆ
+Input:          tblDegrade  -- é™çº§æ–¹æ¡ˆè¡¨å¯¹è±¡
+Output:         æ— 
+Return:         true - è®¾ç½®é™çº§é…ç½®æ–¹æ¡ˆæˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetDegradePattern(DbByteArray& tblDegrade)
 {
@@ -7029,11 +7029,11 @@ bool CGbtTscDb::SetDegradePattern(DbByteArray& tblDegrade)
 
 /**************************************************************
 Function:       CGbtTscDb::SetDegradePattern
-Description:    ¸ù¾İ½µ¼¶Ä£Ê½ÉèÖÃ½µ¼¶ÅäÖÃ·½°¸
-Input:          ucDegradeMode  -- ½µ¼¶Ä£Ê½
-				ucDegradePattern -- ½µ¼¶·½°¸
-Output:         ÎŞ
-Return:         true - ÉèÖÃ½µ¼¶ÅäÖÃ·½°¸³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    æ ¹æ®é™çº§æ¨¡å¼è®¾ç½®é™çº§é…ç½®æ–¹æ¡ˆ
+Input:          ucDegradeMode  -- é™çº§æ¨¡å¼
+				ucDegradePattern -- é™çº§æ–¹æ¡ˆ
+Output:         æ— 
+Return:         true - è®¾ç½®é™çº§é…ç½®æ–¹æ¡ˆæˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetDegradePattern(Byte ucDegradeMode, Byte ucDegradePattern)
 {
@@ -7060,10 +7060,10 @@ bool CGbtTscDb::SetDegradePattern(Byte ucDegradeMode, Byte ucDegradePattern)
 
 /**************************************************************
 Function:       CGbtTscDb::GetCtrlMasterOptFlag
-Description:    »ñÈ¡¿ØÖÆÖ÷»ú²ÎÊı
-Input:          ÎŞ
-Output:         ucCtrlOptFlag   -- ¿ØÖÆÖ÷»ú²ÎÊı
-Return:         true - »ñÈ¡²ÎÊı³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–æ§åˆ¶ä¸»æœºå‚æ•°
+Input:          æ— 
+Output:         ucCtrlOptFlag   -- æ§åˆ¶ä¸»æœºå‚æ•°
+Return:         true - è·å–å‚æ•°æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetCtrlMasterOptFlag(Byte& ucCtrlOptFlag)
 {
@@ -7081,10 +7081,10 @@ bool CGbtTscDb::GetCtrlMasterOptFlag(Byte& ucCtrlOptFlag)
 
 /**************************************************************
 Function:       CGbtTscDb::SetCtrlMasterOptFlag
-Description:    ÉèÖÃ¿ØÖÆÖ÷»ú²ÎÊı
-Input:          ÎŞ
-Output:         ucCtrlOptFlag   -- ¿ØÖÆÖ÷»ú²ÎÊı
-Return:         true - »ñÈ¡²ÎÊı³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è®¾ç½®æ§åˆ¶ä¸»æœºå‚æ•°
+Input:          æ— 
+Output:         ucCtrlOptFlag   -- æ§åˆ¶ä¸»æœºå‚æ•°
+Return:         true - è·å–å‚æ•°æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetCtrlMasterOptFlag(Byte ucCtrlOptFlag)
 {
@@ -7093,11 +7093,11 @@ bool CGbtTscDb::SetCtrlMasterOptFlag(Byte ucCtrlOptFlag)
 
 /**************************************************************
 Function:       CGbtTscDb::GetMultiCtrlPara
-Description:    »ñÈ¡¶àÂ·¿ÚĞÅºÅ»ú²ÎÊı
-Input:          ÎŞ
-Output:         usBaseAddr   -- »ù×¼µØÖ·
-				ucDevCount   -- Éè±¸ĞÅºÅ»úÊı
-Return:         true - »ñÈ¡²ÎÊı³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–å¤šè·¯å£ä¿¡å·æœºå‚æ•°
+Input:          æ— 
+Output:         usBaseAddr   -- åŸºå‡†åœ°å€
+				ucDevCount   -- è®¾å¤‡ä¿¡å·æœºæ•°
+Return:         true - è·å–å‚æ•°æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetMultiCtrlPara(Ushort& usBaseAddr, Byte& ucDevCount)
 {
@@ -7130,11 +7130,11 @@ bool CGbtTscDb::GetMultiCtrlPara(Ushort& usBaseAddr, Byte& ucDevCount)
 
 /**************************************************************
 Function:       CGbtTscDb::SetMultiCtrlPara
-Description:    ÉèÖÃ¶àÂ·¿ÚĞÅºÅ»ú²ÎÊı
-Input:          usBaseAddr   -- »ù×¼µØÖ·²ÎÊıÖ¸Õë
-				ucDevCount   -- Éè±¸ĞÅºÅ»úÊı²ÎÊıÖ¸Õë
-Output:         ÎŞ
-Return:         true - ÉèÖÃ²ÎÊı³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®å¤šè·¯å£ä¿¡å·æœºå‚æ•°
+Input:          usBaseAddr   -- åŸºå‡†åœ°å€å‚æ•°æŒ‡é’ˆ
+				ucDevCount   -- è®¾å¤‡ä¿¡å·æœºæ•°å‚æ•°æŒ‡é’ˆ
+Output:         æ— 
+Return:         true - è®¾ç½®å‚æ•°æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetMultiCtrlPara(Ushort* usBaseAddr, Byte* ucDevCount)
 {
@@ -7188,10 +7188,10 @@ bool CGbtTscDb::SetMultiCtrlPara(Ushort* usBaseAddr, Byte* ucDevCount)
 
 /**************************************************************
 Function:       CGbtTscDb::SetEypSerial
-Description:    ÉèÖÃ±£´æ¼ÓÃÜÑéÖ¤×Ö·û´®
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - ÉèÖÃ¼ÓÃÜÑéÖ¤ĞòºÅ³É¹¦  false - ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®ä¿å­˜åŠ å¯†éªŒè¯å­—ç¬¦ä¸²
+Input:          æ— 
+Output:         æ— 
+Return:         true - è®¾ç½®åŠ å¯†éªŒè¯åºå·æˆåŠŸ  false - è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetEypSerial()
 {
@@ -7213,10 +7213,10 @@ bool CGbtTscDb::SetEypSerial()
 
 /**************************************************************
 Function:       CGbtTscDb::GetEypSerial
-Description:    »ñÈ¡¼ÓÃÜÑéÖ¤×Ö·û´®
-Input:          SysEypSerial- ¼ÓÃÜ°¡ĞòÁĞºÅ×Ö·ûÖ¸Õë
-Output:         ÎŞ
-Return:         true - »ñÈ¡¼ÓÃÜÑéÖ¤ĞòºÅ³É¹¦  false - »ñÈ¡Ê§°Ü
+Description:    è·å–åŠ å¯†éªŒè¯å­—ç¬¦ä¸²
+Input:          SysEypSerial- åŠ å¯†å•Šåºåˆ—å·å­—ç¬¦æŒ‡é’ˆ
+Output:         æ— 
+Return:         true - è·å–åŠ å¯†éªŒè¯åºå·æˆåŠŸ  false - è·å–å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetEypSerial(char * SysEypSerial)
 {
@@ -7248,10 +7248,10 @@ bool CGbtTscDb::GetEypSerial(char * SysEypSerial)
 
 /**************************************************************
 Function:       CGbtTscDb::AddDefault
-Description:    Êı¾İ¿âÌí¼ÓÈ«¾ÖÄ£Ê½²ÎÊı
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ•°æ®åº“æ·»åŠ å…¨å±€æ¨¡å¼å‚æ•°
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CGbtTscDb::AddDefault()
 {
@@ -7295,10 +7295,10 @@ void CGbtTscDb::AddDefault()
 
 /**************************************************************
 Function:       CGbtTscDb::GetSystemData
-Description:    ²éÑ¯ÏµÍ³±í
-Input:          sField  -- ²éÑ¯×Ö¶ÎÖ¸Õë
-Output:         ulData  --  ²éÑ¯Öµ
-Return:         true -- ²éÑ¯³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢ç³»ç»Ÿè¡¨
+Input:          sField  -- æŸ¥è¯¢å­—æ®µæŒ‡é’ˆ
+Output:         ulData  --  æŸ¥è¯¢å€¼
+Return:         true -- æŸ¥è¯¢æˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetSystemData(const char* sField, Ulong& ulData)
 {
@@ -7329,11 +7329,11 @@ bool CGbtTscDb::GetSystemData(const char* sField, Ulong& ulData)
 
 /**************************************************************
 Function:       CGbtTscDb::SetSystemData
-Description:    ÉèÖÃÏµÍ³±í
-Input:          sField  -- ÉèÖÃ×Ö¶ÎÖ¸Õë
-				ulData  -- ÉèÖÃÖµ
+Description:    è®¾ç½®ç³»ç»Ÿè¡¨
+Input:          sField  -- è®¾ç½®å­—æ®µæŒ‡é’ˆ
+				ulData  -- è®¾ç½®å€¼
 Output:         
-Return:         true -- ÉèÖÃÏµÍ³±í³É¹¦  false -²éÑ¯Ê§°Ü
+Return:         true -- è®¾ç½®ç³»ç»Ÿè¡¨æˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetSystemData(const char* sField, Ulong ulData)
 {
@@ -7351,11 +7351,11 @@ bool CGbtTscDb::SetSystemData(const char* sField, Ulong ulData)
 
 /**************************************************************
 Function:       CGbtTscDb::GetFieldData
-Description:    ²éÑ¯Êı¾İ±í×Ö¶ÎÖµ
-Input:          sTable  -- Êı¾İ±íÃû×Ö·û´®
-				sField  -- ×Ö¶ÎÃû
-Output:         ulData  -- ×Ö¶ÎÖµ
-Return:         true -- ²éÑ¯±í×Ö¶Î³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢æ•°æ®è¡¨å­—æ®µå€¼
+Input:          sTable  -- æ•°æ®è¡¨åå­—ç¬¦ä¸²
+				sField  -- å­—æ®µå
+Output:         ulData  -- å­—æ®µå€¼
+Return:         true -- æŸ¥è¯¢è¡¨å­—æ®µæˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetFieldData(const char* sTable, const char* sField, Ulong& ulData)
 {
@@ -7387,12 +7387,12 @@ bool CGbtTscDb::GetFieldData(const char* sTable, const char* sField, Ulong& ulDa
 
 /**************************************************************
 Function:       CGbtTscDb::SetFieldData
-Description:    ÉèÖÃÊı¾İ±í×Ö¶ÎÖµ
-Input:          sTable  -- Êı¾İ±íÃû×Ö·û´®
-				sField  -- ×Ö¶ÎÃû
-				ulData  -- ×Ö¶ÎÖµ
-Output:         ÎŞ
-Return:         true -- ²éÉèÖÃ±í×Ö¶Î³É¹¦  false -ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®æ•°æ®è¡¨å­—æ®µå€¼
+Input:          sTable  -- æ•°æ®è¡¨åå­—ç¬¦ä¸²
+				sField  -- å­—æ®µå
+				ulData  -- å­—æ®µå€¼
+Output:         æ— 
+Return:         true -- æŸ¥è®¾ç½®è¡¨å­—æ®µæˆåŠŸ  false -è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetFieldData(const char* sTable, const char* sField, Ulong ulData)
 {
@@ -7424,11 +7424,11 @@ bool CGbtTscDb::SetFieldData(const char* sTable, const char* sField, Ulong ulDat
 
 /**************************************************************
 Function:       CGbtTscDb::GetFieldSignData
-Description:    ²éÑ¯Êı¾İ±í×Ö¶ÎÖµ
-Input:          sTable  -- Êı¾İ±íÃû×Ö·û´®
-				sField  -- ×Ö¶ÎÃû
-Output:         lData  -- ×Ö¶ÎÖµ
-Return:         true -- ²éÑ¯±í×Ö¶Î³É¹¦  false -²éÑ¯Ê§°Ü
+Description:    æŸ¥è¯¢æ•°æ®è¡¨å­—æ®µå€¼
+Input:          sTable  -- æ•°æ®è¡¨åå­—ç¬¦ä¸²
+				sField  -- å­—æ®µå
+Output:         lData  -- å­—æ®µå€¼
+Return:         true -- æŸ¥è¯¢è¡¨å­—æ®µæˆåŠŸ  false -æŸ¥è¯¢å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::GetFieldSignData(const char* sTable, const char* sField, Long& lData)
 {
@@ -7460,12 +7460,12 @@ bool CGbtTscDb::GetFieldSignData(const char* sTable, const char* sField, Long& l
 
 /**************************************************************
 Function:       CGbtTscDb::SetFieldSignData
-Description:    ÉèÖÃÊı¾İ±í×Ö¶ÎÖµ
-Input:          sTable  -- Êı¾İ±íÃû×Ö·û´®
-				sField  -- ×Ö¶ÎÃû
-				lData  -- ×Ö¶ÎÖµ
-Output:         ÎŞ
-Return:         true -- ²éÉèÖÃ±í×Ö¶Î³É¹¦  false -ÉèÖÃÊ§°Ü
+Description:    è®¾ç½®æ•°æ®è¡¨å­—æ®µå€¼
+Input:          sTable  -- æ•°æ®è¡¨åå­—ç¬¦ä¸²
+				sField  -- å­—æ®µå
+				lData  -- å­—æ®µå€¼
+Output:         æ— 
+Return:         true -- æŸ¥è®¾ç½®è¡¨å­—æ®µæˆåŠŸ  false -è®¾ç½®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::SetFieldSignData(const char* sTable, const char* sField, Long lData)
 {
@@ -7498,11 +7498,11 @@ bool CGbtTscDb::SetFieldSignData(const char* sTable, const char* sField, Long lD
 
 /**************************************************************
 Function:       CGbtTscDb::IsSysParaValid
-Description:    ÅĞ¶ÏÉèÖÃµ½ÏµÍ³²ÎÊıÊÇ·ñºÏ·¨
-Input:          sField  -- ²ÎÊıÀàĞÍ
-				ulValue  -- ²ÎÊıÖµ				
-Output:         ÎŞ
-Return:         true -- ²ÎÊıºÏ·¨  false -²ÎÊı·Ç·¨
+Description:    åˆ¤æ–­è®¾ç½®åˆ°ç³»ç»Ÿå‚æ•°æ˜¯å¦åˆæ³•
+Input:          sField  -- å‚æ•°ç±»å‹
+				ulValue  -- å‚æ•°å€¼				
+Output:         æ— 
+Return:         true -- å‚æ•°åˆæ³•  false -å‚æ•°éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsSysParaValid(const char* sField, Ulong& ulValue)
 {
@@ -7536,11 +7536,11 @@ bool CGbtTscDb::IsSysParaValid(const char* sField, Ulong& ulValue)
 
 /**************************************************************
 Function:       CGbtTscDb::IsSysParaValid
-Description:    ÅĞ¶ÏÉèÖÃµ½ÏµÍ³²ÎÊıÊÇ·ñºÏ·¨
-Input:          sField  -- ²ÎÊıÀàĞÍ
-				lValue  -- ²ÎÊıÖµ				
-Output:         ÎŞ
-Return:         true -- ²ÎÊıºÏ·¨  false -²ÎÊı·Ç·¨
+Description:    åˆ¤æ–­è®¾ç½®åˆ°ç³»ç»Ÿå‚æ•°æ˜¯å¦åˆæ³•
+Input:          sField  -- å‚æ•°ç±»å‹
+				lValue  -- å‚æ•°å€¼				
+Output:         æ— 
+Return:         true -- å‚æ•°åˆæ³•  false -å‚æ•°éæ³•
 ***************************************************************/
 bool CGbtTscDb::IsSysParaValid(const char* sField, Long& lValue)
 {
@@ -7558,10 +7558,10 @@ bool CGbtTscDb::IsSysParaValid(const char* sField, Long& lValue)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPhaseToDirec
-Description:    ²éÑ¯ÏàÎ»·½Ïò±íÊı¾İ
-Input:          tblPhaseToDirec - ÏàÎ»·½Ïò±í¶ÔÏó			
-Output:         ÎŞ
-Return:         true -- ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æŸ¥è¯¢ç›¸ä½æ–¹å‘è¡¨æ•°æ®
+Input:          tblPhaseToDirec - ç›¸ä½æ–¹å‘è¡¨å¯¹è±¡			
+Output:         æ— 
+Return:         true -- æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPhaseToDirec(TblPhaseToDirec& tblPhaseToDirec)
 {
@@ -7612,10 +7612,10 @@ bool CGbtTscDb::QueryPhaseToDirec(TblPhaseToDirec& tblPhaseToDirec)
 
 /**************************************************************
 Function:       CGbtTscDb::QueryPhaseToDirec
-Description:    ¸ù¾İucId²éÑ¯ÏàÎ»·½Ïò±íÊı¾İ
-Input:          ucId - ucIdºÅ			
-Output:         sPhaseToDirec  -- ÏàÎ»·½ÏòÊı¾İ½á¹¹Ìå
-Return:         true -- ²éÑ¯Êı¾İ³É¹¦  false -²éÑ¯Êı¾İÊ§°Ü
+Description:    æ ¹æ®ucIdæŸ¥è¯¢ç›¸ä½æ–¹å‘è¡¨æ•°æ®
+Input:          ucId - ucIdå·			
+Output:         sPhaseToDirec  -- ç›¸ä½æ–¹å‘æ•°æ®ç»“æ„ä½“
+Return:         true -- æŸ¥è¯¢æ•°æ®æˆåŠŸ  false -æŸ¥è¯¢æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::QueryPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec)
 {
@@ -7654,10 +7654,10 @@ bool CGbtTscDb::QueryPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec)
 
 /**************************************************************
 Function:       CGbtTscDb::AddPhaseToDirec
-Description:    Ìí¼ÓÏàÎ»·½Ïò±íÊı¾İ¼ÇÂ¼
-Input:          ucId - ucIdºÅ			
-Output:         sPhaseToDirec  -- ÏàÎ»·½ÏòÊı¾İ½á¹¹Ìå
-Return:         true -- Ìí¼ÓÊı¾İ³É¹¦  false -Ìí¼ÓÊı¾İÊ§°Ü
+Description:    æ·»åŠ ç›¸ä½æ–¹å‘è¡¨æ•°æ®è®°å½•
+Input:          ucId - ucIdå·			
+Output:         sPhaseToDirec  -- ç›¸ä½æ–¹å‘æ•°æ®ç»“æ„ä½“
+Return:         true -- æ·»åŠ æ•°æ®æˆåŠŸ  false -æ·»åŠ æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::AddPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec)
 {
@@ -7684,10 +7684,10 @@ bool CGbtTscDb::AddPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec)
 
 /**************************************************************
 Function:       CGbtTscDb::ModPhaseToDirec
-Description:    ĞŞ¸ÄÏàÎ»·½Ïò±íÊı¾İ¼ÇÂ¼
-Input:          ucId - ucIdºÅ			
-Output:         sPhaseToDirec  -- ÏàÎ»·½ÏòÊı¾İ½á¹¹Ìå
-Return:         true -- ĞŞ¸ÄÊı¾İ³É¹¦  false -ĞŞ¸ÄÊı¾İÊ§°Ü
+Description:    ä¿®æ”¹ç›¸ä½æ–¹å‘è¡¨æ•°æ®è®°å½•
+Input:          ucId - ucIdå·			
+Output:         sPhaseToDirec  -- ç›¸ä½æ–¹å‘æ•°æ®ç»“æ„ä½“
+Return:         true -- ä¿®æ”¹æ•°æ®æˆåŠŸ  false -ä¿®æ”¹æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::ModPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec)
 {
@@ -7717,10 +7717,10 @@ bool CGbtTscDb::ModPhaseToDirec(Byte ucId, PhaseToDirec& sPhaseToDirec)
 
 /**************************************************************
 Function:       CGbtTscDb::DelPhaseToDirec
-Description:    É¾³ıÈ«²¿ÏàÎ»ÓÚ·½Ïò±íÊı¾İ¼ÇÂ¼
-Input:          ÎŞ		
-Output:         ÎŞ
-Return:         true -- É¾³ıÊı¾İ³É¹¦  false -É¾³ıÊı¾İÊ§°Ü
+Description:    åˆ é™¤å…¨éƒ¨ç›¸ä½äºæ–¹å‘è¡¨æ•°æ®è®°å½•
+Input:          æ— 		
+Output:         æ— 
+Return:         true -- åˆ é™¤æ•°æ®æˆåŠŸ  false -åˆ é™¤æ•°æ®å¤±è´¥
 ***************************************************************/
 bool CGbtTscDb::DelPhaseToDirec()
 {

@@ -18,7 +18,7 @@ public:
 	void ForceAdjust();
     bool CheckSum(char *cMsg);
 	void SetTime(int iYear , int iMon , int iDay, int iHour, int iMin, int iSec);
-	bool m_bGpsTime ;  //�ж��Ƿ��ڽ�ʱ״̬
+	bool m_bGpsTime ;  //判断是否处于较时状态
 
 private:
 	CGps();

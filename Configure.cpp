@@ -1,10 +1,10 @@
 /*================================================================================================== 
- * ÏîÄ¿Ãû³Æ: ¶ÁÈ¡ÅäÖÃÎÄ¼ş¿â 
- *     ¹¦ÄÜ: Ìá¹©ÀàºÍ·½·¨,ÊµÏÖ´ÓÅäÖÃÎÄ¼ş¶ÁÈ¡²ÎÊıÖµ 
- *     ×÷Õß: Â³ÈÊ»ª 
- *     ÁªÏµ: renhualu@live.com 
- * ×î½üĞŞ¸Ä: 2013-4-15 
- *     °æ±¾: v1.0.2 
+ * é¡¹ç›®åç§°: è¯»å–é…ç½®æ–‡ä»¶åº“ 
+ *     åŠŸèƒ½: æä¾›ç±»å’Œæ–¹æ³•,å®ç°ä»é…ç½®æ–‡ä»¶è¯»å–å‚æ•°å€¼ 
+ *     ä½œè€…: é²ä»å 
+ *     è”ç³»: renhualu@live.com 
+ * æœ€è¿‘ä¿®æ”¹: 2013-4-15 
+ *     ç‰ˆæœ¬: v1.0.2 
   ==================================================================================================*/  
   
 #include <sys/timeb.h>  
@@ -18,10 +18,10 @@ using namespace std;
 
 /**************************************************************
 Function:       CreateInstance
-Description:    µ¥ÀıÄ£Ê½´´½¨¶ÔÏó
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         Configure¶ÔÏó
+Description:    å•ä¾‹æ¨¡å¼åˆ›å»ºå¯¹è±¡
+Input:          æ—            
+Output:         æ— 
+Return:         Configureå¯¹è±¡
 ***************************************************************/
 Configure* Configure::CreateInstance()
 {
@@ -30,10 +30,10 @@ Configure* Configure::CreateInstance()
 }
 /**************************************************************
 Function:       Configure
-Description:    ¹¹Ôìº¯Êı£¬´´½¨ÅäÖÃÎÄ¼ş¶ÔÏó¼°ÅäÖÃÎÄ¼ş
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ„é€ å‡½æ•°ï¼Œåˆ›å»ºé…ç½®æ–‡ä»¶å¯¹è±¡åŠé…ç½®æ–‡ä»¶
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 Configure::Configure():impExp_(NULL)
 {
@@ -50,10 +50,10 @@ Configure::Configure():impExp_(NULL)
 }
  /**************************************************************
 Function:       ~Configure
-Description:    Îö¹¹º¯Êı£¬É¾³ıÅäÖÃÎÄ¼ş¶ÔÏó¡£
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ææ„å‡½æ•°ï¼Œåˆ é™¤é…ç½®æ–‡ä»¶å¯¹è±¡ã€‚
+Input:          æ—            
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 Configure::~Configure()
 {
@@ -63,9 +63,9 @@ Configure::~Configure()
 }
 /**************************************************************
 Function:       open
-Description:    ´ò¿ªÅäÖÃÎÄ¼ş
-Input:           filename ÅäÖÃÎÄ¼şÃû³Æ          
-Output:         ÎŞ
+Description:    æ‰“å¼€é…ç½®æ–‡ä»¶
+Input:           filename é…ç½®æ–‡ä»¶åç§°          
+Output:         æ— 
 Return:         IO
 ***************************************************************/
 int Configure::open(const ACE_TCHAR * filename)
@@ -79,11 +79,11 @@ int Configure::open(const ACE_TCHAR * filename)
 }
 /**************************************************************
 Function:       GetString
-Description:    ´ÓÅäÖÃÎÄ¼ş¶ÁÈ¡×Ö·û´®ÀàĞÍµÄÖµ
-Input:          szSection 	ÇøÓò [xxxx]
-				szKey		key×Ö·û´®
-Output:         strValue	Ïà¶Ôkey ÖµµÄ    ÄÚÈİ 
-Return:         1 ³É¹¦	0 Ê§°Ü
+Description:    ä»é…ç½®æ–‡ä»¶è¯»å–å­—ç¬¦ä¸²ç±»å‹çš„å€¼
+Input:          szSection 	åŒºåŸŸ [xxxx]
+				szKey		keyå­—ç¬¦ä¸²
+Output:         strValue	ç›¸å¯¹key å€¼çš„    å†…å®¹ 
+Return:         1 æˆåŠŸ	0 å¤±è´¥
 ***************************************************************/
 int Configure::GetString(const char *szSection, const char *szKey, ACE_TString &strValue)
 {
@@ -93,11 +93,11 @@ int Configure::GetString(const char *szSection, const char *szKey, ACE_TString &
 }
 /**************************************************************
 Function:       GetInteger
-Description:    ´ÓÅäÖÃÎÄ¼ş¶ÁÈ¡Êı×ÖÀàĞÍµÄÖµ
-Input:          szSection 	ÇøÓò [xxxx]
-				szKey		key×Ö·û´®
-Output:         nValue		Ïà¶Ôkey ÖµµÄ    ÄÚÈİ 
-Return:         1 ³É¹¦	0 Ê§°Ü
+Description:    ä»é…ç½®æ–‡ä»¶è¯»å–æ•°å­—ç±»å‹çš„å€¼
+Input:          szSection 	åŒºåŸŸ [xxxx]
+				szKey		keyå­—ç¬¦ä¸²
+Output:         nValue		ç›¸å¯¹key å€¼çš„    å†…å®¹ 
+Return:         1 æˆåŠŸ	0 å¤±è´¥
 ***************************************************************/
 int Configure::GetInteger(const char* szSection,const char* szKey,int& nValue)
 {
@@ -114,10 +114,10 @@ int Configure::GetInteger(const char* szSection,const char* szKey,int& nValue)
 }
 /**************************************************************
 Function:       InitConfig
-Description:    ¶ÔÅäÖÃÎÄ¼ş½øĞĞ³õÊ¼»¯
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         1 ³É¹¦	0 Ê§°Ü
+Description:    å¯¹é…ç½®æ–‡ä»¶è¿›è¡Œåˆå§‹åŒ–
+Input:          æ— 
+Output:         æ— 
+Return:         1 æˆåŠŸ	0 å¤±è´¥
 ***************************************************************/
 bool Configure::InitConfig()
 {
@@ -155,10 +155,10 @@ bool Configure::InitConfig()
 }
  /**************************************************************
 Function:       ShowConfig
-Description:    ÏÔÊ¾ÅäÖÃÎÄ¼şÖĞµÄÄÚÈİ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ˜¾ç¤ºé…ç½®æ–‡ä»¶ä¸­çš„å†…å®¹
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void Configure::ShowConfig()
 {
@@ -203,10 +203,10 @@ cout<<"#................End Show Tsc Configure..................# "<<endl<<endl;
 
  /**************************************************************
 Function:       close
-Description:    ¹Ø±ÕÎÄ¼ş
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         1 ³É¹¦	0 Ê§°Ü
+Description:    å…³é—­æ–‡ä»¶
+Input:          æ— 
+Output:         æ— 
+Return:         1 æˆåŠŸ	0 å¤±è´¥
 ***************************************************************/
 int Configure::close()
 {

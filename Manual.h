@@ -15,14 +15,14 @@ public:
 	void DoManual();
 	void SetPanelStaus(Byte ucStatus);
 private:
-	Byte m_ucManualSts;  //ÊÖ¿Ø×´Ì¬
-	Byte m_ucManual;     //0×Ô¶¯ÔËĞĞ 1ÊÖ¶¯¿ØÖÆ
-	Byte m_ucRedFlash ; //ÊÖ¶¯È«ºì¿ØÖÆ»òÕß»ÆÉÁ¿ØÖÆ 1-È«ºì»ò»Æ?0-È«ºì»ÆÉÁ¹éÎ»
-	Byte m_ucLastManual;     //Ö®Ç°ÊÇ·ñÎªÊÖ¶¯µÄ
-	Byte m_ucLastManualSts;  //Ö®Ç°µÄÊÖ¶¯×´Ì¬
+	Byte m_ucManualSts;  //æ‰‹æ§çŠ¶æ€
+	Byte m_ucManual;     //0è‡ªåŠ¨è¿è¡Œ 1æ‰‹åŠ¨æ§åˆ¶
+	Byte m_ucRedFlash ; //æ‰‹åŠ¨å…¨çº¢æ§åˆ¶æˆ–è€…é»„é—ªæ§åˆ¶ 1-å…¨çº¢æˆ–é»„?0-å…¨çº¢é»„é—ªå½’ä½
+	Byte m_ucLastManual;     //ä¹‹å‰æ˜¯å¦ä¸ºæ‰‹åŠ¨çš„
+	Byte m_ucLastManualSts;  //ä¹‹å‰çš„æ‰‹åŠ¨çŠ¶æ€
 	void OpenDev();
 	int m_iManualFd;
-	Byte ManualKey ;  //µ±Ç°´¦ÓÚÊÖ¿ØÊ±£¬Ñ¡ÔñµÄÊÖ¿Ø²Ù×÷°´Å¥
+	Byte ManualKey ;  //å½“å‰å¤„äºæ‰‹æ§æ—¶ï¼Œé€‰æ‹©çš„æ‰‹æ§æ“ä½œæŒ‰é’®
 
 };
 

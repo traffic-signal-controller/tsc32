@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   LampBoard.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úµÆ¿Ø°å¹ÜÀí²Ù×÷ÀàÎÄ¼ş.°üº¬µÆ¿Ø°åÅäÖÃºÍĞÅÏ¢×´Ì¬µÄ»ñÈ¡²Ù×÷¡£
+Description:ä¿¡å·æœºç¯æ§æ¿ç®¡ç†æ“ä½œç±»æ–‡ä»¶.åŒ…å«ç¯æ§æ¿é…ç½®å’Œä¿¡æ¯çŠ¶æ€çš„è·å–æ“ä½œã€‚
 Version:    V1.0
 History:
 ***************************************************************/
@@ -35,36 +35,36 @@ History:
 #endif
 
 /*
-ĞÅºÅµÆ×´Ì¬Ã¶¾Ù
+ä¿¡å·ç¯çŠ¶æ€æšä¸¾
 */
 enum
 {
-	LAMP_FLASH = 0 , //ĞÅºÅµÆÉÁË¸
-	LAMP_ON    = 1 , //ĞÅºÅµÆÁÁ
-	LAMP_OFF   = 2 , //ĞÅºÅµÆÃğ
-	LAMP_HOLD  = 3 , //ĞÅºÅµÆ±£³ÖÔ­×´
+	LAMP_FLASH = 0 , //ä¿¡å·ç¯é—ªçƒ
+	LAMP_ON    = 1 , //ä¿¡å·ç¯äº®
+	LAMP_OFF   = 2 , //ä¿¡å·ç¯ç­
+	LAMP_HOLD  = 3 , //ä¿¡å·ç¯ä¿æŒåŸçŠ¶
 };
 
 /*
-µÆ¿Ø°å¿ØÖÆÉèÖÃÀàĞÍÃ¶¾Ù
+ç¯æ§æ¿æ§åˆ¶è®¾ç½®ç±»å‹æšä¸¾
 */
 enum
 {
-	LAMPBOARD_HEAD_SETCOLOR      = 0x02 ,  //ÉèÖÃµÆ¿Ø°åµÆ¾ßµÄÑÕÉ«
-	LAMPBOARD_HEAD_CFG           = 0x03 ,  //¶ÔµÆ¿Ø°åÏÂ·¢ÅäÖÃÊı¾İ
-	LAMPBOARD_HEAD_LIGHT_CHK     = 0x04 ,  //ÇëÇóµÆ¿Ø°å·¢ËÍµÆÅİ¼ì²âÊı¾İ
-	LAMPBOARD_HEAD_ELECT_CHK134  = 0x05 ,  //ÇëÇóµÆ¿Ø°å·¢ËÍÍ¨µÀ1£¬3£¬4µÄµÆÅİµçÁ÷¼ì²â
-	LAMPBOARD_HEAD_ELECT_CHK679  = 0x06 ,  //ÇëÇóµÆ¿Ø°å·¢ËÍÍ¨µÀ6£¬7£¬9µÄµÆÅİµçÁ÷¼ì²â
-	LAMPBOARD_HEAD_ELECT_CHK1012 = 0x07 ,  //ÇëÇóµÆ¿Ø°å·¢ËÍÍ¨µÀ10£¬12 µÄµÆÅİµçÁ÷¼ì²â
-	LAMPBOARD_HEAD_TEMPE_CHK     = 0x08 ,  //ÇëÇóµÆ¿Ø°å·¢ËÍµÆ¿Ø°å°åÔØÎÂ¶È¼ì²âµÄÎÂ¶ÈÖµ
-	LAMPBOARD_HEAD_VER           = 0xff    //ÇëÇóµÆ¿Ø°å°æ±¾³ÌĞò
+	LAMPBOARD_HEAD_SETCOLOR      = 0x02 ,  //è®¾ç½®ç¯æ§æ¿ç¯å…·çš„é¢œè‰²
+	LAMPBOARD_HEAD_CFG           = 0x03 ,  //å¯¹ç¯æ§æ¿ä¸‹å‘é…ç½®æ•°æ®
+	LAMPBOARD_HEAD_LIGHT_CHK     = 0x04 ,  //è¯·æ±‚ç¯æ§æ¿å‘é€ç¯æ³¡æ£€æµ‹æ•°æ®
+	LAMPBOARD_HEAD_ELECT_CHK134  = 0x05 ,  //è¯·æ±‚ç¯æ§æ¿å‘é€é€šé“1ï¼Œ3ï¼Œ4çš„ç¯æ³¡ç”µæµæ£€æµ‹
+	LAMPBOARD_HEAD_ELECT_CHK679  = 0x06 ,  //è¯·æ±‚ç¯æ§æ¿å‘é€é€šé“6ï¼Œ7ï¼Œ9çš„ç¯æ³¡ç”µæµæ£€æµ‹
+	LAMPBOARD_HEAD_ELECT_CHK1012 = 0x07 ,  //è¯·æ±‚ç¯æ§æ¿å‘é€é€šé“10ï¼Œ12 çš„ç¯æ³¡ç”µæµæ£€æµ‹
+	LAMPBOARD_HEAD_TEMPE_CHK     = 0x08 ,  //è¯·æ±‚ç¯æ§æ¿å‘é€ç¯æ§æ¿æ¿è½½æ¸©åº¦æ£€æµ‹çš„æ¸©åº¦å€¼
+	LAMPBOARD_HEAD_VER           = 0xff    //è¯·æ±‚ç¯æ§æ¿ç‰ˆæœ¬ç¨‹åº
 };
 
 /**************************************************************
 Function:        CLampBoard::CLampBoard
-Description:     µÆ¿Ø°åCLampBoardÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà			
-Input:          ÎŞ           
-Output:         ÎŞ
+Description:     ç¯æ§æ¿CLampBoardç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»			
+Input:          æ—            
+Output:         æ— 
 Return:         0
 ***************************************************************/
 CLampBoard::CLampBoard()
@@ -98,9 +98,9 @@ CLampBoard::CLampBoard()
 
 /**************************************************************
 Function:        CLampBoard::~CLampBoard
-Description:     µÆ¿Ø°åCLampBoardÎö¹¹º¯Êı		
-Input:          ÎŞ           
-Output:         ÎŞ
+Description:     ç¯æ§æ¿CLampBoardææ„å‡½æ•°		
+Input:          æ—            
+Output:         æ— 
 Return:         0
 ***************************************************************/
 CLampBoard::~CLampBoard()
@@ -111,10 +111,10 @@ CLampBoard::~CLampBoard()
 
 /**************************************************************
 Function:        CLampBoard::CreateInstance
-Description:     ´´½¨CLampBoardµÆ¿Ø¾²Ì¬¶ÔÏó		
-Input:          ÎŞ           
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:     åˆ›å»ºCLampBoardç¯æ§é™æ€å¯¹è±¡		
+Input:          æ—            
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CLampBoard* CLampBoard::CreateInstance()
 {
@@ -125,11 +125,11 @@ CLampBoard* CLampBoard::CreateInstance()
 
 /**************************************************************
 Function:        CLampBoard::ReviseLampInfo
-Description:     ºÏ·¨µÆÉ«ĞÅÏ¢Ğ£Õı		
-Input:          ucType  0-ÁÁ 1-Ãğ   
-				pLampInfo  µÆÉ«Êı×é        
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     åˆæ³•ç¯è‰²ä¿¡æ¯æ ¡æ­£		
+Input:          ucType  0-äº® 1-ç­   
+				pLampInfo  ç¯è‰²æ•°ç»„        
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::ReviseLampInfo(Byte ucType,Byte pLampInfo[MAX_LAMP])
 {
@@ -184,10 +184,10 @@ void CLampBoard::ReviseLampInfo(Byte ucType,Byte pLampInfo[MAX_LAMP])
 
 /**************************************************************
 Function:        CLampBoard::SetSeriousFlash
-Description:     ÉèÖÃÑÏÖØ»ÆÉÁ±ê¼Ç		
-Input:          isflash  flase-·Ç»ÆÉÁ×´Ì¬ 1-»ÆÉÁ×´Ì¬ 
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è®¾ç½®ä¸¥é‡é»„é—ªæ ‡è®°		
+Input:          isflash  flase-éé»„é—ªçŠ¶æ€ 1-é»„é—ªçŠ¶æ€ 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::SetSeriousFlash(bool isflash)
 {
@@ -197,11 +197,11 @@ void CLampBoard::SetSeriousFlash(bool isflash)
 
 /**************************************************************
 Function:        CLampBoard::SetLamp
-Description:     ÉèÖÃµÆ¾ßÑÕÉ«£¬Õı³£Ò»¸ö²½·¥ÉèÖÃÒ»´Î	
-Input:          pLampOn  µÆÁÁÃğ×´Ì¬»º´æÖ¸Õë
-				pLampFlash  µÆÉÁË¸×°Ëû»º´æÖ¸Õë
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è®¾ç½®ç¯å…·é¢œè‰²ï¼Œæ­£å¸¸ä¸€ä¸ªæ­¥ä¼è®¾ç½®ä¸€æ¬¡	
+Input:          pLampOn  ç¯äº®ç­çŠ¶æ€ç¼“å­˜æŒ‡é’ˆ
+				pLampFlash  ç¯é—ªçƒè£…ä»–ç¼“å­˜æŒ‡é’ˆ
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::SetLamp(Byte* pLampOn,Byte* pLampFlash)
 {
@@ -218,11 +218,11 @@ void CLampBoard::SetLamp(Byte* pLampOn,Byte* pLampFlash)
 
 /**************************************************************
 Function:        CLampBoard::GetLamp
-Description:     »ñÈ¡µÆ¾ßÑÕÉ«£¬Õı³£Ò»¸ö²½·¥ÉèÖÃÒ»´Î	
-Input:          pLampOn  µÆÁÁÃğ×´Ì¬»º´æÖ¸Õë
-			pLampFlash  µÆÉÁË¸×°Ëû»º´æÖ¸Õë
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è·å–ç¯å…·é¢œè‰²ï¼Œæ­£å¸¸ä¸€ä¸ªæ­¥ä¼è®¾ç½®ä¸€æ¬¡	
+Input:          pLampOn  ç¯äº®ç­çŠ¶æ€ç¼“å­˜æŒ‡é’ˆ
+			pLampFlash  ç¯é—ªçƒè£…ä»–ç¼“å­˜æŒ‡é’ˆ
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::GetLamp(Byte* pLampOn,Byte* pLampFlash)
 {
@@ -237,10 +237,10 @@ void CLampBoard::GetLamp(Byte* pLampOn,Byte* pLampFlash)
 
 /**************************************************************
 Function:        CLampBoard::SendSingleLamp
-Description:     ·¢ËÍµ¥Ò»¸öµÆ¿Ø°åµÄÊı¾İ£¬ÉèÖÃµÆ¿Ø°åµÆ¾ßÑÕÉ«	
-Input:          ucLampBoardId  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3 4  5  6  7 
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     å‘é€å•ä¸€ä¸ªç¯æ§æ¿çš„æ•°æ®ï¼Œè®¾ç½®ç¯æ§æ¿ç¯å…·é¢œè‰²	
+Input:          ucLampBoardId  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3 4  5  6  7 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::SendSingleLamp(Byte ucLampBoardId,Byte ucFlashBreak)
 {
@@ -253,30 +253,30 @@ void CLampBoard::SendSingleLamp(Byte ucLampBoardId,Byte ucFlashBreak)
 	Can::BuildCanId(CAN_MSG_TYPE_011 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , ucLampBoardCanAddr  , &(sSendFrameTmp.ulCanId));
 
 	sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6 ) | LAMPBOARD_HEAD_SETCOLOR;
-	for ( int iDataIndex=1; iDataIndex<4; iDataIndex++ ) //Ò»¿éµÆ¿Ø°åÓÉ3¸ö×Ö½Ú´æ´¢µÆÉ«ĞÅÏ¢£¬Ã¿¸öÍ¨µÀµÆÉ«ĞÅÏ¢Õ¼2bitÎ»,Ò»¸ö×Ö½Ú´æ´¢4Í¨µÀµÆÉ«ĞÅÏ¢
+	for ( int iDataIndex=1; iDataIndex<4; iDataIndex++ ) //ä¸€å—ç¯æ§æ¿ç”±3ä¸ªå­—èŠ‚å­˜å‚¨ç¯è‰²ä¿¡æ¯ï¼Œæ¯ä¸ªé€šé“ç¯è‰²ä¿¡æ¯å 2bitä½,ä¸€ä¸ªå­—èŠ‚å­˜å‚¨4é€šé“ç¯è‰²ä¿¡æ¯
 	{
 		ucDataTemp  = 0;
-		ucLampIndex = ucLampBoardId * 12 + (iDataIndex-1) * 4;  //1¿é°å12¸öÍ¨µÀ 1×Ö½Ú´æ´¢4¸öÍ¨µÀ µÆ¾ß???? ¸Ã±äÁ¿±íÊ¾Ã¿¿éµÆ¿Ø°åÆğÊ¼µÆ¾ßµÄË÷Òı.
+		ucLampIndex = ucLampBoardId * 12 + (iDataIndex-1) * 4;  //1å—æ¿12ä¸ªé€šé“ 1å­—èŠ‚å­˜å‚¨4ä¸ªé€šé“ ç¯å…·???? è¯¥å˜é‡è¡¨ç¤ºæ¯å—ç¯æ§æ¿èµ·å§‹ç¯å…·çš„ç´¢å¼•.
 		
-		for ( int ucIncrease=0; ucIncrease<4; ucIncrease++ ) //1¸ö×Ö½ÚÃ¿´Î2bitÎ»ÉèÖÃ£¬ĞèÒªÑ­»·4´Î.
+		for ( int ucIncrease=0; ucIncrease<4; ucIncrease++ ) //1ä¸ªå­—èŠ‚æ¯æ¬¡2bitä½è®¾ç½®ï¼Œéœ€è¦å¾ªç¯4æ¬¡.
 		{
-			if ( 1 == m_ucLampFlash[ucLampIndex+ucIncrease] )  //ÉÁµÆ
+			if ( 1 == m_ucLampFlash[ucLampIndex+ucIncrease] )  //é—ªç¯
 			{
-				ucDataTemp |= LAMP_FLASH << (2*ucIncrease); //Ã¿´ÎÒÆ¶¯Á½Î»±íÊ¾Ò»¸öµÆ¾ßÑÕÉ«
+				ucDataTemp |= LAMP_FLASH << (2*ucIncrease); //æ¯æ¬¡ç§»åŠ¨ä¸¤ä½è¡¨ç¤ºä¸€ä¸ªç¯å…·é¢œè‰²
 			}
 			else
 			{
-				if ( 1 == m_ucLampOn[ucLampIndex+ucIncrease] )  //ÁÁµÆ
+				if ( 1 == m_ucLampOn[ucLampIndex+ucIncrease] )  //äº®ç¯
 				{
 					ucDataTemp |= LAMP_ON << (2*ucIncrease);
 				}
 				else 
 				{
-					ucDataTemp |= LAMP_OFF << (2*ucIncrease);  //ÃğµÆ
+					ucDataTemp |= LAMP_OFF << (2*ucIncrease);  //ç­ç¯
 				}
 			}
 		}
-		sSendFrameTmp.pCanData[iDataIndex] = ucDataTemp; //Ñ­»·3´Î£¬Ã¿´Î4¸öµÆ¾ß×´Ì¬ÉèÖµ£¬Ã¿´ÎÒ»¸ö×Ö½Ú.
+		sSendFrameTmp.pCanData[iDataIndex] = ucDataTemp; //å¾ªç¯3æ¬¡ï¼Œæ¯æ¬¡4ä¸ªç¯å…·çŠ¶æ€è®¾å€¼ï¼Œæ¯æ¬¡ä¸€ä¸ªå­—èŠ‚.
 	}
 	sSendFrameTmp.pCanData[4] = ~sSendFrameTmp.pCanData[1];
 	sSendFrameTmp.pCanData[5] = ~sSendFrameTmp.pCanData[2];
@@ -294,10 +294,10 @@ void CLampBoard::SendSingleLamp(Byte ucLampBoardId,Byte ucFlashBreak)
 
 /**************************************************************
 Function:        CLampBoard::SendLamp
-Description:     ¸øËùÓĞµÆ¿Ø°å·¢ËÍµÆÉ«ĞÅÏ¢	£¬Õı³£×´Ì¬500ms·¢ËÍÒ»´Î
-Input:          ucLampBoardId  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     ç»™æ‰€æœ‰ç¯æ§æ¿å‘é€ç¯è‰²ä¿¡æ¯	ï¼Œæ­£å¸¸çŠ¶æ€500mså‘é€ä¸€æ¬¡
+Input:          ucLampBoardId  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::SendLamp()
 {
@@ -308,7 +308,7 @@ void CLampBoard::SendLamp()
 		{
 			 
 			SendSingleLamp(iBdINdex,0);
-/******   ¼ÆËãÃ¿´Î·¢ËÍµÆÖ®¼äµÄÊ±¼ä
+/******   è®¡ç®—æ¯æ¬¡å‘é€ç¯ä¹‹é—´çš„æ—¶é—´
 			struct timeval    tv;  
 		    struct timezone tz;  
 		      
@@ -328,10 +328,10 @@ void CLampBoard::SendLamp()
 
 /**************************************************************
 Function:        CLampBoard::SendCfg
-Description:     ¸øËùÓĞµÆ¿Ø°å·¢ËÍÅäÖÃÊı¾İ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     ç»™æ‰€æœ‰ç¯æ§æ¿å‘é€é…ç½®æ•°æ®
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::SendCfg()
 {
@@ -345,10 +345,10 @@ void CLampBoard::SendCfg()
 
 /**************************************************************
 Function:        CLampBoard::SendSingleCfg
-Description:     ¶Ôµ¥¸öµÆ¿Ø°å·¢ËÍÅäÖÃÊı¾İ
-Input:          ucLampBoardId  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     å¯¹å•ä¸ªç¯æ§æ¿å‘é€é…ç½®æ•°æ®
+Input:          ucLampBoardId  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::SendSingleCfg(Byte ucLampBoardId)
 {	
@@ -359,8 +359,8 @@ void CLampBoard::SendSingleCfg(Byte ucLampBoardId)
 	Can::BuildCanId(CAN_MSG_TYPE_101 , BOARD_ADDR_MAIN , FRAME_MODE_P2P  , ucLampBoardCanAddr , &(sSendFrameTmp.ulCanId));
 
 	sSendFrameTmp.pCanData[0]  = ( DATA_HEAD_CHECK << 6 ) | LAMPBOARD_HEAD_CFG;
-	//bit0-bit1 00:±£³Öµ±Ç°ÉèÖÃ²»±ä 01:¹Ø±ÕµÆÅİ¼ì²â      2:´ò¿ªµÆÅİ¼ì²â      3:±£Áô ±¸ÓÃ
-	//bit2-bit3 00:±£³Öµ±Ç°ÉèÖÃ²»±ä 01:¹Ø±ÕºìÂÌ³åÍ»¼ì²â  2:´ò¿ªºìÂÌ³åÍ»¼ì²â  3:±£Áô ±¸ÓÃ
+	//bit0-bit1 00:ä¿æŒå½“å‰è®¾ç½®ä¸å˜ 01:å…³é—­ç¯æ³¡æ£€æµ‹      2:æ‰“å¼€ç¯æ³¡æ£€æµ‹      3:ä¿ç•™ å¤‡ç”¨
+	//bit2-bit3 00:ä¿æŒå½“å‰è®¾ç½®ä¸å˜ 01:å…³é—­çº¢ç»¿å†²çªæ£€æµ‹  2:æ‰“å¼€çº¢ç»¿å†²çªæ£€æµ‹  3:ä¿ç•™ å¤‡ç”¨
 	sSendFrameTmp.pCanData[1]  = m_ucCheckCfg[ucLampBoardId] & 0x0f;	
 	sSendFrameTmp.ucCanDataLen = 2;
 	Can::CreateInstance()->Send(sSendFrameTmp);
@@ -371,10 +371,10 @@ void CLampBoard::SendSingleCfg(Byte ucLampBoardId)
 
 /**************************************************************
 Function:        CLampBoard::CheckLight
-Description:     ÇëÇóµÆ¿Ø°å·¢ËÍµÆÅİ¼ì²âÊı¾İ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è¯·æ±‚ç¯æ§æ¿å‘é€ç¯æ³¡æ£€æµ‹æ•°æ®
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::CheckLight()
 {
@@ -393,10 +393,10 @@ void CLampBoard::CheckLight()
 
 /**************************************************************
 Function:        CLampBoard::CheckSingleLight
-Description:     ÇëÇóµ¥Ò»µÆ¿Ø°å·¢ËÍµÆÅİ¼ì²â,ºìÂÌ³åÍ»Êı¾İ
-Input:          ucLampBoardId  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è¯·æ±‚å•ä¸€ç¯æ§æ¿å‘é€ç¯æ³¡æ£€æµ‹,çº¢ç»¿å†²çªæ•°æ®
+Input:          ucLampBoardId  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::CheckSingleLight(Byte ucLampBoardId)
 {
@@ -427,13 +427,13 @@ void CLampBoard::CheckSingleLight(Byte ucLampBoardId)
 
 /**************************************************************
 Function:        CLampBoard::CheckSingleLight
-Description:     ¼ì²âÄ³Í¨µÀµÄµçÁ÷
-Input:          ucLampBoardId  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3
-				ucType  LAMPBOARD_HEAD_ELECT_CHK134    Í¨µÀ134
-					    LAMPBOARD_HEAD_ELECT_CHK679	   Í¨µÀ679
-					    LAMPBOARD_HEAD_ELECT_CHK1012   Í¨µÀ10 12
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ£€æµ‹æŸé€šé“çš„ç”µæµ
+Input:          ucLampBoardId  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3
+				ucType  LAMPBOARD_HEAD_ELECT_CHK134    é€šé“134
+					    LAMPBOARD_HEAD_ELECT_CHK679	   é€šé“679
+					    LAMPBOARD_HEAD_ELECT_CHK1012   é€šé“10 12
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::CheckLampElect(Byte ucLampBoardId,Byte ucType)
 {
@@ -463,10 +463,10 @@ void CLampBoard::CheckLampElect(Byte ucLampBoardId,Byte ucType)
 
 /**************************************************************
 Function:        CLampBoard::CheckSingleElect
-Description:     ¼ì²âµ¥Ò»µÆ¿Ø°åµÄµçÁ÷
-Input:          ucLampBoardId  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ£€æµ‹å•ä¸€ç¯æ§æ¿çš„ç”µæµ
+Input:          ucLampBoardId  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::CheckSingleElect(Byte ucLampBoardId)
 {
@@ -478,10 +478,10 @@ void CLampBoard::CheckSingleElect(Byte ucLampBoardId)
 
 /**************************************************************
 Function:        CLampBoard::CheckElect
-Description:     ¼ì²â¸÷¸öµÆ¿Ø°åµÄµÆÅİµçÁ÷
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ£€æµ‹å„ä¸ªç¯æ§æ¿çš„ç¯æ³¡ç”µæµ
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::CheckElect()
 {
@@ -494,10 +494,10 @@ void CLampBoard::CheckElect()
 
 /**************************************************************
 Function:        CLampBoard::CheckTemp
-Description:     ¼ì²âËùÓĞµÆ¿Ø°å°å¿¨ÎÂ¶È
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ£€æµ‹æ‰€æœ‰ç¯æ§æ¿æ¿å¡æ¸©åº¦
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::CheckTemp()
 {
@@ -510,10 +510,10 @@ void CLampBoard::CheckTemp()
 
 /**************************************************************
 Function:        CLampBoard::CheckSingleTemp
-Description:     ¼ì²âµ¥Ò»µÆ¿Ø°å°å¿¨µÄÎÂ¶È
-Input:          ucLampBoardId  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ£€æµ‹å•ä¸€ç¯æ§æ¿æ¿å¡çš„æ¸©åº¦
+Input:          ucLampBoardId  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::CheckSingleTemp(Byte ucLampBoardId)
 {
@@ -534,11 +534,11 @@ void CLampBoard::CheckSingleTemp(Byte ucLampBoardId)
 
 /**************************************************************
 Function:        CLampBoard::RecvLampCan
-Description:     ½âÎöµÆ¿Ø°å·¢ËÍ»ØÀ´µÄCanÊı¾İ°ü£¬²¢´¦Àí¡£
-Input:          ucBoardAddr  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3
-				sRecvCanTmp  canÊı¾İ°ü
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     è§£æç¯æ§æ¿å‘é€å›æ¥çš„Canæ•°æ®åŒ…ï¼Œå¹¶å¤„ç†ã€‚
+Input:          ucBoardAddr  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3
+				sRecvCanTmp  canæ•°æ®åŒ…
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 {		
@@ -583,7 +583,7 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		if ( LAMPBOARD_HEAD_LIGHT_CHK == ucType )
 		{
 			//ACE_DEBUG((LM_DEBUG,"%s:%d Get the LampBoard%d status!\n",__FILE__,__LINE__,ucLampBoardId+1));			
-			//Í¨µÀ¼ì²âbyte1-byte2  		//00:µÆÅİÁÁÃğÕı³£  01:µÆÅİ´î½Ó³£ÁÁ	//10:µÆÅİËğ»µ³£Ãğ  11:¿É¿Ø¹èËğ»µ
+			//é€šé“æ£€æµ‹byte1-byte2  		//00:ç¯æ³¡äº®ç­æ­£å¸¸  01:ç¯æ³¡æ­æ¥å¸¸äº®	//10:ç¯æ³¡æŸåå¸¸ç­  11:å¯æ§ç¡…æŸå
 			m_ucLampStas[ucLampBoardId*12]    = sRecvCanTmp.pCanData[1] & 0x3;          //1
 			m_ucLampStas[ucLampBoardId*12+2]   = (sRecvCanTmp.pCanData[1] >> 2 ) & 0x3;   //3
 			m_ucLampStas[ucLampBoardId*12+3]   = (sRecvCanTmp.pCanData[1] >> 4 ) & 0x3;   //4
@@ -594,7 +594,7 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 			m_ucLampStas[ucLampBoardId*12+9]   = (sRecvCanTmp.pCanData[2] >> 4 ) & 0x3;     //10
 			m_ucLampStas[ucLampBoardId*12+11]  = (sRecvCanTmp.pCanData[2] >> 6 ) & 0x3;      //12
 
-			//ºìÂÌ³åÍ»¼ì²âbyte3	//00:µÆÅİºìÂÌÊä³öÕı³£     01:Êı¾İ°üÖĞµÄºìÂÌ³åÍ»	//10:Ó²¼ş¼ì²âµ½µÄºìÂÌ³åÍ» 11:±£Áô±¸ÓÃ
+			//çº¢ç»¿å†²çªæ£€æµ‹byte3	//00:ç¯æ³¡çº¢ç»¿è¾“å‡ºæ­£å¸¸     01:æ•°æ®åŒ…ä¸­çš„çº¢ç»¿å†²çª	//10:ç¡¬ä»¶æ£€æµ‹åˆ°çš„çº¢ç»¿å†²çª 11:ä¿ç•™å¤‡ç”¨
 			m_ucLampConflic[ucLampBoardId][0]   = sRecvCanTmp.pCanData[3] & 0x3;
 			m_ucLampConflic[ucLampBoardId][1]   = (sRecvCanTmp.pCanData[3] >> 2 ) & 0x3;
 			m_ucLampConflic[ucLampBoardId][2]   = (sRecvCanTmp.pCanData[3] >> 4 ) & 0x3;
@@ -619,7 +619,7 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 										m_bLampErrFlag[iLamp] = false ;
 										ACE_DEBUG((LM_DEBUG,"%s:%d LampBoard: %d Lamp:%d status:%d \n",__FILE__,__LINE__,ucLampBoardId+1,iLamp+1,m_ucLampStas[iLamp]));												
 										CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_LAMP,iLamp+1,m_ucLampStas[iLamp],ucLampBoardId+1,0);			
-										isFlash =1 ; // 1 ±íÊ¾µÆÅİ¹ÊÕÏ
+										isFlash =1 ; // 1 è¡¨ç¤ºç¯æ³¡æ•…éšœ
 									}								
 								}							
 							}						
@@ -632,8 +632,8 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 					ACE_DEBUG((LM_DEBUG,"%s:%d ucLampBoardI: %d  Lampgrp %d conflict:%d\n",__FILE__,__LINE__,ucLampBoardId+1,iLampGrp+1,m_ucLampConflic[ucLampBoardId][iLampGrp] ));
 					//CManaKernel::CreateInstance()->DealGreenConflict(1); //					
 						
-					CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_GREEN_CONFIG,m_ucLampConflic[ucLampBoardId][iLampGrp],ucLampBoardId+1,iLampGrp+1,0); //ADD£º201309251130						
-					isFlash = 3 ; // 3 ±íÊ¾ºìÂÌ³åÍ»£¬ÓÉµÆ¿Ø°åÅĞ¶Ï·µ»Ø£¬°üÀ¨Ó²¼ş³åÍ»ºÍÈí³åÍ»
+					CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_GREEN_CONFIG,m_ucLampConflic[ucLampBoardId][iLampGrp],ucLampBoardId+1,iLampGrp+1,0); //ADDï¼š201309251130						
+					isFlash = 3 ; // 3 è¡¨ç¤ºçº¢ç»¿å†²çªï¼Œç”±ç¯æ§æ¿åˆ¤æ–­è¿”å›ï¼ŒåŒ…æ‹¬ç¡¬ä»¶å†²çªå’Œè½¯å†²çª
 							
 				}
 			}
@@ -686,7 +686,7 @@ void CLampBoard::RecvLampCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		}
 	if ( LAMPBOARD_HEAD_TEMPE_CHK == ucType )
 	{
-			//byte1 °åÔØÎÂ¶È¼ì²âµÄÎÂ¶ÈÖµ (ÎÂ¶È·¶Î§ -127 - +127ÉãÊÏ¶È)
+			//byte1 æ¿è½½æ¸©åº¦æ£€æµ‹çš„æ¸©åº¦å€¼ (æ¸©åº¦èŒƒå›´ -127 - +127æ‘„æ°åº¦)
 			int iTemp = (int)sRecvCanTmp.pCanData[1];
 			if ( iTemp  > -127 && iTemp < 127 )
 			{
@@ -734,10 +734,10 @@ bool CLampBoard::IsFlash()
 
 /**************************************************************
 Function:        CLampBoard::GetLampBoardAddr
-Description:     »ñÈ¡µÆÇı°åCANµØÖ·
-Input:             LampBoardIndex  µÆ¿Ø°åÏÂ±êË÷Òı 0 1 2 3 4 5 6 7
-Output:         ÎŞ
-Return:          µÆÇı°å¶ÔÓ¦CANµØÖ·
+Description:     è·å–ç¯é©±æ¿CANåœ°å€
+Input:             LampBoardIndex  ç¯æ§æ¿ä¸‹æ ‡ç´¢å¼• 0 1 2 3 4 5 6 7
+Output:         æ— 
+Return:          ç¯é©±æ¿å¯¹åº”CANåœ°å€
 ***************************************************************/
 Byte CLampBoard::GetLampBoardAddr(Byte LampBoardIndex)
 {

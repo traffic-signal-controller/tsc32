@@ -3,15 +3,15 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   ManaKernel.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úºËĞÄÒµÎñ´¦ÀíÀàÎÄ¼ş
+Description:ä¿¡å·æœºæ ¸å¿ƒä¸šåŠ¡å¤„ç†ç±»æ–‡ä»¶
 Version:    V1.0
-History:    201308010930  Ìí¼Ó48¸öµÆÅİ¼ì²âµÄÅäÖÃÊı¾İ¿â±íºÍ±í´¦Àí
-		 201309251030 ĞŞ¸ÄÏàÎ»³åÍ»¼ì²âÎ»ÖÃ£¬´ÓÏÂÒ»ÖÜÆÚÒÆµ½ÏÂÒ»²½´¦½øĞĞ¼ì²â
-		201309251120 Ìí¼ÓÈÕÖ¾ÏûÏ¢·¢ËÍº¯Êı£¬½«²»Í¬ÀàÈÕÖ¾ÏûÏ¢Í³Ò»µ½Ò»¸öº¯Êı´¦Àí
-		201309251030 ĞŞ¸ÄÏàÎ»³åÍ»¼ì²âÎ»ÖÃ£¬´ÓÏÂÒ»ÖÜÆÚÒÆµ½ÏÂÒ»²½´¦½øĞĞ¼ì²â
+History:    201308010930  æ·»åŠ 48ä¸ªç¯æ³¡æ£€æµ‹çš„é…ç½®æ•°æ®åº“è¡¨å’Œè¡¨å¤„ç†
+		 201309251030 ä¿®æ”¹ç›¸ä½å†²çªæ£€æµ‹ä½ç½®ï¼Œä»ä¸‹ä¸€å‘¨æœŸç§»åˆ°ä¸‹ä¸€æ­¥å¤„è¿›è¡Œæ£€æµ‹
+		201309251120 æ·»åŠ æ—¥å¿—æ¶ˆæ¯å‘é€å‡½æ•°ï¼Œå°†ä¸åŒç±»æ—¥å¿—æ¶ˆæ¯ç»Ÿä¸€åˆ°ä¸€ä¸ªå‡½æ•°å¤„ç†
+		201309251030 ä¿®æ”¹ç›¸ä½å†²çªæ£€æµ‹ä½ç½®ï¼Œä»ä¸‹ä¸€å‘¨æœŸç§»åˆ°ä¸‹ä¸€æ­¥å¤„è¿›è¡Œæ£€æµ‹
 		201309281025 Add "ComFunc.h" headfile
-		201412091508.×¢ÊÍµôManaker.cpp 131 132ĞĞÔ­À´µÄ ²åÈëÄ¬ÈÏÊı¾İº¯Êı¡£
-		                     È¥µôManaker.cpp ÖĞvoid MemeryConfigDataRun() Ä¬ÈÏÎŞÊı¾İ¿âÊı¾İ¡£
+		201412091508.æ³¨é‡Šæ‰Manaker.cpp 131 132è¡ŒåŸæ¥çš„ æ’å…¥é»˜è®¤æ•°æ®å‡½æ•°ã€‚
+		                     å»æ‰Manaker.cpp ä¸­void MemeryConfigDataRun() é»˜è®¤æ— æ•°æ®åº“æ•°æ®ã€‚
 ***********************************************************************************/
 #include <stdlib.h>
 #include "ace/Date_Time.h"
@@ -33,21 +33,21 @@ History:    201308010930  Ìí¼Ó48¸öµÆÅİ¼ì²âµÄÅäÖÃÊı¾İ¿â±íºÍ±í´¦Àí
 #include "Configure.h"
 #define CNTDOWN_TIME 8
 /*
-ĞÅºÅµÆÑÕÉ«ÀàĞÍÃ¶¾Ù
+ä¿¡å·ç¯é¢œè‰²ç±»å‹æšä¸¾
 */
 enum
 {
-	LAMP_COLOR_RED = 0,  //ºìÉ«µÆ
-	LAMP_COLOR_YELLOW ,  //»ÆÉ«µÆ
-	LAMP_COLOR_GREEN     //ÂÌÉ«µÆ
+	LAMP_COLOR_RED = 0,  //çº¢è‰²ç¯
+	LAMP_COLOR_YELLOW ,  //é»„è‰²ç¯
+	LAMP_COLOR_GREEN     //ç»¿è‰²ç¯
 };
 
 /**************************************************************
 Function:       CManaKernel::CManaKernel
-Description:    ĞÅºÅ»úºËĞÄCManaKernelÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯ºËĞÄ±äÁ¿
+Description:    ä¿¡å·æœºæ ¸å¿ƒCManaKernelç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–æ ¸å¿ƒå˜é‡
 Input:          ucMaxTick                 
-Output:         ÎŞ
-Return:         ÎŞ
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CManaKernel::CManaKernel()
 {
@@ -67,8 +67,8 @@ CManaKernel::CManaKernel()
 	//m_ucStageDynamicMaxGreen = 0x0 ; //ADD 201508171045
 	//m_ucStageDynamicMinGreen = 0x0 ; //ADD 201508171045
 
-	m_pTscConfig = new STscConfig;      //ĞÅºÅ»úÅäÖÃĞÅÏ¢
-	m_pRunData   = new STscRunData;     //ĞÅºÅ»ú¶¯Ì¬²ÎÊıĞÅÏ¢
+	m_pTscConfig = new STscConfig;      //ä¿¡å·æœºé…ç½®ä¿¡æ¯
+	m_pRunData   = new STscRunData;     //ä¿¡å·æœºåŠ¨æ€å‚æ•°ä¿¡æ¯
 	bNextDirec = false ;
 	bTmpPattern = false ;
 	bValidSoftWare = true ;
@@ -80,15 +80,15 @@ CManaKernel::CManaKernel()
 	//ACE_OS::memset(m_pTscConfig->sOverlapPhase,0,MAX_OVERLAP_PHASE*sizeof(SOverlapPhase));
 	ACE_OS::memset(m_pTscConfig , 0 , sizeof(STscConfig) );
 	ACE_OS::memset(m_pRunData , 0 , sizeof(STscRunData) );
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d¡ï¡ï¡ïCManaKernel¡ï¡ï¡ï Init ManaKernel objetc ok!\r\n",__FILE__,__LINE__));
+	ACE_DEBUG((LM_DEBUG,"\n%s:%dâ˜…â˜…â˜…CManaKernelâ˜…â˜…â˜… Init ManaKernel objetc ok!\r\n",__FILE__,__LINE__));
 }
 
 /**************************************************************
 Function:       CManaKernel::~CManaKernel
-Description:    CManaKernelÀàÎö¹¹º¯Êı£¬ÊÍ·ÅÀà±äÁ¿
-Input:          ÎŞ               
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CManaKernelç±»ææ„å‡½æ•°ï¼Œé‡Šæ”¾ç±»å˜é‡
+Input:          æ—                
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CManaKernel::~CManaKernel()
 {
@@ -108,10 +108,10 @@ CManaKernel::~CManaKernel()
 
 /**************************************************************
 Function:       CManaKernel::CreateInstance
-Description:    ´´½¨CManaKernelÀà¾²Ì¬¶ÔÏó		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         CManaKernel¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»ºCManaKernelç±»é™æ€å¯¹è±¡		
+Input:          æ—               
+Output:         æ— 
+Return:         CManaKernelé™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CManaKernel* CManaKernel::CreateInstance()
 {
@@ -123,15 +123,15 @@ CManaKernel* CManaKernel::CreateInstance()
 
 /**************************************************************
 Function:       CManaKernel::InitWorkPara
-Description:    ³õÊ¼»¯CManaKernelºËĞÄÀà²¿·Ö¹¤×÷²ÎÊıºÍÊı¾İ¿â	
-Input:          ÎŞ  ¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    åˆå§‹åŒ–CManaKernelæ ¸å¿ƒç±»éƒ¨åˆ†å·¥ä½œå‚æ•°å’Œæ•°æ®åº“	
+Input:          æ—   â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::InitWorkPara()
 {	
-	ACE_DEBUG((LM_DEBUG,"\n%s:%d¡ï¡ï¡ïInitWorkPara¡ï¡ï¡ï Booting TSC ,initializing kernel parameters! \r\n",__FILE__,__LINE__)); //ADD: 20130523 1053	
-	////²åÈëÄ¬ÈÏÖµµ½Êı¾İ¿â Èç¹ûÊı¾İ¿â±íÎª¿Õ
+	ACE_DEBUG((LM_DEBUG,"\n%s:%dâ˜…â˜…â˜…InitWorkParaâ˜…â˜…â˜… Booting TSC ,initializing kernel parameters! \r\n",__FILE__,__LINE__)); //ADD: 20130523 1053	
+	////æ’å…¥é»˜è®¤å€¼åˆ°æ•°æ®åº“ å¦‚æœæ•°æ®åº“è¡¨ä¸ºç©º
 	UpdateConfig();
 
 	m_pRunData->bNeedUpdate  = false;
@@ -144,7 +144,7 @@ void CManaKernel::InitWorkPara()
 	m_pRunData->bStartFlash  = true;
 	m_pRunData->ucWorkMode   = m_pTscConfig->sSpecFun[FUN_CROSS_TYPE].ucValue ;
 
-	//³õÊ¼»¯µÆÅİ¼ì²âÊı¾İ£¬´ÓÊı¾İ¿âÖĞÈ¡³ö
+	//åˆå§‹åŒ–ç¯æ³¡æ£€æµ‹æ•°æ®ï¼Œä»æ•°æ®åº“ä¸­å–å‡º
 	if(m_pTscConfig->sSpecFun[FUN_LIGHTCHECK].ucValue == 0)
 		m_pRunData->bIsChkLght   = false ;
 	else
@@ -171,10 +171,10 @@ void CManaKernel::InitWorkPara()
 
 /**************************************************************
 Function:       CManaKernel::SelectDataFromDb
-Description:    ´ÓSqliteÊı¾İ¿â»ñÈ¡ĞÅºÅ¼°È«¾ÖÅäÖÃÊı¾İ	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä»Sqliteæ•°æ®åº“è·å–ä¿¡å·åŠå…¨å±€é…ç½®æ•°æ®	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::SelectDataFromDb() 
 {
@@ -217,13 +217,13 @@ void CManaKernel::SelectDataFromDb()
 	GBT_DB::TblCntDownDev tblCntDownDev;     //ADD:201312301518
 	GBT_DB::CntDownDev*     pCntDownDev = NULL;
 	
-	(CDbInstance::m_cGbtTscDb).QueryDetPara(sDetPara);               //¼ì²âÆ÷½á¹¹Ìå²ÎÊı,´Ótbl_system tbl_constant ½øĞĞ²éÑ¯
-	//CDetector::CreateInstance()->SetStatCycle(sDetPara.ucDataCycle);  //Êı¾İ²É¼¯ÖÜÆÚÉèÖÃ
+	(CDbInstance::m_cGbtTscDb).QueryDetPara(sDetPara);               //æ£€æµ‹å™¨ç»“æ„ä½“å‚æ•°,ä»tbl_system tbl_constant è¿›è¡ŒæŸ¥è¯¢
+	//CDetector::CreateInstance()->SetStatCycle(sDetPara.ucDataCycle);  //æ•°æ®é‡‡é›†å‘¨æœŸè®¾ç½®
 
-	ACE_OS::memset(m_pTscConfig , 0 , sizeof(STscConfig) ); //ĞÅºÅ»úÅäÖÃ²ÎÊıÈ«²¿³õÊ¼»¯Îª0
+	ACE_OS::memset(m_pTscConfig , 0 , sizeof(STscConfig) ); //ä¿¡å·æœºé…ç½®å‚æ•°å…¨éƒ¨åˆå§‹åŒ–ä¸º0
 	
 	
-	/*************ÏàÎ»Óë·½ÏòÅäÖÃ±í****************/  //ADD:201310181706
+	/*************ç›¸ä½ä¸æ–¹å‘é…ç½®è¡¨****************/  //ADD:201310181706
 	(CDbInstance::m_cGbtTscDb).QueryPhaseToDirec(tblPhaseToDirec);
 	pPhaseToDirec = tblPhaseToDirec.GetData(ucCount);
 	iIndex = 0;
@@ -234,7 +234,7 @@ void CManaKernel::SelectDataFromDb()
 		iIndex++;
 	}
 
-	/*************Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í±í****************/  //ADD:20130801 15 35
+	/*************é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨è¡¨****************/  //ADD:20130801 15 35
 	(CDbInstance::m_cGbtTscDb).QueryChannelChk(tblChannelChk);
 	pChannelChk = tblChannelChk.GetData(ucCount);
 	iIndex = 0;
@@ -246,7 +246,7 @@ void CManaKernel::SelectDataFromDb()
 
 	}
 
-    /*************µ÷¶È¼Æ»®±í****************/
+    /*************è°ƒåº¦è®¡åˆ’è¡¨****************/
 	(CDbInstance::m_cGbtTscDb).QueryPlan(tblPlan);
 	pPlan = tblPlan.GetData(ucCount);
 	iIndex = 0;
@@ -259,7 +259,7 @@ void CManaKernel::SelectDataFromDb()
 	//ACE_OS::memset(m_pTscConfig->sTimeGroup+iIndex,0,sizeof(GBT_DB::Plan));
 
 
-	/*************Ò»ÌìµÄÊ±¶Î±í»ñÈ¡****************/
+	/*************ä¸€å¤©çš„æ—¶æ®µè¡¨è·å–****************/
 	ACE_Date_Time tvTime(ACE_OS::gettimeofday());	
 	ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb***Year=%d Mon=%d Day=%d WeekDay=%d !\n",__FILE__,__LINE__,tvTime.year(),(Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday()));
 	Byte ucCurScheduleId = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday()); 
@@ -286,7 +286,7 @@ void CManaKernel::SelectDataFromDb()
 	//ACE_OS::memset(m_pTscConfig->sSchedule+iIndex,0,sizeof(SSchedule));
 	
 
-	/*************ÅäÊ±·½°¸±í²Ù×÷****************/
+	/*************é…æ—¶æ–¹æ¡ˆè¡¨æ“ä½œ****************/
 	(CDbInstance::m_cGbtTscDb).QueryPattern(tblPattern);
 	pPattern = tblPattern.GetData(ucCount);
 	iIndex = 0;
@@ -300,7 +300,7 @@ void CManaKernel::SelectDataFromDb()
 
 	
 
-	/************½×¶ÎÅäÊ±±í*************/
+	/************é˜¶æ®µé…æ—¶è¡¨*************/
 	Byte ucScheType = 0;
 	Byte ucSubSche  = 0;
 	(CDbInstance::m_cGbtTscDb).QueryStagePattern(tblStage);
@@ -320,7 +320,7 @@ void CManaKernel::SelectDataFromDb()
 		iIndex++;
 	}
 
-	/********************ÏàÎ»±í*****************/
+	/********************ç›¸ä½è¡¨*****************/
 	(CDbInstance::m_cGbtTscDb).QueryPhase(tblPhase);
 	pPhase = tblPhase.GetData(ucCount);
 	iIndex = 0;
@@ -332,7 +332,7 @@ void CManaKernel::SelectDataFromDb()
 	}
 	//ACE_OS::memset(m_pTscConfig->sPhase+iIndex,0,sizeof(SPhase));
 
-	/********************¸úËæÏàÎ»±í****************/
+	/********************è·Ÿéšç›¸ä½è¡¨****************/
 	(CDbInstance::m_cGbtTscDb).QueryOverlapPhase(tblOverlapPhase);
 	pOverlapPhase = tblOverlapPhase.GetData(ucCount);
 	iIndex = 0;
@@ -344,7 +344,7 @@ void CManaKernel::SelectDataFromDb()
 	}
 	//ACE_OS::memset(m_pTscConfig->sOverlapPhase+iIndex,0,sizeof(SOverlapPhase));
 
-	/********************³åÍ»ÏàÎ»±í****************/
+	/********************å†²çªç›¸ä½è¡¨****************/
 	(CDbInstance::m_cGbtTscDb).QueryCollision(tblCollision);
 	pCollision = tblCollision.GetData(ucCount);
 	iIndex = 0;
@@ -359,7 +359,7 @@ void CManaKernel::SelectDataFromDb()
 	}
 	//ACE_OS::memset(m_pTscConfig->sOverlapPhase+iIndex,0,sizeof(GBT_DB::Collision));
 	
-	/********************Í¨µÀ±í*******************/
+	/********************é€šé“è¡¨*******************/
 	(CDbInstance::m_cGbtTscDb).QueryChannel(tblChannel);
 	pChannel = tblChannel.GetData(ucCount);
 	iIndex = 0;
@@ -374,7 +374,7 @@ void CManaKernel::SelectDataFromDb()
 	
 	
 
-	/**********************µ¥Ôª²ÎÊı Æô¶¯»ÆÉÁ È«ºìÊ±¼ä*******************/
+	/**********************å•å…ƒå‚æ•° å¯åŠ¨é»„é—ª å…¨çº¢æ—¶é—´*******************/
 	Byte ucStartFlash     = 0;
 	Byte ucStartAllRed    = 0;
 	Byte ucRemoteCtrlFlag = 0; 
@@ -383,10 +383,10 @@ void CManaKernel::SelectDataFromDb()
 	m_pTscConfig->sUnit.ucStartFlashTime  = ucStartFlash;
 	m_pTscConfig->sUnit.ucStartAllRedTime = ucStartAllRed;
 	
-	/**********************½µ¼¶Ä£Ê½ ½µ¼¶»ù×¼·½°¸*******************/
+	/**********************é™çº§æ¨¡å¼ é™çº§åŸºå‡†æ–¹æ¡ˆ*******************/
 	(CDbInstance::m_cGbtTscDb).GetDegradeCfg(m_pTscConfig->DegradeMode, m_pTscConfig->DegradePattern);
 
-	/**********************¹«¹²ÖÜÆÚÊ±³¤ Ğ­µ÷ÏàÎ»²î********************/
+	/**********************å…¬å…±å‘¨æœŸæ—¶é•¿ åè°ƒç›¸ä½å·®********************/
 	if ( false == (CDbInstance::m_cGbtTscDb).GetGlobalCycle(m_ucUtcsComCycle) )
 	{
 		m_ucUtcsComCycle = 0; 
@@ -397,7 +397,7 @@ void CManaKernel::SelectDataFromDb()
 	}
 
 	
-	/*********************¼ì²âÆ÷²ÎÊı***************************/
+	/*********************æ£€æµ‹å™¨å‚æ•°***************************/
 	(CDbInstance::m_cGbtTscDb).QueryDetector(tblDetector);
 	pDetector = tblDetector.GetData(ucCount);
 	iIndex = 0;
@@ -409,16 +409,16 @@ void CManaKernel::SelectDataFromDb()
 		{
 			ACE_DEBUG((LM_DEBUG,"%s:%d***SelectDataFromDb*** pDetector->ucDetectorId = %d \n",__FILE__,__LINE__,pDetector->ucDetectorId));
 			ACE_OS::memcpy(m_pTscConfig->sDetector+(pDetector->ucDetectorId-1) , pDetector , sizeof(GBT_DB::Detector));
-			//CDetector::CreateInstance()->m_ucDetError[pDetector->ucDetectorId-1] = DET_NORMAL ; //µ±´æÔÚ¼ì²âÆ÷Ê±£¬Ä¬ÈÏ¹¤×÷×´Ì¬Õı³£
+			//CDetector::CreateInstance()->m_ucDetError[pDetector->ucDetectorId-1] = DET_NORMAL ; //å½“å­˜åœ¨æ£€æµ‹å™¨æ—¶ï¼Œé»˜è®¤å·¥ä½œçŠ¶æ€æ­£å¸¸
 		}
 		
 		pDetector++;
 		iIndex++;
 	}
 	//ACE_OS::memset(m_pTscConfig->sDetector+iIndex , 0 , sizeof(GBT_DB::Detector));
-	SetDetectorPhase();  //¼ì²âÆ÷ÓëÏàÎ»¹ØÏµ
+	SetDetectorPhase();  //æ£€æµ‹å™¨ä¸ç›¸ä½å…³ç³»
 	
-	/*********************ÌØÊâ¹¦ÄÜ¿ªÆô±í***********************/ //ÉèÖÃĞÅºÅ»úÌØÊâ¹¦ÄÜ³õÊ¼»¯²ÎÊı
+	/*********************ç‰¹æ®ŠåŠŸèƒ½å¼€å¯è¡¨***********************/ //è®¾ç½®ä¿¡å·æœºç‰¹æ®ŠåŠŸèƒ½åˆå§‹åŒ–å‚æ•°
 	(CDbInstance::m_cGbtTscDb).QuerySpecFun(tblSpecFun);
 	pSpecFun = tblSpecFun.GetData(ucCount);
 	iIndex   = 0;
@@ -433,11 +433,11 @@ void CManaKernel::SelectDataFromDb()
 		iIndex++;
 	}
 	
-	/********************»ñÈ¡ÅäÖÃµÄµÆ¿Ø°å¸öÊı********************/
+	/********************è·å–é…ç½®çš„ç¯æ§æ¿ä¸ªæ•°********************/
 	//GetUseLampBoard(bLampBoardExit);
 	//CLamp::CreateInstance()->GetLampBoardExit(bLampBoardExit);
 
-	/********************»ñÈ¡Ä£¿é±í ¼ì²âÆ÷°åµÄÅäÖÃÇé¿ö***********/
+	/********************è·å–æ¨¡å—è¡¨ æ£€æµ‹å™¨æ¿çš„é…ç½®æƒ…å†µ***********/
 	//ACE_OS::memset(m_pTscConfig->iDetCfg , 0 , MAX_DET_BOARD*sizeof(int));
 	(CDbInstance::m_cGbtTscDb).QueryModule(tblModule);
 	pModule = tblModule.GetData(ucCount);
@@ -470,7 +470,7 @@ void CManaKernel::SelectDataFromDb()
 	CDetector::CreateInstance()->SelectDetectorBoardCfg(m_pTscConfig->iDetCfg);
 	
 	 
-	/********************»ñÈ¡¼ì²âÆ÷À©Õ¹±í**********************/
+	/********************è·å–æ£€æµ‹å™¨æ‰©å±•è¡¨**********************/
 	(CDbInstance::m_cGbtTscDb).QueryDetExtend(tblDetExtend);
 	pDetExtend = tblDetExtend.GetData(ucCount);
 	iIndex     = 0;
@@ -485,7 +485,7 @@ void CManaKernel::SelectDataFromDb()
 		iIndex++;
 	}
 
-	//CAdaptive::CreateInstance()->SynPara();  //×ÔÊÊÓ¦¿ØÖÆ²ÎÊı
+	//CAdaptive::CreateInstance()->SynPara();  //è‡ªé€‚åº”æ§åˆ¶å‚æ•°
 	(CDbInstance::m_cGbtTscDb).QueryCntDownDev(tblCntDownDev);
 	pCntDownDev = tblCntDownDev.GetData(ucCount);
 	iIndex= 0 ;	
@@ -497,7 +497,7 @@ void CManaKernel::SelectDataFromDb()
 		pCntDownDev++;
 		iIndex++;
 	} 
-	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_STUDY)  //µ¹¼ÆÊ±Éè±¸²ÎÊı
+	if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_STUDY)  //å€’è®¡æ—¶è®¾å¤‡å‚æ•°
 	{
 		CGaCountDown::CreateInstance()->GaUpdateCntDownCfg();
 	}
@@ -509,10 +509,10 @@ void CManaKernel::SelectDataFromDb()
 
 /**************************************************************
 Function:       CManaKernel::SetDetectorPhase
-Description:    ÉèÖÃ¼ì²âÆ÷ÓëÏàÎ»µÄ¶ÔÓ¦¹ØÏµ	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®æ£€æµ‹å™¨ä¸ç›¸ä½çš„å¯¹åº”å…³ç³»	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::SetDetectorPhase()
 {
@@ -554,11 +554,11 @@ void CManaKernel::SetDetectorPhase()
 
 /**************************************************************
 Function:       CManaKernel::UpdateConfig
-Description:    ¸üĞÂĞÅºÅ»ú¾²Ì¬ÅäÖÃ²ÎÊı,´ÓÊı¾İ¿â¼ÓÔØ¸÷¸ö±íµÄĞÅÏ¢µ½
-				ÄÚ´æÖĞ,µ±Êı¾İ¿âµÃµ½¸üĞÂÊ±£¬ÔÚÒ»¸öÖÜÆÚ½áÊøºóµ÷ÓÃ¸Ãº¯Êı
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ›´æ–°ä¿¡å·æœºé™æ€é…ç½®å‚æ•°,ä»æ•°æ®åº“åŠ è½½å„ä¸ªè¡¨çš„ä¿¡æ¯åˆ°
+				å†…å­˜ä¸­,å½“æ•°æ®åº“å¾—åˆ°æ›´æ–°æ—¶ï¼Œåœ¨ä¸€ä¸ªå‘¨æœŸç»“æŸåè°ƒç”¨è¯¥å‡½æ•°
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::UpdateConfig()
 {	
@@ -570,17 +570,17 @@ void CManaKernel::UpdateConfig()
 
 /**************************************************************
 Function:       CManaKernel::DecTime
-Description:    1sÖ´ĞĞÒ»´Î£¬ÔËĞĞÊ±¼ä++ Ö÷Òª¹¦ÄÜÊÇÅĞ¶ÏÊÇ·ñµ½ÁËÏÂÒ»
-				²½Ê±¼ä£¬ÊÇµÄ»°¾Í·¢ËÍTSCÏûÏ¢²½½ø£¬²»ÊÇµÄ»°Ôò½«µ±Ç°²½
-				Ê£ÓàÊ±¼ä¼õÉÙÒ»Ãë
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    1sæ‰§è¡Œä¸€æ¬¡ï¼Œè¿è¡Œæ—¶é—´++ ä¸»è¦åŠŸèƒ½æ˜¯åˆ¤æ–­æ˜¯å¦åˆ°äº†ä¸‹ä¸€
+				æ­¥æ—¶é—´ï¼Œæ˜¯çš„è¯å°±å‘é€TSCæ¶ˆæ¯æ­¥è¿›ï¼Œä¸æ˜¯çš„è¯åˆ™å°†å½“å‰æ­¥
+				å‰©ä½™æ—¶é—´å‡å°‘ä¸€ç§’
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::DecTime()
 {
 	m_bAddTimeCount = true;
-	/*   ÎŞÎı¼ì²âÒªÇó£¬ÒªÔÚ¿ª»úÈ«ºìµÄÇé¿öÏÂ½øĞĞµÆÅİ¼ì²â <<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+	/*   æ— é”¡æ£€æµ‹è¦æ±‚ï¼Œè¦åœ¨å¼€æœºå…¨çº¢çš„æƒ…å†µä¸‹è¿›è¡Œç¯æ³¡æ£€æµ‹ <<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 	if(m_bFinishBoot == false && m_pRunData->uiWorkStatus == ALLRED)
 	{
 		static Byte iChkTime = 0 ;
@@ -603,30 +603,30 @@ void CManaKernel::DecTime()
 	
 	//ACE_DEBUG((LM_DEBUG,"%s:%d	StepNo=%d Steptime=%d elapsetime=%d !\n",__FILE__,__LINE__,m_pRunData->ucStepNo,
 	//	m_pRunData->ucStepTime,m_pRunData->ucElapseTime));		
-	if ( m_bWaitStandard )  //ĞÅºÅ»úÕı´¦ÓÚ»ÆÉÁ-->È«ºì  ÊÖ¶¯ÓÖ½øÈë
+	if ( m_bWaitStandard )  //ä¿¡å·æœºæ­£å¤„äºé»„é—ª-->å…¨çº¢  æ‰‹åŠ¨åˆè¿›å…¥
 	{
-		if ( CTRL_PANEL == m_pRunData->uiCtrl )  //Ãæ°åÊÖ¶¯¿ØÖÆ
+		if ( CTRL_PANEL == m_pRunData->uiCtrl )  //é¢æ¿æ‰‹åŠ¨æ§åˆ¶
 		{
 			return;
 		}
 	}
 	else if ( !m_bWaitStandard )
 	{
-		if ( CTRL_MANUAL == m_pRunData->uiCtrl )  //ÊÖ¶¯¿ØÖÆ
+		if ( CTRL_MANUAL == m_pRunData->uiCtrl )  //æ‰‹åŠ¨æ§åˆ¶
 		{
 			return;
 		}
 		if ( ( CTRL_PANEL == m_pRunData->uiCtrl ) && ( (SIGNALOFF == m_pRunData->uiWorkStatus ) || (ALLRED == m_pRunData->uiWorkStatus) 
-			|| (FLASH == m_pRunData->uiWorkStatus ) ) )  //Ãæ°å¹ØµÆ¡¢È«ºì¡¢»ÆÉÁ
+			|| (FLASH == m_pRunData->uiWorkStatus ) ) )  //é¢æ¿å…³ç¯ã€å…¨çº¢ã€é»„é—ª
 		{
 			return;
 		}
-		if ( (CTRL_PANEL == m_pRunData->uiCtrl) && (0 == m_iTimePatternId ))//|| (250 == m_iTimePatternId)))  //Ãæ°å¿ØÖÆÇÒ·ÇÖ¸¶¨ÅäÊ±·½°¸
+		if ( (CTRL_PANEL == m_pRunData->uiCtrl) && (0 == m_iTimePatternId ))//|| (250 == m_iTimePatternId)))  //é¢æ¿æ§åˆ¶ä¸”éæŒ‡å®šé…æ—¶æ–¹æ¡ˆ
 		{
 			//ACE_DEBUG((LM_DEBUG,"\n%s:%d CTRL_PANEL and m_iTimePatternId=0 or 250\n",__FILE__,__LINE__));
 			return;
 		}
-		if ( CTRL_SECOND_PRIORITY== m_pRunData->uiCtrl )  //´ÎÏß°ë¸ĞÓ¦
+		if ( CTRL_SECOND_PRIORITY== m_pRunData->uiCtrl )  //æ¬¡çº¿åŠæ„Ÿåº”
 		{
 			if(CManaKernel::CreateInstance()->bSecondPriority == false && m_pRunData->ucElapseTime < m_pRunData->ucCycle*3)
 			{
@@ -636,7 +636,7 @@ void CManaKernel::DecTime()
 			else
 			{				
 				if(CManaKernel::CreateInstance()->bSecondPriority == false)
-					CManaKernel::CreateInstance()->bSecondPriority = true ; //3¸öÖÜÆÚ³¬Ê±ºóÅÜÍêÕâ¸öÖÜÆÚµÆÉ«·ÅĞĞ
+					CManaKernel::CreateInstance()->bSecondPriority = true ; //3ä¸ªå‘¨æœŸè¶…æ—¶åè·‘å®Œè¿™ä¸ªå‘¨æœŸç¯è‰²æ”¾è¡Œ
 				//ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bSecondPriorty=%s ucElapseTime=%d\r\n",__FILE__,__LINE__,(CreateInstance()->bSecondPriority == false)?"false":"true",m_pRunData->ucElapseTime);
 			}
 		}	
@@ -650,14 +650,14 @@ void CManaKernel::DecTime()
 		CTscMsgQueue::CreateInstance()->SendMessage(&sMsg,sizeof(sMsg));
 		return ;
 	}		
-	if(m_pRunData->uiCtrl == CTRL_PREANALYSIS  ||m_pRunData->uiCtrl == CTRL_ACTIVATE )//ÊÂÏÈ·ÖÎö¿ØÖÆ
+	if(m_pRunData->uiCtrl == CTRL_PREANALYSIS  ||m_pRunData->uiCtrl == CTRL_ACTIVATE )//äº‹å…ˆåˆ†ææ§åˆ¶
 	{
 		bool bStageFirstStep = false ;
 		int NextStage = (m_pRunData->ucStageNo+1 == m_pRunData->ucStageCount)?0x0:(m_pRunData->ucStageNo+1) ;
 		StepToStage(m_pRunData->ucStepNo,&bStageFirstStep);
-		if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )   //³¤²½ÇÒÎª½×¶ÎµÄµÚÒ»²½ ³¤²½¾ÍÊÇµ±Ç°ÓĞÂÌµÆÁÁ
+		if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )   //é•¿æ­¥ä¸”ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥ é•¿æ­¥å°±æ˜¯å½“å‰æœ‰ç»¿ç¯äº®
 		{		
-			if(m_pRunData->ucStepTime == m_pRunData->ucElapseTime+1) //ÂÌµÆ×îºóÒ»Ãë
+			if(m_pRunData->ucStepTime == m_pRunData->ucElapseTime+1) //ç»¿ç¯æœ€åä¸€ç§’
 			{				
 				//ACE_OS::printf("%s:%d CTRL_PREANALYSIS CurrentStageNo=%d ,CurrentStepNo=%d CurrentStepTime=%d\r\n",__FILE__,__LINE__,m_pRunData->ucStageNo,m_pRunData->ucStepNo,m_pRunData->ucStepTime);
 				Uint32 CurrentllowPhase = m_pRunData->sScheduleTime[m_pRunData->ucStageNo].usAllowPhase ;
@@ -675,7 +675,7 @@ void CManaKernel::DecTime()
 								//ACE_DEBUG((LM_DEBUG,"%s:%d DetectoPhaseID=%d ,DetecId=%d\n"	,__FILE__,__LINE__,iIndex+1,m_sPhaseDet[iIndex].iDetectorId[iDetIndex]));
 								//ACE_OS::printf("%s:%d DetectorId =%d cars from %d to Zero \r\n",__FILE__,__LINE__,m_sPhaseDet[iIndex].iDetectorId[iDetIndex],m_sPhaseDet[iIndex].iDetectorCarNumbers[iDetIndex]);
 								
-								m_sPhaseDet[iIndex].iDetectorCarNumbers[iDetIndex] = 0x0 ; //°Ñ¶ÔÓ¦·ÅĞĞÏàÎ»¼ì²âÆ÷ÅÅ¶Ó³¤¶ÈÇåÁã
+								m_sPhaseDet[iIndex].iDetectorCarNumbers[iDetIndex] = 0x0 ; //æŠŠå¯¹åº”æ”¾è¡Œç›¸ä½æ£€æµ‹å™¨æ’é˜Ÿé•¿åº¦æ¸…é›¶
 								iDetIndex++;
 							}
 						}
@@ -715,7 +715,7 @@ void CManaKernel::DecTime()
 					}
 						if(!bHaveCar)
 						{						
-							//ÏÂÒ»½×¶ÎµÄ²½·¥³¤¶È¶¼Îª0 						
+							//ä¸‹ä¸€é˜¶æ®µçš„æ­¥ä¼é•¿åº¦éƒ½ä¸º0 						
 							Byte NextStageStepNum= m_pRunData->ucStageIncludeSteps[NextStage];
 						//	Byte NextStageStepNo = m_pRunData->ucStepNo+ m_pRunData->ucStageIncludeSteps[m_pRunData->ucStageNo];
 							Byte NextStageStepNo=StageToStep(NextStage);							
@@ -723,9 +723,9 @@ void CManaKernel::DecTime()
 							{
 								m_pRunData->sScheduleTime[NextStage+1].usAllowPhase = m_pRunData->sScheduleTime[NextStage].usAllowPhase|m_pRunData->sScheduleTime[NextStage+1].usAllowPhase;
 										
-								//SetCycleStepInfo(0); //²»¸Ä±ä²½·¥Êı£¬Ö»ÊÇ¶¯Ì¬¸Ä±ä²½·¥ÏàÎ»
+								//SetCycleStepInfo(0); //ä¸æ”¹å˜æ­¥ä¼æ•°ï¼Œåªæ˜¯åŠ¨æ€æ”¹å˜æ­¥ä¼ç›¸ä½
 								Byte NextStageStepNo1=StageToStep(NextStage+1);
-								SetStepInfoWithStage(NextStage+1,&NextStageStepNo1,&(m_pRunData->sScheduleTime[NextStage+1]));// ucStageIndex ×Ó½×¶ÎºÅ
+								SetStepInfoWithStage(NextStage+1,&NextStageStepNo1,&(m_pRunData->sScheduleTime[NextStage+1]));// ucStageIndex å­é˜¶æ®µå·
 								ACE_OS::printf("%s:%d CTRL_PREANALYSIS NextStage+1=%d usAllowPhase=%d\r\n",__FILE__,__LINE__,NextStage+1,m_pRunData->sScheduleTime[NextStage+1].usAllowPhase);
 								for(Byte index =0x0 ; index<NextStageStepNum ;index++)
 								{						
@@ -763,8 +763,8 @@ void CManaKernel::DecTime()
 				int NextCycleMaxTime = TempMin+NextStageCars*m_ucStageDynamicAddGreen[NextStage];
 				int NextStageMinTime = TempMin+(NextStageCars-3)*m_ucStageDynamicAddGreen[NextStage];
 				
-				m_ucStageDynamicMinGreen[NextStage] =(TempMin >NextStageMinTime)? TempMin:NextStageMinTime; //ÏÂ¸ö½×¶Î¶¯Ì¬×îĞ¡ÂÌ				
-				m_ucStageDynamicMaxGreen[NextStage]=NextCycleMaxTime>Max2?Max2:NextCycleMaxTime ;	//±¾½×¶ÎÏÂ¸öÖÜÆÚ¶¯Ì¬×î´óÂÌ
+				m_ucStageDynamicMinGreen[NextStage] =(TempMin >NextStageMinTime)? TempMin:NextStageMinTime; //ä¸‹ä¸ªé˜¶æ®µåŠ¨æ€æœ€å°ç»¿				
+				m_ucStageDynamicMaxGreen[NextStage]=NextCycleMaxTime>Max2?Max2:NextCycleMaxTime ;	//æœ¬é˜¶æ®µä¸‹ä¸ªå‘¨æœŸåŠ¨æ€æœ€å¤§ç»¿
 				m_ucStageDynamicMaxGreen[NextStage] = (m_ucStageDynamicMaxGreen[NextStage]==TempMin)?(TempMin+8):m_ucStageDynamicMaxGreen[NextStage];
 				//m_ucStageDynamicMinGreen[NextStage] = m_ucStageDynamicMinGreen[NextStage]>Max2?
 				
@@ -786,10 +786,10 @@ void CManaKernel::DecTime()
 
 /**************************************************************
 Function:       CManaKernel::GoNextStep
-Description:    Ò»¸ö²½·¥×ßÍê£¬ÇĞ»»µ½ÏÂÒ»¸ö²½·¥
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¸€ä¸ªæ­¥ä¼èµ°å®Œï¼Œåˆ‡æ¢åˆ°ä¸‹ä¸€ä¸ªæ­¥ä¼
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::GoNextStep()
 {
@@ -807,13 +807,13 @@ void CManaKernel::GoNextStep()
 		m_pRunData->ucStepNo++;
 	}
 	
-	//MOD:201309251030 ĞŞ¸ÄÏàÎ»³åÍ»¼ì²âÎ»ÖÃ£¬´ÓÏÂÒ»ÖÜÆÚÒÆµ½ÏÂÒ»²½´¦½øĞĞ¼ì²â
-	if ( InConflictPhase() )  //ÏàÎ»³åÍ»±í ³öÏÖÍ¬Ê±ÁÁµÄÂÌµÆ
+	//MOD:201309251030 ä¿®æ”¹ç›¸ä½å†²çªæ£€æµ‹ä½ç½®ï¼Œä»ä¸‹ä¸€å‘¨æœŸç§»åˆ°ä¸‹ä¸€æ­¥å¤„è¿›è¡Œæ£€æµ‹
+	if ( InConflictPhase() )  //ç›¸ä½å†²çªè¡¨ å‡ºç°åŒæ—¶äº®çš„ç»¿ç¯
 	{			
-		SndMsgLog(LOG_TYPE_GREEN_CONFIG,3,0,0,0); // 3±íÊ¾ÏàÎ»³åÍ» ADD£º201309251130
+		SndMsgLog(LOG_TYPE_GREEN_CONFIG,3,0,0,0); // 3è¡¨ç¤ºç›¸ä½å†²çª ADDï¼š201309251130
 		DealGreenConflict(1);
 		//ACE_DEBUG((LM_DEBUG,"%s:%d InConflictPhase !\n",__FILE__,__LINE__));
-		//CFlashMac::CreateInstance()->FlashForceStart(2) ; //ÂÌ³åÍ»£¬Ç¿ÖÆ»ÆÉÁË¸		
+		//CFlashMac::CreateInstance()->FlashForceStart(2) ; //ç»¿å†²çªï¼Œå¼ºåˆ¶é»„é—ªçƒ		
 
 		m_pRunData->flashType = CTRLBOARD_FLASH_PHASECONFLIC;
 		bDegrade = true ;
@@ -829,7 +829,7 @@ void CManaKernel::GoNextStep()
 	}
 	else if ( m_pRunData->ucStepNo < m_pRunData->ucStepNum )
 	{
-		//´ÓÒÑÓĞµÄ²½·¥±í¿ìËÙ¼ÓÔØÏÂÒ»²½
+		//ä»å·²æœ‰çš„æ­¥ä¼è¡¨å¿«é€ŸåŠ è½½ä¸‹ä¸€æ­¥
 		switch ( m_pRunData->uiCtrl )
 		{
 			case CTRL_WIRELESS:
@@ -860,11 +860,11 @@ void CManaKernel::GoNextStep()
 				break;
 		
 
-			case CTRL_VEHACTUATED:   //¸ĞÓ¦¿ØÖÆ×´Ì¬ÏÂ²½·¥¸Ä±ä
+			case CTRL_VEHACTUATED:   //æ„Ÿåº”æ§åˆ¶çŠ¶æ€ä¸‹æ­¥ä¼æ”¹å˜
 			case CTRL_MAIN_PRIORITY: 
 			case CTRL_SECOND_PRIORITY: 
 				StepToStage(m_pRunData->ucStepNo,&bStageFirstStep);
-				if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )   //³¤²½ÇÒÎª½×¶ÎµÄµÚÒ»²½ ³¤²½¾ÍÊÇµ±Ç°ÓĞÂÌµÆÁÁ
+				if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )   //é•¿æ­¥ä¸”ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥ é•¿æ­¥å°±æ˜¯å½“å‰æœ‰ç»¿ç¯äº®
 				{
 					m_iMinStepTime = GetCurStepMinGreen(m_pRunData->ucStepNo , &m_iMaxStepTime , &m_iAdjustTime  );
 					m_bVehile = true;
@@ -875,10 +875,10 @@ void CManaKernel::GoNextStep()
 				}
 				m_pRunData->ucStepTime = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucStepLen;
 				break;
-			case CTRL_PREANALYSIS: //ÇåÁã·ÅĞÄÏàÎ»¶ÔÓ¦¼ì²âÆ÷ÅÅ¶Ó³¤¶È
+			case CTRL_PREANALYSIS: //æ¸…é›¶æ”¾å¿ƒç›¸ä½å¯¹åº”æ£€æµ‹å™¨æ’é˜Ÿé•¿åº¦
 			case CTRL_ACTIVATE:
 				StepToStage(m_pRunData->ucStepNo,&bStageFirstStep);
-				if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )	 //³¤²½ÇÒÎª½×¶ÎµÄµÚÒ»²½ ³¤²½¾ÍÊÇµ±Ç°ÓĞÂÌµÆÁÁ
+				if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )	 //é•¿æ­¥ä¸”ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥ é•¿æ­¥å°±æ˜¯å½“å‰æœ‰ç»¿ç¯äº®
 				{					
 					m_iMinStepTime = GetCurStepMinGreen(m_pRunData->ucStepNo , &m_iMaxStepTime , &m_iAdjustTime  );
 					m_bVehile = true;
@@ -891,7 +891,7 @@ void CManaKernel::GoNextStep()
 
 				}
 				
-				if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo))	 //³¤²½ÇÒÎª½×¶ÎµÄµÚÒ»²½ ³¤²½¾ÍÊÇµ±Ç°ÓĞÂÌµÆÁÁ
+				if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo))	 //é•¿æ­¥ä¸”ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥ é•¿æ­¥å°±æ˜¯å½“å‰æœ‰ç»¿ç¯äº®
 				{
 					m_pRunData->ucStepTime = m_ucStageDynamicMinGreen[m_pRunData->ucStageNo];
 				}
@@ -910,7 +910,7 @@ void CManaKernel::GoNextStep()
 		}
 		m_pRunData->ucElapseTime = 0;
 		//m_pRunData->ucStepTime = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucStepLen;
-		m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //¸ù¾İ²½·¥ºÅ»ñÈ¡½×¶ÎºÅ
+		m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //æ ¹æ®æ­¥ä¼å·è·å–é˜¶æ®µå·
 
 		CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn
 			,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
@@ -929,10 +929,10 @@ void CManaKernel::GoNextStep()
 
 /**************************************************************
 Function:       CManaKernel::OverCycle
-Description:    Ò»¸öÖÜÆÚ×ßÍê
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¸€ä¸ªå‘¨æœŸèµ°å®Œ
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::OverCycle()
 {
@@ -947,17 +947,17 @@ void CManaKernel::OverCycle()
 		UpdateConfig();
 	}
 	
-	 //Ò»¸öÖÜÆÚ¼ì²âÒ»´Î¼ì²âÆ÷¹¤×÷×´Ì¬ÓÃÓÚ¸ĞÓ¦½µ¼¶ºóÔÙÉı¼¶
+	 //ä¸€ä¸ªå‘¨æœŸæ£€æµ‹ä¸€æ¬¡æ£€æµ‹å™¨å·¥ä½œçŠ¶æ€ç”¨äºæ„Ÿåº”é™çº§åå†å‡çº§
 	CDetector::CreateInstance()->SearchAllStatus(false,true);
-	if ( FLASH == m_pRunData->uiWorkStatus )  //»ÆÉÁÍê ½øÈëÈ«ºì
+	if ( FLASH == m_pRunData->uiWorkStatus )  //é»„é—ªå®Œ è¿›å…¥å…¨çº¢
 	{	
-		if ( m_bSpeStatusTblSchedule )  //Ê±¶Î±í¶¨ÒåµÄ»ÆÉÁ×´Ì¬
+		if ( m_bSpeStatusTblSchedule )  //æ—¶æ®µè¡¨å®šä¹‰çš„é»„é—ªçŠ¶æ€
 		{
 			m_pRunData->uiOldWorkStatus = FLASH;
 			m_pRunData->uiWorkStatus    = STANDARD;
 			m_bVirtualStandard          = true;
 			
-			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** m_bSpeStatusTblSchedule ¡¢ m_bVirtualStandard == true chaned from FLASH to STANDARD !\n",__FILE__,__LINE__));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** m_bSpeStatusTblSchedule ã€ m_bVirtualStandard == true chaned from FLASH to STANDARD !\n",__FILE__,__LINE__));
 		}
 		else
 		{	
@@ -969,17 +969,17 @@ void CManaKernel::OverCycle()
 	}
 	else
 	{
-		if ( m_bSpeStatusTblSchedule )  //Ê±¶Î±í¶¨ÒåµÄ¹ØµÆ»òÕßÈ«ºì
+		if ( m_bSpeStatusTblSchedule )  //æ—¶æ®µè¡¨å®šä¹‰çš„å…³ç¯æˆ–è€…å…¨çº¢
 		{
 			m_pRunData->uiOldWorkStatus = m_pRunData->uiWorkStatus;
 			m_pRunData->uiWorkStatus    = STANDARD;
 			m_bVirtualStandard         = true;
 			
-			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** m_bSpeStatusTblSchedule ¡¢ m_bVirtualStandard == true chaned from %d to STANDARD !\n",__FILE__,__LINE__,m_pRunData->uiWorkStatus));
+			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** m_bSpeStatusTblSchedule ã€ m_bVirtualStandard == true chaned from %d to STANDARD !\n",__FILE__,__LINE__,m_pRunData->uiWorkStatus));
 		}
 
 
-		if ( ALLRED == m_pRunData->uiWorkStatus )  //È«ºìÍê ½øÈë±ê×¼
+		if ( ALLRED == m_pRunData->uiWorkStatus )  //å…¨çº¢å®Œ è¿›å…¥æ ‡å‡†
 		{
 			
 			m_bWaitStandard             = false;
@@ -989,14 +989,14 @@ void CManaKernel::OverCycle()
 			Ulong mRestart = 0 ;
 		(CDbInstance::m_cGbtTscDb).GetSystemData("ucDownloadFlag",mRestart);
 
-		//ÓÃÓÚµÆÅİ¼ì²â£¬ÖØÆğÏµÍ³ºó½øĞĞ¹ÊÕÏÇå³ı¡£ĞèÒªÖØĞÂ½øĞĞÉèÖÃ
+		//ç”¨äºç¯æ³¡æ£€æµ‹ï¼Œé‡èµ·ç³»ç»Ÿåè¿›è¡Œæ•…éšœæ¸…é™¤ã€‚éœ€è¦é‡æ–°è¿›è¡Œè®¾ç½®
 		if(mRestart >0)
 		{
 			#ifdef LINUX
 			usleep(100000);
 			#endif
 			CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_OTHER,2,mRestart,0,0);	
-			(CDbInstance::m_cGbtTscDb).SetSystemData("ucDownloadFlag",0);  // ¹ÊÕÏÇåÁã
+			(CDbInstance::m_cGbtTscDb).SetSystemData("ucDownloadFlag",0);  // æ•…éšœæ¸…é›¶
 		}  			//
 			
 	}
@@ -1004,14 +1004,14 @@ void CManaKernel::OverCycle()
 	
 		if ( (m_pRunData->uiWorkStatus!=FLASH) && (m_pRunData->uiWorkStatus!=ALLRED) && (m_pRunData->uiWorkStatus!=SIGNALOFF) )
 		{
-			//----->¿ªÆôĞòÁĞºÅÑéÖ¤
+			//----->å¼€å¯åºåˆ—å·éªŒè¯
 			bValidSoftWare = VaildSN();
 			if(bValidSoftWare == false)
 			{
 				//pWorkParaManager->SndMsgLog(LOG_TYPE_CAN,0,0,0,0);
 				CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_SYSTEMCONTROL,255);
 				return ;
-			}	//---------<½áÊøĞòÁĞºÅÑéÖ¤/
+			}	//---------<ç»“æŸåºåˆ—å·éªŒè¯/
 			
 			switch ( m_pRunData->uiCtrl )
 			{
@@ -1019,7 +1019,7 @@ void CManaKernel::OverCycle()
 				break;
 			case CTRL_UTCS:
 				ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** UtcsHeartBeat= %d ucCycle =%d\n",__FILE__,__LINE__,m_pRunData->uiUtcsHeartBeat,m_pRunData->ucCycle));
-				if ( (Byte)m_pRunData->uiUtcsHeartBeat >= m_pRunData->ucCycle )  //1¸öÖÜÆÚÃ»ÓĞÊÕµ½ĞÄÌøÁªÍøÖ¸Áî
+				if ( (Byte)m_pRunData->uiUtcsHeartBeat >= m_pRunData->ucCycle )  //1ä¸ªå‘¨æœŸæ²¡æœ‰æ”¶åˆ°å¿ƒè·³è”ç½‘æŒ‡ä»¤
 				{					
 						bUTS = false ;
 						bDegrade = true ;
@@ -1030,7 +1030,7 @@ void CManaKernel::OverCycle()
 							if(m_pTscConfig->DegradeMode >= 5)
 							{
 								m_pRunData->uiCtrl    = CTRL_SCHEDULE;	
-								SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //ÈÕÖ¾¼ÇÂ¼¿ØÖÆ·½Ê½ÇĞ»» ADD?201311041530													
+								SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //æ—¥å¿—è®°å½•æ§åˆ¶æ–¹å¼åˆ‡æ¢ ADD?201311041530													
 								ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl =%d\n"	,__FILE__,__LINE__,CTRL_UTCS,CTRL_SCHEDULE));
 
 								
@@ -1054,12 +1054,12 @@ void CManaKernel::OverCycle()
 							m_pRunData->uiOldCtrl =CTRL_UTCS;
 							m_pRunData->uiCtrl    = CTRL_SCHEDULE;
 							m_pRunData->bNeedUpdate = true;
-							SndMsgLog(LOG_TYPE_OTHER,1,CTRL_UTCS,CTRL_SCHEDULE,1); //ÈÕÖ¾¼ÇÂ¼¿ØÖÆ·½Ê½ÇĞ»» ADD?201311041530
+							SndMsgLog(LOG_TYPE_OTHER,1,CTRL_UTCS,CTRL_SCHEDULE,1); //æ—¥å¿—è®°å½•æ§åˆ¶æ–¹å¼åˆ‡æ¢ ADD?201311041530
 							ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl =%d \n"	,__FILE__,__LINE__,CTRL_UTCS,CTRL_SCHEDULE));
 						}
-						CWirelessCoord::CreateInstance()->SetDegrade() ;   //½µ¼¶ÇåÁãÉèÖÃ  ADD£º201311121430
+						CWirelessCoord::CreateInstance()->SetDegrade() ;   //é™çº§æ¸…é›¶è®¾ç½®  ADDï¼š201311121430
 						CMainBoardLed::CreateInstance()->DoModeLed(true,true);
-						ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** too long no utcs command£¡\n"	,__FILE__,__LINE__));
+						ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** too long no utcs commandï¼\n"	,__FILE__,__LINE__));
 				}
 				break;
 			case CTRL_VEHACTUATED:
@@ -1068,7 +1068,7 @@ void CManaKernel::OverCycle()
 			case CTRL_PREANALYSIS :
 				{
 					bool bHaveDetectors = CDetector::CreateInstance()->HaveDetBoard();
-					if ( !bHaveDetectors||(CTRL_PREANALYSIS != m_pRunData->uiScheduleCtrl&&CTRL_VEHACTUATED != m_pRunData->uiScheduleCtrl&&CTRL_MAIN_PRIORITY!= m_pRunData->uiScheduleCtrl && CTRL_SECOND_PRIORITY!= m_pRunData->uiScheduleCtrl))/*|| !m_bPhaseDetCfg*/  /*²»´æÔÚ¼ì²âÆ÷°å*/
+					if ( !bHaveDetectors||(CTRL_PREANALYSIS != m_pRunData->uiScheduleCtrl&&CTRL_VEHACTUATED != m_pRunData->uiScheduleCtrl&&CTRL_MAIN_PRIORITY!= m_pRunData->uiScheduleCtrl && CTRL_SECOND_PRIORITY!= m_pRunData->uiScheduleCtrl))/*|| !m_bPhaseDetCfg*/  /*ä¸å­˜åœ¨æ£€æµ‹å™¨æ¿*/
 					{
 						ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** bHaveDetectors=%d , or uiCtrl != VEHACTUATED\n",__FILE__,__LINE__,bHaveDetectors));
 						m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;					
@@ -1077,7 +1077,7 @@ void CManaKernel::OverCycle()
 						m_pRunData->bNeedUpdate = true;	
 						bDegrade = true ;	
 						CMainBoardLed::CreateInstance()->DoModeLed(true,true);				
-						SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //ÈÕÖ¾¼ÇÂ¼¿ØÖÆ·½Ê½ÇĞ»» ADD?201311041530
+						SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //æ—¥å¿—è®°å½•æ§åˆ¶æ–¹å¼åˆ‡æ¢ ADD?201311041530
 						ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,m_pRunData->uiCtrl,CTRL_SCHEDULE));
 						break;
 					}
@@ -1095,25 +1095,25 @@ void CManaKernel::OverCycle()
 					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
 					m_pRunData->uiCtrl    = CTRL_SCHEDULE;
 					ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,CTRL_WIRELESS,CTRL_SCHEDULE));
-					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //ÈÕÖ¾¼ÇÂ¼¿ØÖÆ·½Ê½ÇĞ»» ADD?201311041530
+					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //æ—¥å¿—è®°å½•æ§åˆ¶æ–¹å¼åˆ‡æ¢ ADD?201311041530
 				}
 				break;
 			default:
 				iCurTimePatternId = m_pRunData->ucTimePatternId > 0 ? m_pRunData->ucTimePatternId : 1;
 			
 				if ( CTRL_WIRELESS == m_pRunData->uiScheduleCtrl && m_pTscConfig->sTimePattern[iCurTimePatternId-1].ucPhaseOffset < 99 
-					&& CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )  //ÉèÖÃÏàÎ»²î²¢ÇÒ¿ªÆôgps
+					&& CManaKernel::CreateInstance()->m_pTscConfig->sSpecFun[FUN_GPS].ucValue != 0 )  //è®¾ç½®ç›¸ä½å·®å¹¶ä¸”å¼€å¯gps
 				{
 					m_pRunData->uiOldCtrl = m_pRunData->uiCtrl;
 					m_pRunData->uiCtrl    = CTRL_WIRELESS;
-					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //ÈÕÖ¾¼ÇÂ¼¿ØÖÆ·½Ê½ÇĞ»» ADD?201311041530
+					SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,1); //æ—¥å¿—è®°å½•æ§åˆ¶æ–¹å¼åˆ‡æ¢ ADD?201311041530
 				}				
 				break;
 			}
 		}
 		
 		
-		ResetRunData(0);  //Õı³£µÄÖØĞÂ»ñÈ¡¶¯Ì¬²ÎÊı
+		ResetRunData(0);  //æ­£å¸¸çš„é‡æ–°è·å–åŠ¨æ€å‚æ•°
 		
 		m_pRunData->bNeedUpdate = false;
 
@@ -1122,13 +1122,13 @@ void CManaKernel::OverCycle()
 			m_pRunData->bOldLock = false;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***OverCycle*** begin setcyclestepinfo\n",__FILE__,__LINE__));
 
-			SetCycleStepInfo(0); //µ¥µ¥¹¹ÔìÕû¸öÖÜÆÚµÄ²½·¥ĞÅÏ¢¼´¿É
+			SetCycleStepInfo(0); //å•å•æ„é€ æ•´ä¸ªå‘¨æœŸçš„æ­¥ä¼ä¿¡æ¯å³å¯
 		}
 
 		m_pRunData->ucStepNo     = 0;
 		m_pRunData->ucStageNo    = 0;
 		m_pRunData->ucElapseTime = 0;
-		m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //¸ù¾İ²½·¥ºÅ»ñÈ¡½×¶ÎºÅ MOD:201406191430
+		m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //æ ¹æ®æ­¥ä¼å·è·å–é˜¶æ®µå· MOD:201406191430
 		m_pRunData->ucStepTime   = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucStepLen;
 		m_pRunData->ucRunTime    = m_pRunData->ucStepTime;
 	}
@@ -1147,7 +1147,7 @@ void CManaKernel::OverCycle()
 								, iStepLength);
 		CWirelessCoord::CreateInstance()->OverCycle();
 	}
-	else if ( (CTRL_UTCS == m_pRunData->uiCtrl) && (m_ucUtcsComCycle != 0)) //*&& (m_ucUtscOffset != 0)*/ )   //Áª¿Ø±ê×¼Ê± ¼´Ê¹ÏàÎ»²îÎª0Ò²½øĞĞÖÜÆÚÊ±³¤µÄµ÷Õû
+	else if ( (CTRL_UTCS == m_pRunData->uiCtrl) && (m_ucUtcsComCycle != 0)) //*&& (m_ucUtscOffset != 0)*/ )   //è”æ§æ ‡å‡†æ—¶ å³ä½¿ç›¸ä½å·®ä¸º0ä¹Ÿè¿›è¡Œå‘¨æœŸæ—¶é•¿çš„è°ƒæ•´
 	{
 		if ( m_pRunData->ucCycle != m_ucUtcsComCycle )
 		{  
@@ -1204,7 +1204,7 @@ void CManaKernel::OverCycle()
 		case CTRL_SECOND_PRIORITY: 
 		case CTRL_PREANALYSIS:
 			StepToStage(m_pRunData->ucStepNo,&bStageFirstStep);
-			if ( IsLongStep(m_pRunData->ucStepNo) && bStageFirstStep )   //³¤²½ÇÒÎª½×¶ÎµÄµÚÒ»²½
+			if ( IsLongStep(m_pRunData->ucStepNo) && bStageFirstStep )   //é•¿æ­¥ä¸”ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥
 			{  //ACE_DEBUG((LM_DEBUG,"%s:%d  uiCtrl == 7 and islongsetp and bFirstStep and m_bVehile == true!\n",__FILE__,__LINE__));
 				m_iMinStepTime = GetCurStepMinGreen(m_pRunData->ucStepNo , &m_iMaxStepTime , &m_iAdjustTime  );
 				m_bVehile = true;
@@ -1219,7 +1219,7 @@ void CManaKernel::OverCycle()
 				bool bStageFirstStep = false ;
 				int NextStage = (m_pRunData->ucStageNo+1 == m_pRunData->ucStageCount)?0x0:(m_pRunData->ucStageNo+1) ;
 				StepToStage(0,&bStageFirstStep);
-				if ( bStageFirstStep && IsLongStep(0) )	 //³¤²½ÇÒÎª½×¶ÎµÄµÚÒ»²½ ³¤²½¾ÍÊÇµ±Ç°ÓĞÂÌµÆÁÁ
+				if ( bStageFirstStep && IsLongStep(0) )	 //é•¿æ­¥ä¸”ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥ é•¿æ­¥å°±æ˜¯å½“å‰æœ‰ç»¿ç¯äº®
 				{		
 						if((m_pRunData->sScheduleTime[0].ucOption)&0x2)
 						{					
@@ -1260,7 +1260,7 @@ void CManaKernel::OverCycle()
 										//Byte setp0 = 0x0 ;
 										Byte StageStepNo = StageToStep(1);
 										m_pRunData->sScheduleTime[1].usAllowPhase = m_pRunData->sScheduleTime[1].usAllowPhase|m_pRunData->sScheduleTime[0].usAllowPhase;
-										SetStepInfoWithStage(1,&StageStepNo,&(m_pRunData->sScheduleTime[1]));// ucStageIndex ×Ó½×¶ÎºÅ
+										SetStepInfoWithStage(1,&StageStepNo,&(m_pRunData->sScheduleTime[1]));// ucStageIndex å­é˜¶æ®µå·
 										//SetCycleStepInfo(0);
 										for(Byte index = 0x0 ;index< m_pRunData->ucStageIncludeSteps[0];index++)
 										{
@@ -1287,7 +1287,7 @@ void CManaKernel::OverCycle()
 			break;
 		case CTRL_ACTIVATE:
 			ucStageNo = StepToStage(m_pRunData->ucStepNo,&bStageFirstStep);
-			if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )   //³¤²½ÇÒÎª½×¶ÎµÄµÚÒ»²½
+			if ( bStageFirstStep && IsLongStep(m_pRunData->ucStepNo) )   //é•¿æ­¥ä¸”ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥
 			{
 				//m_pRunData->ucStepTime = 
 					//CAdaptive::CreateInstance()->GetStageGreenLen(m_pRunData->ucStepNo,ucStageNo);
@@ -1307,7 +1307,7 @@ void CManaKernel::OverCycle()
 		m_pRunData->bStartFlash = false;
 	}
 	
-	if(m_pRunData->uiCtrl == CTRL_SECOND_PRIORITY || m_pRunData->uiCtrl == CTRL_MAIN_PRIORITY) //Ã¿ÖÜÆÚ·µ»ØÄ¬ÈÏ´ÎÏß¸ĞÓ¦¿ØÖÆÏàÎ»ÎŞ³µÔòÊ±¼äÎª0 ADD:201406191430
+	if(m_pRunData->uiCtrl == CTRL_SECOND_PRIORITY || m_pRunData->uiCtrl == CTRL_MAIN_PRIORITY) //æ¯å‘¨æœŸè¿”å›é»˜è®¤æ¬¡çº¿æ„Ÿåº”æ§åˆ¶ç›¸ä½æ— è½¦åˆ™æ—¶é—´ä¸º0 ADD:201406191430
 	{
 		bSecondPriority = false ; 
 		//ACE_OS::printf("%s:%d CTRL_SECOND_PRIORITY bSecondPriorty=%s steptime=%d\r\n",__FILE__,__LINE__,(CreateInstance()->bSecondPriority == false)?"false":"true",m_pRunData->ucStepTime);
@@ -1316,13 +1316,13 @@ void CManaKernel::OverCycle()
 	
 	//CwpmGetCntDownSecStep();
 	
-	//ÕâÀïÔÚÅäÖÃÎÄ¼şÖĞ¶¨Òå 0 ±íÊ¾ ²»ÆôÓÃ±¸·İµ¥Æ¬»ú£¬1±íÊ¾ ÆôÓÃ±¸·İµ¥Æ¬»ú>>>>>>>>>
+	//è¿™é‡Œåœ¨é…ç½®æ–‡ä»¶ä¸­å®šä¹‰ 0 è¡¨ç¤º ä¸å¯ç”¨å¤‡ä»½å•ç‰‡æœºï¼Œ1è¡¨ç¤º å¯ç”¨å¤‡ä»½å•ç‰‡æœº>>>>>>>>>
 	int backuptruefalse;
 	Configure::CreateInstance()->GetInteger("FUNCTION","BACKUP",backuptruefalse);
 	if(backuptruefalse == 1)
 	{
-	//lastUcTimePatternId ÉÏÒ»¸öÅäÊ±ºÅÊÇ·ñÓëµ±Ç°µÄÅäÊ±ºÅÒ»Ñù  
-	//ÕâÀïÖ÷Òª¶ÔÍ¬ÑùµÄ·½°¸²»½øĞĞ²½·¥±í±¸·İµ½µ¥Æ¬»ú¡£
+	//lastUcTimePatternId ä¸Šä¸€ä¸ªé…æ—¶å·æ˜¯å¦ä¸å½“å‰çš„é…æ—¶å·ä¸€æ ·  
+	//è¿™é‡Œä¸»è¦å¯¹åŒæ ·çš„æ–¹æ¡ˆä¸è¿›è¡Œæ­¥ä¼è¡¨å¤‡ä»½åˆ°å•ç‰‡æœºã€‚
 		if(lastUcTimePatternId != m_pRunData->ucTimePatternId)
 		{			
 			ACE_DEBUG((LM_DEBUG,"%s:%d<<<<<OverCycle<<<<< SCM backup LastUcTimePatternId =%d,m_pRunData->ucTimePatternId=%d\n",__FILE__,__LINE__,lastUcTimePatternId,m_pRunData->ucTimePatternId));
@@ -1341,10 +1341,10 @@ void CManaKernel::OverCycle()
 
 /**************************************************************
 Function:       CManaKernel::SetCycleBit
-Description:    ÉèÖÃÖÜÆÚÎ»
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®å‘¨æœŸä½
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::SetCycleBit(bool bSetCycle)
 {
@@ -1355,10 +1355,10 @@ void CManaKernel::SetCycleBit(bool bSetCycle)
 
 /**************************************************************
 Function:       CManaKernel::CwpmGetCntDownSecStep
-Description:    ·¢ËÍµ¹¼ÆÊ±ĞÅÏ¢
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å‘é€å€’è®¡æ—¶ä¿¡æ¯
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::CwpmGetCntDownSecStep()
 {
@@ -1380,16 +1380,16 @@ void CManaKernel::CwpmGetCntDownSecStep()
 
 /**************************************************************
 Function:       CManaKernel::ResetRunData
-Description:    ÖØĞÂÉèÖÃĞÅºÅ»ú¶¯Ì¬²ÎÊı,Õı³£Ò»¸öÖÜÆÚÒ»´Î,¸Ä±äĞÅºÅ»ú
-			×´Ì¬µÄÊ±ºòÒ²»áµ÷ÓÃ
-Input:          ucTime :  »ÆÉÁ»òÈ«ºìµÄÊ±¼ä           
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    é‡æ–°è®¾ç½®ä¿¡å·æœºåŠ¨æ€å‚æ•°,æ­£å¸¸ä¸€ä¸ªå‘¨æœŸä¸€æ¬¡,æ”¹å˜ä¿¡å·æœº
+			çŠ¶æ€çš„æ—¶å€™ä¹Ÿä¼šè°ƒç”¨
+Input:          ucTime :  é»„é—ªæˆ–å…¨çº¢çš„æ—¶é—´           
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::ResetRunData(Byte ucTime)
 {
 
-	if ( FLASH == m_pRunData->uiWorkStatus )// ³õÊ¼»¯ÖµÎª CTRL_SCHEDULE;
+	if ( FLASH == m_pRunData->uiWorkStatus )// åˆå§‹åŒ–å€¼ä¸º CTRL_SCHEDULE;
 	{
 		if ( m_bSpeStatusTblSchedule )
 		{
@@ -1413,7 +1413,7 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		m_pRunData->ucStageNo    = 0;
 		m_pRunData->ucStageCount = 1;
 		
-		if ( m_bSpePhase )  //ÌØ¶¨ÏàÎ»ÂÌÉÁ
+		if ( m_bSpePhase )  //ç‰¹å®šç›¸ä½ç»¿é—ª
 		{
 			m_bSpePhase = false;
 			for ( int i=0; i<MAX_LAMP; i++ )
@@ -1429,17 +1429,17 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		else
 		{
 			ACE_OS::memset( &m_pRunData->sStageStepInfo[0] , 0 , sizeof(SStepInfo) );
-			/******************* »ÆÉÁÖ®Ç°£¬·¢ËÍÏ¨µÆĞÅºÅ£¬±ÜÃâ»ÆÉÁ²»ÕûÆë**************************************/
+			/******************* é»„é—ªä¹‹å‰ï¼Œå‘é€ç†„ç¯ä¿¡å·ï¼Œé¿å…é»„é—ªä¸æ•´é½**************************************/
 			CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[0].ucLampOn, m_pRunData->sStageStepInfo[0].ucLampFlash);
 			CLampBoard::CreateInstance()->SendLamp();
-			/******************* »ÆÉÁÖ®Ç°£¬·¢ËÍÏ¨µÆĞÅºÅ£¬±ÜÃâ»ÆÉÁ²»ÕûÆë**************************************/
+			/******************* é»„é—ªä¹‹å‰ï¼Œå‘é€ç†„ç¯ä¿¡å·ï¼Œé¿å…é»„é—ªä¸æ•´é½**************************************/
 			m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;
 			SetLampColor(1);			
 		}
 		
 		m_bSpeStatus = true;
 	}
-	else if ( m_pRunData->uiWorkStatus == ALLRED )  //È«ºì
+	else if ( m_pRunData->uiWorkStatus == ALLRED )  //å…¨çº¢
 	{
 		if ( m_bSpeStatusTblSchedule )
 		{
@@ -1467,7 +1467,7 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		SetLampColor(2);
 		m_bSpeStatus = true;
 	}
-	else if ( m_pRunData->uiWorkStatus == SIGNALOFF )  //¹ØµÆ
+	else if ( m_pRunData->uiWorkStatus == SIGNALOFF )  //å…³ç¯
 	{
 		if ( m_bSpeStatusTblSchedule )
 		{
@@ -1486,11 +1486,11 @@ void CManaKernel::ResetRunData(Byte ucTime)
 		m_pRunData->sStageStepInfo[0].ucStepLen = m_pRunData->ucStepTime;	
 		m_bSpeStatus = true;
 	}
-	else if ( m_pRunData->uiWorkStatus == STANDARD )  //±ê×¼
+	else if ( m_pRunData->uiWorkStatus == STANDARD )  //æ ‡å‡†
 	{
 		ACE_DEBUG((LM_DEBUG,"\n%s:%d***ResetRunData*** When uiWorkStatus == STANDARD,call GetRunDataStandard()\n" ,__FILE__,__LINE__));
 		
-		GetRunDataStandard(); //Õı³£µØ¹¹Ôì¶¯Ì¬Êı¾İ
+		GetRunDataStandard(); //æ­£å¸¸åœ°æ„é€ åŠ¨æ€æ•°æ®
 		m_bSpeStatus = false;
 		
 	}
@@ -1500,12 +1500,12 @@ void CManaKernel::ResetRunData(Byte ucTime)
 
 /**************************************************************
 Function:       CManaKernel::GetRunDataStandard
-Description:    ±ê×¼Çé¿öÏÂ£¬Õı³£Âß¼­µÄ»ñÈ¡¶¯Ì¬ĞÅÏ¢ ¸ù¾İĞèÒªÖØĞÂ¼Ó
-				ÔØÊ±¶Î±í  »ñÈ¡ÅäÊ±·½°¸ºÅ »ñÈ¡½×¶ÎÅäÊ±±íºÅ,»ñÈ¡½×
-				¶ÎĞÅÏ¢
-Input:          ÎŞ          
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ ‡å‡†æƒ…å†µä¸‹ï¼Œæ­£å¸¸é€»è¾‘çš„è·å–åŠ¨æ€ä¿¡æ¯ æ ¹æ®éœ€è¦é‡æ–°åŠ 
+				è½½æ—¶æ®µè¡¨  è·å–é…æ—¶æ–¹æ¡ˆå· è·å–é˜¶æ®µé…æ—¶è¡¨å·,è·å–é˜¶
+				æ®µä¿¡æ¯
+Input:          æ—           
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::GetRunDataStandard()
 {
@@ -1516,7 +1516,7 @@ void CManaKernel::GetRunDataStandard()
 	if(ucDay == 0)
 		ucDay = tvTime.day();
 	
-	if ( m_pRunData->bNeedUpdate || (0==tvTime.hour() && tvTime.day() !=ucDay ) )  //ÏÂÒ»Ìì,¿ÉÄÜĞèÒªÖØĞÂ¼ÓÔØÊ±¶Î±íĞÅÏ¢
+	if ( m_pRunData->bNeedUpdate || (0==tvTime.hour() && tvTime.day() !=ucDay ) )  //ä¸‹ä¸€å¤©,å¯èƒ½éœ€è¦é‡æ–°åŠ è½½æ—¶æ®µè¡¨ä¿¡æ¯
 	{
 		bNewDay = true;
 		if( m_pRunData->bNeedUpdate)
@@ -1530,12 +1530,12 @@ void CManaKernel::GetRunDataStandard()
 
 	if ( bNewDay )
 	{
-		//µ±Êı¾İ¿âÊı¾İÊÖ¶¯ĞèÒªÖØĞÂ¼ÓÔØ»òÕßĞÂµÄÒ»Ìì£¬ÖØĞÂ»ñÈ¡Ê±¶Î±í
+		//å½“æ•°æ®åº“æ•°æ®æ‰‹åŠ¨éœ€è¦é‡æ–°åŠ è½½æˆ–è€…æ–°çš„ä¸€å¤©ï¼Œé‡æ–°è·å–æ—¶æ®µè¡¨
 		ucCurScheduleId = GetScheduleId((Byte)tvTime.month(),(Byte)tvTime.day(),(Byte)tvTime.weekday());  
 		
 		if (ucCurScheduleId != m_pRunData->ucScheduleId)
 		{
-			//ÖØĞÂ´ÓÊı¾İ¿â¼ÓÔØ1ÌìÊ±¶Î±íĞÅÏ¢ 
+			//é‡æ–°ä»æ•°æ®åº“åŠ è½½1å¤©æ—¶æ®µè¡¨ä¿¡æ¯ 
 			unsigned short usCount = 0;
 			int iIndex   = 0;
 			GBT_DB::TblSchedule tblSchedule;
@@ -1555,47 +1555,47 @@ void CManaKernel::GetRunDataStandard()
 			
 		}
 	}			
-		//¸ù¾İÊ±¶ÎĞÅÏ¢ÖØĞÂ»ñÈ¡ÅäÊ±·½°¸ºÅ
+		//æ ¹æ®æ—¶æ®µä¿¡æ¯é‡æ–°è·å–é…æ—¶æ–¹æ¡ˆå·
 		Byte ucCurCtrl          = m_pRunData->uiCtrl;
 		Byte ucCurStatus        = m_pRunData->uiWorkStatus;
 		Byte ucCurTimePatternId = 0 ;
 		m_pRunData->ucScheduleId = ucCurScheduleId ;
-		// º¯Êı¸ù¾İµ±Ç°Ê±¼ä·ÖÖÓÊı»ñµÃÅäÊ±·½°¸ºÅ,¿ØÖÆ·½Ê½,×´Ì¬
+		// å‡½æ•°æ ¹æ®å½“å‰æ—¶é—´åˆ†é’Ÿæ•°è·å¾—é…æ—¶æ–¹æ¡ˆå·,æ§åˆ¶æ–¹å¼,çŠ¶æ€
 		ucCurTimePatternId = GetTimePatternId( ucCurScheduleId , &ucCurCtrl , &ucCurStatus );
-		//ÖØĞÂÉèÖÃÊ±¶Î±í¿ØÖÆ·½Ê½²ÎÊı
+		//é‡æ–°è®¾ç½®æ—¶æ®µè¡¨æ§åˆ¶æ–¹å¼å‚æ•°
 		m_pRunData->uiScheduleCtrl  = ucCurCtrl;
 		if(m_pRunData->uiScheduleCtrl == CTRL_SCHEDULE && m_pRunData->uiCtrl ==CTRL_SCHEDULE&& bDegrade == true)
 		{
-			//ADD 20150120 ½µ¼¶ºóÊ±¶ÎÇĞ»»µ½¶àÊ±¶ÎÉı¼¶
+			//ADD 20150120 é™çº§åæ—¶æ®µåˆ‡æ¢åˆ°å¤šæ—¶æ®µå‡çº§
 			ACE_OS::printf("%s:%d Now changed to CTRL_SCHEDULE ,bDegrade changed to false !\n",__FILE__,__LINE__);
 			bDegrade = false ;
 		}
 
-		//ÓĞÉèÖÃÌØ¶¨·½°¸
+		//æœ‰è®¾ç½®ç‰¹å®šæ–¹æ¡ˆ
 		if(bTmpPattern == true  && m_iTimePatternId != 0)
 		{
 			ucCurTimePatternId = m_iTimePatternId;		
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Set m_iTimePatternId = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
 		}		  
-		 //¿ØÖÆ·½Ê½¸Ä±ä
+		 //æ§åˆ¶æ–¹å¼æ”¹å˜
 		if ( ucCurCtrl != m_pRunData->uiCtrl) 
 		{
 			SwitchCtrl(ucCurCtrl); 				
 		//	ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Schedule Table Control Mode Changed from %d to %d !\n" ,__FILE__,__LINE__,m_pRunData->uiCtrl,ucCurCtrl));
 		}
 	
-	//»ñÈ¡½×¶ÎÅäÊ±±í
+	//è·å–é˜¶æ®µé…æ—¶è¡¨
 	 if(m_pRunData->bNeedUpdate || ucCurTimePatternId != m_pRunData->ucTimePatternId ||m_pRunData->uiCtrl == CTRL_PREANALYSIS)
 	 {		
 		m_pRunData->ucTimePatternId = ucCurTimePatternId;
 		
-		//»ñÈ¡ÅäÊ±½×¶Î±íºÅ
+		//è·å–é…æ—¶é˜¶æ®µè¡¨å·
 		Byte ucCurScheduleTimeId = GetScheduleTimeId(ucCurTimePatternId,m_ucUtcsComCycle,m_ucUtscOffset); 
 				
 		if ( m_pRunData->bNeedUpdate|| (ucCurScheduleTimeId != m_pRunData->ucScheduleTimeId) ||m_pRunData->uiCtrl == CTRL_PREANALYSIS )
 		{
 			m_pRunData->ucScheduleTimeId = ucCurScheduleTimeId;
-			//ÖØĞÂ¼ÓÔØ¶¯Ì¬Êı¾İµÄ½×¶ÎÅäÊ±ĞÅÏ¢sScheduleTime
+			//é‡æ–°åŠ è½½åŠ¨æ€æ•°æ®çš„é˜¶æ®µé…æ—¶ä¿¡æ¯sScheduleTime
 			if(!GetSonScheduleTime(ucCurScheduleTimeId))
 			{
 				bDegrade = true ;
@@ -1610,7 +1610,7 @@ void CManaKernel::GetRunDataStandard()
 			
 		}
 	}
-	else if ( m_bSpeStatus && STANDARD == ucCurStatus)  //ÓÉÌØÊâ×´Ì¬-->STANDARD ĞèÒªÖØĞÂ»ñÈ¡²ÎÊı
+	else if ( m_bSpeStatus && STANDARD == ucCurStatus)  //ç”±ç‰¹æ®ŠçŠ¶æ€-->STANDARD éœ€è¦é‡æ–°è·å–å‚æ•°
 	{
 		Byte ucCurScheduleTimeId = GetScheduleTimeId(ucCurTimePatternId,m_ucUtcsComCycle,m_ucUtscOffset);
 
@@ -1618,17 +1618,17 @@ void CManaKernel::GetRunDataStandard()
 		m_pRunData->ucScheduleTimeId = ucCurScheduleTimeId;
 		GetSonScheduleTime(ucCurScheduleTimeId);
 		SetCycleStepInfo(0);
-		ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** ReConstruct every step info,when no manual update database and PatterId  not changed but from m_bSpeStatus changed to STANDARD!£\\n" ,__FILE__,__LINE__));
+		ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** ReConstruct every step info,when no manual update database and PatterId  not changed but from m_bSpeStatus changed to STANDARD!î–¢\n" ,__FILE__,__LINE__));
 				
 	}
-	if ( ucCurStatus != m_pRunData->uiWorkStatus && m_pRunData->uiCtrl != CTRL_UTCS)  //¹¤×÷×´Ì¬¸Ä±ä ÁªÍø¿ØÖÆÊ±ºò²»ÉÁ¹â
+	if ( ucCurStatus != m_pRunData->uiWorkStatus && m_pRunData->uiCtrl != CTRL_UTCS)  //å·¥ä½œçŠ¶æ€æ”¹å˜ è”ç½‘æ§åˆ¶æ—¶å€™ä¸é—ªå…‰
 	{		
 		ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** Status changed from %d to %d !\n" ,__FILE__,__LINE__,m_pRunData->uiWorkStatus,ucCurStatus));
 		SwitchStatus(ucCurStatus);
 	}
 	else if ( m_bVirtualStandard && (STANDARD == ucCurStatus) ) 
 	{
-		//STANDARD(FLASH¡¢ALLRED¡¢SINGLEALL) --> STANDARD
+		//STANDARD(FLASHã€ALLREDã€SINGLEALL) --> STANDARD
 		
 		ACE_DEBUG((LM_DEBUG,"%s:%d***GetRunDataStandard*** m_bVirtualStandard ==true ,uiWorkStatus =%d uiOldWorkStatus=%d \n" ,__FILE__,__LINE__,m_pRunData->uiWorkStatus,m_pRunData->uiOldWorkStatus));
 		m_pRunData->uiWorkStatus = m_pRunData->uiOldWorkStatus;
@@ -1636,7 +1636,7 @@ void CManaKernel::GetRunDataStandard()
 		SwitchStatus(ucCurStatus);
 	}
 	
-	if(m_pRunData->uiCtrl == CTRL_PREANALYSIS) //³õÊ¼»¯¶¯Ì¬×îĞ¡ÂÌ×î´óÂÌ
+	if(m_pRunData->uiCtrl == CTRL_PREANALYSIS) //åˆå§‹åŒ–åŠ¨æ€æœ€å°ç»¿æœ€å¤§ç»¿
 	{
 		if(m_ucStageDynamicMinGreen[0] ==0x0 && m_ucStageDynamicMaxGreen[0] ==0x0)
 		{
@@ -1661,16 +1661,16 @@ void CManaKernel::GetRunDataStandard()
 
 /**************************************************************
 Function:       CManaKernel::GetScheduleId
-Description:    ¸ù¾İÔÂ¡¢ÈÕ¡¢ĞÇÆÚ»ñÈ¡µ±Ç°µÄÊ±¶Î±íºÅ
-Input:            ucWeek £º ×Ö½ÚÎ»0²»ÓÃ£¬×Ö½ÚÎ»1´ú±íÖÜÒ»£¬ÒÀ´ÎÀàÍÆ£¬×Ö½ÚÎ»7´ú±íÖÜÈÕ
-			ucMonth £º×Ö½ÚÎ»0²»ÓÃ£¬×Ö½ÚÎ»1±íÊ¾1ÔÂ£¬ÒÀ´ÎÀàÍÆ£¬×Ö½ÚÎ»12´ú±í12ÔÂ 
-			ucDay   £º×Ö½ÚÎ»0²»ÓÃ£¬×Ö½ÚÎ»1±íÊ¾1ºÃ£¬ÒÀ´ÎÀàÍÆ£¬×Ö½ÚÎ»31´ú±í31ºÅ      
-Output:         ÎŞ
-Return:         µ±ÈÕµ½Ê±¶Î±íºÅ£¬ÈôÃ»ÓĞ²éÑ¯µ½Ôò·µ»Ø1
+Description:    æ ¹æ®æœˆã€æ—¥ã€æ˜ŸæœŸè·å–å½“å‰çš„æ—¶æ®µè¡¨å·
+Input:            ucWeek ï¼š å­—èŠ‚ä½0ä¸ç”¨ï¼Œå­—èŠ‚ä½1ä»£è¡¨å‘¨ä¸€ï¼Œä¾æ¬¡ç±»æ¨ï¼Œå­—èŠ‚ä½7ä»£è¡¨å‘¨æ—¥
+			ucMonth ï¼šå­—èŠ‚ä½0ä¸ç”¨ï¼Œå­—èŠ‚ä½1è¡¨ç¤º1æœˆï¼Œä¾æ¬¡ç±»æ¨ï¼Œå­—èŠ‚ä½12ä»£è¡¨12æœˆ 
+			ucDay   ï¼šå­—èŠ‚ä½0ä¸ç”¨ï¼Œå­—èŠ‚ä½1è¡¨ç¤º1å¥½ï¼Œä¾æ¬¡ç±»æ¨ï¼Œå­—èŠ‚ä½31ä»£è¡¨31å·      
+Output:         æ— 
+Return:         å½“æ—¥åˆ°æ—¶æ®µè¡¨å·ï¼Œè‹¥æ²¡æœ‰æŸ¥è¯¢åˆ°åˆ™è¿”å›1
 ***************************************************************/
 Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 {
-	//°´ÈÕ ½Ú¼ÙÈÕ ÌØ¶¨ÔÂ + ÌØ¶¨ÈÕ + ÖÜÈ«Ñ¡
+	//æŒ‰æ—¥ èŠ‚å‡æ—¥ ç‰¹å®šæœˆ + ç‰¹å®šæ—¥ + å‘¨å…¨é€‰
 	//ACE_DEBUG((LM_DEBUG,"%s:%d***GetScheduleId*** ucId= %d, ucScheduledId = %d,month = %d ,day = %u ,week = %d \n" ,__FILE__,__LINE__,m_pTscConfig->sTimeGroup[0].ucId,m_pTscConfig->sTimeGroup[0].ucScheduleId,m_pTscConfig->sTimeGroup[0].usMonth,m_pTscConfig->sTimeGroup[0].uiDayWithMonth,m_pTscConfig->sTimeGroup[0].ucDayWithWeek));
 	
 	for (int i=0; i<MAX_TIMEGROUP; i++ )
@@ -1698,11 +1698,11 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 		}
 		else
 		{
-			break;  //Ã»ÓĞ¸ÃÌìµÄÊ±¼ä·½°¸
+			break;  //æ²¡æœ‰è¯¥å¤©çš„æ—¶é—´æ–¹æ¡ˆ
 		}
 	}
 
-	//°´ÖÜ£ºÈ«ÔÂ   + È«ÈÕ   + ÌØ¶¨ÖÜ
+	//æŒ‰å‘¨ï¼šå…¨æœˆ   + å…¨æ—¥   + ç‰¹å®šå‘¨
 	for (int i=0; i<MAX_TIMEGROUP; i++ )
 	{	
 		if ( m_pTscConfig->sTimeGroup[i].ucId != 0 )
@@ -1713,7 +1713,7 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 				if ( (m_pTscConfig->sTimeGroup[i].uiDayWithMonth & 0xfffffffe) == 0xfffffffe )
 				{
 					if(ucWeek ==0)
-						ucWeek = 7 ;  //ACE ÖÜÈÕÖµÎ»0
+						ucWeek = 7 ;  //ACE å‘¨æ—¥å€¼ä½0
 					if ((((m_pTscConfig->sTimeGroup[i].ucDayWithWeek)>>ucWeek) & 0x1)
 						&& ( ( m_pTscConfig->sTimeGroup[i].ucDayWithWeek & 0xfe) != 0xfe ) )
 					{
@@ -1729,11 +1729,11 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 		}
 		else
 		{
-			break;  //Ã»ÓĞ¸ÃÌìµÄÊ±¼ä·½°¸
+			break;  //æ²¡æœ‰è¯¥å¤©çš„æ—¶é—´æ–¹æ¡ˆ
 		}
 	}
 
-	//°´ÔÂ£ºÌØ¶¨ÔÂ + È«ÈÕ   + È«ÖÜ
+	//æŒ‰æœˆï¼šç‰¹å®šæœˆ + å…¨æ—¥   + å…¨å‘¨
 	for (int i=0; i<MAX_TIMEGROUP; i++ )
 	{	
 		if ( m_pTscConfig->sTimeGroup[i].ucId != 0 )
@@ -1758,22 +1758,22 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 		}
 		else
 		{
-			break;  //Ã»ÓĞ¸ÃÌìµÄÊ±¼ä·½°¸
+			break;  //æ²¡æœ‰è¯¥å¤©çš„æ—¶é—´æ–¹æ¡ˆ
 		}
 	}
 
-	//ÆäËû£ºÌØ¶¨ÔÂ + ÌØ¶¨ÈÕ + ÌØ¶¨ÖÜ
+	//å…¶ä»–ï¼šç‰¹å®šæœˆ + ç‰¹å®šæ—¥ + ç‰¹å®šå‘¨
 	for (int i=0; i<MAX_TIMEGROUP; i++ )
 	{	
 		if ( m_pTscConfig->sTimeGroup[i].ucId != 0 )
 		{
 			
-			if ( (m_pTscConfig->sTimeGroup[i].usMonth>>ucMonth) &0x1 )//ÔÂ·İÕıÈ· b1:1ÔÂ b12:12
+			if ( (m_pTscConfig->sTimeGroup[i].usMonth>>ucMonth) &0x1 )//æœˆä»½æ­£ç¡® b1:1æœˆ b12:12
 			{
 				if(ucWeek ==0)     //MOD:201403311117
-					ucWeek = 7 ;  //ACE ÖÜÈÕÖµÎ»0
-				if ( ( (m_pTscConfig->sTimeGroup[i].ucDayWithWeek>>(ucWeek)) & 0x1 ) //b1£ºÖÜÈÕ b2£ºÖÜ1 
-					&& ( (m_pTscConfig->sTimeGroup[i].uiDayWithMonth>>ucDay) & 0x1 ) )  //b1:1ºÅ b2
+					ucWeek = 7 ;  //ACE å‘¨æ—¥å€¼ä½0
+				if ( ( (m_pTscConfig->sTimeGroup[i].ucDayWithWeek>>(ucWeek)) & 0x1 ) //b1ï¼šå‘¨æ—¥ b2ï¼šå‘¨1 
+					&& ( (m_pTscConfig->sTimeGroup[i].uiDayWithMonth>>ucDay) & 0x1 ) )  //b1:1å· b2
 				{
 				//	ACE_DEBUG((LM_DEBUG,"%s:%d sTimeGroup[%d].ucId=%d\n",__FILE__,__LINE__,i,m_pTscConfig->sTimeGroup[i].ucId));
 						
@@ -1785,24 +1785,24 @@ Byte CManaKernel::GetScheduleId(Byte ucMonth,Byte ucDay , Byte ucWeek)
 		}
 		else
 		{
-			break;  //Ã»ÓĞ¸ÃÌìµÄÊ±¼ä·½°¸
+			break;  //æ²¡æœ‰è¯¥å¤©çš„æ—¶é—´æ–¹æ¡ˆ
 		}
 	}
 	ACE_OS::printf("%s:%d***GetScheduleId*** Cant get ScheduleId from DB ,Default return 1!\n",__FILE__,__LINE__);
 	
 	m_pRunData->ucPlanId = 0 ;
-	return 1; //Ä¬ÈÏ·µ»ØÊ±¶Î±í1
+	return 1; //é»˜è®¤è¿”å›æ—¶æ®µè¡¨1
 }
 
 
 
 /**************************************************************
 Function:       CManaKernel::GetTimePatternId
-Description:    ¸ù¾İÔÂ¡¢ÈÕ¡¢ĞÇÆÚ»ñÈ¡µ±Ç°µÄÊ±¶Î±íºÅ
-Input:          ucScheduleId £ºÊ±¶Î±íºÅ       
-Output:         ucCtrl	 £º µ±Ç°¿ØÖÆÄ£Ê½
-			ucStatus £º µ±Ç°¹¤×÷×´
-Return:         ÅäÊ±·½°¸ºÅ 
+Description:    æ ¹æ®æœˆã€æ—¥ã€æ˜ŸæœŸè·å–å½“å‰çš„æ—¶æ®µè¡¨å·
+Input:          ucScheduleId ï¼šæ—¶æ®µè¡¨å·       
+Output:         ucCtrl	 ï¼š å½“å‰æ§åˆ¶æ¨¡å¼
+			ucStatus ï¼š å½“å‰å·¥ä½œçŠ¶
+Return:         é…æ—¶æ–¹æ¡ˆå· 
 ***************************************************************/
 Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucStatus )
 {	
@@ -1816,7 +1816,7 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 	{		
 		if ( m_pTscConfig->sSchedule[iIndex].ucId != 0 && (m_pTscConfig->sSchedule[iIndex].ucEventId != 0 ) )
 		{
-			if ( m_pTscConfig->sSchedule[iIndex+1].ucId == ucScheduleId )//ÅĞ¶ÏÊÇ·ñµ½ÁË×îºóÒ»ÌõÊ±¶Î
+			if ( m_pTscConfig->sSchedule[iIndex+1].ucId == ucScheduleId )//åˆ¤æ–­æ˜¯å¦åˆ°äº†æœ€åä¸€æ¡æ—¶æ®µ
 			{				
 				if ((CompareTime(m_pTscConfig->sSchedule[iIndex].ucHour,m_pTscConfig->sSchedule[iIndex].ucMin ,
 								(Byte)tvTime.hour(),(Byte)tvTime.minute()) )
@@ -1833,14 +1833,14 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 				}
 			}
 		}
-		else //Ó¦¸ÃÌáÇ°È¥
+		else //åº”è¯¥æå‰å»
 		{	
 			bLastTem = true; //
 			break;           //
 		}
 	}
 
-	if ( bLastTem && (iIndex != 0 )) //×îºóÒ»¶ÎµÄÊ±¼ä½×¶Î
+	if ( bLastTem && (iIndex != 0 )) //æœ€åä¸€æ®µçš„æ—¶é—´é˜¶æ®µ
 	{
 		
 		ucCurTimePatternId =  m_pTscConfig->sSchedule[iIndex-1].ucTimePatternId;
@@ -1852,65 +1852,65 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
     
 	switch ( ucCtrlTmp )
 	{
-		case 0:     //0:¶àÊ±¶Î
+		case 0:     //0:å¤šæ—¶æ®µ
 			*ucCtrl   = CTRL_SCHEDULE;
 			*ucStatus = STANDARD;
 			
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,STRL_SCHEDULE!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
-		case 1:    //1:¹ØµÆ
+		case 1:    //1:å…³ç¯
 			*ucCtrl   = CTRL_SCHEDULE_OFF;
 			*ucStatus = SIGNALOFF;
 			m_bSpeStatusTblSchedule = true;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,SIGNALOFF!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
-		case 2:    //2:ÉÁ¹â
+		case 2:    //2:é—ªå…‰
 			*ucCtrl   = CTRL_SCHEDULE_FLASH;
 			*ucStatus = FLASH;
 			m_bSpeStatusTblSchedule = true;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,FLASH!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
-		case 3:    //3:È«ºì
+		case 3:    //3:å…¨çº¢
 			*ucCtrl   = CTRL_SCHEDULE_RED;
 			*ucStatus = ALLRED;
 			m_bSpeStatusTblSchedule = true;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,ALLRED!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
-		case 4:    //4£ºÖ÷Ïß°ë¸ĞÓ¦
+		case 4:    //4ï¼šä¸»çº¿åŠæ„Ÿåº”
 			*ucCtrl   = CTRL_MAIN_PRIORITY;
 			*ucStatus = STANDARD;
 			break;
-		case 5:    //5:´ÎÏß°ë¸ĞÓ¦
+		case 5:    //5:æ¬¡çº¿åŠæ„Ÿåº”
 			*ucCtrl   = CTRL_SECOND_PRIORITY;
 			*ucStatus = STANDARD;
 			break;
-		case 6:    //6:È«¸ĞÓ¦
+		case 6:    //6:å…¨æ„Ÿåº”
 			*ucCtrl   = CTRL_VEHACTUATED;
 			*ucStatus = STANDARD;		
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,STRL_VEHACTUATED!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
-		case 7:    //7:ÎŞµçÏßÀÂ
+		case 7:    //7:æ— ç”µçº¿ç¼†
 			*ucCtrl   = CTRL_WIRELESS;
 			*ucStatus = STANDARD;
 			break;
-		case 8:    //8:×ÔÊÊÓ¦¿ØÖÆ
+		case 8:    //8:è‡ªé€‚åº”æ§åˆ¶
 			*ucCtrl   = CTRL_ACTIVATE;
 			*ucStatus = STANDARD;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,CTRL_ACTIVATE!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
-		case 12:   //12:ÁªÍø
+		case 12:   //12:è”ç½‘
 			*ucCtrl   = CTRL_UTCS;
 			*ucStatus = STANDARD;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,CTRL_UTCS!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		
-		case 9:   //9:¶¯Ì¬Ô¤·ÖÎö
+		case 9:   //9:åŠ¨æ€é¢„åˆ†æ
 			*ucCtrl   = CTRL_PREANALYSIS;
 			*ucStatus = STANDARD;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,CTRL_PREANALYSIS!\n\n",__FILE__,__LINE__,ucScheduleId));
 			break;
 		
-		default:   //Ä¬ÈÏ¶àÊ±¶Î
+		default:   //é»˜è®¤å¤šæ—¶æ®µ
 			*ucCtrl   = CTRL_SCHEDULE;
 			*ucStatus = STANDARD;
 			ACE_DEBUG((LM_DEBUG,"%s:%d***GetTimePatternId*** ScheduleId:%d ,default CTRL_SCHEDULE!\n\n",__FILE__,__LINE__,ucScheduleId));
@@ -1924,11 +1924,11 @@ Byte CManaKernel::GetTimePatternId(Byte ucScheduleId , Byte* ucCtrl , Byte* ucSt
 
 /**************************************************************
 Function:       CManaKernel::GetScheduleTimeId
-Description:    ¸ù¾İÔÂ¡¢ÈÕ¡¢ĞÇÆÚ»ñÈ¡µ±Ç°µÄÊ±¶Î±íºÅ
-Input:          ucTimePatternId - ÅäÊ±·½°¸±íºÅ       
-Output:         ucCycle         - ÖÜÆÚ
-*       	    ucOffSet        - ÏàÎ»²î
-Return:         ½×¶ÎÅäÊ±±íºÅ £¬Èç¹ûÃ»ÓĞ²éÑ¯µ½ºÏ·¨½×¶ÎÅäÊ±±íºÅÔò·µ»Ø1
+Description:    æ ¹æ®æœˆã€æ—¥ã€æ˜ŸæœŸè·å–å½“å‰çš„æ—¶æ®µè¡¨å·
+Input:          ucTimePatternId - é…æ—¶æ–¹æ¡ˆè¡¨å·       
+Output:         ucCycle         - å‘¨æœŸ
+*       	    ucOffSet        - ç›¸ä½å·®
+Return:         é˜¶æ®µé…æ—¶è¡¨å· ï¼Œå¦‚æœæ²¡æœ‰æŸ¥è¯¢åˆ°åˆæ³•é˜¶æ®µé…æ—¶è¡¨å·åˆ™è¿”å›1
 ***************************************************************/
 Byte CManaKernel::GetScheduleTimeId(Byte ucTimePatternId,Byte& ucCycle,Byte& ucOffSet)
 {	
@@ -1948,17 +1948,17 @@ Byte CManaKernel::GetScheduleTimeId(Byte ucTimePatternId,Byte& ucCycle,Byte& ucO
 			break;
 		}
 	}
-	return 1;  //²»ºÏ·¨µÄ²ÎÊı,»ÆÉÁ£¿
+	return 1;  //ä¸åˆæ³•çš„å‚æ•°,é»„é—ªï¼Ÿ
 }
 
 
 /**************************************************************
 Function:       CManaKernel::GetSonScheduleTime
-Description:    ¸ù¾İ¶¯Ì¬Êı¾İµÄ½×¶ÎÅäÊ±±íºÅ(ucScheduleTimeId)»ñÈ¡
-				¸÷¸ö×Ó½×¶ÎµÄĞÅÏ¢
-Input:          ucScheduleTimeId - ½×¶ÎÅäÊ±±íºÅ       
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ ¹æ®åŠ¨æ€æ•°æ®çš„é˜¶æ®µé…æ—¶è¡¨å·(ucScheduleTimeId)è·å–
+				å„ä¸ªå­é˜¶æ®µçš„ä¿¡æ¯
+Input:          ucScheduleTimeId - é˜¶æ®µé…æ—¶è¡¨å·       
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 bool CManaKernel::GetSonScheduleTime(Byte ucScheduleTimeId)
 {
@@ -1992,10 +1992,10 @@ bool CManaKernel::GetSonScheduleTime(Byte ucScheduleTimeId)
 
 /**************************************************************
 Function:       CManaKernel::StageToStep
-Description:    ¸ù¾İ½×¶ÎºÅ»ñÈ¡²½·¥ºÅ ¸Ã½×¶ÎºÅ¶ÔÓ¦½áÊø²½·¥Êı
-Input:          iStageNo:½×¶ÎºÅ      
-Output:         ÎŞ
-Return:         ²½·¥ºÅ
+Description:    æ ¹æ®é˜¶æ®µå·è·å–æ­¥ä¼å· è¯¥é˜¶æ®µå·å¯¹åº”ç»“æŸæ­¥ä¼æ•°
+Input:          iStageNo:é˜¶æ®µå·      
+Output:         æ— 
+Return:         æ­¥ä¼å·
 ***************************************************************/
 Byte CManaKernel::StageToStep(int iStageNo)
 {
@@ -2012,10 +2012,10 @@ Byte CManaKernel::StageToStep(int iStageNo)
 
 /**************************************************************
 Function:       CManaKernel::StepToStage
-Description:    ¸ù¾İ²½·¥ºÅ»ñÈ¡½×¶ÎºÅ
-Input:          iStepNo:²½·¥ºÅ      
-Output:         bStageFirstStep:ÊÇ·ñÎª½×¶ÎµÄµÚÒ»²½
-Return:         ½×¶ÎºÅ
+Description:    æ ¹æ®æ­¥ä¼å·è·å–é˜¶æ®µå·
+Input:          iStepNo:æ­¥ä¼å·      
+Output:         bStageFirstStep:æ˜¯å¦ä¸ºé˜¶æ®µçš„ç¬¬ä¸€æ­¥
+Return:         é˜¶æ®µå·
 ***************************************************************/
 Byte CManaKernel::StepToStage(int iStepNo,bool* bStageFirstStep)
 {
@@ -2051,11 +2051,11 @@ Byte CManaKernel::StepToStage(int iStepNo,bool* bStageFirstStep)
 
 /**************************************************************
 Function:       CManaKernel::GetStageTime
-Description:    »ñÈ¡½×¶ÎµÄÔ¤¼Æ×ÜÊ±¼äºÍ½×¶ÎÒÑ¾­ÔËĞĞµÄÊ±¼ä
-Input:          ÎŞ     
-Output:         pTotalTime-½×¶ÎµÄÔ¤¼Æ×ÜÊ±¼ä  pElapseTime-½×¶ÎÒÑ
-				¾­ÔËĞĞµÄÊ±¼ä
-Return:         ÎŞ
+Description:    è·å–é˜¶æ®µçš„é¢„è®¡æ€»æ—¶é—´å’Œé˜¶æ®µå·²ç»è¿è¡Œçš„æ—¶é—´
+Input:          æ—      
+Output:         pTotalTime-é˜¶æ®µçš„é¢„è®¡æ€»æ—¶é—´  pElapseTime-é˜¶æ®µå·²
+				ç»è¿è¡Œçš„æ—¶é—´
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::GetStageTime(Byte* pTotalTime,Byte* pElapseTime)
 {
@@ -2109,11 +2109,11 @@ void CManaKernel::GetStageTime(Byte* pTotalTime,Byte* pElapseTime)
 
 /**************************************************************
 Function:       CManaKernel::SetCycleStepInfo
-Description:    ¹¹ÔìÕû¸öÖÜÆÚµÄ²½·¥ĞÅÏ¢£¬²½·¥ĞÅÏ¢´æ´¢ÔÚ
-				m_pRunData->sStageStepInfoÖĞ
-Input:          ucLockPhase - Ëø¶¨ÏàÎ»ºÅ     
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ„é€ æ•´ä¸ªå‘¨æœŸçš„æ­¥ä¼ä¿¡æ¯ï¼Œæ­¥ä¼ä¿¡æ¯å­˜å‚¨åœ¨
+				m_pRunData->sStageStepInfoä¸­
+Input:          ucLockPhase - é”å®šç›¸ä½å·     
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::SetCycleStepInfo(Byte ucLockPhase)
 {
@@ -2124,9 +2124,9 @@ void CManaKernel::SetCycleStepInfo(Byte ucLockPhase)
 
 	ACE_OS::memset(m_pRunData->sStageStepInfo,0,sizeof(m_pRunData->sStageStepInfo));
 
-	if ( ucLockPhase != 0 )  //Ëø¶¨ÏàÎ» 
+	if ( ucLockPhase != 0 )  //é”å®šç›¸ä½ 
 	{
-		//¸ù¾İËø¶¨ÏàÎ»ÉèÖÃÕû¸öÖÜÆÚµÄ²½·¥ĞÅÏ¢..............
+		//æ ¹æ®é”å®šç›¸ä½è®¾ç½®æ•´ä¸ªå‘¨æœŸçš„æ­¥ä¼ä¿¡æ¯..............
 		m_pRunData->ucStepNo = 0;
 		m_pRunData->ucStepNum = 1;
 		m_pRunData->ucStageNo = 0;
@@ -2135,18 +2135,18 @@ void CManaKernel::SetCycleStepInfo(Byte ucLockPhase)
 		return;
 	}
 
-	//Õı³£ÉèÖÃ²½·¥ĞÅÏ¢
+	//æ­£å¸¸è®¾ç½®æ­¥ä¼ä¿¡æ¯
 	for (ucStageIndex=0; ucStageIndex<MAX_SON_SCHEDULE; ucStageIndex++ )//MAX_SON_SCHEDULE
 	{
- 		if ( m_pRunData->ucScheduleTimeId == m_pRunData->sScheduleTime[ucStageIndex].ucId )  //ucScheduleTimeId  ucId½×¶ÎÅäÊ±±íºÅ
+ 		if ( m_pRunData->ucScheduleTimeId == m_pRunData->sScheduleTime[ucStageIndex].ucId )  //ucScheduleTimeId  ucIdé˜¶æ®µé…æ—¶è¡¨å·
  		{
-			//¸ù¾İÒ»¸ö×Ó½×¶Î¹¹Ôì²½·¥ºÅ
-			SetStepInfoWithStage(ucStageIndex,&ucStepIndex,&(m_pRunData->sScheduleTime[ucStageIndex]));// ucStageIndex ×Ó½×¶ÎºÅ
+			//æ ¹æ®ä¸€ä¸ªå­é˜¶æ®µæ„é€ æ­¥ä¼å·
+			SetStepInfoWithStage(ucStageIndex,&ucStepIndex,&(m_pRunData->sScheduleTime[ucStageIndex]));// ucStageIndex å­é˜¶æ®µå·
 			// ACE_DEBUG((LM_DEBUG,"%s:%d ucStageIncludeSteps= %d \n" ,__FILE__,__LINE__,m_pRunData->ucStageIncludeSteps[ucStageIndex]));
 		}
 		else
 		{
-			break;  //È«²¿µÄ×Ó½×¶Î±éÀúÍê±Ï
+			break;  //å…¨éƒ¨çš„å­é˜¶æ®µéå†å®Œæ¯•
 		}
 	}
 
@@ -2170,12 +2170,12 @@ void CManaKernel::SetCycleStepInfo(Byte ucLockPhase)
 
 /**************************************************************
 Function:       CManaKernel::GetOverlapPhaseIndex
-Description:    ¸ù¾İ°üº¬ÏàÎ»id»ñÈ¡È«²¿µÄ¸úËæÏàÎ»
-				m_pRunData->sStageStepInfoÖĞ
-Input:          iPhaseId      - °üº¬ÏàÎ»id     
-Output:         ucCnt         - ¸úËæÏàÎ»¸öÊı
-*       	    pOverlapPhase - ´æ´¢¸÷¸ö¸úËæÏàÎ»
-Return:         ÎŞ
+Description:    æ ¹æ®åŒ…å«ç›¸ä½idè·å–å…¨éƒ¨çš„è·Ÿéšç›¸ä½
+				m_pRunData->sStageStepInfoä¸­
+Input:          iPhaseId      - åŒ…å«ç›¸ä½id     
+Output:         ucCnt         - è·Ÿéšç›¸ä½ä¸ªæ•°
+*       	    pOverlapPhase - å­˜å‚¨å„ä¸ªè·Ÿéšç›¸ä½
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::GetOverlapPhaseIndex(Byte iPhaseId , Byte* ucCnt , Byte* pOverlapPhase)
 {
@@ -2209,11 +2209,11 @@ void CManaKernel::GetOverlapPhaseIndex(Byte iPhaseId , Byte* ucCnt , Byte* pOver
 
 /**************************************************************
 Function:       CManaKernel::OverlapPhaseToPhase
-Description:   ¸ù¾İ¸úËæÏàÎ»»ñÈ¡·ÅĞĞÏàÎ»index				
-Input:          iCurAllowPhase      - ½×¶Î·ÅĞĞÏàÎ»
-*    		    ucOverlapPhaseIndex - ¸úËæÏàÎ»ÏÂ±ê 0 1 ....7    
+Description:   æ ¹æ®è·Ÿéšç›¸ä½è·å–æ”¾è¡Œç›¸ä½index				
+Input:          iCurAllowPhase      - é˜¶æ®µæ”¾è¡Œç›¸ä½
+*    		    ucOverlapPhaseIndex - è·Ÿéšç›¸ä½ä¸‹æ ‡ 0 1 ....7    
 Output:       
-Return:         return: ¶ÔÓ¦·ÅĞĞÏàÎ»µÄindex 0 1 .....15
+Return:         return: å¯¹åº”æ”¾è¡Œç›¸ä½çš„index 0 1 .....15
 ***************************************************************/
 Byte CManaKernel::OverlapPhaseToPhase(Uint uiCurAllowPhase,Byte ucOverlapPhaseIndex)
 {
@@ -2238,12 +2238,12 @@ Byte CManaKernel::OverlapPhaseToPhase(Uint uiCurAllowPhase,Byte ucOverlapPhaseIn
 
 /*********************************************************************************
 Function:       CManaKernel::SetStepInfoWithStage
-Description:    ¸ù¾İÒ»¸ö×Ó½×¶ÎÉèÖÃ²½·¥ĞÅÏ¢			
-Input:          ucStageIndex  : µ±Ç°µÄ×Ó½×¶ÎÏÂ±ê
-*      	     ucCurStepIndex£ºµ±Ç°ÀÛ¼ÆÉèÖÃµÄ²½·¥Êı,¼´sStageStepInfoµÄÏÂ±ê
-*       		pScheduleTime : ×Ó½×¶ÎĞÅÏ¢µÄÖ¸Õë£¬Îªµ±Ç°×Ó½×¶ÎºÅ¶ÔÓ¦½×¶ÎÅäÊ±·ÖÅäÇé¿ö
-Output:         ucCurStepIndex: µ±Ç°ÀÛ¼ÆÉèÖÃµÄ²½·¥Êı,¼´sStageStepInfoµÄÏÂ±ê
-Return:         ÎŞ
+Description:    æ ¹æ®ä¸€ä¸ªå­é˜¶æ®µè®¾ç½®æ­¥ä¼ä¿¡æ¯			
+Input:          ucStageIndex  : å½“å‰çš„å­é˜¶æ®µä¸‹æ ‡
+*      	     ucCurStepIndexï¼šå½“å‰ç´¯è®¡è®¾ç½®çš„æ­¥ä¼æ•°,å³sStageStepInfoçš„ä¸‹æ ‡
+*       		pScheduleTime : å­é˜¶æ®µä¿¡æ¯çš„æŒ‡é’ˆï¼Œä¸ºå½“å‰å­é˜¶æ®µå·å¯¹åº”é˜¶æ®µé…æ—¶åˆ†é…æƒ…å†µ
+Output:         ucCurStepIndex: å½“å‰ç´¯è®¡è®¾ç½®çš„æ­¥ä¼æ•°,å³sStageStepInfoçš„ä¸‹æ ‡
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepIndex,SScheduleTime* pScheduleTime)
 {
@@ -2262,17 +2262,17 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 	ACE_OS::memset(sPhaseStep,0,(MAX_PHASE+MAX_OVERLAP_PHASE)*sizeof(SPhaseStep));
 	for (Byte i=0; i<MAX_PHASE; i++ )
 	{
-		if(( pScheduleTime->usAllowPhase>>i ) & 0x1 )  //·ÅĞĞÏàÎ»Çé¿ö,»ñÈ¡¸Ã×Ó½×¶Î·ÅĞĞÏàÎ»µÄÂÌ»ÆºìÊ±¼ä
+		if(( pScheduleTime->usAllowPhase>>i ) & 0x1 )  //æ”¾è¡Œç›¸ä½æƒ…å†µ,è·å–è¯¥å­é˜¶æ®µæ”¾è¡Œç›¸ä½çš„ç»¿é»„çº¢æ—¶é—´
 		{
 			sPhaseStep[ucPhaseIndex].ucPhaseId     = i + 1;
 			sPhaseStep[ucPhaseIndex].bIsAllowPhase = true;
-			GetPhaseStepTime(i,pScheduleTime,sPhaseStep[ucPhaseIndex].ucStepTime,ucCurStageIndex); //»ñÈ¡¸ÃÏàÎ»µÄ ÂÌ ÂÌÉ¾ »Æ ºìÊ±¼ä  4¸ö×Ö½Ú±íÊ¾
+			GetPhaseStepTime(i,pScheduleTime,sPhaseStep[ucPhaseIndex].ucStepTime,ucCurStageIndex); //è·å–è¯¥ç›¸ä½çš„ ç»¿ ç»¿åˆ  é»„ çº¢æ—¶é—´  4ä¸ªå­—èŠ‚è¡¨ç¤º
 			ucAllowPhaseIndex = ucPhaseIndex;
-			//ACE_DEBUG((LM_DEBUG,"%s:%d PhaseId=%d  sPhaseStep[%d] = %d,Green=%d,GF = %d Yellow = %d Red = %d\n" ,__FILE__,__LINE__,i+1,ucPhaseIndex,sPhaseStep[ucPhaseIndex].ucPhaseId,sPhaseStep[ucPhaseIndex].ucStepTime[0],sPhaseStep[ucPhaseIndex].ucStepTime[1],sPhaseStep[ucPhaseIndex].ucStepTime[2],sPhaseStep[ucPhaseIndex].ucStepTime[3])); // ADD: 20130708 ²âÊÔ¸ĞÓ¦¿ØÖÆÏÂÊ±¼ä³¤?
+			//ACE_DEBUG((LM_DEBUG,"%s:%d PhaseId=%d  sPhaseStep[%d] = %d,Green=%d,GF = %d Yellow = %d Red = %d\n" ,__FILE__,__LINE__,i+1,ucPhaseIndex,sPhaseStep[ucPhaseIndex].ucPhaseId,sPhaseStep[ucPhaseIndex].ucStepTime[0],sPhaseStep[ucPhaseIndex].ucStepTime[1],sPhaseStep[ucPhaseIndex].ucStepTime[2],sPhaseStep[ucPhaseIndex].ucStepTime[3])); // ADD: 20130708 æµ‹è¯•æ„Ÿåº”æ§åˆ¶ä¸‹æ—¶é—´é•¿?
 			ucPhaseIndex++;			
-			//¸úËæÏàÎ»Çé¿ö   READ:20130703 1423
+			//è·Ÿéšç›¸ä½æƒ…å†µ   READ:20130703 1423
 			GetOverlapPhaseIndex(i+1 , &ucCnt , ucOverlapPhase);
-			if ( ucCnt > 0 )  //¸ÃÆÕÍ¨ÏàÎ»Îª°üº¬ÏàÎ»£¬±éÀú¸úËæÏàÎ»
+			if ( ucCnt > 0 )  //è¯¥æ™®é€šç›¸ä½ä¸ºåŒ…å«ç›¸ä½ï¼Œéå†è·Ÿéšç›¸ä½
 			{
 				int iIndex = 0;
 				while ( iIndex < ucCnt )
@@ -2288,7 +2288,7 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 							, pScheduleTime->ucYellowTime);
 						sPhaseStep[ucPhaseIndex].ucPhaseId = ucOverlapPhase[iIndex] + 1;
 						sPhaseStep[ucPhaseIndex].bIsAllowPhase = false;
-					  //  ACE_DEBUG((LM_DEBUG,"%s:%d overPhaseId=%d  sPhaseStep[ucPhaseIndex] = %d,Green=%d,GF = %d Yellow = %d\n" ,__FILE__,__LINE__,ucOverlapPhase[iIndex] + 1,ucPhaseIndex,sPhaseStep[ucPhaseIndex].ucStepTime[0],sPhaseStep[ucPhaseIndex].ucStepTime[1],sPhaseStep[ucPhaseIndex].ucStepTime[2])); // ADD: 20130708 ²âÊÔ¸ĞÓ¦¿ØÖÆÏÂÊ±¼ä³¤?
+					  //  ACE_DEBUG((LM_DEBUG,"%s:%d overPhaseId=%d  sPhaseStep[ucPhaseIndex] = %d,Green=%d,GF = %d Yellow = %d\n" ,__FILE__,__LINE__,ucOverlapPhase[iIndex] + 1,ucPhaseIndex,sPhaseStep[ucPhaseIndex].ucStepTime[0],sPhaseStep[ucPhaseIndex].ucStepTime[1],sPhaseStep[ucPhaseIndex].ucStepTime[2])); // ADD: 20130708 æµ‹è¯•æ„Ÿåº”æ§åˆ¶ä¸‹æ—¶é—´é•¿?
 
 						ucPhaseIndex++;
 					}
@@ -2296,14 +2296,14 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 				}
 			}
 		}
-	}// µÃµ½¸Ã×Ó½×¶ÎËùÓĞ·ÅĞĞÏàÎ»µÄ ·ÅĞĞÊ±¼ä
+	}// å¾—åˆ°è¯¥å­é˜¶æ®µæ‰€æœ‰æ”¾è¡Œç›¸ä½çš„ æ”¾è¡Œæ—¶é—´
 
 	//ACE_DEBUG((LM_DEBUG,"%s:%d ucCurStageIndex= %d ucPhaseIndex=%d \n" ,__FILE__,__LINE__,ucCurStageIndex,ucPhaseIndex));
 
-	//´¦ÀíËùÓĞµÄÏàÎ» ½«sPhaseStep×ª»¯Îª²½·¥ĞÅÏ¢
+	//å¤„ç†æ‰€æœ‰çš„ç›¸ä½ å°†sPhaseStepè½¬åŒ–ä¸ºæ­¥ä¼ä¿¡æ¯
 	m_pRunData->ucStageIncludeSteps[ucCurStageIndex] = 0;	
 
-	for ( int i=0; i<ucPhaseIndex; i++ ) //ucPhaseIndex Îª·ÅĞĞÏàÎ»Êı
+	for ( int i=0; i<ucPhaseIndex; i++ ) //ucPhaseIndex ä¸ºæ”¾è¡Œç›¸ä½æ•°
 	{
 		//ACE_DEBUG((LM_DEBUG,"%s:%d i=%d sPhaseStep[%d].phase=%d \n" ,__FILE__,__LINE__,i,i,sPhaseStep[i].ucPhaseId)); 
 		if ( (ucTmpStepLen = GetPhaseStepLen(&sPhaseStep[i]) ) > 0 )
@@ -2313,10 +2313,10 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 		}
 	
 	   // ACE_DEBUG((LM_DEBUG,"%s:%d i=%d,ucMinStepLen= %d ucPhaseIndex=%d \n" ,__FILE__,__LINE__,i,ucMinStepLen,ucPhaseIndex));		
-		if ( ( i + 1 ) ==  ucPhaseIndex )  //¹¹Ôì1¸öÍêÕû²½·¥    ´ïµ½×î´óÏàÎ»Êı
+		if ( ( i + 1 ) ==  ucPhaseIndex )  //æ„é€ 1ä¸ªå®Œæ•´æ­¥ä¼    è¾¾åˆ°æœ€å¤§ç›¸ä½æ•°
 		{
-		//	ACE_DEBUG((LM_DEBUG,"%s:%d ¿ªÊ¼¹¹Ôì²½·¥Êı£¡ \n" ,__FILE__,__LINE__));
-			if ( 200 == ucMinStepLen )  //È«²¿±éÀúÍê±Ï
+		//	ACE_DEBUG((LM_DEBUG,"%s:%d å¼€å§‹æ„é€ æ­¥ä¼æ•°ï¼ \n" ,__FILE__,__LINE__));
+			if ( 200 == ucMinStepLen )  //å…¨éƒ¨éå†å®Œæ¯•
 			{
 				// ACE_DEBUG((LM_DEBUG,"%s:%d ucStageIncludeSteps= %d \n" ,__FILE__,__LINE__,m_pRunData->ucStageIncludeSteps[ucCurStageIndex]));
 				return;
@@ -2327,7 +2327,7 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 			m_pRunData->sStageStepInfo[*ucCurStepIndex].ucStepLen = ucMinStepLen;				
 			//ACE_DEBUG((LM_DEBUG,"%s:%d sStageStepInfo[%d].ucStepLen=%d !\n",__FILE__,__LINE__,*ucCurStepIndex,m_pRunData->sStageStepInfo[*ucCurStepIndex].ucStepLen ));
 
-			for ( int j=0; j<ucPhaseIndex; j++ ) //±éÀúÃ¿¸öÏàÎ»
+			for ( int j=0; j<ucPhaseIndex; j++ ) //éå†æ¯ä¸ªç›¸ä½
 			{
 				ucColorIndex = GetPhaseStepIndex(&sPhaseStep[j]);
 				if ( 5 == ucColorIndex )
@@ -2374,7 +2374,7 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 				ucSignalGrpIndex = 0;
 				while ( ucSignalGrpIndex < ucSignalGrpNum )
 				{
-					ucLampIndex = ( ucSignalGrp[ucSignalGrpIndex] - 1 ) * 3; //ÏàÎ»×éµÄredÏÂ±ê
+					ucLampIndex = ( ucSignalGrp[ucSignalGrpIndex] - 1 ) * 3; //ç›¸ä½ç»„çš„redä¸‹æ ‡
 					
 					if ( 0 == ucColorIndex )  //green
 					{
@@ -2412,7 +2412,7 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 			{
 				return;
 			}
-			i = -1;  //ÖØĞÂ¿ªÊ¼²éÕÒÏÂÒ»ÂÖ²½·¥
+			i = -1;  //é‡æ–°å¼€å§‹æŸ¥æ‰¾ä¸‹ä¸€è½®æ­¥ä¼
 			
 		}
 	
@@ -2424,12 +2424,12 @@ void CManaKernel::SetStepInfoWithStage(Byte ucCurStageIndex, Byte* ucCurStepInde
 
 /*********************************************************************************
 Function:       CManaKernel::ExitOvelapPhase
-Description:    µ±Ç°ÊÇ·ñÒÑ´æÔÚ¸Ã¸úËæÏàÎ»			
-Input:          ucOverlapPhaseId  £º ÏàÎ»ºÅ
-*      			ucPhaseCnt £ºÏàÎ»Êı
-*       		pPhaseStep : ÏàÎ»²½·¥ĞÅÏ¢
+Description:    å½“å‰æ˜¯å¦å·²å­˜åœ¨è¯¥è·Ÿéšç›¸ä½			
+Input:          ucOverlapPhaseId  ï¼š ç›¸ä½å·
+*      			ucPhaseCnt ï¼šç›¸ä½æ•°
+*       		pPhaseStep : ç›¸ä½æ­¥ä¼ä¿¡æ¯
 Output:         
-Return:         true - ´æÔÚ  false - ²»´æÔÚ
+Return:         true - å­˜åœ¨  false - ä¸å­˜åœ¨
 **********************************************************************************/
 bool CManaKernel::ExitOvelapPhase(Byte ucOverlapPhaseId,Byte ucPhaseCnt,SPhaseStep* pPhaseStep)
 {
@@ -2446,10 +2446,10 @@ bool CManaKernel::ExitOvelapPhase(Byte ucOverlapPhaseId,Byte ucPhaseCnt,SPhaseSt
 
 /*********************************************************************************
 Function:       CManaKernel::SetRedOtherLamp
-Description:    ½«Î´ÉèÖÃµÆÉ«ĞÅÏ¢µ½ĞÅºÅµÆ×éÇ¿ÖÆÉèÖÃÎªºìµÆÁÁ			
-Input:          ÎŞ
-Output:         ucLampOn  - ĞÅºÅµÆÁÁÃğÊı×éÖ¸Õë
-Return:         ÎŞ
+Description:    å°†æœªè®¾ç½®ç¯è‰²ä¿¡æ¯åˆ°ä¿¡å·ç¯ç»„å¼ºåˆ¶è®¾ç½®ä¸ºçº¢ç¯äº®			
+Input:          æ— 
+Output:         ucLampOn  - ä¿¡å·ç¯äº®ç­æ•°ç»„æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::SetRedOtherLamp(Byte* ucLampOn,Byte *ucLampFlash)
 {
@@ -2459,22 +2459,22 @@ void CManaKernel::SetRedOtherLamp(Byte* ucLampOn,Byte *ucLampFlash)
 		bRed = true;
 		for (int j=i; j<(i+3); j++)
 		{
-			if ( 1 == ucLampOn[j] )        //¸ÃµÆ×éÓĞ±»ÖÃÎ»
+			if ( 1 == ucLampOn[j] )        //è¯¥ç¯ç»„æœ‰è¢«ç½®ä½
 			{
 				bRed = false;
 				break;
 			}
 		}
-		if ( bRed && IsInChannel(i/3+1) )  //¸ÃµÆ×é(Í¨µÀ)ÓĞ±»¶¨Òå
+		if ( bRed && IsInChannel(i/3+1) )  //è¯¥ç¯ç»„(é€šé“)æœ‰è¢«å®šä¹‰
 		{
-			if(m_pTscConfig->sChannel[i/3].ucFlashAuto == 0x2) //Í¨µÀÇ¿ÖÆ»ÆÉÁ,¸ÃÍ¨µÀÏàÎ»Ã»ÓĞ½×¶Î·ÅĞĞ
+			if(m_pTscConfig->sChannel[i/3].ucFlashAuto == 0x2) //é€šé“å¼ºåˆ¶é»„é—ª,è¯¥é€šé“ç›¸ä½æ²¡æœ‰é˜¶æ®µæ”¾è¡Œ
 			{
 				ucLampOn[i+1] = 1;
 				ucLampFlash[i+1] = 1;
 			}
 			else
 			{
-				ucLampOn[i] = 1;         	   //¸ÃµÆ×éÇ¿ÖÆÁÁºìµÆ
+				ucLampOn[i] = 1;         	   //è¯¥ç¯ç»„å¼ºåˆ¶äº®çº¢ç¯
 			}
 		}
 	}
@@ -2483,16 +2483,16 @@ void CManaKernel::SetRedOtherLamp(Byte* ucLampOn,Byte *ucLampFlash)
 
 /*********************************************************************************
 Function:       CManaKernel::ExitStageStretchPhase
-Description:    ÅĞ¶Ï½×¶ÎµÄÏàÎ»×éÊÇ·ñ´æÔÚµ¯ĞÔÏàÎ»			
-Input:          pScheduleTime - ×Ó½×¶ÎĞÅÏ¢
-Output:         ÎŞ
-Return:         true -µ¯ĞÔÏàÎ»   false -·Çµ¯ĞÔÏàÎ»
+Description:    åˆ¤æ–­é˜¶æ®µçš„ç›¸ä½ç»„æ˜¯å¦å­˜åœ¨å¼¹æ€§ç›¸ä½			
+Input:          pScheduleTime - å­é˜¶æ®µä¿¡æ¯
+Output:         æ— 
+Return:         true -å¼¹æ€§ç›¸ä½   false -éå¼¹æ€§ç›¸ä½
 **********************************************************************************/
 bool CManaKernel::ExitStageStretchPhase(SScheduleTime* pScheduleTime)
 {
 	for (Byte ucIndex=0; ucIndex<MAX_PHASE; ucIndex++ )
 	{
-		if ( ( pScheduleTime->usAllowPhase>>ucIndex ) & 0x1 )  //·ÅĞĞÏàÎ»Çé¿ö
+		if ( ( pScheduleTime->usAllowPhase>>ucIndex ) & 0x1 )  //æ”¾è¡Œç›¸ä½æƒ…å†µ
 		{
 			if ( (m_pTscConfig->sPhase[ucIndex].ucType>>5) & 0x1 )
 			{
@@ -2506,15 +2506,15 @@ bool CManaKernel::ExitStageStretchPhase(SScheduleTime* pScheduleTime)
 
 /*********************************************************************************
 Function:       CManaKernel::GetPhaseStepTime
-Description:    ¸ù¾İÏàÎ»ºÅ£¬»ñÈ¡¸ÃÏàÎ»µÄÂÌ¡¢ÂÌÉÁ¡¢»Æ¡¢È«ºìÊ±¼ä(ÆÕÍ¨ÏàÎ»)			
-Input:          ucPhaseId:ÏàÎ»ºÅ  pScheduleTime:×Ó½×¶ÎĞÅÏ¢
-Output:         pTime:¸÷¸öÊ±¼ä
-Return:         ÎŞ
+Description:    æ ¹æ®ç›¸ä½å·ï¼Œè·å–è¯¥ç›¸ä½çš„ç»¿ã€ç»¿é—ªã€é»„ã€å…¨çº¢æ—¶é—´(æ™®é€šç›¸ä½)			
+Input:          ucPhaseId:ç›¸ä½å·  pScheduleTime:å­é˜¶æ®µä¿¡æ¯
+Output:         pTime:å„ä¸ªæ—¶é—´
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,Byte* pTime,Byte ucCurStageIndex)
 {
 	bool bExitNextStage             = false;   
-	Byte ucNextStageIndex           = ucCurStageIndex + 1;  //ÏÂÒ»¸ö½×¶ÎÏÂ±ê
+	Byte ucNextStageIndex           = ucCurStageIndex + 1;  //ä¸‹ä¸€ä¸ªé˜¶æ®µä¸‹æ ‡
 	Uint32 usNextAllowPhase = 0; 
 	pTime[2] = pScheduleTime->ucYellowTime;    //yellow
 	pTime[3] = pScheduleTime->ucRedTime;       //red        
@@ -2522,7 +2522,7 @@ void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,B
 	if ( /*( (m_pTscConfig->sPhase[ucPhaseId].ucType>>5) & 0x1 )*/
 		ExitStageStretchPhase(pScheduleTime)
 		&& ((CTRL_PREANALYSIS == m_pRunData->uiCtrl)|| (CTRL_VEHACTUATED == m_pRunData->uiCtrl)|| (CTRL_MAIN_PRIORITY == m_pRunData->uiCtrl )|| (CTRL_SECOND_PRIORITY == m_pRunData->uiCtrl)||(CTRL_ACTIVATE== m_pRunData->uiCtrl) ) 
-		/*&& (m_sPhaseDet[ucPhaseId].iRoadwayCnt > 0)*/ )  //¸ĞÓ¦¿ØÖÆ  ½×¶ÎµÄÏàÎ»×é´æÔÚµ¯ĞÔÏàÎ» 
+		/*&& (m_sPhaseDet[ucPhaseId].iRoadwayCnt > 0)*/ )  //æ„Ÿåº”æ§åˆ¶  é˜¶æ®µçš„ç›¸ä½ç»„å­˜åœ¨å¼¹æ€§ç›¸ä½ 
 	{
 		//pTime[0] = m_pTscConfig->sPhase[ucPhaseId].ucMinGreen;  //min green
 		pTime[0] = GetStageMinGreen(pScheduleTime->usAllowPhase);
@@ -2530,7 +2530,7 @@ void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,B
 	}
 	else 
 	{
-		if ( 0 == pScheduleTime->ucGreenTime )  //½×¶ÎÂÌµÆÎª0
+		if ( 0 == pScheduleTime->ucGreenTime )  //é˜¶æ®µç»¿ç¯ä¸º0
 		{
 			pTime[1] = 0;  //green flash
 			pTime[0] = 0;  //green
@@ -2546,9 +2546,9 @@ void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,B
 			pTime[0] = pScheduleTime->ucGreenTime;         //green
 		}
 	}
-	if ( (m_pTscConfig->sPhase[ucPhaseId].ucOption>>1) & 0x1 )      //ĞĞÈËÏàÎ»
+	if ( (m_pTscConfig->sPhase[ucPhaseId].ucOption>>1) & 0x1 )      //è¡Œäººç›¸ä½
 	{
-		pTime[2] = 0;    //ĞĞÈËÏàÎ»Ã»ÓĞ»ÆµÆ
+		pTime[2] = 0;    //è¡Œäººç›¸ä½æ²¡æœ‰é»„ç¯
 	}
 	if ( ucNextStageIndex >= m_pRunData->ucStageCount )
 	{
@@ -2570,12 +2570,12 @@ void CManaKernel::GetPhaseStepTime(Byte ucPhaseId,SScheduleTime* pScheduleTime,B
 
 /*********************************************************************************
 Function:       CManaKernel::ExitStageStretchPhase
-Description:    »ñÈ¡¸úËæÏàÎ»µÄÂÌ¡¢ÂÌÉÁ¡¢»Æ¡¢È«ºìÊ±¼ä			
-Input:           ucCurStageIndex  - µ±Ç°½×¶ÎÅäÊ±ÏÂ±ê  
-*      			 ucOverlapPhaseId - ¸úËæÏàÎ»ÏÂ±ê 0 1 2 .... 7 
-*				 pIncludeTime     - ¸úËæÏàÎ»µÄ°üº¬ÏàÎ»µÄÂÌ ÂÌÉÁ »Æ È«ºìÊ±¼ä
-Output:         pTime - ÂÌ¡¢ÂÌÉÁ¡¢»Æ¡¢È«ºìÊ±¼ä
-Return:         ÎŞ
+Description:    è·å–è·Ÿéšç›¸ä½çš„ç»¿ã€ç»¿é—ªã€é»„ã€å…¨çº¢æ—¶é—´			
+Input:           ucCurStageIndex  - å½“å‰é˜¶æ®µé…æ—¶ä¸‹æ ‡  
+*      			 ucOverlapPhaseId - è·Ÿéšç›¸ä½ä¸‹æ ‡ 0 1 2 .... 7 
+*				 pIncludeTime     - è·Ÿéšç›¸ä½çš„åŒ…å«ç›¸ä½çš„ç»¿ ç»¿é—ª é»„ å…¨çº¢æ—¶é—´
+Output:         pTime - ç»¿ã€ç»¿é—ªã€é»„ã€å…¨çº¢æ—¶é—´
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetOverlapPhaseStepTime(
 											    Byte ucCurStageIndex
@@ -2585,10 +2585,10 @@ void CManaKernel::GetOverlapPhaseStepTime(
 											  , Byte ucPhaseIndex
 											  , Byte ucStageYellow )
 {
-	bool bExitNextStage             = false;                //°üº¬ÏàÎ»´æÔÚÏÂÒ»¸ö½×¶ÎÀï
+	bool bExitNextStage             = false;                //åŒ…å«ç›¸ä½å­˜åœ¨ä¸‹ä¸€ä¸ªé˜¶æ®µé‡Œ
 	Byte ucCnt                      = 0;
-	Byte ucNextStageIndex           = ucCurStageIndex + 1;  //ÏÂÒ»¸ö½×¶ÎÏÂ±ê
-	Uint32 usNextAllowPhase = 0;                    //ÏÂÒ»¸öÏàÎ»×é
+	Byte ucNextStageIndex           = ucCurStageIndex + 1;  //ä¸‹ä¸€ä¸ªé˜¶æ®µä¸‹æ ‡
+	Uint32 usNextAllowPhase = 0;                    //ä¸‹ä¸€ä¸ªç›¸ä½ç»„
 	int  iIndex                     = 0;
 	int  jIndex                     = 0;
 	Byte ucOverlapPhase[MAX_OVERLAP_PHASE] = {0};
@@ -2602,7 +2602,7 @@ void CManaKernel::GetOverlapPhaseStepTime(
 	{
 		if ( ( usNextAllowPhase >> iIndex ) & 1 )
 		{
-			GetOverlapPhaseIndex(iIndex+1 , &ucCnt , ucOverlapPhase);  //»ñÈ¡ÏÂÒ»¸ö½×¶Î·ÅĞĞÏàÎ»µÄ¸úËæÏàÎ»
+			GetOverlapPhaseIndex(iIndex+1 , &ucCnt , ucOverlapPhase);  //è·å–ä¸‹ä¸€ä¸ªé˜¶æ®µæ”¾è¡Œç›¸ä½çš„è·Ÿéšç›¸ä½
 			if ( ucCnt > 0 )
 			{
 				jIndex = 0;
@@ -2627,22 +2627,22 @@ void CManaKernel::GetOverlapPhaseStepTime(
         iIndex++;
 	}
 
-	if ( bExitNextStage )   //¸úËæÏàÎ»´æÔÚÓÚÏÂÒ»¸ö½×¶Î
+	if ( bExitNextStage )   //è·Ÿéšç›¸ä½å­˜åœ¨äºä¸‹ä¸€ä¸ªé˜¶æ®µ
 	{
 		pOverlapTime[0] = pIncludeTime[0] + pIncludeTime[1] + pIncludeTime[2] + pIncludeTime[3];  //green
-		//¿ÉÒÔÔÙ¸ù¾İÎ²²¿ÂÌµÆ¡¢Î²²¿»ÆµÆ¡¢Î²²¿ºìµÆ ºóĞø¿ÉÄÜÀ©Õ¹ÉèÖÃ .......
+		//å¯ä»¥å†æ ¹æ®å°¾éƒ¨ç»¿ç¯ã€å°¾éƒ¨é»„ç¯ã€å°¾éƒ¨çº¢ç¯ åç»­å¯èƒ½æ‰©å±•è®¾ç½® .......
 		pOverlapTime[1] = 0;  //green flash
 		pOverlapTime[2] = 0;  //yellow
 		pOverlapTime[3] = 0;  //red
 
-		//if ( (m_pTscConfig->sPhase[ucPhaseIndex].ucOption>>1) & 0x1 )      //ĞĞÈËÏàÎ»MOD:20150803 ÕâÀïĞŞ¸Ä
-		// ¸úËæÏàÎ»µÄÄ¸ÏàÎ»²»ÄÜÊÇÈËĞĞÏàÎ»£¬·ñÔòÔÚÆÕÍ¨ÏàÎ»ÉèÖÃÎªÁ¬Ğø·ÅĞĞµÄ
-		//Ê±ºò£¬Èç¹ûÄ¸ÏàÎ»ÊÇÈËĞĞÁ¬Ğø·ÅĞĞ£¬ÔòÕâÀï»á¶àÌí¼Ó»ÆµÆÊ±¼ä¡£
+		//if ( (m_pTscConfig->sPhase[ucPhaseIndex].ucOption>>1) & 0x1 )      //è¡Œäººç›¸ä½MOD:20150803 è¿™é‡Œä¿®æ”¹
+		// è·Ÿéšç›¸ä½çš„æ¯ç›¸ä½ä¸èƒ½æ˜¯äººè¡Œç›¸ä½ï¼Œå¦åˆ™åœ¨æ™®é€šç›¸ä½è®¾ç½®ä¸ºè¿ç»­æ”¾è¡Œçš„
+		//æ—¶å€™ï¼Œå¦‚æœæ¯ç›¸ä½æ˜¯äººè¡Œè¿ç»­æ”¾è¡Œï¼Œåˆ™è¿™é‡Œä¼šå¤šæ·»åŠ é»„ç¯æ—¶é—´ã€‚
 	//	{
-		//pOverlapTime[0] += ucStageYellow;  //ĞĞÈËÏàÎ» ²¹ÉÏ»ÆÉÁµÄÊ±¼ä
+		//pOverlapTime[0] += ucStageYellow;  //è¡Œäººç›¸ä½ è¡¥ä¸Šé»„é—ªçš„æ—¶é—´
 	//	}
 	}
-	else  //¸úËæÏàÎ»ÔÚ¸Ã½×¶ÎÕı³£½áÊø£¬¼´ĞèÒª¾­¹ıÕı³£µÄ¹ı¶È²½
+	else  //è·Ÿéšç›¸ä½åœ¨è¯¥é˜¶æ®µæ­£å¸¸ç»“æŸï¼Œå³éœ€è¦ç»è¿‡æ­£å¸¸çš„è¿‡åº¦æ­¥
 	{
 		Byte ucTailGreen = 0 ;
 		Byte ucTailYw = 0 ;
@@ -2679,10 +2679,10 @@ void CManaKernel::GetOverlapPhaseStepTime(
 
 /*********************************************************************************
 Function:       CManaKernel::GetPhaseStepLen
-Description:    »ñÈ¡ÏàÎ»ÔÚÄ³¸ö²½·¥µÄÓ¦½ØÈ¡µÄ³¤¶È			
-Input:          pPhaseStep:ÏàÎ»²½·¥ĞÅÏ¢Ö¸Õë
-Output:         ÎŞ
-Return:         ÏàÎ»½ØÈ¡²½·¥µÄ´óĞ¡
+Description:    è·å–ç›¸ä½åœ¨æŸä¸ªæ­¥ä¼çš„åº”æˆªå–çš„é•¿åº¦			
+Input:          pPhaseStep:ç›¸ä½æ­¥ä¼ä¿¡æ¯æŒ‡é’ˆ
+Output:         æ— 
+Return:         ç›¸ä½æˆªå–æ­¥ä¼çš„å¤§å°
 **********************************************************************************/
 Byte CManaKernel::GetPhaseStepLen( SPhaseStep* pPhaseStep)
 {
@@ -2690,7 +2690,7 @@ Byte CManaKernel::GetPhaseStepLen( SPhaseStep* pPhaseStep)
 	while ( i < 4 )
 	{
 		//ACE_DEBUG((LM_DEBUG,"%s:%d i= %d pPhaseStep->ucStepTime[%d]=%d \n" ,__FILE__,__LINE__,i,i,pPhaseStep->ucStepTime[i]));
-		if((i == 2) && (m_pTscConfig->sPhase[pPhaseStep->ucPhaseId -1].ucOption ==0x2 )) //Èç¹û»ÆÉÁ£¬ÇÒÈËĞĞÏàÎ»
+		if((i == 2) && (m_pTscConfig->sPhase[pPhaseStep->ucPhaseId -1].ucOption ==0x2 )) //å¦‚æœé»„é—ªï¼Œä¸”äººè¡Œç›¸ä½
 		{	
 			//ACE_DEBUG((LM_DEBUG,"%s:%d return 0 when people phase! \n" ,__FILE__,__LINE__));
 			return 0 ;
@@ -2711,10 +2711,10 @@ Byte CManaKernel::GetPhaseStepLen( SPhaseStep* pPhaseStep)
 
 /*********************************************************************************
 Function:       CManaKernel::GetPhaseStepIndex
-Description:    ·µ»ØÏàÎ»µÄÏÂ±ê£¬¼´ÅĞ¶Ï¸ÃÏàÎ»ÊÇ·ñÒÑ¾­È«²¿½ØÈ¡Íê±Ï			
-Input:          pPhaseStep:ÏàÎ»²½·¥ĞÅÏ¢Ö¸Õë
-Output:         ÎŞ
-Return:         0-3£º½ØÈ¡ÏÂ±êºÅ 5:½ØÈ¡Íê±Ï
+Description:    è¿”å›ç›¸ä½çš„ä¸‹æ ‡ï¼Œå³åˆ¤æ–­è¯¥ç›¸ä½æ˜¯å¦å·²ç»å…¨éƒ¨æˆªå–å®Œæ¯•			
+Input:          pPhaseStep:ç›¸ä½æ­¥ä¼ä¿¡æ¯æŒ‡é’ˆ
+Output:         æ— 
+Return:         0-3ï¼šæˆªå–ä¸‹æ ‡å· 5:æˆªå–å®Œæ¯•
 **********************************************************************************/
 Byte CManaKernel::GetPhaseStepIndex( SPhaseStep* pPhaseStep )
 {
@@ -2734,13 +2734,13 @@ Byte CManaKernel::GetPhaseStepIndex( SPhaseStep* pPhaseStep )
 
 /*********************************************************************************
 Function:       CManaKernel::GetSignalGroupId
-Description:    ¸ù¾İÏàÎ»ºÅ»ñÈ¡Í¨µÀ			
-Input:          bIsAllowPhase - ÊÇ·ñÎª·ÅĞĞÏàÎ» false - ¸úËæÏàÎ»
-*        		ucPhaseId     - ÏàÎ»ID 
-*       		pNum          - Í¨µÀ¸öÊı 
-*       		pSignalGroup  - ¸÷¸öÍ¨µÀºÅ
-Output:         pNum:Í¨µÀ¸öÊı pSignalGroup:¸÷¸öÍ¨µÀºÅ
-Return:         0-3£º½ØÈ¡ÏÂ±êºÅ 5:½ØÈ¡Íê±Ï
+Description:    æ ¹æ®ç›¸ä½å·è·å–é€šé“			
+Input:          bIsAllowPhase - æ˜¯å¦ä¸ºæ”¾è¡Œç›¸ä½ false - è·Ÿéšç›¸ä½
+*        		ucPhaseId     - ç›¸ä½ID 
+*       		pNum          - é€šé“ä¸ªæ•° 
+*       		pSignalGroup  - å„ä¸ªé€šé“å·
+Output:         pNum:é€šé“ä¸ªæ•° pSignalGroup:å„ä¸ªé€šé“å·
+Return:         0-3ï¼šæˆªå–ä¸‹æ ‡å· 5:æˆªå–å®Œæ¯•
 **********************************************************************************/
 void CManaKernel::GetSignalGroupId(bool bIsAllowPhase , Byte ucPhaseId,Byte* pNum,Byte* pSignalGroup)
 {
@@ -2776,10 +2776,10 @@ void CManaKernel::GetSignalGroupId(bool bIsAllowPhase , Byte ucPhaseId,Byte* pNu
 
 /*********************************************************************************
 Function:       CManaKernel::SwitchStatus
-Description:    ĞÅºÅ»ú¹¤×÷×´Ì¬ÇĞ»»			
-Input:          uiWorkStatus - ĞÂ¹¤×÷×´Ì¬
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºå·¥ä½œçŠ¶æ€åˆ‡æ¢			
+Input:          uiWorkStatus - æ–°å·¥ä½œçŠ¶æ€
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::SwitchStatus(unsigned int uiWorkStatus)
 {
@@ -2789,12 +2789,12 @@ void CManaKernel::SwitchStatus(unsigned int uiWorkStatus)
 	{
 		return;
 	}
-	if ( ( SIGNALOFF == m_pRunData->uiWorkStatus ) && ( STANDARD == uiWorkStatus ) )  //¹ØµÆÇĞ»»µ½±ê×¼ ĞèÒª¾­¹ı»ÆÉÁ
+	if ( ( SIGNALOFF == m_pRunData->uiWorkStatus ) && ( STANDARD == uiWorkStatus ) )  //å…³ç¯åˆ‡æ¢åˆ°æ ‡å‡† éœ€è¦ç»è¿‡é»„é—ª
 	{
 		m_pRunData->uiOldWorkStatus = SIGNALOFF ;
 		m_pRunData->uiWorkStatus = FLASH;
 	}
-	else if ( (FLASH == m_pRunData->uiWorkStatus) && ( STANDARD == uiWorkStatus ) )  //»ÆÉÁÇĞ»»µ½±ê×¼ ĞèÒª¾­¹ıÈ«ºì 
+	else if ( (FLASH == m_pRunData->uiWorkStatus) && ( STANDARD == uiWorkStatus ) )  //é»„é—ªåˆ‡æ¢åˆ°æ ‡å‡† éœ€è¦ç»è¿‡å…¨çº¢ 
 	{
 		m_bWaitStandard          = true;
 		m_pRunData->uiOldWorkStatus = FLASH ;
@@ -2805,19 +2805,19 @@ void CManaKernel::SwitchStatus(unsigned int uiWorkStatus)
 		m_pRunData->uiOldWorkStatus = m_pRunData->uiWorkStatus ;
 		m_pRunData->uiWorkStatus = uiWorkStatus;
 	}
-	 /*È¥µôÊÖ¶¯Ê±ĞèÒªÖØĞÂ¼ÓÔØÍ¨µÀĞÅÏ¢µÈÒ»ÏµÁĞĞÅÏ¢*/
+	 /*å»æ‰æ‰‹åŠ¨æ—¶éœ€è¦é‡æ–°åŠ è½½é€šé“ä¿¡æ¯ç­‰ä¸€ç³»åˆ—ä¿¡æ¯*/
 	m_pRunData->bNeedUpdate = true;  
-	ResetRunData(0);  //Õı³£µÄÖØĞÂ»ñÈ¡¶¯Ì¬²ÎÊı
+	ResetRunData(0);  //æ­£å¸¸çš„é‡æ–°è·å–åŠ¨æ€å‚æ•°
 	CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn	,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
 }
 
 
 /*********************************************************************************
 Function:       CManaKernel::SwitchCtrl
-Description:    ĞÅºÅ»ú¿ØÖÆÄ£Ê½ÇĞ»»		
-Input:          uiCtrl - ĞÂ¿ØÖÆÄ£Ê½
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºæ§åˆ¶æ¨¡å¼åˆ‡æ¢		
+Input:          uiCtrl - æ–°æ§åˆ¶æ¨¡å¼
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 {
@@ -2829,16 +2829,16 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 
 	if(uiCtrl == CTRL_SCHEDULE && m_pRunData->uiCtrl == CTRL_VEHACTUATED)
 	{
-		m_pRunData->bNeedUpdate = true;  //ĞèÒªÖØ¶ÁÊı¾İ¿â¼ÓÔØÂÌ²½Ê±¼ä
+		m_pRunData->bNeedUpdate = true;  //éœ€è¦é‡è¯»æ•°æ®åº“åŠ è½½ç»¿æ­¥æ—¶é—´
 	}
-	if ( (CTRL_MANUAL == m_pRunData->uiCtrl) && m_bSpePhase )  //µ±Ç°µÄ¿ØÖÆ·½Ê½ÎªÊÖ¶¯ÌØ¶¨ÏàÎ»£¬×¼±¸È¥³ıÊÖ¶¯
+	if ( (CTRL_MANUAL == m_pRunData->uiCtrl) && m_bSpePhase )  //å½“å‰çš„æ§åˆ¶æ–¹å¼ä¸ºæ‰‹åŠ¨ç‰¹å®šç›¸ä½ï¼Œå‡†å¤‡å»é™¤æ‰‹åŠ¨
 	{
 		SThreadMsg sTscMsgSts;
 		sTscMsgSts.ulType             = TSC_MSG_SWITCH_STATUS;  
 		sTscMsgSts.ucMsgOpt           = 0;
 		sTscMsgSts.uiMsgDataLen       = 1;
 		sTscMsgSts.pDataBuf           = ACE_OS::malloc(1);
-		*((Byte*)sTscMsgSts.pDataBuf) = FLASH;  //ÉÁ¹â
+		*((Byte*)sTscMsgSts.pDataBuf) = FLASH;  //é—ªå…‰
 		CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 	}	
 
@@ -2847,7 +2847,7 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 		if ( !CDetector::CreateInstance()->HaveDetBoard())   //MOD: 201309231450
 		{				
 			bDegrade = true ;
-			if(m_pRunData->uiCtrl == CTRL_SCHEDULE )         //·ÀÖ¹ÖØ¸´Ğ´Èë¿ØÖÆ·½Ê½¸ü¸ÄÈÕÖ¾
+			if(m_pRunData->uiCtrl == CTRL_SCHEDULE )         //é˜²æ­¢é‡å¤å†™å…¥æ§åˆ¶æ–¹å¼æ›´æ”¹æ—¥å¿—
 			{			
 				return ;
 			}
@@ -2858,7 +2858,7 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 		}
 		else if ( CTRL_ACTIVATE != uiCtrl )
 		{
-			m_pRunData->bNeedUpdate = true;   //ĞèÒª»ñÈ¡¼ì²âÆ÷ĞÅÏ¢
+			m_pRunData->bNeedUpdate = true;   //éœ€è¦è·å–æ£€æµ‹å™¨ä¿¡æ¯
 			ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
 			if((m_pRunData->uiCtrl == CTRL_SCHEDULE) && bDegrade == true )
 			{
@@ -2868,11 +2868,11 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 			//ACE_DEBUG((LM_DEBUG,"%s:%d CTRL_VEHACTUATED == uiCtrl,m_pRunData->bNeedUpdate == true \n" ,__FILE__,__LINE__));
 		}
 	}
-	if(CTRL_UTCS== uiCtrl && bDegrade == true && bUTS == false)//Èç¹ûÒÑ¾­´ÓÁªÍø½µ¼¶¶àÊ±¶Î±í¿ØÖÆ·½Ê½»¹ÊÇÁªÍøÔò²»ÏìÓ¦
+	if(CTRL_UTCS== uiCtrl && bDegrade == true && bUTS == false)//å¦‚æœå·²ç»ä»è”ç½‘é™çº§å¤šæ—¶æ®µè¡¨æ§åˆ¶æ–¹å¼è¿˜æ˜¯è”ç½‘åˆ™ä¸å“åº”
 	{
 		return ;
 	}
-	if ( uiCtrl == CTRL_LAST_CTRL )  //ÉÏ´Î¿ØÖÆ·½Ê½
+	if ( uiCtrl == CTRL_LAST_CTRL )  //ä¸Šæ¬¡æ§åˆ¶æ–¹å¼
 	{		
 		unsigned int uiCtrlTmp = m_pRunData->uiCtrl ;
 		m_pRunData->uiCtrl      = m_pRunData->uiOldCtrl;
@@ -2887,29 +2887,29 @@ void CManaKernel::SwitchCtrl(unsigned int uiCtrl)
 		ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** m_pRunData->uiOldCtrl =%d m_pRunData->uiCtrl = %d \n" ,__FILE__,__LINE__,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
 	}
 
-	if ( uiCtrl == CTRL_PANEL || uiCtrl == CTRL_MANUAL )               //Èç¹ûÊÇÇĞ»»µ½ÊÖ¶¯»òÕßÃæ°å¿ØÖÆÔò·¢ËÍºÚÆÁµ¹¼ÆÊ±
+	if ( uiCtrl == CTRL_PANEL || uiCtrl == CTRL_MANUAL )               //å¦‚æœæ˜¯åˆ‡æ¢åˆ°æ‰‹åŠ¨æˆ–è€…é¢æ¿æ§åˆ¶åˆ™å‘é€é»‘å±å€’è®¡æ—¶
 	{             
 		if ( m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_STUDY && m_pTscConfig->sSpecFun[FUN_COUNT_DOWN].ucValue != COUNTDOWN_FLASHOFF)
 			CGaCountDown::CreateInstance()->sendblack();
 	}
 	
-	if ( CTRL_PANEL == m_pRunData->uiOldCtrl && m_iTimePatternId != 0)  //MOD:20130928 ½«Õâ¸öÅĞ¶Ï´ÓÉÏÃæÒÆ¶¯µ½ÕâÀï
+	if ( CTRL_PANEL == m_pRunData->uiOldCtrl && m_iTimePatternId != 0)  //MOD:20130928 å°†è¿™ä¸ªåˆ¤æ–­ä»ä¸Šé¢ç§»åŠ¨åˆ°è¿™é‡Œ
 	{		
 		m_iTimePatternId = 0;
 		ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** After CTRL_PANEL to auto m_iTimePatternId = %d \n" ,__FILE__,__LINE__,m_iTimePatternId));
 	}
 	ACE_DEBUG((LM_DEBUG,"%s:%d***SwitchCtrl*** oldctrl = %d newctrl = %d\n"	,__FILE__,__LINE__,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl));
-	SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,0); //ÈÕÖ¾¼ÇÂ¼¿ØÖÆ·½Ê½ÇĞ»» ADD?201311041530
+	SndMsgLog(LOG_TYPE_OTHER,1,m_pRunData->uiOldCtrl,m_pRunData->uiCtrl,0); //æ—¥å¿—è®°å½•æ§åˆ¶æ–¹å¼åˆ‡æ¢ ADD?201311041530
 }
 
 
 
 /*********************************************************************************
 Function:       CManaKernel::SetUpdateBit
-Description:    ÉèÖÃÊı¾İ¿â¸üĞÂÊôĞÔÎªÕæ		
-Input:          uiCtrl - ĞÂ¿ØÖÆÄ£Ê½
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®æ•°æ®åº“æ›´æ–°å±æ€§ä¸ºçœŸ		
+Input:          uiCtrl - æ–°æ§åˆ¶æ¨¡å¼
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::SetUpdateBit()
 {
@@ -2920,16 +2920,16 @@ void CManaKernel::SetUpdateBit()
 
 /*********************************************************************************
 Function:       CManaKernel::ChangePatter
-Description:    ÇĞ»»ĞÅºÅ»úµÄÅäÊ±·½°¸£¬ÓÃÓÚÇĞ»»µ½ÌØÊâ·½°¸
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    åˆ‡æ¢ä¿¡å·æœºçš„é…æ—¶æ–¹æ¡ˆï¼Œç”¨äºåˆ‡æ¢åˆ°ç‰¹æ®Šæ–¹æ¡ˆ
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::ChangePatter(Byte iParama)
 {
-	//if(m_iTimePatternId == 250) //ÌØÊâ·½°¸-ËÄ·½Ïò·ÅĞĞ
+	//if(m_iTimePatternId == 250) //ç‰¹æ®Šæ–¹æ¡ˆ-å››æ–¹å‘æ”¾è¡Œ
 	//{
-		 SetDirecChannelColor(iParama) ; //ÉèÖÃÕâ¸ö·½ÏòÂÌµÆ·ÅĞĞ£¬²»°üÀ¨ĞĞÈËÍ¨µÀ
+		 SetDirecChannelColor(iParama) ; //è®¾ç½®è¿™ä¸ªæ–¹å‘ç»¿ç¯æ”¾è¡Œï¼Œä¸åŒ…æ‹¬è¡Œäººé€šé“
 	//}
 		
 }
@@ -2937,10 +2937,10 @@ void CManaKernel::ChangePatter(Byte iParama)
 
 /*********************************************************************************
 Function:       CManaKernel::LockStage
-Description:    Ëø¶¨½×¶Î
-Input:          ucStage - ½×¶ÎºÅ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    é”å®šé˜¶æ®µ
+Input:          ucStage - é˜¶æ®µå·
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::LockStage(Byte ucStage)
 {
@@ -2952,11 +2952,11 @@ void CManaKernel::LockStage(Byte ucStage)
 	}
 	ACE_DEBUG((LM_DEBUG,"%s:%d ucStage:%d m_pRunData->ucStageNo:%d LongStep:%d\n" , __FILE__,__LINE__,ucStage , m_pRunData->ucStageNo , IsLongStep(m_pRunData->ucStepNo) ));
 	m_bSpePhase = false;
-	if ( ucStage == m_pRunData->ucStageNo && (IsLongStep(m_pRunData->ucStepNo)) )  //Ëø¶¨½×¶Î¾ÍÊÇµ±Ç°½×¶Î£¬ÇÒ½×¶Î´¦ÓÚÂÌµÆ½×¶Î
+	if ( ucStage == m_pRunData->ucStageNo && (IsLongStep(m_pRunData->ucStepNo)) )  //é”å®šé˜¶æ®µå°±æ˜¯å½“å‰é˜¶æ®µï¼Œä¸”é˜¶æ®µå¤„äºç»¿ç¯é˜¶æ®µ
 	{
 		return;
 	}
-	//±£Ö¤×ßÍê×îĞ¡ÂÌ
+	//ä¿è¯èµ°å®Œæœ€å°ç»¿
 	if(m_iTimePatternId == 0)
 	{
 		if ( IsLongStep(m_pRunData->ucStepNo) )
@@ -2965,11 +2965,11 @@ void CManaKernel::LockStage(Byte ucStage)
 			if ( m_pRunData->ucElapseTime < iMinGreen )
 			{
 				//return;
-				ACE_OS::sleep(iMinGreen-m_pRunData->ucElapseTime);  //×ßÍê×îĞ¡ÂÌ
+				ACE_OS::sleep(iMinGreen-m_pRunData->ucElapseTime);  //èµ°å®Œæœ€å°ç»¿
 			}
 		}
 		
-		//¹ı¶É²½
+		//è¿‡æ¸¡æ­¥
 		while (true)
 		{
 			m_pRunData->ucStepNo++;
@@ -2978,11 +2978,11 @@ void CManaKernel::LockStage(Byte ucStage)
 				m_pRunData->ucStepNo = 0;
 			}
 
-			if ( !IsLongStep(m_pRunData->ucStepNo) )  //·Ç³¤²½
+			if ( !IsLongStep(m_pRunData->ucStepNo) )  //éé•¿æ­¥
 			{
 				m_pRunData->ucElapseTime = 0;
 				m_pRunData->ucStepTime = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucStepLen;
-				m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //¸ù¾İ²½·¥ºÅ»ñÈ¡½×¶ÎºÅ
+				m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //æ ¹æ®æ­¥ä¼å·è·å–é˜¶æ®µå·
 
 				CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn
 					,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
@@ -2992,7 +2992,7 @@ void CManaKernel::LockStage(Byte ucStage)
 					//ACE_OS::printf("%s:%d ucElapseTime=%d ucStepTime=%d \r\n",__FILE__,__LINE__,m_pRunData->ucElapseTime,m_pRunData->ucStepTime);
 					//ACE_OS::sleep(ACE_Time_Value(0,500));
 					//continue;
-					//ACE_OS::sleep(iMinGreen-m_pRunData->ucElapseTime);  //×ßÍê×îĞ¡ÂÌ
+					//ACE_OS::sleep(iMinGreen-m_pRunData->ucElapseTime);  //èµ°å®Œæœ€å°ç»¿
 				//}
 
 			}
@@ -3010,7 +3010,7 @@ void CManaKernel::LockStage(Byte ucStage)
 		}	
 	}
 	m_pRunData->ucStageNo = ucStage;
-	m_pRunData->ucStepNo = StageToStep(m_pRunData->ucStageNo);  //¸ù¾İ½×¶ÎºÅ»ñÈ¡²½·¥ºÅ
+	m_pRunData->ucStepNo = StageToStep(m_pRunData->ucStageNo);  //æ ¹æ®é˜¶æ®µå·è·å–æ­¥ä¼å·
 	m_pRunData->ucStepTime = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucStepLen;
 	m_pRunData->ucElapseTime = 0;
 	m_pRunData->ucRunTime = m_pRunData->ucStepTime;
@@ -3023,10 +3023,10 @@ void CManaKernel::LockStage(Byte ucStage)
 
 /*********************************************************************************
 Function:       CManaKernel::LockNextStage
-Description:    ÇĞ»»µ½ÏÂÒ»¸ö½×¶ÎËø¶¨
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    åˆ‡æ¢åˆ°ä¸‹ä¸€ä¸ªé˜¶æ®µé”å®š
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::LockNextStage()
 {	
@@ -3055,17 +3055,17 @@ void CManaKernel::LockNextStage()
 
 /*********************************************************************************
 Function:       CManaKernel::LockStep
-Description:    Ëø¶¨²½·¥
-Input:          ucStep - 0:ÏÂÒ»²½ other:Ö¸¶¨²½·¥
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    é”å®šæ­¥ä¼
+Input:          ucStep - 0:ä¸‹ä¸€æ­¥ other:æŒ‡å®šæ­¥ä¼
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::LockStep(Byte ucStep)
 {
-	//±£Ö¤×ßÍê×îĞ¡ÂÌ
+	//ä¿è¯èµ°å®Œæœ€å°ç»¿
 	int iMinGreen = 0;
 
-	if ( STANDARD != m_pRunData->uiWorkStatus )  //»ÆÉÁ¡¢È«ºìÒÔ¼°¹ØµÆÃ»ÓĞÏÂÒ»²½
+	if ( STANDARD != m_pRunData->uiWorkStatus )  //é»„é—ªã€å…¨çº¢ä»¥åŠå…³ç¯æ²¡æœ‰ä¸‹ä¸€æ­¥
 	{
 		return;
 	}
@@ -3098,11 +3098,11 @@ void CManaKernel::LockStep(Byte ucStep)
 		m_pRunData->ucStepNo = ucStep - 1;
 	}
 
-	//´ÓÒÑÓĞµÄ²½·¥±í¿ìËÙ¼ÓÔØÏÂÒ»²½
+	//ä»å·²æœ‰çš„æ­¥ä¼è¡¨å¿«é€ŸåŠ è½½ä¸‹ä¸€æ­¥
 	m_pRunData->ucStepTime = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucStepLen;
 	m_pRunData->ucElapseTime = 0;
 	m_pRunData->ucRunTime = m_pRunData->ucStepTime;
-	m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //¸ù¾İ²½·¥ºÅ»ñÈ¡½×¶ÎºÅ
+	m_pRunData->ucStageNo = StepToStage(m_pRunData->ucStepNo,NULL); //æ ¹æ®æ­¥ä¼å·è·å–é˜¶æ®µå·
 
 	CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn	,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
 	
@@ -3111,10 +3111,10 @@ void CManaKernel::LockStep(Byte ucStep)
 
 /*********************************************************************************
 Function:       CManaKernel::LockStep
-Description:    Ëø¶¨ÏàÎ»ÃüÁî
-Input:          PhaseId  - Ëø¶¨ÏàÎ»ºÅ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    é”å®šç›¸ä½å‘½ä»¤
+Input:          PhaseId  - é”å®šç›¸ä½å·
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::LockPhase(Byte PhaseId)
 {
@@ -3126,7 +3126,7 @@ void CManaKernel::LockPhase(Byte PhaseId)
 
 	if ( !m_bSpePhase )
 	{
-		//³¤²½±£Ö¤×ßÍê×îĞ¡ÂÌ
+		//é•¿æ­¥ä¿è¯èµ°å®Œæœ€å°ç»¿
 		if ( IsLongStep(m_pRunData->ucStepNo) )
 		{
 			iMinGreen = GetMaxStageMinGreen(m_pRunData->ucStepNo);
@@ -3138,7 +3138,7 @@ void CManaKernel::LockPhase(Byte PhaseId)
 			}
 		}
 
-		//¹ı¶É²½
+		//è¿‡æ¸¡æ­¥
 		while ( true )
 		{
 			m_pRunData->ucStepNo++;
@@ -3146,11 +3146,11 @@ void CManaKernel::LockPhase(Byte PhaseId)
 			{
 				m_pRunData->ucStepNo = 0;
 			}
-			if ( !IsLongStep(m_pRunData->ucStepNo) )  //·Ç³¤²½
+			if ( !IsLongStep(m_pRunData->ucStepNo) )  //éé•¿æ­¥
 			{
 				m_pRunData->ucElapseTime = 0;
 				m_pRunData->ucStepTime   = m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucStepLen;
-				m_pRunData->ucStageNo    = StepToStage(m_pRunData->ucStepNo,NULL); //¸ù¾İ²½·¥ºÅ»ñÈ¡½×¶ÎºÅ
+				m_pRunData->ucStageNo    = StepToStage(m_pRunData->ucStepNo,NULL); //æ ¹æ®æ­¥ä¼å·è·å–é˜¶æ®µå·
 
 				CLampBoard::CreateInstance()->SetLamp(m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampOn
 					,m_pRunData->sStageStepInfo[m_pRunData->ucStepNo].ucLampFlash);
@@ -3175,7 +3175,7 @@ void CManaKernel::LockPhase(Byte PhaseId)
 	ucSignalGrpIndex = 0;
 	while ( ucSignalGrpIndex < ucSignalGrpNum )  //red yellow green
 	{
-		ucLampIndex = ( ucSignalGrp[ucSignalGrpIndex] - 1 ) * 3; //ÏàÎ»×éµÄredÏÂ±ê
+		ucLampIndex = ( ucSignalGrp[ucSignalGrpIndex] - 1 ) * 3; //ç›¸ä½ç»„çš„redä¸‹æ ‡
 		ucLampIndex = ucLampIndex + 2;  //green
 		m_ucLampOn[ucLampIndex] = 1;
 		ucSignalGrpIndex++;
@@ -3187,24 +3187,24 @@ void CManaKernel::LockPhase(Byte PhaseId)
 
 /*********************************************************************************
 Function:       CManaKernel::ReadTscEvent
-Description:    ÊÂ¼ş¶ÁÈ¡
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    äº‹ä»¶è¯»å–
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::ReadTscEvent()
 {
-	//´ı²¹³ä
+	//å¾…è¡¥å……
 }
 
 
 /*********************************************************************************
 Function:       CManaKernel::ReadTscEvent
-Description:    ĞÅºÅ»úĞ£Ê±½Ó¿Ú,ÓÃÓÚÊÖ¶¯Ğ£Ê±ºÍGPSĞ£Ê±´¦Àí
-Input:          ucType - Ğ£Ê±ÀàĞÍ
-				pValue - Ê±¼äÖµÖ¸Õë
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºæ ¡æ—¶æ¥å£,ç”¨äºæ‰‹åŠ¨æ ¡æ—¶å’ŒGPSæ ¡æ—¶å¤„ç†
+Input:          ucType - æ ¡æ—¶ç±»å‹
+				pValue - æ—¶é—´å€¼æŒ‡é’ˆ
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 {
@@ -3220,7 +3220,7 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 		iIndex++;
 	}
 
-	if ( ucType == OBJECT_UTC_TIME) //utcÊ±¼ä
+	if ( ucType == OBJECT_UTC_TIME) //utcæ—¶é—´
 	{
 		iTotalSec = iTotalSec - 8 * 3600;
 	}
@@ -3249,7 +3249,7 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 	now.tm_mon--;
 	now.tm_zone = 0;	
 	ti = mktime(&now);
-	stime(&ti);   //ÉèÖÃÏµÍ³Ê±¼ä	
+	stime(&ti);   //è®¾ç½®ç³»ç»Ÿæ—¶é—´	
 	fd = open(DEV_RTC, O_WRONLY, 0);
 	if(fd > 0)
 	{
@@ -3263,7 +3263,7 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 	
 	CTimerManager::CreateInstance()->StartAllTimer();
 	SetUpdateBit();
-	if(m_pRunData->uiCtrl == CTRL_WIRELESS) //´¦ÓÚÎŞÏßĞ­µ÷¿ØÖÆ
+	if(m_pRunData->uiCtrl == CTRL_WIRELESS) //å¤„äºæ— çº¿åè°ƒæ§åˆ¶
 		CWirelessCoord::CreateInstance()->ForceAssort();
 	
 	SThreadMsg sTscMsg;
@@ -3282,10 +3282,10 @@ void CManaKernel::CorrectTime(Byte ucType,Byte* pValue)
 
 /*********************************************************************************
 Function:       CManaKernel::GetTscStatus
-Description:    ĞÅºÅ»ú×´Ì¬»ñÈ¡
-Input:          ucDealDataIndex - ´ı´¦Àí¿Í»§¶ËÏÂ±ê
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºçŠ¶æ€è·å–
+Input:          ucDealDataIndex - å¾…å¤„ç†å®¢æˆ·ç«¯ä¸‹æ ‡
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetTscStatus(Byte ucDealDataIndex)
 {
@@ -3307,17 +3307,17 @@ void CManaKernel::GetTscStatus(Byte ucDealDataIndex)
 	((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm2    = 0;
 	if ( m_bRestart )
 	{
-		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm2 |= (1<<5);  /*ĞÅºÅ»úÍ£Ö¹ÔËĞĞ*/
+		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm2 |= (1<<5);  /*ä¿¡å·æœºåœæ­¢è¿è¡Œ*/
 	}
 
 	((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm1    = 0;
 	if ( FLASH == m_pRunData->uiWorkStatus )
 	{
-		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm1 |= (1<<5);   /*±¾µØÉÁ¹â¿ØÖÆ*/  
+		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm1 |= (1<<5);   /*æœ¬åœ°é—ªå…‰æ§åˆ¶*/  
 	}
 	if ( CTRL_UTCS != m_pRunData->uiCtrl )
 	{
-		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm1 |= (1<<6);   /*±¾µØµ¥µã¿ØÖÆ*/  
+		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarm1 |= (1<<6);   /*æœ¬åœ°å•ç‚¹æ§åˆ¶*/  
 	}
 
 	/*
@@ -3328,14 +3328,14 @@ void CManaKernel::GetTscStatus(Byte ucDealDataIndex)
 	((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarmSummary  = 0;
 	if ( CDetector::CreateInstance()->IsDetError() )
 	{
-		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarmSummary |= (1<<5); /*¼ì²âÆ÷¹ÊÕÏ*/
+		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarmSummary |= (1<<5); /*æ£€æµ‹å™¨æ•…éšœ*/
 	}
 	if ( m_bRestart )
 	{
-		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarmSummary |= (1<<7); /*ĞÅºÅ»ú¼´½«Í£Ö¹ÔËĞĞ*/
+		((STscStatus*)(sGbtMsg.pDataBuf))->ucTscAlarmSummary |= (1<<7); /*ä¿¡å·æœºå³å°†åœæ­¢è¿è¡Œ*/
 	}
 
-	/*¼ì²âÆ÷Êı¾İ*/
+	/*æ£€æµ‹å™¨æ•°æ®*/
 	/*
 	((STscStatus*)(sGbtMsg.pDataBuf))->ucActiveDetCnt = tblDetector.GetCount();
 	GetDetectorSts(((STscStatus*)(sGbtMsg.pDataBuf))->sDetSts);
@@ -3359,10 +3359,10 @@ void CManaKernel::GetTscStatus(Byte ucDealDataIndex)
 
 /*********************************************************************************
 Function:       CManaKernel::GetTscStatus
-Description:    ĞÅºÅ»úÀ©Õ¹×´Ì¬»ñÈ¡
-Input:          ucDealDataIndex - ´ı´¦Àí¿Í»§¶ËÏÂ±ê
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¿¡å·æœºæ‰©å±•çŠ¶æ€è·å–
+Input:          ucDealDataIndex - å¾…å¤„ç†å®¢æˆ·ç«¯ä¸‹æ ‡
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 {
@@ -3395,10 +3395,10 @@ void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 	((Byte*)sGbtMsg.pDataBuf)[4] = m_pRunData->ucStageCount;
 	((Byte*)sGbtMsg.pDataBuf)[5] = m_pRunData->ucStageNo + 1;
 	 GetStageTime(&ucStageTotalTime,&ucStageElapseTime);
-	((Byte*)sGbtMsg.pDataBuf)[6] = ucStageTotalTime;   //½×¶Î×ÜÊ±¼ä
-	((Byte*)sGbtMsg.pDataBuf)[7] = ucStageElapseTime;  //½×¶ÎÒÑ¾­ÔËĞĞÊ±¼ä
+	((Byte*)sGbtMsg.pDataBuf)[6] = ucStageTotalTime;   //é˜¶æ®µæ€»æ—¶é—´
+	((Byte*)sGbtMsg.pDataBuf)[7] = ucStageElapseTime;  //é˜¶æ®µå·²ç»è¿è¡Œæ—¶é—´
 
-	if ( m_bSpePhase )  //Ö¸¶¨ÏàÎ»
+	if ( m_bSpePhase )  //æŒ‡å®šç›¸ä½
 	{
 		//pLampOn    = m_ucLampOn;
 		//pLampFlash = m_ucLampFlash;
@@ -3412,12 +3412,12 @@ void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 		CLampBoard::CreateInstance()->GetLamp(pLampOn,pLampFlash);
 	}
 
-	//´ò°üÍ¨µÀ×´Ì¬
+	//æ‰“åŒ…é€šé“çŠ¶æ€
 	for ( int i=0; i<MAX_LAMP; i++ )
 	{
 		ucChanIndex = i / 3;  
 
-		if ( pLampOn[i] == 0 )  //·ÇµÆÁÁ
+		if ( pLampOn[i] == 0 )  //éç¯äº®
 		{
 			continue;
 		}
@@ -3437,7 +3437,7 @@ void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 				break;
 		}
 
-		if ( 1 == pLampFlash[i] )  //Í¨µÀÉÁË¸Êä³ö×´Ì¬
+		if ( 1 == pLampFlash[i] )  //é€šé“é—ªçƒè¾“å‡ºçŠ¶æ€
 		{
 			ulChanOut[3] |= 1<<ucChanIndex;
 		}
@@ -3456,10 +3456,10 @@ void CManaKernel::GetTscExStatus(Byte ucDealDataIndex)
 
 /*********************************************************************************
 Function:       CManaKernel::GetCurStageLen
-Description:    »ñÈ¡µ±Ç°·½°¸¸÷½×¶ÎÊ±³¤
+Description:    è·å–å½“å‰æ–¹æ¡ˆå„é˜¶æ®µæ—¶é•¿
 Input:          
-Output:         pCurStageLen - ½×¶ÎÊ±³¤Ö¸Õë
-Return:         ÎŞ
+Output:         pCurStageLen - é˜¶æ®µæ—¶é•¿æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetCurStageLen(Byte* pCurStageLen)
 {
@@ -3478,10 +3478,10 @@ void CManaKernel::GetCurStageLen(Byte* pCurStageLen)
 
 /*********************************************************************************
 Function:       CManaKernel::GetCurKeyGreenLen
-Description:    µ±Ç°·½°¸¸÷¹Ø¼üÏàÎ»ÂÌµÆÊ±³¤
+Description:    å½“å‰æ–¹æ¡ˆå„å…³é”®ç›¸ä½ç»¿ç¯æ—¶é•¿
 Input:          
-Output:         pCurKeyGreen - ¹Ø¼üÏàÎ»Ê±³¤Êı×éÖ¸Õë
-Return:         ÎŞ
+Output:         pCurKeyGreen - å…³é”®ç›¸ä½æ—¶é•¿æ•°ç»„æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetCurKeyGreenLen(Byte* pCurKeyGreen)
 {
@@ -3498,10 +3498,10 @@ void CManaKernel::GetCurKeyGreenLen(Byte* pCurKeyGreen)
 
 /*********************************************************************************
 Function:       CManaKernel::GetDetectorSts
-Description:    »ñÈ¡¼ì²âÆ÷×´Ì¬
+Description:    è·å–æ£€æµ‹å™¨çŠ¶æ€
 Input:          
-Output:         pDetStatus - ¼ì²âÆ÷×´Ì¬Ö¸Õë
-Return:         ÎŞ
+Output:         pDetStatus - æ£€æµ‹å™¨çŠ¶æ€æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 /*
 void CManaKernel::GetDetectorSts(SDetectorStsPara* pDetStatus)
@@ -3526,10 +3526,10 @@ void CManaKernel::GetDetectorSts(SDetectorStsPara* pDetStatus)
 
 /*********************************************************************************
 Function:       CManaKernel::GetDetectorData
-Description:    »ñÈ¡¼ì²âÆ÷²ÎÊı
+Description:    è·å–æ£€æµ‹å™¨å‚æ•°
 Input:          
-Output:         pDetStatus - ¼ì²âÆ÷²ÎÊıÖ¸Õë
-Return:         ÎŞ
+Output:         pDetStatus - æ£€æµ‹å™¨å‚æ•°æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 /*
 void CManaKernel::GetDetectorData(SDetectorDataPara* pDetData)
@@ -3554,10 +3554,10 @@ void CManaKernel::GetDetectorData(SDetectorDataPara* pDetData)
 
 /*********************************************************************************
 Function:       CManaKernel::GetDetectorAlarm
-Description:    »ñÈ¡³µÁ¾¼ì²âÆ÷¸æ¾¯²ÎÊı
+Description:    è·å–è½¦è¾†æ£€æµ‹å™¨å‘Šè­¦å‚æ•°
 Input:          
-Output:         pDetStatus - ¼ì²âÆ÷¾¯¸æ²ÎÊıÖ¸Õë
-Return:         ÎŞ
+Output:         pDetStatus - æ£€æµ‹å™¨è­¦å‘Šå‚æ•°æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 /*
 void CManaKernel::GetDetectorAlarm(SDetectorAlarm* pDetAlarm)
@@ -3582,10 +3582,10 @@ void CManaKernel::GetDetectorAlarm(SDetectorAlarm* pDetAlarm)
 
 /*********************************************************************************
 Function:       CManaKernel::GetPhaseStatus
-Description:    »ñÈ¡µ±Ç°µÄÏàÎ»×´Ì¬ĞÅÏ¢
-Input:          ÎŞ
-Output:         pPhaseStatus - ÏàÎ»×´Ì¬ĞÅÏ¢²ÎÊıÖ¸Õë
-Return:         ÎŞ
+Description:    è·å–å½“å‰çš„ç›¸ä½çŠ¶æ€ä¿¡æ¯
+Input:          æ— 
+Output:         pPhaseStatus - ç›¸ä½çŠ¶æ€ä¿¡æ¯å‚æ•°æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetPhaseStatus(SPhaseSts* pPhaseStatus)
 {
@@ -3598,12 +3598,12 @@ void CManaKernel::GetPhaseStatus(SPhaseSts* pPhaseStatus)
 
 		switch ( uiWorkStatus )
 		{
-		case SIGNALOFF: //¹ØµÆ
+		case SIGNALOFF: //å…³ç¯
 			continue;
-		case ALLRED:    //È«ºì
+		case ALLRED:    //å…¨çº¢
 			pPhaseStatus[i].ucRed    = 0xff;
 			continue;
-		case FLASH:     //ÉÁ¹â
+		case FLASH:     //é—ªå…‰
 			pPhaseStatus[i].ucYellow = 0xff;
 			continue;
 		default:
@@ -3634,10 +3634,10 @@ void CManaKernel::GetPhaseStatus(SPhaseSts* pPhaseStatus)
 
 /*********************************************************************************
 Function:       CManaKernel::GetOverlapPhaseStatus
-Description:    »ñÈ¡¸úËæÏàÎ»×´Ì¬
-Input:          ÎŞ
-Output:         pOverlapPhaseSts - ¸úËæÏàÎ»×´Ì¬ĞÅÏ¢²ÎÊıÖ¸Õë
-Return:         ÎŞ
+Description:    è·å–è·Ÿéšç›¸ä½çŠ¶æ€
+Input:          æ— 
+Output:         pOverlapPhaseSts - è·Ÿéšç›¸ä½çŠ¶æ€ä¿¡æ¯å‚æ•°æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetOverlapPhaseStatus(SOverlapPhaseSts* pOverlapPhaseSts)
 {
@@ -3648,12 +3648,12 @@ void CManaKernel::GetOverlapPhaseStatus(SOverlapPhaseSts* pOverlapPhaseSts)
 
 	switch ( uiWorkStatus )
 	{
-	case SIGNALOFF: //¹ØµÆ
+	case SIGNALOFF: //å…³ç¯
 		return;
-	case ALLRED:    //È«ºì
+	case ALLRED:    //å…¨çº¢
 		pOverlapPhaseSts->ucRed    = 0xff;
 		return;
-	case FLASH:     //ÉÁ¹â
+	case FLASH:     //é—ªå…‰
 		pOverlapPhaseSts->ucYellow = 0xff;
 		return;
 	default:
@@ -3684,10 +3684,10 @@ void CManaKernel::GetOverlapPhaseStatus(SOverlapPhaseSts* pOverlapPhaseSts)
 
 /*********************************************************************************
 Function:       CManaKernel::GetChannelStatus
-Description:    Í¨µÀ×´Ì¬ĞÅÏ¢»ñÈ¡
-Input:          ÎŞ
-Output:         pChannelSts - Í¨µÀ×´Ì¬ĞÅÏ¢²ÎÊıÖ¸Õë
-Return:         ÎŞ
+Description:    é€šé“çŠ¶æ€ä¿¡æ¯è·å–
+Input:          æ— 
+Output:         pChannelSts - é€šé“çŠ¶æ€ä¿¡æ¯å‚æ•°æŒ‡é’ˆ
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetChannelStatus(SChannelSts* pChannelSts)
 {
@@ -3702,14 +3702,14 @@ void CManaKernel::GetChannelStatus(SChannelSts* pChannelSts)
 	{
 		switch ( uiWorkStatus )
 		{
-		case SIGNALOFF: //¹ØµÆ
+		case SIGNALOFF: //å…³ç¯
 			ucIndex++;
 			continue;
-		case ALLRED:    //È«ºì
+		case ALLRED:    //å…¨çº¢
 			pChannelSts[ucIndex].ucRed = 0xff;
 			ucIndex++;
 			continue;
-		case FLASH:     //ÉÁ¹â
+		case FLASH:     //é—ªå…‰
 			pChannelSts[ucIndex].ucYellow = 0xff;
 			ucIndex++;
 			continue;
@@ -3732,7 +3732,7 @@ void CManaKernel::GetChannelStatus(SChannelSts* pChannelSts)
 				pPhaseColor = m_pRunData->sStageStepInfo[ucCurStepNo].ucPhaseColor;
 			}
 				
-			if ( (ucPhaseNo>0) && (ucPhaseNo<MAX_PHASE) )  //´æÔÚ¸ÃÍ¨µÀĞÅÏ¢
+			if ( (ucPhaseNo>0) && (ucPhaseNo<MAX_PHASE) )  //å­˜åœ¨è¯¥é€šé“ä¿¡æ¯
 			{
 				switch ( pPhaseColor[ucPhaseNo-1] )  
 				{
@@ -3758,10 +3758,10 @@ void CManaKernel::GetChannelStatus(SChannelSts* pChannelSts)
 
 /*********************************************************************************
 Function:       CManaKernel::GetPhaseIdWithChannel
-Description:    ¸ù¾İÍ¨µÀºÅ»ñÈ¡Í¨µÀ¶ÔÓ¦¹ØÁªÏàÎ»ºÅ
-Input:          ucChannelNo -Í¨µÀĞÅºÅµÆ×éºÅ
-Output:         ÎŞ
-Return:         ÏàÎ»ºÅ£¬Èô»ñÈ¡´íÎó·µ»Ø MAX_PHASE+1(´íÎó)
+Description:    æ ¹æ®é€šé“å·è·å–é€šé“å¯¹åº”å…³è”ç›¸ä½å·
+Input:          ucChannelNo -é€šé“ä¿¡å·ç¯ç»„å·
+Output:         æ— 
+Return:         ç›¸ä½å·ï¼Œè‹¥è·å–é”™è¯¯è¿”å› MAX_PHASE+1(é”™è¯¯)
 **********************************************************************************/
 Byte CManaKernel::GetPhaseIdWithChannel(Byte ucChannelNo)
 {
@@ -3785,10 +3785,10 @@ Byte CManaKernel::GetPhaseIdWithChannel(Byte ucChannelNo)
 
 /*********************************************************************************
 Function:       CManaKernel::SetRestart
-Description:    ÉèÖÃÖØÆôÊôĞÔÎªÕæÖµ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®é‡å¯å±æ€§ä¸ºçœŸå€¼
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::SetRestart()
 {
@@ -3798,10 +3798,10 @@ void CManaKernel::SetRestart()
 
 /*********************************************************************************
 Function:       CManaKernel::GetRestart
-Description:    »ñÈ¡ÖØÆô²ÎÊıÊôĞÔÖµ
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÖØÆô²ÎÊıÊôĞÔÖµ
+Description:    è·å–é‡å¯å‚æ•°å±æ€§å€¼
+Input:          æ— 
+Output:         æ— 
+Return:         é‡å¯å‚æ•°å±æ€§å€¼
 **********************************************************************************/
 bool CManaKernel::GetRestart()
 {
@@ -3811,10 +3811,10 @@ bool CManaKernel::GetRestart()
 
 /*********************************************************************************
 Function:       CManaKernel::RestartTsc
-Description:    ÖØÆôĞÅºÅ»ú,1s½øÈëÒ»´Î
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    é‡å¯ä¿¡å·æœº,1sè¿›å…¥ä¸€æ¬¡
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::RestartTsc()
 {
@@ -3839,10 +3839,10 @@ void CManaKernel::RestartTsc()
 
 /*********************************************************************************
 Function:       CManaKernel::IsLongStep
-Description:    ÅĞ¶Ïµ±Ç°²½·¥ÊÇ·ñÎª³¤²½£¬¼´ÂÌµÆÁÁÆğ
-Input:          iStepNo  - ²½·¥ºÅ
-Output:         ÎŞ
-Return:         true - ³¤²½  false - ·Ç³¤²½
+Description:    åˆ¤æ–­å½“å‰æ­¥ä¼æ˜¯å¦ä¸ºé•¿æ­¥ï¼Œå³ç»¿ç¯äº®èµ·
+Input:          iStepNo  - æ­¥ä¼å·
+Output:         æ— 
+Return:         true - é•¿æ­¥  false - éé•¿æ­¥
 **********************************************************************************/
 bool CManaKernel::IsLongStep(int iStepNo)
 {
@@ -3857,30 +3857,30 @@ bool CManaKernel::IsLongStep(int iStepNo)
 			iIndex++;
 			continue;
 		}		
-		if ( ( LAMP_COLOR_YELLOW == iIndex % 3 )&& (1 == m_pRunData->sStageStepInfo[iStepNo].ucLampOn[iIndex]) )  //´æÔÚ»ÆµÆ
+		if ( ( LAMP_COLOR_YELLOW == iIndex % 3 )&& (1 == m_pRunData->sStageStepInfo[iStepNo].ucLampOn[iIndex]) )  //å­˜åœ¨é»„ç¯
 		{
 			return false;
 		}
 
-		if ( 1 == m_pRunData->sStageStepInfo[iStepNo].ucLampOn[iIndex] )  //´æÔÚÂÌµÆÁÁ
+		if ( 1 == m_pRunData->sStageStepInfo[iStepNo].ucLampOn[iIndex] )  //å­˜åœ¨ç»¿ç¯äº®
 		{
-			if ( 0 == m_pRunData->sStageStepInfo[iStepNo].ucLampFlash[iIndex] ) //ÂÌµÆ²»ÉÁ
+			if ( 0 == m_pRunData->sStageStepInfo[iStepNo].ucLampFlash[iIndex] ) //ç»¿ç¯ä¸é—ª
 			{
 				bGreen = true;
-				//break ; //ADD: 2013 0702 1723 Ó¦¸ÃÌø³öÑ­»·
+				//break ; //ADD: 2013 0702 1723 åº”è¯¥è·³å‡ºå¾ªç¯
 				
 			}
-			else  //ÂÌÉÁ 
+			else  //ç»¿é—ª 
 			{
 				bGreenFlash = true;
 			}
 
-			break ; ////Ó¦¸ÃÌø³öÀ´ ADD?20130702 17 21
+			break ; ////åº”è¯¥è·³å‡ºæ¥ ADD?20130702 17 21
 		}
 		iIndex++;
 	}
 
-	if ( bGreen && !bGreenFlash ) //´æÔÚÂÌµÆ ²¢ÇÒÃ»ÓĞ(»Æ»ò»ÆÉÁ»òÂÌÉÁ)
+	if ( bGreen && !bGreenFlash ) //å­˜åœ¨ç»¿ç¯ å¹¶ä¸”æ²¡æœ‰(é»„æˆ–é»„é—ªæˆ–ç»¿é—ª)
 	{
 		return true;
 	}
@@ -3892,10 +3892,10 @@ bool CManaKernel::IsLongStep(int iStepNo)
 
 /*********************************************************************************
 Function:       CManaKernel::GetStageMinGreen
-Description:    »ñÈ¡½×¶ÎÏàÎ»×éµÄ×îĞ¡ÂÌ
-Input:          usAllowPhase  - ·ÅĞĞÏàÎ»×éºÏĞòÁĞ
-Output:         ÎŞ
-Return:         ×îĞ¡ÂÌÖµ
+Description:    è·å–é˜¶æ®µç›¸ä½ç»„çš„æœ€å°ç»¿
+Input:          usAllowPhase  - æ”¾è¡Œç›¸ä½ç»„åˆåºåˆ—
+Output:         æ— 
+Return:         æœ€å°ç»¿å€¼
 **********************************************************************************/
 int CManaKernel::GetStageMinGreen(Ushort usAllowPhase)
 {
@@ -3916,10 +3916,10 @@ int CManaKernel::GetStageMinGreen(Ushort usAllowPhase)
 
 /*********************************************************************************
 Function:       CManaKernel::GetCurStepMinGreen
-Description:    »ñÈ¡µ±Ç°²½·¥µÄ×îĞ¡ÂÌ(¸÷¸öÏàÎ»µÄ×îĞ¡ÂÌ)£¬Õı³£ÔÚ½×¶ÎµÄµÚÒ»²½»ñÈ¡
-Input:          iStepNo  - ²½·¥ºÅ
-Output:         iMaxGreenTime:²½·¥×î´óÂÌ iAddGreenTime:×îĞ¡µ¥Î»ÂÌµÆÑÓ³¤Ê±¼ä
-Return:         µ±Ç°²½·¥µÄ×îĞ¡ÂÌ
+Description:    è·å–å½“å‰æ­¥ä¼çš„æœ€å°ç»¿(å„ä¸ªç›¸ä½çš„æœ€å°ç»¿)ï¼Œæ­£å¸¸åœ¨é˜¶æ®µçš„ç¬¬ä¸€æ­¥è·å–
+Input:          iStepNo  - æ­¥ä¼å·
+Output:         iMaxGreenTime:æ­¥ä¼æœ€å¤§ç»¿ iAddGreenTime:æœ€å°å•ä½ç»¿ç¯å»¶é•¿æ—¶é—´
+Return:         å½“å‰æ­¥ä¼çš„æœ€å°ç»¿
 **********************************************************************************/
 int CManaKernel::GetCurStepMinGreen(int iStepNo , int* iMaxGreenTime, int* iAddGreenTime)
 {
@@ -3937,20 +3937,20 @@ int CManaKernel::GetCurStepMinGreen(int iStepNo , int* iMaxGreenTime, int* iAddG
 	{
 		if ( /*(*/ (uiAllowPhase >> iIndex) & 1 /*) || ( (uiOverlapPhase >> iIndex) & 1 )*/ )
 		{
-			//if ( m_pTscConfig->sPhase[iIndex].ucType>>5 & 1  )  /*µ¯ĞÔÏàÎ»*/
+			//if ( m_pTscConfig->sPhase[iIndex].ucType>>5 & 1  )  /*å¼¹æ€§ç›¸ä½*/
 			//{
 				iTmpMinGreen = m_pTscConfig->sPhase[iIndex].ucMinGreen;
 				iTmpAddGreen = m_pTscConfig->sPhase[iIndex].ucGreenDelayUnit;
 				iTmpMaxGreen = m_pTscConfig->sPhase[iIndex].ucMaxGreen1;
 			//}
 			/*
-			else if ( m_pTscConfig->sPhase[iIndex].ucType>>6 & 1  ) //´ı¶¨ÏàÎ»
+			else if ( m_pTscConfig->sPhase[iIndex].ucType>>6 & 1  ) //å¾…å®šç›¸ä½
 			{
 				iTmpMinGreen = m_pTscConfig->sPhase[iIndex].ucFixedGreen;
 			}
 			*/
 			/*
-			else if ( m_pTscConfig->sPhase[iIndex].ucType>>7 & 1 )  //¹Ì¶¨ÏàÎ» 
+			else if ( m_pTscConfig->sPhase[iIndex].ucType>>7 & 1 )  //å›ºå®šç›¸ä½ 
 			{
 				iTmpMinGreen = m_pRunData->sScheduleTime[StepToStage(m_pRunData->ucStepNo,NULL)].ucGreenTime 
 					               - m_pTscConfig->sPhase[iIndex].ucGreenFlash;      //green
@@ -3961,12 +3961,12 @@ int CManaKernel::GetCurStepMinGreen(int iStepNo , int* iMaxGreenTime, int* iAddG
 			}
 			*/
 
-			iMinGreen = iTmpMinGreen < iMinGreen    ? iMinGreen    : iTmpMinGreen; //ÕÒ´ó
+			iMinGreen = iTmpMinGreen < iMinGreen    ? iMinGreen    : iTmpMinGreen; //æ‰¾å¤§
 			if ( iTmpAddGreen > 0 )
 			{
-				iAddGreen = iAddGreen    < iTmpAddGreen ? iAddGreen    : iTmpAddGreen; //ÕÒĞ¡
+				iAddGreen = iAddGreen    < iTmpAddGreen ? iAddGreen    : iTmpAddGreen; //æ‰¾å°
 			}
-			iMaxGreen = iMaxGreen    < iTmpMaxGreen ? iTmpMaxGreen : iMaxGreen;    //ÕÒ´ó
+			iMaxGreen = iMaxGreen    < iTmpMaxGreen ? iTmpMaxGreen : iMaxGreen;    //æ‰¾å¤§
 		} 
 		iIndex++;
 	}
@@ -3986,11 +3986,11 @@ int CManaKernel::GetCurStepMinGreen(int iStepNo , int* iMaxGreenTime, int* iAddG
 
 /*********************************************************************************
 Function:       CManaKernel::AddRunTime
-Description:    ¸ĞÓ¦¿ØÖÆ£¬Ôö¼ÓÂÌµÆÔËĞĞÊ±¼ä
-Input:          iAddTime     - ÏàÎ»×é¸÷¸öÏàÎ»Ôö¼ÓµÄ×îĞ¡Ê±¼ä
-				ucPhaseIndex - ÓĞ³µµÄÏàÎ»index 0 - 15
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ„Ÿåº”æ§åˆ¶ï¼Œå¢åŠ ç»¿ç¯è¿è¡Œæ—¶é—´
+Input:          iAddTime     - ç›¸ä½ç»„å„ä¸ªç›¸ä½å¢åŠ çš„æœ€å°æ—¶é—´
+				ucPhaseIndex - æœ‰è½¦çš„ç›¸ä½index 0 - 15
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::AddRunTime(int iAddTime,Byte ucPhaseIndex)
 {
@@ -4003,7 +4003,7 @@ void CManaKernel::AddRunTime(int iAddTime,Byte ucPhaseIndex)
 	
 	//	ACE_DEBUG((LM_DEBUG,"%s:%d: PhaseID =%d ucElapseTime:%d,ucStepTime=%d StepLeftTime=%d iStepUnitTime=%d \r\n",__FILE__,__LINE__	,ucPhaseIndex+1,m_pRunData->ucElapseTime,OldStepTime,iLeftRunTime,iStepUnitTime));
 		if(!((m_pRunData->ucElapseTime >= m_pRunData->ucStepTime-m_iAdjustTime) && (m_pRunData->ucElapseTime <= m_pRunData->ucStepTime-1)))
-			return ; //¸ĞÓ¦Ê±¼ä²»ÔÚÊ±¼äÇø¼ä·¶Î§ÄÚ£¬²»ÓèÔö¼ÓÊ±¼ä
+			return ; //æ„Ÿåº”æ—¶é—´ä¸åœ¨æ—¶é—´åŒºé—´èŒƒå›´å†…ï¼Œä¸äºˆå¢åŠ æ—¶é—´
 		
 		m_pRunData->ucStepTime = m_pRunData->ucStepTime+m_iAdjustTime;//;iStepUnitTime ;  
 		
@@ -4028,18 +4028,18 @@ void CManaKernel::AddRunTime(int iAddTime,Byte ucPhaseIndex)
 		}	
 		m_pRunData->ucCycle = m_pRunData->ucCycle-OldStepTime+m_pRunData->ucStepTime;
 			
-		//	iCntFlashTime = iPhaseFlashTime ;    //   ÓÃÓÚµ¹¼ÆÊ±ÂÌÉÁ´¦Àí	
-		m_ucAddTimeCnt         = m_pRunData->ucStepTime - OldStepTime;   //¸Ã½×¶ÎÔö¼ÓµÄÂÌµÆÊ±³¤
+		//	iCntFlashTime = iPhaseFlashTime ;    //   ç”¨äºå€’è®¡æ—¶ç»¿é—ªå¤„ç†	
+		m_ucAddTimeCnt         = m_pRunData->ucStepTime - OldStepTime;   //è¯¥é˜¶æ®µå¢åŠ çš„ç»¿ç¯æ—¶é•¿
 }
 
 
 /*********************************************************************************
 Function:       CManaKernel::GetStageDetector
-Description:    ¸ĞÓ¦¿ØÖÆ£¬»ñÈ¡½×¶ÎµÄ¶ÔÓ¦ÏßÈ¦ È¥³ıÔÚºó½×¶Î»¹»á³öÏÖµÄÏàÎ»,ÒÀ¾İÏàÍ¬µÄ¸ú
-				ËæÏàÎ»È¥³ıÇ°Ò»¸ö½×¶ÎµÄµÄÏàÎ»
-Input:          iStageNo     - ½×¶ÎºÅ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ„Ÿåº”æ§åˆ¶ï¼Œè·å–é˜¶æ®µçš„å¯¹åº”çº¿åœˆ å»é™¤åœ¨åé˜¶æ®µè¿˜ä¼šå‡ºç°çš„ç›¸ä½,ä¾æ®ç›¸åŒçš„è·Ÿ
+				éšç›¸ä½å»é™¤å‰ä¸€ä¸ªé˜¶æ®µçš„çš„ç›¸ä½
+Input:          iStageNo     - é˜¶æ®µå·
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetStageDetector(int iStageNo)
 {	
@@ -4062,11 +4062,11 @@ void CManaKernel::GetStageDetector(int iStageNo)
 	iNextAllowPhase   = m_pRunData->sStageStepInfo[iNextStep].uiAllowPhase;
 	iNextOverlapPhase = m_pRunData->sStageStepInfo[iNextStep].uiOverlapPhase;
 	
-	//ÆÕÍ¨ÏàÎ»
+	//æ™®é€šç›¸ä½
 	while ( ucPhaseIndex < MAX_PHASE )
 	{
 		if ( (iCurAllowPhase>>ucPhaseIndex & 1) 
-			&& (iNextAllowPhase>>ucPhaseIndex & 1) )  //ÏÂÒ»¸ö½×¶ÎÒ²´æÔÚ¸ÃÏàÎ»£¬È¥³ı¸ÃÏàÎ»
+			&& (iNextAllowPhase>>ucPhaseIndex & 1) )  //ä¸‹ä¸€ä¸ªé˜¶æ®µä¹Ÿå­˜åœ¨è¯¥ç›¸ä½ï¼Œå»é™¤è¯¥ç›¸ä½
 		{
 			uiTmp = 0;
 			uiTmp |= ~(1<<ucPhaseIndex);
@@ -4075,13 +4075,13 @@ void CManaKernel::GetStageDetector(int iStageNo)
 		ucPhaseIndex++;
 	}
 
-	/*/¸úËæÏàÎ»
+	/*/è·Ÿéšç›¸ä½
 	while ( ucOverlapPhaseIndex < MAX_OVERLAP_PHASE )
 	{
 		if ( (iCurOverlapPhase>>ucOverlapPhaseIndex & 1) 
-		  && (iNextOverlapPhase>>ucOverlapPhaseIndex & 1) )  //ÏÂÒ»¸ö½×¶ÎÒ²´æÔÚ¸ÃÏàÎ»£¬È¥³ı¸ÃÏàÎ»
+		  && (iNextOverlapPhase>>ucOverlapPhaseIndex & 1) )  //ä¸‹ä¸€ä¸ªé˜¶æ®µä¹Ÿå­˜åœ¨è¯¥ç›¸ä½ï¼Œå»é™¤è¯¥ç›¸ä½
 		{
-			ucDelPhase = OverlapPhaseToPhase(iCurAllowPhase,ucOverlapPhaseIndex);  //¸ù¾İ¸úËæÏàÎ»»ñÈ¡·ÅĞĞÏàÎ»µÄÏÂ±ê
+			ucDelPhase = OverlapPhaseToPhase(iCurAllowPhase,ucOverlapPhaseIndex);  //æ ¹æ®è·Ÿéšç›¸ä½è·å–æ”¾è¡Œç›¸ä½çš„ä¸‹æ ‡
 			if ( ucDelPhase < MAX_PHASE )
 			{
 				uiTmp = 0;
@@ -4099,10 +4099,10 @@ void CManaKernel::GetStageDetector(int iStageNo)
 
 /*********************************************************************************
 Function:       CManaKernel::GetAllStageDetector
-Description:    ¸ĞÓ¦¿ØÖÆ£¬»ñÈ¡ËùÓĞ½×¶ÎµÄ¶ÔÓ¦ÏßÈ¦£¬Ò»¸öÖÜÆÚÒ»´Î
-Input:          iStageNo     - ½×¶ÎºÅ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ„Ÿåº”æ§åˆ¶ï¼Œè·å–æ‰€æœ‰é˜¶æ®µçš„å¯¹åº”çº¿åœˆï¼Œä¸€ä¸ªå‘¨æœŸä¸€æ¬¡
+Input:          iStageNo     - é˜¶æ®µå·
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetAllStageDetector()
 {
@@ -4120,10 +4120,10 @@ void CManaKernel::GetAllStageDetector()
 
 /*********************************************************************************
 Function:       CManaKernel::GetMaxStageMinGreen
-Description:    »ñÈ¡Ä³²½·¥¸÷¸öÏàÎ»µÄ×î´ó×îĞ¡ÂÌ£¬ÓÃÓÚ½×¶ÎÇĞ»»Ê±±£Ö¤×ßÍê×îĞ¡ÂÌ
-Input:          iStepNo - ²½·¥ºÅ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è·å–æŸæ­¥ä¼å„ä¸ªç›¸ä½çš„æœ€å¤§æœ€å°ç»¿ï¼Œç”¨äºé˜¶æ®µåˆ‡æ¢æ—¶ä¿è¯èµ°å®Œæœ€å°ç»¿
+Input:          iStepNo - æ­¥ä¼å·
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 int CManaKernel::GetMaxStageMinGreen(int iStepNo)
 {
@@ -4149,14 +4149,14 @@ int CManaKernel::GetMaxStageMinGreen(int iStepNo)
 
 /*********************************************************************************
 Function:       CManaKernel::SpecTimePattern
-Description:    Ö¸¶¨ÌØ¶¨µÄÅäÊ±·½°¸ºÅ
-Input:          iTimePatternId - Ö¸¶¨µÄÅäÊ±·½°¸ºÅ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æŒ‡å®šç‰¹å®šçš„é…æ—¶æ–¹æ¡ˆå·
+Input:          iTimePatternId - æŒ‡å®šçš„é…æ—¶æ–¹æ¡ˆå·
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::SpecTimePattern(int iTimePatternId )
 {
-	if ( iTimePatternId != m_pRunData->ucTimePatternId )   //ÏÂ¸öÖÜÆÚ»á²ÉÓÃ´Ë·½°¸ºÅ
+	if ( iTimePatternId != m_pRunData->ucTimePatternId )   //ä¸‹ä¸ªå‘¨æœŸä¼šé‡‡ç”¨æ­¤æ–¹æ¡ˆå·
 	{
 		SetUpdateBit();
 	}
@@ -4168,12 +4168,12 @@ void CManaKernel::SpecTimePattern(int iTimePatternId )
 
 /*********************************************************************************
 Function:       CManaKernel::GetVehilePara
-Description:    »ñÈ¡ÔÊĞí¸ĞÓ¦¿ØÖÆÆğ×÷ÓÃµÄÖµ
-Input:          ÎŞ
-Output:         pbVehile     - ÊÇ·ñÎª¸ĞÓ¦¿ØÖÆ        bDefStep    - Ä¿Ç°ÇĞÈëĞÂµÄ²½·¥ 
-*       	    piAdjustTime - Ã¿´ÎµÄµ÷ÕûÊ±¼ä        piCurPhase  - µ±Ç°ÔÊĞíÖ´ĞĞµÄÏàÎ»×é 
-*       	    piNextPhase  - ÏÂ¸öÔÊĞíÖ´ĞĞµÄÏàÎ»×é  psPhaseDet  - ÏàÎ»Óë¼ì²âÆ÷µÄ¹ØÏµ  
-Return:         ÎŞ
+Description:    è·å–å…è®¸æ„Ÿåº”æ§åˆ¶èµ·ä½œç”¨çš„å€¼
+Input:          æ— 
+Output:         pbVehile     - æ˜¯å¦ä¸ºæ„Ÿåº”æ§åˆ¶        bDefStep    - ç›®å‰åˆ‡å…¥æ–°çš„æ­¥ä¼ 
+*       	    piAdjustTime - æ¯æ¬¡çš„è°ƒæ•´æ—¶é—´        piCurPhase  - å½“å‰å…è®¸æ‰§è¡Œçš„ç›¸ä½ç»„ 
+*       	    piNextPhase  - ä¸‹ä¸ªå…è®¸æ‰§è¡Œçš„ç›¸ä½ç»„  psPhaseDet  - ç›¸ä½ä¸æ£€æµ‹å™¨çš„å…³ç³»  
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetVehilePara(bool* pbVehile
 									 , bool* bDefStep
@@ -4215,15 +4215,15 @@ void CManaKernel::GetVehilePara(bool* pbVehile
 		return;
 	}
 	
-	/*»ñÈ¡ÏÂÒ»¸öÏàÎ»²½£¬Ö»ÔÚ°ë¸ĞÓ¦¿ØÖÆÓÃµ½*/
-	iIndex = m_pRunData->ucStepNo + 1;  //Ñ°ÕÒÏÂÒ»¸öÏàÎ»²½
+	/*è·å–ä¸‹ä¸€ä¸ªç›¸ä½æ­¥ï¼Œåªåœ¨åŠæ„Ÿåº”æ§åˆ¶ç”¨åˆ°*/
+	iIndex = m_pRunData->ucStepNo + 1;  //å¯»æ‰¾ä¸‹ä¸€ä¸ªç›¸ä½æ­¥
 	while ( iIndex < m_pRunData->ucStepNum )
 	{
 		if ( IsLongStep(iIndex) )
 		{
 			ucNextStage    = StepToStage(iIndex,NULL);
 			ucNextPhaseTmp = m_uiStagePhase[ucNextStage];
-			if ( IsMainPhaseGrp(*piCurPhase) != IsMainPhaseGrp(ucNextPhaseTmp) ) //Ö÷ ´Î ³µµÀÏà½áºÏ
+			if ( IsMainPhaseGrp(*piCurPhase) != IsMainPhaseGrp(ucNextPhaseTmp) ) //ä¸» æ¬¡ è½¦é“ç›¸ç»“åˆ
 			{
 				*piNextPhase = ucNextPhaseTmp;
 				//ACE_DEBUG((LM_DEBUG,"\n %s:%d *piCurPhase:%x *piNextPhase:%x \n" ,__FILE__,__LINE__,*piCurPhase ,*piNextPhase ));
@@ -4241,10 +4241,10 @@ void CManaKernel::GetVehilePara(bool* pbVehile
 
 /*********************************************************************************
 Function:       CManaKernel::GetVehilePara
-Description:    ÅĞ¶ÏÄ³¸öÏàÎ»×éÊÇ·ñÎªÖ÷ÏàÎ»×é£¬¼´Ö÷³µµÀÏàÎ»£¬ÓÃÓÚ°ë¸ĞÓ¦¿ØÖÆ
-Input:          uiPhase -ÏàÎ»×éºÏĞòÁĞ
-Output:         ÎŞ
-Return:         true - Ö÷³µµÀ false - ·ÇÖ÷³µµÀ
+Description:    åˆ¤æ–­æŸä¸ªç›¸ä½ç»„æ˜¯å¦ä¸ºä¸»ç›¸ä½ç»„ï¼Œå³ä¸»è½¦é“ç›¸ä½ï¼Œç”¨äºåŠæ„Ÿåº”æ§åˆ¶
+Input:          uiPhase -ç›¸ä½ç»„åˆåºåˆ—
+Output:         æ— 
+Return:         true - ä¸»è½¦é“ false - éä¸»è½¦é“
 **********************************************************************************/
 bool CManaKernel::IsMainPhaseGrp(Uint uiPhase)
 {
@@ -4263,7 +4263,7 @@ bool CManaKernel::IsMainPhaseGrp(Uint uiPhase)
 			while ( iDetIndex < iDetCnt )
 			{
 				iDetId = m_sPhaseDet[iIndex].iDetectorId[iDetIndex] - 1;
-				if ( (m_pTscConfig->sDetector[iDetId].ucOptionFlag>>1) & 1 )  //¸ÃÍ¨µÀÉèÖÃÎª¹Ø¼üÏàÎ»
+				if ( (m_pTscConfig->sDetector[iDetId].ucOptionFlag>>1) & 1 )  //è¯¥é€šé“è®¾ç½®ä¸ºå…³é”®ç›¸ä½
 				{
 					return true;
 				}
@@ -4280,10 +4280,10 @@ bool CManaKernel::IsMainPhaseGrp(Uint uiPhase)
 
 /*********************************************************************************
 Function:       CManaKernel::IsInChannel
-Description:    ÅĞ¶Ï¸ÃÍ¨µÀÊÇ·ñ±»ÆôÓÃ
-Input:          iChannelId : Í¨µÀºÅ
-Output:         ÎŞ
-Return:         true - ÆôÓÃ false - Î´ÆôÓÃ
+Description:    åˆ¤æ–­è¯¥é€šé“æ˜¯å¦è¢«å¯ç”¨
+Input:          iChannelId : é€šé“å·
+Output:         æ— 
+Return:         true - å¯ç”¨ false - æœªå¯ç”¨
 **********************************************************************************/
 bool CManaKernel::IsInChannel(int iChannelId)
 {
@@ -4304,10 +4304,10 @@ bool CManaKernel::IsInChannel(int iChannelId)
 
 /*********************************************************************************
 Function:       CManaKernel::InConflictPhase
-Description:    ÅĞ¶ÏÏàÎ»ÊÇ·ñ³åÍ»£¬¼´³öÏÖÂÌ³åÍ»
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         true - ³åÍ» false - Î´³åÍ»
+Description:    åˆ¤æ–­ç›¸ä½æ˜¯å¦å†²çªï¼Œå³å‡ºç°ç»¿å†²çª
+Input:          æ— 
+Output:         æ— 
+Return:         true - å†²çª false - æœªå†²çª
 **********************************************************************************/
 bool CManaKernel::InConflictPhase()
 {
@@ -4320,7 +4320,7 @@ bool CManaKernel::InConflictPhase()
 
 	while ( iIndex < MAX_PHASE )
 	{
-		if ( (uiAllowPhase >> iIndex) & 1 )  //´æÔÚ¸ÃÏàÎ»
+		if ( (uiAllowPhase >> iIndex) & 1 )  //å­˜åœ¨è¯¥ç›¸ä½
 		{
 			uiCollision = (pConflictPhase+iIndex)->usCollisionFlag;
 			if ( (uiAllowPhase & uiCollision) != 0 )
@@ -4338,10 +4338,10 @@ bool CManaKernel::InConflictPhase()
 
 /*********************************************************************************
 Function:       CManaKernel::DealGreenConflict
-Description:    ´¦Àí³öÏÖµÄÂÌ³åÍ»
-Input:          ucdata   - ²ÎÊıÖµ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å¤„ç†å‡ºç°çš„ç»¿å†²çª
+Input:          ucdata   - å‚æ•°å€¼
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::DealGreenConflict(Byte ucdata)
 {
@@ -4355,7 +4355,7 @@ void CManaKernel::DealGreenConflict(Byte ucdata)
 		sTscMsg.ucMsgOpt     = 0;
 		sTscMsg.uiMsgDataLen = 1;
 		sTscMsg.pDataBuf     = ACE_OS::malloc(1);
-		*((Byte*)sTscMsg.pDataBuf) = CTRL_MANUAL;  //ÊÖ¶¯
+		*((Byte*)sTscMsg.pDataBuf) = CTRL_MANUAL;  //æ‰‹åŠ¨
 		CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsg,sizeof(sTscMsg));
 
 		SThreadMsg sTscMsgSts;
@@ -4363,7 +4363,7 @@ void CManaKernel::DealGreenConflict(Byte ucdata)
 		sTscMsgSts.ucMsgOpt     = 0;
 		sTscMsgSts.uiMsgDataLen = 1;
 		sTscMsgSts.pDataBuf     = ACE_OS::malloc(1);
-		*((Byte*)sTscMsgSts.pDataBuf) = FLASH;  //»ÆÉÁ
+		*((Byte*)sTscMsgSts.pDataBuf) = FLASH;  //é»„é—ª
 		CTscMsgQueue::CreateInstance()->SendMessage(&sTscMsgSts,sizeof(sTscMsgSts));
 	}
 	
@@ -4372,10 +4372,10 @@ void CManaKernel::DealGreenConflict(Byte ucdata)
 
 /*********************************************************************************
 Function:       CManaKernel::AllotActiveTime
-Description:    ×ÔÊÊÓ¦¿ØÖÆ¸ù¾İ¸÷¸ö¼ì²âÆ÷ÉÏ¸öÖÜÆÚµÄÕ¼ÓĞÂÊ£¬·ÖÅäÂÌµÆÊ±¼ä
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è‡ªé€‚åº”æ§åˆ¶æ ¹æ®å„ä¸ªæ£€æµ‹å™¨ä¸Šä¸ªå‘¨æœŸçš„å æœ‰ç‡ï¼Œåˆ†é…ç»¿ç¯æ—¶é—´
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::AllotActiveTime()
 {
@@ -4390,7 +4390,7 @@ void CManaKernel::AllotActiveTime()
 	int iGreenTimeSum  = 0;
 	int iStepGreenTime = 0;
 	unsigned long ulTotalHaveCarTime = 0; 
-	unsigned int iStageHaveCarTime[MAX_SON_SCHEDULE] = {0};   //¸÷¸ö½×¶ÎÔÚÅäÖÃµÄ¼ì²âÆ÷µÄÓĞ³µÊ±¼ä
+	unsigned int iStageHaveCarTime[MAX_SON_SCHEDULE] = {0};   //å„ä¸ªé˜¶æ®µåœ¨é…ç½®çš„æ£€æµ‹å™¨çš„æœ‰è½¦æ—¶é—´
 	GBT_DB::VehicleStat*   pVehicleStat = NULL;
 	GBT_DB::TblVehicleStat tblVehicleStat;
 
@@ -4419,7 +4419,7 @@ void CManaKernel::AllotActiveTime()
 					iDetId = m_sPhaseDet[jIndex].iDetectorId[zIndex];
 					if (  iDetId < iRecordSum )
 					{
-						iStageHaveCarTime[iIndex] += (pVehicleStat+iDetId-1)->ucOccupancy;     //»ñÈ¡Õ¼ÓĞÂÊ
+						iStageHaveCarTime[iIndex] += (pVehicleStat+iDetId-1)->ucOccupancy;     //è·å–å æœ‰ç‡
 					}
 					//zIndex++;
 				//}
@@ -4428,8 +4428,8 @@ void CManaKernel::AllotActiveTime()
 			jIndex++;
 		}
 		
-		iGreenTimeSum      += m_pRunData->sStageStepInfo[iStepNo].ucStepLen;   //ÂÌµÆ×ÜÔËĞĞÊ±¼ä
-		ulTotalHaveCarTime += iStageHaveCarTime[iIndex];       //×ÜÓĞ³µÊ±¼ä      
+		iGreenTimeSum      += m_pRunData->sStageStepInfo[iStepNo].ucStepLen;   //ç»¿ç¯æ€»è¿è¡Œæ—¶é—´
+		ulTotalHaveCarTime += iStageHaveCarTime[iIndex];       //æ€»æœ‰è½¦æ—¶é—´      
 		iStagePhase = 0;
 		iIndex++;
 	}
@@ -4445,7 +4445,7 @@ void CManaKernel::AllotActiveTime()
 			iStepGreenTime = MIN_GREEN_TIME;
 		}
 
-		m_pRunData->sStageStepInfo[iStepNo].ucStepLen = iStepGreenTime;  //ĞŞ¸Ä½×¶ÎµÄÂÌµÆÊ±¼ä
+		m_pRunData->sStageStepInfo[iStepNo].ucStepLen = iStepGreenTime;  //ä¿®æ”¹é˜¶æ®µçš„ç»¿ç¯æ—¶é—´
 		iIndex++;
 	}
 }
@@ -4453,10 +4453,10 @@ void CManaKernel::AllotActiveTime()
 
 /*********************************************************************************
 Function:       CManaKernel::UtcsAdjustCycle
-Description:    Ğ­µ÷¿ØÖÆ£¬¸ù¾İÖĞĞÄÌá¹©µÄ¹«¹²ÖÜÆÚÊ±³¤½øĞĞÖÜÆÚµ÷Õû£¬¶à¼õÉÙ²¹
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    åè°ƒæ§åˆ¶ï¼Œæ ¹æ®ä¸­å¿ƒæä¾›çš„å…¬å…±å‘¨æœŸæ—¶é•¿è¿›è¡Œå‘¨æœŸè°ƒæ•´ï¼Œå¤šå‡å°‘è¡¥
+Input:          æ— 
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::UtcsAdjustCycle()
 {
@@ -4484,18 +4484,18 @@ void CManaKernel::UtcsAdjustCycle()
 	}
 	
 	ACE_DEBUG((LM_DEBUG,"%s:%d Cycle iAdjustCnt = %d bPlus=%d\n",__FILE__,__LINE__,iAdjustCnt,bPlus));
-	//Æ½·Öµ÷ÕûÖÜÆÚ
+	//å¹³åˆ†è°ƒæ•´å‘¨æœŸ
 	for ( int i = 0; i < MAX_STEP && i < m_pRunData->ucStepNum; i++ ) 
 	{
 		if ( !IsLongStep(i) )
 		{
 			continue;
 		}
-		ucAdjustGreenLen[i] = iAdjustCnt / ucStageCnt; //5Ãë
+		ucAdjustGreenLen[i] = iAdjustCnt / ucStageCnt; //5ç§’
 	}
 	iAdjustCnt -= ucStageCnt * ( iAdjustCnt / ucStageCnt ); //0
 
-	//µ÷ÕûÔ¼Êø
+	//è°ƒæ•´çº¦æŸ
 	for ( int i = 0; i < MAX_STEP && i < m_pRunData->ucStepNum; i++ ) 
 	{
 		if ( !IsLongStep(i) )
@@ -4514,12 +4514,12 @@ void CManaKernel::UtcsAdjustCycle()
 			iAdjustPerStep = m_pRunData->sStageStepInfo[i].ucStepLen - iMinGreen;
 		}
 
-		if ( iAdjustPerStep < 0 )  //Ô¤·À×îĞ¡ÂÌ»ò×î´óÂÌµÄÉèÖÃ´íÎó
+		if ( iAdjustPerStep < 0 )  //é¢„é˜²æœ€å°ç»¿æˆ–æœ€å¤§ç»¿çš„è®¾ç½®é”™è¯¯
 		{
 			iAdjustPerStep = m_pRunData->sStageStepInfo[i].ucStepLen / MAX_ADJUST_CYCLE;
 		}
 
-		if ( ucAdjustGreenLen[i] > iAdjustPerStep )  //µ÷Õû·¶Î§¹ı´ó
+		if ( ucAdjustGreenLen[i] > iAdjustPerStep )  //è°ƒæ•´èŒƒå›´è¿‡å¤§
 		{
 			iAdjustCnt         += ( ucAdjustGreenLen[i] - iAdjustPerStep );
 			ucAdjustGreenLen[i] = iAdjustPerStep;
@@ -4529,7 +4529,7 @@ void CManaKernel::UtcsAdjustCycle()
 			iAdjustPerStep = iAdjustPerStep - ucAdjustGreenLen[i];
 		}
 
-		if ( iAdjustPerStep > iAdjustCnt )  //µ÷ÕûÍê±Ï
+		if ( iAdjustPerStep > iAdjustCnt )  //è°ƒæ•´å®Œæ¯•
 		{
 			iAdjustPerStep = iAdjustCnt;
 		}
@@ -4553,10 +4553,10 @@ void CManaKernel::UtcsAdjustCycle()
 
 /*********************************************************************************
 Function:       CManaKernel::GetUseLampBoard
-Description:    ¸ù¾İÍ¨µÀID¼ÆËãÆôÓÃµÄµÆ¿Ø°å
-Input:          ÎŞ
-Output:         bUseLampBoard: true-ÆôÓÃ false-Ã»ÓĞÆôÓÃ
-Return:         ÎŞ
+Description:    æ ¹æ®é€šé“IDè®¡ç®—å¯ç”¨çš„ç¯æ§æ¿
+Input:          æ— 
+Output:         bUseLampBoard: true-å¯ç”¨ false-æ²¡æœ‰å¯ç”¨
+Return:         æ— 
 **********************************************************************************/
 void CManaKernel::GetUseLampBoard(bool* bUseLampBoard)
 {
@@ -4569,7 +4569,7 @@ void CManaKernel::GetUseLampBoard(bool* bUseLampBoard)
 
 	while ( iIndex < MAX_LAMP_BOARD )
 	{
-		if ( GetUseLampBoard(iIndex) )  //¸ÃµÆ¿Ø°åÓĞÆôÓÃµÄÍ¨µÀ
+		if ( GetUseLampBoard(iIndex) )  //è¯¥ç¯æ§æ¿æœ‰å¯ç”¨çš„é€šé“
 		{
 			*(bUseLampBoard+iIndex) = true;
 		}
@@ -4580,10 +4580,10 @@ void CManaKernel::GetUseLampBoard(bool* bUseLampBoard)
 
 /*********************************************************************************
 Function:       CManaKernel::GetUseLampBoard
-Description:    ÅĞ¶ÏµÆ¿Ø°åÊÇ·ñ´æÔÚÅäÖÃĞÅÏ¢
-Input:          iLampBoard - µÆ¿Ø°å 0 , 1 , 2 , 3
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    åˆ¤æ–­ç¯æ§æ¿æ˜¯å¦å­˜åœ¨é…ç½®ä¿¡æ¯
+Input:          iLampBoard - ç¯æ§æ¿ 0 , 1 , 2 , 3
+Output:         æ— 
+Return:         æ— 
 **********************************************************************************/
 bool CManaKernel::GetUseLampBoard(int iLampBoard)
 {
@@ -4603,10 +4603,10 @@ bool CManaKernel::GetUseLampBoard(int iLampBoard)
 
 /*********************************************************************************
 Function:       CManaKernel::InPhaseDetector
-Description:    ÅĞ¶Ï¼ì²âÆ÷ÊÇ·ñÔÚµ±Ç°µÄÅäÖÃ
-Input:          ucDetId -¼ì²âÆ÷IDºÅ
-Output:         ÎŞ
-Return:         true - ÔÚµ±Ç°ÅäÖÃ  false -²»ÔÚµ±Ç°ÅäÖÃ
+Description:    åˆ¤æ–­æ£€æµ‹å™¨æ˜¯å¦åœ¨å½“å‰çš„é…ç½®
+Input:          ucDetId -æ£€æµ‹å™¨IDå·
+Output:         æ— 
+Return:         true - åœ¨å½“å‰é…ç½®  false -ä¸åœ¨å½“å‰é…ç½®
 **********************************************************************************/
 bool CManaKernel::InPhaseDetector(Byte ucDetId)
 {
@@ -4639,14 +4639,14 @@ bool CManaKernel::IsVehile()
 
 /**************************************************************
 Function:        CManaKernel::SndMsgLog
-Description:     Ìí¼ÓÈÕÖ¾ÏûÏ¢º¯Êı£¬ÓÃÓÚ·¢ËÍ¸÷ÀàĞ´ÈÕÖ¾ÏûÏ¢				
-Input:          ucLogType  ÈÕÖ¾ÀàĞÍ
-				ucLogVau1  ÈÕÖ¾Öµ1
-				ucLogVau2  ÈÕÖ¾Öµ2
-				ucLogVau3  ÈÕÖ¾Öµ3
-				ucLogVau4  ÈÕÖ¾Öµ4              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ·»åŠ æ—¥å¿—æ¶ˆæ¯å‡½æ•°ï¼Œç”¨äºå‘é€å„ç±»å†™æ—¥å¿—æ¶ˆæ¯				
+Input:          ucLogType  æ—¥å¿—ç±»å‹
+				ucLogVau1  æ—¥å¿—å€¼1
+				ucLogVau2  æ—¥å¿—å€¼2
+				ucLogVau3  æ—¥å¿—å€¼3
+				ucLogVau4  æ—¥å¿—å€¼4              
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte ucLogVau3,Byte ucLogVau4)
 {
@@ -4664,16 +4664,16 @@ void CManaKernel::SndMsgLog(Byte ucLogType,Byte ucLogVau1,Byte ucLogVau2,Byte uc
 
 /**************************************************************
 Function:        CManaKernel::ValidSoftWare
-Description:    ÑéÖ¤Èí¼şµÄºÏ·¨ĞÔ			
-Input:          ÎŞ    
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    éªŒè¯è½¯ä»¶çš„åˆæ³•æ€§			
+Input:          æ—     
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CManaKernel::ValidSoftWare()
 	{
 		char SerialNum1[32]={0};
 		char SerialNum2[32]={0};
-		//ÔÚ6410¿ª·¢°åÉÏÓÃµÄÊÇ£¬ÃÜÂë±£´æµ½Êı¾İ¿â
+		//åœ¨6410å¼€å‘æ¿ä¸Šç”¨çš„æ˜¯ï¼Œå¯†ç ä¿å­˜åˆ°æ•°æ®åº“
 		//(CDbInstance::m_cGbtTscDb).GetEypSerial(SerialNum1);
 		GetSysEnyDevId(SerialNum2);
 
@@ -4734,11 +4734,11 @@ void CManaKernel::SetLampColor(Byte ColorType)
 
 /**************************************************************
 Function:        CManaKernel::SetPhaseColor
-Description:    ÉèÖÃÏàÎ»ËùÊôÍ¨µÀÂÌµÆÁÁ			
-Input:          bOverPhase -ÊÇ·ñÊôÓÚ¸úËæÏàÎ» true-ÆÕÍ¨ÏàÎ» false-¸úËæÏàÎ»
-				iPhaseId   - ÏàÎ»ºÅ   
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®ç›¸ä½æ‰€å±é€šé“ç»¿ç¯äº®			
+Input:          bOverPhase -æ˜¯å¦å±äºè·Ÿéšç›¸ä½ true-æ™®é€šç›¸ä½ false-è·Ÿéšç›¸ä½
+				iPhaseId   - ç›¸ä½å·   
+Output:         æ— 
+Return:         æ— 
 
 ***************************************************************/
 void CManaKernel::SetPhaseColor(bool bOverPhase,Byte iPhaseId)
@@ -4750,7 +4750,7 @@ void CManaKernel::SetPhaseColor(bool bOverPhase,Byte iPhaseId)
 	GetSignalGroupId(bOverPhase, iPhaseId, &ucSignalGrpNum , ucSignalGrp);
 	while ( ucSignalGrpIndex < ucSignalGrpNum )
 	{
-		ucLampIndex = ( ucSignalGrp[ucSignalGrpIndex] - 1 ) * 3; //ÏàÎ»×éµÄredÏÂ±ê
+		ucLampIndex = ( ucSignalGrp[ucSignalGrpIndex] - 1 ) * 3; //ç›¸ä½ç»„çš„redä¸‹æ ‡
 		ucLampIndex = ucLampIndex + 2;
 		m_ucLampOn[ucLampIndex] = 1;
 		ucSignalGrpIndex++;
@@ -4760,12 +4760,12 @@ void CManaKernel::SetPhaseColor(bool bOverPhase,Byte iPhaseId)
 
 /**************************************************************
 Function:        CManaKernel::GaGetDirLane
-Description:    ÅĞ¶Ï·½ÏòÖµÊÇ·ñÊôÓÚÄ³¸ö·½Ïò		
-Input:          ucTableId -·½ÏòÖµ ÄÚ²¿°üº¬·½ÏòºÍ¸Ã·½ÏòµÄ×óÖ±ÓÒĞĞÈËÍ¨µÀÀàĞÍ
-				ucDir   - ·½ÏòÀàĞÍ 0-±±·½ 1-¶«·½ 2-ÄÏ·½ 3-Î÷·½  
+Description:    åˆ¤æ–­æ–¹å‘å€¼æ˜¯å¦å±äºæŸä¸ªæ–¹å‘		
+Input:          ucTableId -æ–¹å‘å€¼ å†…éƒ¨åŒ…å«æ–¹å‘å’Œè¯¥æ–¹å‘çš„å·¦ç›´å³è¡Œäººé€šé“ç±»å‹
+				ucDir   - æ–¹å‘ç±»å‹ 0-åŒ—æ–¹ 1-ä¸œæ–¹ 2-å—æ–¹ 3-è¥¿æ–¹  
 					  ucTableId   0      2      4     6
-Output:         ÎŞ
-Return:         true- ÊôÓÚ¸Ã·½Ïò false-²»ÊôÓÚ¸Ã·½Ïò
+Output:         æ— 
+Return:         true- å±äºè¯¥æ–¹å‘ false-ä¸å±äºè¯¥æ–¹å‘
 ***************************************************************/
 bool CManaKernel::GaGetDirLane(Byte ucTableId , Byte  ucDir )
 {
@@ -4783,12 +4783,12 @@ bool CManaKernel::GaGetDirLane(Byte ucTableId , Byte  ucDir )
 /**************************************************************
 Function:        CManaKernel::SetDirecChannelColor
 
-Description:    ÉèÖÃÄ³¸ö·½ÏòÉÏÂÌµÆ·ÅĞĞ		
-Input:          ucTableId -·½ÏòÖµ ÄÚ²¿°üº¬·½ÏòºÍ¸Ã·½ÏòµÄ×óÖ±ÓÒĞĞÈËÍ¨µÀÀàĞÍ
+Description:    è®¾ç½®æŸä¸ªæ–¹å‘ä¸Šç»¿ç¯æ”¾è¡Œ		
+Input:          ucTableId -æ–¹å‘å€¼ å†…éƒ¨åŒ…å«æ–¹å‘å’Œè¯¥æ–¹å‘çš„å·¦ç›´å³è¡Œäººé€šé“ç±»å‹
 
-				ucDir   - ·½ÏòÀàĞÍ 0-±±·½ 1-¶«·½ 2-ÄÏ·½ 3-Î÷·½  
-Output:         ÎŞ
-Return:         true- ÊôÓÚ¸Ã·½Ïò false-²»ÊôÓÚ¸Ã·½Ïò
+				ucDir   - æ–¹å‘ç±»å‹ 0-åŒ—æ–¹ 1-ä¸œæ–¹ 2-å—æ–¹ 3-è¥¿æ–¹  
+Output:         æ— 
+Return:         true- å±äºè¯¥æ–¹å‘ false-ä¸å±äºè¯¥æ–¹å‘
 ***************************************************************/
 
 void CManaKernel::SetDirecChannelColor(Byte iDirecType)
@@ -4826,11 +4826,11 @@ void CManaKernel::SetDirecChannelColor(Byte iDirecType)
 
 /**************************************************************
 Function:        CManaKernel::SetWirelessBtbDirecCfg
-Description:    ÉèÖÃÎŞÏßÒ£¿Ø°´¼üÒ»¸ö»ò¶à¸ö·½ÏòÉÏµÄÂÌµÆ·ÅĞĞ	
-Input:          RecvBtnDirecData -4×Ö½ÚµÄ±±¶«ÄÏÎ÷·½ÏòµÄÂÌµÆ·ÅĞĞ,Ã¿¸ö·ÅĞĞÒ»¸ö×Ö½Ú£¬Ã¿¸ö×Ö½Ú
-		     °üº¬ ×ó¡¢Ö±¡¢ÓÒÈËĞĞµ÷Í·¡£				  
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®æ— çº¿é¥æ§æŒ‰é”®ä¸€ä¸ªæˆ–å¤šä¸ªæ–¹å‘ä¸Šçš„ç»¿ç¯æ”¾è¡Œ	
+Input:          RecvBtnDirecData -4å­—èŠ‚çš„åŒ—ä¸œå—è¥¿æ–¹å‘çš„ç»¿ç¯æ”¾è¡Œ,æ¯ä¸ªæ”¾è¡Œä¸€ä¸ªå­—èŠ‚ï¼Œæ¯ä¸ªå­—èŠ‚
+		     åŒ…å« å·¦ã€ç›´ã€å³äººè¡Œè°ƒå¤´ã€‚				  
+Output:         æ— 
+Return:         æ— 
 Date:            2014-10-21 16:06
 ***************************************************************/
 void CManaKernel::SetWirelessBtnDirecCfg(Uint RecvBtnDirecData ,Byte Lampcolor)
@@ -4839,14 +4839,14 @@ void CManaKernel::SetWirelessBtnDirecCfg(Uint RecvBtnDirecData ,Byte Lampcolor)
 	//Byte ucLampIndex = 0 ;
 	ACE_OS::memset(m_ucLampOn,0,MAX_LAMP);
 	ACE_OS::memset(m_ucLampFlash,0,MAX_LAMP);
-	for(Byte idex = 0 ; idex <4 ; idex++)   // ±±¶«ÄÏÎ÷Ë÷Òı 0 1 2 3
+	for(Byte idex = 0 ; idex <4 ; idex++)   // åŒ—ä¸œå—è¥¿ç´¢å¼• 0 1 2 3
 	{
 		BtnDirecData = (RecvBtnDirecData>>8*idex) ;
-		for(Byte idex2 = 0 ; idex2< 5 ; idex2++) //×óÖ±ÓÒÈËĞĞµ÷Í·Ë÷Òı
+		for(Byte idex2 = 0 ; idex2< 5 ; idex2++) //å·¦ç›´å³äººè¡Œè°ƒå¤´ç´¢å¼•
 		{
 			if(BtnDirecData>>idex2 &0x1)
 			{
-				if(idex2 ==0x4) //µ÷Í·£¬±±¶«ÄÏÎ÷µ÷Í·Í¨µÀÄ¬ÈÏ17 18 19 20
+				if(idex2 ==0x4) //è°ƒå¤´ï¼ŒåŒ—ä¸œå—è¥¿è°ƒå¤´é€šé“é»˜è®¤17 18 19 20
 				{
 					if(Lampcolor == 0x0)
 						m_ucLampOn[(16+idex)*3+2] = 1;
@@ -4864,13 +4864,13 @@ void CManaKernel::SetWirelessBtnDirecCfg(Uint RecvBtnDirecData ,Byte Lampcolor)
 				{
 					if(Lampcolor == 0x0)
 					{
-						m_ucLampOn[(4*idex+idex2)*3+2] = 1; //×óÖ±ÓÒÈËĞĞ	
+						m_ucLampOn[(4*idex+idex2)*3+2] = 1; //å·¦ç›´å³äººè¡Œ	
 						
 					}
 					else if(Lampcolor == 0x1)
 					{
 						if(idex2 !=0x3)
-							m_ucLampOn[(4*idex+idex2)*3+1] = 1; //ÈËĞĞ»ÆµÆ²»ÉÁË¸
+							m_ucLampOn[(4*idex+idex2)*3+1] = 1; //äººè¡Œé»„ç¯ä¸é—ªçƒ
 						
 						//ACE_OS::printf("%s:%d Transit setp Yellow lamp= %d !\n",__FILE__,__LINE__,(4*idex+idex2)*3+1);
 					}
@@ -4899,7 +4899,7 @@ void CManaKernel::SetWirelessBtnDirecCfg(Uint RecvBtnDirecData ,Byte Lampcolor)
 	
 }
 
-Byte CManaKernel::GetStageMaxDetectorCars(Uint32 StageAllowPhases) //»ñÈ¡½×¶ÎÏàÎ»¼ì²âÆ÷µÄÅÅÅÅ¶Ó³¤¶È
+Byte CManaKernel::GetStageMaxDetectorCars(Uint32 StageAllowPhases) //è·å–é˜¶æ®µç›¸ä½æ£€æµ‹å™¨çš„æ’æ’é˜Ÿé•¿åº¦
 {
 	Byte iIndex =0x0 ;
 	Byte iDetCnt =0x0 ;
@@ -4930,7 +4930,7 @@ Byte CManaKernel::GetStageMaxDetectorCars(Uint32 StageAllowPhases) //»ñÈ¡½×¶ÎÏàÎ
 }
 
 
-Byte CManaKernel::GetMaxGreen2(int iStepNo) //»ñÈ¡²½·¥×î´óÂÌ2
+Byte CManaKernel::GetMaxGreen2(int iStepNo) //è·å–æ­¥ä¼æœ€å¤§ç»¿2
 {
 	
 	int iIndex		 = 0;

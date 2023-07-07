@@ -5,14 +5,14 @@
 #include "ace/Timer_Heap.h"
 #include "Define.h"
 /*
-*ĞÅºÅ»ú¿ØÖÆ¶¨Ê±Æ÷£¬Èç·¢ËÍÕûÃëÊÂ¼şµÈ
+*ä¿¡å·æœºæ§åˆ¶å®šæ—¶å™¨ï¼Œå¦‚å‘é€æ•´ç§’äº‹ä»¶ç­‰
 */
 class CTscTimer : public ACE_Event_Handler
 {
 public: 
 	CTscTimer(Byte ucMaxTick);
 	~CTscTimer();
-	virtual int handle_timeout(const ACE_Time_Value &tCurrentTime, const void * = 0); //¶¨Ê±Æ÷»Øµ÷º¯Êı
+	virtual int handle_timeout(const ACE_Time_Value &tCurrentTime, const void * = 0); //å®šæ—¶å™¨å›è°ƒå‡½æ•°
 	void ChooseDecTime();
 private:
 	bool m_bWatchdog;

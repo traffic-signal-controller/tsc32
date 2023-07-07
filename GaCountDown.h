@@ -5,56 +5,56 @@
 
 #define GACOUNTDOWN_CPP "GaCountDown.cpp"
 
-const int GA_MAX_DIRECT    = 8;   //×î´ó·½Ïò ±± ¶« ÄÏ Î÷ 
-const int GA_MAX_LANE      = 10;   //×î´óµÀÂ·ÀàÐÍ ×ó Ö± ÓÒ ÈËÐÐ¶þ´Î¹ý½Ö µ÷Í· ÆäËû ÌØÊâµÈ
-const int GA_MAX_SEND_BUF  = 5;  //µ¹¼ÆÊ±Ð­Òé¶¨ÒåµÄÃ¿Ö¡Êý¾Ý×Ö½ÚÊý
+const int GA_MAX_DIRECT    = 8;   //æœ€å¤§æ–¹å‘ åŒ— ä¸œ å— è¥¿ 
+const int GA_MAX_LANE      = 10;   //æœ€å¤§é“è·¯ç±»åž‹ å·¦ ç›´ å³ äººè¡ŒäºŒæ¬¡è¿‡è¡— è°ƒå¤´ å…¶ä»– ç‰¹æ®Šç­‰
+const int GA_MAX_SEND_BUF  = 5;  //å€’è®¡æ—¶åè®®å®šä¹‰çš„æ¯å¸§æ•°æ®å­—èŠ‚æ•°
 
 /*
-*¹ú±êÖ÷¶¯µ¹¼ÆÊ±Àà(¸ù¾ÝGAT508-2004Ð­Òé)
-*Ã¿¸ö·½ÏòÖ»ÓÐÒ»¸öµ¹¼ÆÊ±ÅÆ  Îª´ËÈËÐÐµ¹¼ÆÊ±²»ÔÚ¿¼ÂÇ·¶Î§
+*å›½æ ‡ä¸»åŠ¨å€’è®¡æ—¶ç±»(æ ¹æ®GAT508-2004åè®®)
+*æ¯ä¸ªæ–¹å‘åªæœ‰ä¸€ä¸ªå€’è®¡æ—¶ç‰Œ  ä¸ºæ­¤äººè¡Œå€’è®¡æ—¶ä¸åœ¨è€ƒè™‘èŒƒå›´
 
-*¹ú±êÖ÷¶¯µ¹¼ÆÊ±Àà(¸ù¾ÝGAT508-2014Ð­Òé)
-*×î´óÖ§³Ö32¸öµ¹¼ÆÊ±,Ö§³ÖµØÖ··¶Î§0-31 ,ËùÒÔÐÂ¹ú±êµ¹¼ÆÊ±°´ÕÕ32¸ö
-·½Ïòµ¹¼ÆÊ±Ö§³Ö,Óë·½ÏòÓÐ¹Ø,·½Ïò°ó¶¨ÏàÎ»
+*å›½æ ‡ä¸»åŠ¨å€’è®¡æ—¶ç±»(æ ¹æ®GAT508-2014åè®®)
+*æœ€å¤§æ”¯æŒ32ä¸ªå€’è®¡æ—¶,æ”¯æŒåœ°å€èŒƒå›´0-31 ,æ‰€ä»¥æ–°å›½æ ‡å€’è®¡æ—¶æŒ‰ç…§32ä¸ª
+æ–¹å‘å€’è®¡æ—¶æ”¯æŒ,ä¸Žæ–¹å‘æœ‰å…³,æ–¹å‘ç»‘å®šç›¸ä½
 
 */
 
 
 enum
 {
-	GA_DIRECT_NORTH  = 0 ,  //±±
-	GA_DIRECT_EAST   = 1 ,  //¶«
-	GA_DIRECT_SOUTH  = 2 ,  //ÄÏ
-	GA_DIRECT_WEST   = 3 ,  //Î÷
-	GA_DIRECT_NORTH_EAST  = 4 , //¶«±±
-	GA_DIRECT_SOUTH_EAST  = 5 , //¶«ÄÏ
-	GA_DIRECT_SOUTH_WEST  = 6 , //Î÷ÄÏ
-	GA_DIRECT_NORTH_WEST  = 7  //Î÷±±
+	GA_DIRECT_NORTH  = 0 ,  //åŒ—
+	GA_DIRECT_EAST   = 1 ,  //ä¸œ
+	GA_DIRECT_SOUTH  = 2 ,  //å—
+	GA_DIRECT_WEST   = 3 ,  //è¥¿
+	GA_DIRECT_NORTH_EAST  = 4 , //ä¸œåŒ—
+	GA_DIRECT_SOUTH_EAST  = 5 , //ä¸œå—
+	GA_DIRECT_SOUTH_WEST  = 6 , //è¥¿å—
+	GA_DIRECT_NORTH_WEST  = 7  //è¥¿åŒ—
 	
 };
 
 enum
 {
-	GA_LANE_LEFT     = 0 ,  //×ó   
-	GA_LANE_STRAIGHT = 1 ,  //Ö±
-	GA_LANE_RIGHT    = 2 ,  //ÓÒ
-	GA_LANE_FOOT     = 3 ,  //Ò»´ÎÈËÐÐ	
-	GA_LANE_SECOND_FOOT    = 4 , //¶þ´ÎÈËÐÐ
-	GA_LANE_TRUNAROUND     = 5 , //µ÷Í·	
-	GA_LANE_LEFT_RIGHT_STRAIGHT = 6 , //×óÖ±ÓÒ(ÉÏÎ»»úÌØÊâ·½Ïò)	
-	GA_LANE_OTHER               = 7, // ÆäËû	
-	GA_LANE_LEFT_STRAIGHT       = 8 , //×óÖ±
-	GA_LANE_RIGHT_STRAIGHT      = 9  //ÓÒÖ±
+	GA_LANE_LEFT     = 0 ,  //å·¦   
+	GA_LANE_STRAIGHT = 1 ,  //ç›´
+	GA_LANE_RIGHT    = 2 ,  //å³
+	GA_LANE_FOOT     = 3 ,  //ä¸€æ¬¡äººè¡Œ	
+	GA_LANE_SECOND_FOOT    = 4 , //äºŒæ¬¡äººè¡Œ
+	GA_LANE_TRUNAROUND     = 5 , //è°ƒå¤´	
+	GA_LANE_LEFT_RIGHT_STRAIGHT = 6 , //å·¦ç›´å³(ä¸Šä½æœºç‰¹æ®Šæ–¹å‘)	
+	GA_LANE_OTHER               = 7, // å…¶ä»–	
+	GA_LANE_LEFT_STRAIGHT       = 8 , //å·¦ç›´
+	GA_LANE_RIGHT_STRAIGHT      = 9  //å³ç›´
 };
 
 enum
 {
 	
-	GANEW_COLOR_OTHER  = 4 , //ÆäËûÑÕÉ«
-	GANEW_COLOR_RED    = 3 , //ºì
-	GANEW_COLOR_YELLOW = 2 , //»Æ
-	GANEW_COLOR_GREEN  = 1 , //ÂÌ
-	GANEW_COLOR_BLACK  = 0  //ºÚÉ«
+	GANEW_COLOR_OTHER  = 4 , //å…¶ä»–é¢œè‰²
+	GANEW_COLOR_RED    = 3 , //çº¢
+	GANEW_COLOR_YELLOW = 2 , //é»„
+	GANEW_COLOR_GREEN  = 1 , //ç»¿
+	GANEW_COLOR_BLACK  = 0  //é»‘è‰²
 };
 
 
@@ -80,9 +80,9 @@ public:
 	
 	bool PackSendBuf( Byte ucDirIndex , Byte ucColor , Byte ucCountTime );	
 	bool PackSendBufNewGB4Direc( Byte ucDirIndex , Byte ucColor , Byte ucCountTime );
-	void sendblack();    //·¢ËÍºÚÆÁÐÅÏ¢	
+	void sendblack();    //å‘é€é»‘å±ä¿¡æ¯	
 	
-	void send8cntdown(); //·¢ËÍ8Ãëµ¹¼ÆÊ±
+	void send8cntdown(); //å‘é€8ç§’å€’è®¡æ—¶
 	void SetClinetCntDown(ACE_INET_Addr& addrClient, Uint uBufCnt , Byte* pBuf) ; //ADD:201401121705
 	
 	
@@ -91,17 +91,17 @@ public:
 	
 	bool ComputeColorCount( Byte ucDirIndex , Byte& ucColor , Byte& ucCountTime );
 
-	bool m_bGaNeedCntDown[GA_MAX_DIRECT][GA_MAX_LANE]; //ÐèÒªµ¹¼ÆÊ±µÄ·½Ïò
-	Byte m_ucGaRuntime[GA_MAX_DIRECT][GA_MAX_LANE];    //¸ÃµÆÉ«»¹ÐèÎ¬³ÖµÄÊ±¼ä
-	Byte m_ucGaColor[GA_MAX_DIRECT][GA_MAX_LANE];      //µÆÉ«
+	bool m_bGaNeedCntDown[GA_MAX_DIRECT][GA_MAX_LANE]; //éœ€è¦å€’è®¡æ—¶çš„æ–¹å‘
+	Byte m_ucGaRuntime[GA_MAX_DIRECT][GA_MAX_LANE];    //è¯¥ç¯è‰²è¿˜éœ€ç»´æŒçš„æ—¶é—´
+	Byte m_ucGaColor[GA_MAX_DIRECT][GA_MAX_LANE];      //ç¯è‰²
 	GBT_DB::PhaseToDirec m_sGaPhaseToDirec[GA_MAX_DIRECT][GA_MAX_LANE];
 	SendCntDownNum sSendCDN[MAX_CLIENT_NUM] ;  //ADD:201401121705
 
-	Byte m_sGaSendBuf[GA_MAX_DIRECT][GA_MAX_SEND_BUF];   //·¢ËÍ»º´æ
+	Byte m_sGaSendBuf[GA_MAX_DIRECT][GA_MAX_SEND_BUF];   //å‘é€ç¼“å­˜
 	Byte m_ucLampBoardFlashBreak[MAX_LAMP_BOARD]; //201407231400
-	Byte m_newsGaSendBuf[MAX_CNTDOWNDEV*2+4]; //ÐÂ2014µ¹¼ÆÊ±±ê×¼²âÊÔÊý¾Ý4+32*2 	
-	Byte m_newsGaSendBuf4D[12] ; ////ÐÂ2014µ¹¼ÆÊ±±ê×¼²âÊÔÊý¾Ý4·½Ïò
-	SNewGBCntDownTimeInfo m_newGbCntDownDevTime[MAX_CNTDOWNDEV] ;//ÐÂ2014µ¹¼ÆÊ±±ê×¼Ã¿¸öµ¹¼ÆÊ±µ¹¼ÆÊ±Êý
+	Byte m_newsGaSendBuf[MAX_CNTDOWNDEV*2+4]; //æ–°2014å€’è®¡æ—¶æ ‡å‡†æµ‹è¯•æ•°æ®4+32*2 	
+	Byte m_newsGaSendBuf4D[12] ; ////æ–°2014å€’è®¡æ—¶æ ‡å‡†æµ‹è¯•æ•°æ®4æ–¹å‘
+	SNewGBCntDownTimeInfo m_newGbCntDownDevTime[MAX_CNTDOWNDEV] ;//æ–°2014å€’è®¡æ—¶æ ‡å‡†æ¯ä¸ªå€’è®¡æ—¶å€’è®¡æ—¶æ•°
 private:
 };
 

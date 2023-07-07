@@ -8,8 +8,8 @@
 #include "Log.h"
 
 /*
-*ÐÅºÅ»úºËÐÄ¿ØÖÆÏûÏ¢¶ÓÁÐ
-*µ¥¸öÊµÀý´æÔÚ
+*ä¿¡å·æœºæ ¸å¿ƒæŽ§åˆ¶æ¶ˆæ¯é˜Ÿåˆ—
+*å•ä¸ªå®žä¾‹å­˜åœ¨
 */
 class CTscMsgQueue 
 {
@@ -21,8 +21,8 @@ public:
 
 /*
 public:
-	Byte m_ucLogMaxId;   //ÈÕÖ¾±íµÄ×î´óÐÐÊý
-	Byte m_ucLogMinId;   //ÈÕÖ¾±íµÄÈÕÆÚ×îÐ¡µÄid
+	Byte m_ucLogMaxId;   //æ—¥å¿—è¡¨çš„æœ€å¤§è¡Œæ•°
+	Byte m_ucLogMinId;   //æ—¥å¿—è¡¨çš„æ—¥æœŸæœ€å°çš„id
 */
 
 private:

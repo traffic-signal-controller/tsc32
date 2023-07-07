@@ -4,7 +4,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   Log.cpp
 Date:       2013-1-1
-Description:ĞÅºÅ»úÈÕÖ¾´¦ÀíÎÄ¼ş
+Description:ä¿¡å·æœºæ—¥å¿—å¤„ç†æ–‡ä»¶
 Version:    V1.0
 History:    
 ***************************************************************/
@@ -13,9 +13,9 @@ History:
 
 /**************************************************************
 Function:       CLogger::CLogger
-Description:    CLogger£¬ÓÃÓÚÀà³õÊ¼»¯´¦Àí				
-Input:          ÎŞ              
-Output:         ÎŞ
+Description:    CLoggerï¼Œç”¨äºç±»åˆå§‹åŒ–å¤„ç†				
+Input:          æ—               
+Output:         æ— 
 Return:         0
 ***************************************************************/
 CLogger::CLogger()
@@ -26,11 +26,11 @@ CLogger::CLogger()
 
 /**************************************************************
 Function:       CLogger::WriteEventLog
-Description:    µ÷ÓÃgbtÊı¾İ¿â´¦ÀíÀàÌí¼ÓÈÕÖ¾º¯Êı	
-Input:          ucEvtType  ÈÕÖ¾ÀàĞÍ
-				uiEvtValue ÈÕÖ¾Öµ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è°ƒç”¨gbtæ•°æ®åº“å¤„ç†ç±»æ·»åŠ æ—¥å¿—å‡½æ•°	
+Input:          ucEvtType  æ—¥å¿—ç±»å‹
+				uiEvtValue æ—¥å¿—å€¼              
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLogger::WriteEventLog(Byte ucEvtType,Uint uiEvtValue)
 {
@@ -39,25 +39,25 @@ void CLogger::WriteEventLog(Byte ucEvtType,Uint uiEvtValue)
 
 /**************************************************************
 Function:       CLogger::WriteEventLogActive
-Description:    Éú³ÉÃüÁî¶ÔÏó£¬²åÈëµ½ÃüÁî¶ÓÁĞÖĞ	
-Input:          ucEvtType  ÈÕÖ¾ÀàĞÍ
-				uiEvtValue ÈÕÖ¾Öµ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ç”Ÿæˆå‘½ä»¤å¯¹è±¡ï¼Œæ’å…¥åˆ°å‘½ä»¤é˜Ÿåˆ—ä¸­	
+Input:          ucEvtType  æ—¥å¿—ç±»å‹
+				uiEvtValue æ—¥å¿—å€¼              
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLogger::WriteEventLogActive(Byte ucEvtType,Uint uiEvtValue)
 {
-	//Éú³ÉÃüÁî¶ÔÏó£¬²åÈëµ½ÃüÁî¶ÓÁĞÖĞ
+	//ç”Ÿæˆå‘½ä»¤å¯¹è±¡ï¼Œæ’å…¥åˆ°å‘½ä»¤é˜Ÿåˆ—ä¸­
 	m_queCmd.enqueue(new CLogCmd(this,ucEvtType,uiEvtValue));
 }
 
 /**************************************************************
 Function:       CLogger::SetMaxMinId
-Description:    ÉèÖÃÈÕÖ¾×î´óºÍ×îĞ¡id	
-Input:          uiMaxId  ×î´óID
-				uiMinId  ×îĞ¡ID              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®æ—¥å¿—æœ€å¤§å’Œæœ€å°id	
+Input:          uiMaxId  æœ€å¤§ID
+				uiMinId  æœ€å°ID              
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CLogger::SetMaxMinId(Uint uiMaxId,Uint uiMinId)
 {
@@ -69,16 +69,16 @@ void CLogger::SetMaxMinId(Uint uiMaxId,Uint uiMinId)
 
 /**************************************************************
 Function:       CLogger::svc
-Description:    CLoggerÀàµ½srv·şÎñº¯Êı£¬´Ó»ùÀà¼Ì³Ğ¹ıÀ´	
-Input:          ÎŞ          
-Output:         ÎŞ
+Description:    CLoggerç±»åˆ°srvæœåŠ¡å‡½æ•°ï¼Œä»åŸºç±»ç»§æ‰¿è¿‡æ¥	
+Input:          æ—           
+Output:         æ— 
 Return:         0
 ***************************************************************/
 int CLogger::svc()
 {
 	while ( true )
 	{
-		//±éÀúÃüÁî¶ÓÁĞ£¬Ö´ĞĞÃüÁî
+		//éå†å‘½ä»¤é˜Ÿåˆ—ï¼Œæ‰§è¡Œå‘½ä»¤
 		auto_ptr<ACE_Method_Request> mo(this->m_queCmd.dequeue ());
 
 		if ( mo->call() == -1 )
@@ -93,12 +93,12 @@ int CLogger::svc()
 
 /**************************************************************
 Function:       CLogCmd::CLogCmd
-Description:    CLogCmdÀà´ø²Î¹¹Ôìº¯Êı
-Input:          pLog    CLogger¶ÔÏóÖ¸Õë 
-				ucEvtType ÈÕÖ¾ÀàĞÍ     
-				uiEvtValue ÈÕÖ¾Öµ
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CLogCmdç±»å¸¦å‚æ„é€ å‡½æ•°
+Input:          pLog    CLoggerå¯¹è±¡æŒ‡é’ˆ 
+				ucEvtType æ—¥å¿—ç±»å‹     
+				uiEvtValue æ—¥å¿—å€¼
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CLogCmd::CLogCmd(CLogger *pLog,Byte ucEvtType,Uint uiEvtValue)
 {
@@ -109,9 +109,9 @@ CLogCmd::CLogCmd(CLogger *pLog,Byte ucEvtType,Uint uiEvtValue)
 
 /**************************************************************
 Function:       CLogCmd::call
-Description:    µ÷ÓÃCLogger¶ÔÏóÈÕÖ¾Ìí¼Óº¯Êı
-Input:          ÎŞ
-Output:         ÎŞ
+Description:    è°ƒç”¨CLoggerå¯¹è±¡æ—¥å¿—æ·»åŠ å‡½æ•°
+Input:          æ— 
+Output:         æ— 
 Return:         0
 ***************************************************************/
 int CLogCmd::call()

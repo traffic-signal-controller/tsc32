@@ -3,7 +3,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   TscMsgQueue.cpp
 Date:       2013-1-1
-Description: TSCÏûÏ¢¶ÓÁĞ´¦ÀíÀà£¬°üÀ¨¸÷ÖÖTSCÏûÏ¢µÄ½ÓÊÕºÍ´¦Àí²Ù×÷¡£
+Description: TSCæ¶ˆæ¯é˜Ÿåˆ—å¤„ç†ç±»ï¼ŒåŒ…æ‹¬å„ç§TSCæ¶ˆæ¯çš„æ¥æ”¶å’Œå¤„ç†æ“ä½œã€‚
 Version:    V1.0
 History:
 ***************************************************************/
@@ -16,10 +16,10 @@ History:
 
 /**************************************************************
 Function:        CTscMsgQueue::CTscMsgQueue
-Description:     CTscMsgQueueÀà¹¹Ôìº¯Êı£¬³õÊ¼»¯Àà
-Input:        	ÎŞ	      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     CTscMsgQueueç±»æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç±»
+Input:        	æ— 	      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CTscMsgQueue::CTscMsgQueue()
 {
@@ -30,7 +30,7 @@ CTscMsgQueue::CTscMsgQueue()
 
 	(CDbInstance::m_cGbtTscDb).GetLogMaxMin(&uiLogMaxId,&uiLogMinId);
 	m_logger.SetMaxMinId(uiLogMaxId,uiLogMinId);
-	//m_logger.activate(THR_NEW_LWP|THR_JOINABLE,1,1,ACE_THR_PRI_OTHER_MIN);   //Ïß³ÌÓÅÏÈ¼¶×îµÍ
+	//m_logger.activate(THR_NEW_LWP|THR_JOINABLE,1,1,ACE_THR_PRI_OTHER_MIN);   //çº¿ç¨‹ä¼˜å…ˆçº§æœ€ä½
 
 	ACE_DEBUG((LM_DEBUG,"%s:%d Init TscMsgQueue object ok !\n",__FILE__,__LINE__));
 
@@ -38,10 +38,10 @@ CTscMsgQueue::CTscMsgQueue()
 
 /**************************************************************
 Function:        CTscMsgQueue::~CTscMsgQueue
-Description:     CTscMsgQueueÀàÎö¹¹º¯Êı	
-Input:        	ÎŞ	      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     CTscMsgQueueç±»ææ„å‡½æ•°	
+Input:        	æ— 	      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CTscMsgQueue::~CTscMsgQueue()
 {
@@ -55,10 +55,10 @@ CTscMsgQueue::~CTscMsgQueue()
 
 /**************************************************************
 Function:        CTscMsgQueue::CreateInstance
-Description:     ´´½¨CTscMsgQueue¾²Ì¬¶ÔÏó	
-Input:        	ÎŞ	      
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:     åˆ›å»ºCTscMsgQueueé™æ€å¯¹è±¡	
+Input:        	æ— 	      
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CTscMsgQueue* CTscMsgQueue::CreateInstance()
 {
@@ -69,11 +69,11 @@ CTscMsgQueue* CTscMsgQueue::CreateInstance()
 
 /**************************************************************
 Function:        CTscMsgQueue::SendMessage
-Description:     ½«TSCÏûÏ¢·ÅÈë¶ÓÁĞµÈ´ı´¦Àí		
-Input:        	pMsg  - ÏûÏ¢ÄÚÈİ½á¹¹ÌåÖ¸Õë
-				iLen  - ÏûÏ¢ÄÚÈİ³¤¶È		      
-Output:         ÎŞ
-Return:         0 -´íÎó  1-ÕıÈ·
+Description:     å°†TSCæ¶ˆæ¯æ”¾å…¥é˜Ÿåˆ—ç­‰å¾…å¤„ç†		
+Input:        	pMsg  - æ¶ˆæ¯å†…å®¹ç»“æ„ä½“æŒ‡é’ˆ
+				iLen  - æ¶ˆæ¯å†…å®¹é•¿åº¦		      
+Output:         æ— 
+Return:         0 -é”™è¯¯  1-æ­£ç¡®
 ***************************************************************/
 int CTscMsgQueue::SendMessage(SThreadMsg* pMsg,int iLen)
 {
@@ -85,11 +85,11 @@ int CTscMsgQueue::SendMessage(SThreadMsg* pMsg,int iLen)
 		return 0;
 	}
 
-	ACE_Message_Block *mb = new ACE_Message_Block(iLen); //¹¹ÔìÏûÏ¢¿é
-	mb->copy((char*)pMsg, iLen); // ½«Êı¾İ¿½±´½øÏûÏ¢¿é
+	ACE_Message_Block *mb = new ACE_Message_Block(iLen); //æ„é€ æ¶ˆæ¯å—
+	mb->copy((char*)pMsg, iLen); // å°†æ•°æ®æ‹·è´è¿›æ¶ˆæ¯å—
 
 	ACE_Time_Value nowait(getCurrTime()+ACE_Time_Value(1));
-	m_pMsgQue->enqueue_tail(mb, &nowait);    //Ïò ACE_Message_QueueÖĞÌí¼ÓĞÂÊı¾İ¿é
+	m_pMsgQue->enqueue_tail(mb, &nowait);    //å‘ ACE_Message_Queueä¸­æ·»åŠ æ–°æ•°æ®å—
 
 #ifdef CHECK_MEMERY
 	TestMem(__FILE__,__LINE__);
@@ -101,10 +101,10 @@ int CTscMsgQueue::SendMessage(SThreadMsg* pMsg,int iLen)
 
 /**************************************************************
 Function:        CTscMsgQueue::DealData
-Description:     ½ÓÊÕTSC¶ÓÁĞÏûÏ¢£¬²¢¸ù¾İÏûÏ¢ÀàĞÍ²»Í¬·Ö±ğ´¦Àí				
-Input:        	ÎŞ		      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ¥æ”¶TSCé˜Ÿåˆ—æ¶ˆæ¯ï¼Œå¹¶æ ¹æ®æ¶ˆæ¯ç±»å‹ä¸åŒåˆ†åˆ«å¤„ç†				
+Input:        	æ— 		      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CTscMsgQueue::DealData()
 {
@@ -122,21 +122,21 @@ void CTscMsgQueue::DealData()
 
 	for(;;)
 	{
-		if(m_pMsgQue->dequeue_head(mb, &nowait) != -1) //´Ó ACE_Message_Queue ÖĞµ¯³öÏûÏ¢¿é
+		if(m_pMsgQue->dequeue_head(mb, &nowait) != -1) //ä» ACE_Message_Queue ä¸­å¼¹å‡ºæ¶ˆæ¯å—
 		{   
 			iLen = (int)mb->length();
-			memcpy((char*)&sMsg, mb->base(), iLen);  //´ÓÏûÏ¢¿éÖĞ¶ÁÊı¾İ
+			memcpy((char*)&sMsg, mb->base(), iLen);  //ä»æ¶ˆæ¯å—ä¸­è¯»æ•°æ®
 			mb->release();
 		}
 		else
 		{
-			ACE_OS::sleep(ACE_Time_Value(tTmp));  //ÔİÍ£10ºÁÃë
+			ACE_OS::sleep(ACE_Time_Value(tTmp));  //æš‚åœ10æ¯«ç§’
 			continue;
 		}
 
 	  	//ACE_DEBUG((LM_DEBUG,"%s:%d TscMsg Dealdata type:%d opt:%d dataLen:%d \n" ,__FILE__,__LINE__,sMsg.ulType,sMsg.ucMsgOpt,sMsg.uiMsgDataLen));//MOD:0515 17:00
 
-		switch ( sMsg.ulType )   //ÏûÏ¢´¦Àí
+		switch ( sMsg.ulType )   //æ¶ˆæ¯å¤„ç†
 		{
 		case TSC_MSG_NEXT_STEP:
 			pWorkParaManager->GoNextStep();
@@ -148,7 +148,7 @@ void CTscMsgQueue::DealData()
 			pWorkParaManager->SwitchStatus(*((Byte*)sMsg.pDataBuf));
 			break;
 		case TSC_MSG_SWITCH_CTRL:
-			//ACE_DEBUG((LM_DEBUG,"%s:%d ÊÕµ½TSC¸Ä±ä¿ØÖÆ·½Ê½£¡\n" ,__FILE__,__LINE__));
+			//ACE_DEBUG((LM_DEBUG,"%s:%d æ”¶åˆ°TSCæ”¹å˜æ§åˆ¶æ–¹å¼ï¼\n" ,__FILE__,__LINE__));
 			pWorkParaManager->SwitchCtrl(*((Byte*)sMsg.pDataBuf));
 			break;
 		case TSC_MSG_UPDATE_PARA:
@@ -198,7 +198,7 @@ void CTscMsgQueue::DealData()
 
 		if ( sMsg.pDataBuf != NULL )
 		{
-			ACE_OS::free(sMsg.pDataBuf);  //É¾³ıÉêÇëµÄÄÚ´æ
+			ACE_OS::free(sMsg.pDataBuf);  //åˆ é™¤ç”³è¯·çš„å†…å­˜
 			sMsg.pDataBuf = NULL;
 		}
 
@@ -209,11 +209,11 @@ void CTscMsgQueue::DealData()
 
 /**************************************************************
 Function:        CTscMsgQueue::WriteEventLog
-Description:     ½ÓÊÕµ½Ğ´ÈÕÖ¾ÏûÏ¢ºóµÄ´¦Àíº¯Êı				
-Input:        	uEvtType - ÈÕÖ¾ÀàĞÍ		
-				pEvtValue -ÈÕÖ¾ÖµµØÖ·Ö¸Õë				      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:     æ¥æ”¶åˆ°å†™æ—¥å¿—æ¶ˆæ¯åçš„å¤„ç†å‡½æ•°				
+Input:        	uEvtType - æ—¥å¿—ç±»å‹		
+				pEvtValue -æ—¥å¿—å€¼åœ°å€æŒ‡é’ˆ				      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CTscMsgQueue::WriteEventLog(Byte uEvtType, Byte* pEvtValue)
 {
@@ -222,7 +222,7 @@ void CTscMsgQueue::WriteEventLog(Byte uEvtType, Byte* pEvtValue)
 	while ( iIndex < 4 )
 	{
 		//ACE_DEBUG((LM_DEBUG,"%s:%d pEvtValue[%d] = %d \n" ,__FILE__,__LINE__,iIndex,pEvtValue[iIndex]));//MOD:0515 17:00
-		iEvtValue |=  ((pEvtValue[iIndex]&0xff)<<(8*(3-iIndex)));//Öµ´æ´¢µÍ×Ö½Úµ½¸ßÎ»
+		iEvtValue |=  ((pEvtValue[iIndex]&0xff)<<(8*(3-iIndex)));//å€¼å­˜å‚¨ä½å­—èŠ‚åˆ°é«˜ä½
 		iIndex++;
 	}
 	

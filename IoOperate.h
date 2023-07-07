@@ -4,7 +4,7 @@
 #include "ComStruct.h"
 
 /*
-*IO²Ù×÷Àà Ö÷Òª±£Ö¤writeºÍreadµÄ³É¹¦Ö´ĞĞ
+*IOæ“ä½œç±» ä¸»è¦ä¿è¯writeå’Œreadçš„æˆåŠŸæ‰§è¡Œ
 */
 class CIoOprate
 {

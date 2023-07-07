@@ -4,11 +4,11 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   FlashMac.cpp
 Date:       2013-1-1
-Description:»ÆÉÁÆ÷´¦ÀíÀà£¬´¦ÀíÓë»ÆÉÁÆ÷²¿¼şÏà¹Ø²Ù×÷
+Description:é»„é—ªå™¨å¤„ç†ç±»ï¼Œå¤„ç†ä¸é»„é—ªå™¨éƒ¨ä»¶ç›¸å…³æ“ä½œ
 Version:    V1.0
-History:    201306041700  Ìí¼Ó»ÆÉÁÆ÷ĞÄÌø¼ì²âº¯Êı
-			201306051116  Ìí¼Ó»ÆÉÁÆ÷ÅäÖÃ»ñÈ¡º¯Êı
-			201306050907  Ìí¼ÓÏÂ·¢»ÆÉÁÆ÷ÅäÖÃº¯Êı
+History:    201306041700  æ·»åŠ é»„é—ªå™¨å¿ƒè·³æ£€æµ‹å‡½æ•°
+			201306051116  æ·»åŠ é»„é—ªå™¨é…ç½®è·å–å‡½æ•°
+			201306050907  æ·»åŠ ä¸‹å‘é»„é—ªå™¨é…ç½®å‡½æ•°
 ***************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,24 +24,24 @@ History:    201306041700  Ìí¼Ó»ÆÉÁÆ÷ĞÄÌø¼ì²âº¯Êı
 #include "Can.h" //ADD: 0604 16 49
 
 /*
-»ÆÉÁÆ÷¹¦ÄÜÀàĞÍÃ¶¾Ù
+é»„é—ªå™¨åŠŸèƒ½ç±»å‹æšä¸¾
 */
 enum  
 {
- 	 FLASH_HEAD_CFGGET = 0x02 ,   //»ñÈ¡»ÆÉÁÆ÷ÅäÖÃÊı¾İ
-	 FLASH_HEAD_CFGSET = 0x03 ,	  //ÉèÖÃ»ÆÉÁÆ÷ÅäÖÃÊı¾İ
-	 FLASH_HEAD_ENTRY  = 0x04 ,   //Ç¿ÖÆ»ÆÉÁ
-	 FLASH_HEAD_EXIT   = 0x05 ,   //ÍË³ö»ÆÉÁÆ÷Ç¿ÖÆ»ÆÉÁ×´Ì¬
-	 FLASH_HEAD_VER    =0xff       //»ÆÉÁÆ÷°æ±¾
+ 	 FLASH_HEAD_CFGGET = 0x02 ,   //è·å–é»„é—ªå™¨é…ç½®æ•°æ®
+	 FLASH_HEAD_CFGSET = 0x03 ,	  //è®¾ç½®é»„é—ªå™¨é…ç½®æ•°æ®
+	 FLASH_HEAD_ENTRY  = 0x04 ,   //å¼ºåˆ¶é»„é—ª
+	 FLASH_HEAD_EXIT   = 0x05 ,   //é€€å‡ºé»„é—ªå™¨å¼ºåˆ¶é»„é—ªçŠ¶æ€
+	 FLASH_HEAD_VER    =0xff       //é»„é—ªå™¨ç‰ˆæœ¬
 
 };
 
 /**************************************************************
 Function:       CFlashMac::CFlashMac
-Description:    CFlashMacÀà¹¹Ôìº¯Êı£¬ÓÃÓÚ³õÊ¼»¯Àà¡£				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CFlashMacç±»æ„é€ å‡½æ•°ï¼Œç”¨äºåˆå§‹åŒ–ç±»ã€‚				
+Input:          æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CFlashMac::CFlashMac()
 {
@@ -72,10 +72,10 @@ CFlashMac::CFlashMac()
 
 /**************************************************************
 Function:       CFlashMac::~CFlashMac
-Description:    CFlashMacÀàÎö¹¹º¯Êı¡£				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CFlashMacç±»ææ„å‡½æ•°ã€‚				
+Input:          æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CFlashMac::~CFlashMac()
 {
@@ -84,10 +84,10 @@ CFlashMac::~CFlashMac()
 
 /**************************************************************
 Function:       CFlashMac::CreateInstance
-Description:    ´´½¨CFlashMac¾²Ì¬¶ÔÏó¡£				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»ºCFlashMacé™æ€å¯¹è±¡ã€‚				
+Input:          æ— 			      
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CFlashMac* CFlashMac::CreateInstance()
 {
@@ -97,11 +97,11 @@ CFlashMac* CFlashMac::CreateInstance()
 
 /**************************************************************
 Function:       CFlashMac::FlashHeartBeat
-Description:    ¸ø»ÆÉÁÆ÷·¢ËÍĞÄÌø¼ì²âÏûÏ¢¡£
+Description:    ç»™é»„é—ªå™¨å‘é€å¿ƒè·³æ£€æµ‹æ¶ˆæ¯ã€‚
 				ADD: 201306041700 				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Input:          æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::FlashHeartBeat()  
 {	
@@ -116,11 +116,11 @@ void CFlashMac::FlashHeartBeat()
 
 /**************************************************************
 Function:       CFlashMac::FlashHeartBeat
-Description:    ¸ø»ÆÉÁÆ÷·¢ËÍÉÏ´«ÅäÖÃÊı¾İĞÅºÅ£¬ÓÃÓÚ»ñÈ¡»ÆÉÁÆ÷ÅäÖÃ¡£
+Description:    ç»™é»„é—ªå™¨å‘é€ä¸Šä¼ é…ç½®æ•°æ®ä¿¡å·ï¼Œç”¨äºè·å–é»„é—ªå™¨é…ç½®ã€‚
 				ADD: 201306051116 				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Input:          æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::FlashCfgGet() 
 {
@@ -136,11 +136,11 @@ void CFlashMac::FlashCfgGet()
 
 /**************************************************************
 Function:       CFlashMac::FlashHeartBeat
-Description:    ÏÂ·¢ÅäÖÃÊı¾İ¸ø»ÆÉÁÆ÷¡£
+Description:    ä¸‹å‘é…ç½®æ•°æ®ç»™é»„é—ªå™¨ã€‚
 				ADD: 201306050907				
-Input:          ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Input:          æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::FlashCfgSet() 
 {
@@ -149,9 +149,9 @@ void CFlashMac::FlashCfgSet()
 		
 		Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN  , FRAME_MODE_P2P , BOARD_ADDR_FLASH  , &(sSendFrameTmp.ulCanId));
 		sSendFrameTmp.pCanData[0] = ( DATA_HEAD_RESEND<< 6 ) | FLASH_HEAD_CFGSET;
-		sSendFrameTmp.pCanData[1] = m_ucSetFlashRate ; //»ÆÉÁÆ÷ÆµÂÊÉèÖÃ
-		sSendFrameTmp.pCanData[1] |= m_ucSetDutyCycle <<4; //»ÆÉÁÆ÷Õ¼¿Õ±ÈÉèÖÃ
-		sSendFrameTmp.pCanData[2] = m_ucSetSyType;  //»ÆÉÁÆ÷Í¬²½·½Ê½		
+		sSendFrameTmp.pCanData[1] = m_ucSetFlashRate ; //é»„é—ªå™¨é¢‘ç‡è®¾ç½®
+		sSendFrameTmp.pCanData[1] |= m_ucSetDutyCycle <<4; //é»„é—ªå™¨å ç©ºæ¯”è®¾ç½®
+		sSendFrameTmp.pCanData[2] = m_ucSetSyType;  //é»„é—ªå™¨åŒæ­¥æ–¹å¼		
 		sSendFrameTmp.ucCanDataLen = 3;
 	//	ACE_DEBUG((LM_DEBUG,"%s:%d pCanData[1] = %d pCanData[2] = %d m_ucSetFlashRate = %d m_ucSetDutyCycle = %d\n",__FILE__,__LINE__,sSendFrameTmp.pCanData[1],sSendFrameTmp.pCanData[2], m_ucSetFlashRate,m_ucSetDutyCycle));
 		Can::CreateInstance()->Send(sSendFrameTmp);
@@ -160,19 +160,19 @@ void CFlashMac::FlashCfgSet()
 
 /**************************************************************
 Function:       CFlashMac::FlashForceStart
-Description:    Ö÷¿Ø°å·¢ËÍÇ¿ÖÆ»ÆÉÁÏûÏ¢¸ø»ÆÉÁÆ÷¡£				
-Input:          ucType  »ÆÉÁÀàĞÍ				      
-Output:         ÎŞ
+Description:    ä¸»æ§æ¿å‘é€å¼ºåˆ¶é»„é—ªæ¶ˆæ¯ç»™é»„é—ªå™¨ã€‚				
+Input:          ucType  é»„é—ªç±»å‹				      
+Output:         æ— 
 Return:         0
 ***************************************************************/
-void CFlashMac::FlashForceStart(Byte ucType)  //¿ªÊ¼Ç¿ÖÆ»ÆÉÁ ADD:0605 11 30
+void CFlashMac::FlashForceStart(Byte ucType)  //å¼€å§‹å¼ºåˆ¶é»„é—ª ADD:0605 11 30
 {
 	SCanFrame sSendFrameTmp;					
 	ACE_OS::memset(&sSendFrameTmp , 0 , sizeof(SCanFrame));
 		
 	Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN	, FRAME_MODE_P2P , BOARD_ADDR_FLASH  , &(sSendFrameTmp.ulCanId));
 	sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6 ) | FLASH_HEAD_ENTRY;	
-	sSendFrameTmp.pCanData[1] = ucType; //Ç¿ÖÆ»ÆÉÁ
+	sSendFrameTmp.pCanData[1] = ucType; //å¼ºåˆ¶é»„é—ª
 	sSendFrameTmp.ucCanDataLen = 2;		
 	Can::CreateInstance()->Send(sSendFrameTmp);
 	//ACE_DEBUG((LM_DEBUG,"%s:%d Begin force flashing !\n",__FILE__,__LINE__));
@@ -180,18 +180,18 @@ void CFlashMac::FlashForceStart(Byte ucType)  //¿ªÊ¼Ç¿ÖÆ»ÆÉÁ ADD:0605 11 30
 	
 	CLampBoard::CreateInstance()->SetSeriousFlash(true);
 	SetHardwareFlash(true);			
-	CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_FLASHBOARD,ucType,0,0,0);//ADD:201309251140  ¼ò»¯Ìí¼Ó»ÆÉÁÆ÷ÈÕÖ¾ÏûÏ¢
+	CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_FLASHBOARD,ucType,0,0,0);//ADD:201309251140  ç®€åŒ–æ·»åŠ é»„é—ªå™¨æ—¥å¿—æ¶ˆæ¯
 					
 }
 
 /**************************************************************
 Function:       CFlashMac::FlashForceEnd
-Description:    Ö÷¿Ø°å·¢ËÍÍË³ö»ÆÉÁÏûÏ¢¸ø»ÆÉÁÆ÷¡£				
-Input:          ÎŞ				      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    ä¸»æ§æ¿å‘é€é€€å‡ºé»„é—ªæ¶ˆæ¯ç»™é»„é—ªå™¨ã€‚				
+Input:          æ— 				      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
-void CFlashMac::FlashForceEnd()	//ÍË³öÇ¿ÖÆ»ÆÉÁ	ADD:0605 11 40
+void CFlashMac::FlashForceEnd()	//é€€å‡ºå¼ºåˆ¶é»„é—ª	ADD:0605 11 40
 {
 	SCanFrame sSendFrameTmp;
 						
@@ -200,7 +200,7 @@ void CFlashMac::FlashForceEnd()	//ÍË³öÇ¿ÖÆ»ÆÉÁ	ADD:0605 11 40
 	Can::BuildCanId(CAN_MSG_TYPE_100 , BOARD_ADDR_MAIN	, FRAME_MODE_P2P , BOARD_ADDR_FLASH  , &(sSendFrameTmp.ulCanId));
 	sSendFrameTmp.pCanData[0] = ( DATA_HEAD_NOREPLY<< 6 ) | FLASH_HEAD_EXIT;				
 	sSendFrameTmp.ucCanDataLen = 1;			
-	Can::CreateInstance()->Send(sSendFrameTmp);				//·¢ËÍÍË³ö»ÆÉÁÏûÏ¢¸ø»ÆÉÁÆ÷
+	Can::CreateInstance()->Send(sSendFrameTmp);				//å‘é€é€€å‡ºé»„é—ªæ¶ˆæ¯ç»™é»„é—ªå™¨
 	CGbtMsgQueue::CreateInstance()->SendTscCommand(OBJECT_SWITCH_MANUALCONTROL,0);
 	CLampBoard::CreateInstance()->SetSeriousFlash(false);	
 	
@@ -221,11 +221,11 @@ void CFlashMac::FlashGetVer()
 		
 /**************************************************************
 Function:       CFlashMac::SetHardwareFlash
-Description:    ÉèÖÃ»ÆÉÁÆ÷»ÆÉÁ×´Ì¬ÊôĞÔ¡£				
-Input:          isflash   true: ´¦ÓÚ»ÆÉÁ×´Ì¬
-						  false ´¦ÓÚ·Ç»ÆÉÁ×´Ì¬				      
-Output:         ¸Ä±äCFlashMac¶ÔÏóµÄm_bSetHardwareFlashÊôĞÔ
-Return:         ÎŞ
+Description:    è®¾ç½®é»„é—ªå™¨é»„é—ªçŠ¶æ€å±æ€§ã€‚				
+Input:          isflash   true: å¤„äºé»„é—ªçŠ¶æ€
+						  false å¤„äºéé»„é—ªçŠ¶æ€				      
+Output:         æ”¹å˜CFlashMacå¯¹è±¡çš„m_bSetHardwareFlashå±æ€§
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::SetHardwareFlash(bool isflash)
 {
@@ -238,10 +238,10 @@ void CFlashMac::SetHardwareFlash(bool isflash)
 
 /**************************************************************
 Function:       CFlashMac::GetHardwareFlash
-Description:    »ñÈ¡»ÆÉÁÆ÷»ÆÉÁ×´Ì¬ÊôĞÔ¡£				
-Input:        	ÎŞ			      
-Output:         ÎŞ
-Return:         ·µ»ØboolÖµ£¬ÊÇ·ñ´¦ÓÚ»ÆÉÁ
+Description:    è·å–é»„é—ªå™¨é»„é—ªçŠ¶æ€å±æ€§ã€‚				
+Input:        	æ— 			      
+Output:         æ— 
+Return:         è¿”å›boolå€¼ï¼Œæ˜¯å¦å¤„äºé»„é—ª
 ***************************************************************/
 bool CFlashMac::GetHardwareFlash()
 {
@@ -250,10 +250,10 @@ bool CFlashMac::GetHardwareFlash()
 
 /**************************************************************
 Function:       CFlashMac::WriteAndRead
-Description:    Ğ´and¶Á²Ù×÷ 500ms 1per				
-Input:        	ÎŞ			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å†™andè¯»æ“ä½œ 500ms 1per				
+Input:        	æ— 			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::WriteAndRead()
 {
@@ -316,9 +316,9 @@ void CFlashMac::WriteAndRead()
 			ucSum += ucRx[iIndex];
 			iIndex++;
 		}
-		if ( ucSum == ucRx[MAX_FRAME_LEN-1] ) //ÕıÈ·µÄÊı¾İ
+		if ( ucSum == ucRx[MAX_FRAME_LEN-1] ) //æ­£ç¡®çš„æ•°æ®
 		{
-			if ( ucSum != 0 || ( 0 == ucSum && (ucRx[0]!=0 || ucRx[1]!=0 || ucRx[2]!=0 ) ) )  //Ô¤·ÀÃ»ÓĞ»ÆÉÁÆ÷µÄÇé¿öÈÔÈ»ÊÕµ½È«0µÄÊı¾İ
+			if ( ucSum != 0 || ( 0 == ucSum && (ucRx[0]!=0 || ucRx[1]!=0 || ucRx[2]!=0 ) ) )  //é¢„é˜²æ²¡æœ‰é»„é—ªå™¨çš„æƒ…å†µä»ç„¶æ”¶åˆ°å…¨0çš„æ•°æ®
 			{
 				ResolveReadData(ucRx);
 				if ( ( (m_pTscCfg->sSpecFun[FUN_PRINT_FLAG].ucValue>>6) & 1 )  != 0 )
@@ -330,7 +330,7 @@ void CFlashMac::WriteAndRead()
 				return;
 			}	
 		}
-		//Ğ£ÑéÂë´íÎó
+		//æ ¡éªŒç é”™è¯¯
 		if ( ( (m_pTscCfg->sSpecFun[FUN_PRINT_FLAG].ucValue>>6) & 1 )  != 0 )
 		{
 			ACE_DEBUG((LM_DEBUG,"%s:%d flash send to me error %x %x %x %x \n\n",__FILE__,__LINE__
@@ -345,10 +345,10 @@ void CFlashMac::WriteAndRead()
 
 /**************************************************************
 Function:       CFlashMac::SendRecordBoardMsg
-Description:    ·¢ËÍ¼ÇÂ¼»ÆÉÁÆ÷Í¨ĞÅ×´Ì¬ 500ms 1per				
-Input:        	ucType  - 0ÕıÈ· 1Ğ£Ñé´íÎó			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    å‘é€è®°å½•é»„é—ªå™¨é€šä¿¡çŠ¶æ€ 500ms 1per				
+Input:        	ucType  - 0æ­£ç¡® 1æ ¡éªŒé”™è¯¯			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::SendRecordBoardMsg(Byte ucType)
 {
@@ -356,13 +356,13 @@ void CFlashMac::SendRecordBoardMsg(Byte ucType)
 	Byte ucByte0 = 0;
 	Byte ucByte1 = 0;
 
-	if ( 0 == ucType && m_bRecordSts )  //µ±Ç°×´Ì¬ÕıÈ·ÇÒÊÕµ½ÕıÈ·µÄÊı¾İ
+	if ( 0 == ucType && m_bRecordSts )  //å½“å‰çŠ¶æ€æ­£ç¡®ä¸”æ”¶åˆ°æ­£ç¡®çš„æ•°æ®
 	{
 		m_ucErrCheckCnt = 0;
 		return;
 	}
 
-	if ( ucType != 0 && !m_bRecordSts ) //µ±Ç°×´Ì¬´íÎóÇÒÊÕµ½´íÎóµÄÊı¾İ
+	if ( ucType != 0 && !m_bRecordSts ) //å½“å‰çŠ¶æ€é”™è¯¯ä¸”æ”¶åˆ°é”™è¯¯çš„æ•°æ®
 	{
 		m_ucRightCnt = 0;
 		return;
@@ -386,13 +386,13 @@ void CFlashMac::SendRecordBoardMsg(Byte ucType)
 	{
 		switch ( ucType )
 		{
-			case 0:  //ÕıÈ·
+			case 0:  //æ­£ç¡®
 				m_bRecordSts    = true;
 				m_ucErrCheckCnt = 0;
 				ucByte0 = 0;
 				ucByte1 = 0;
 				break;
-			case 1:  //Ğ£Ñé´íÎó
+			case 1:  //æ ¡éªŒé”™è¯¯
 				m_bRecordSts    = false;
 				m_ucRightCnt = 0;
 				ucByte0 = 1;
@@ -407,38 +407,38 @@ void CFlashMac::SendRecordBoardMsg(Byte ucType)
 		return;
 	}
 
-	CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_FLASHBOARD,0,0,ucByte1,ucByte0);//ADD:201309251140  ¼ò»¯Ìí¼Ó»ÆÉÁÆ÷ÈÕÖ¾ÏûÏ¢
+	CManaKernel::CreateInstance()->SndMsgLog(LOG_TYPE_FLASHBOARD,0,0,ucByte1,ucByte0);//ADD:201309251140  ç®€åŒ–æ·»åŠ é»„é—ªå™¨æ—¥å¿—æ¶ˆæ¯
 	ACE_DEBUG((LM_DEBUG,"%s:%d LOG_TYPE_FLASHBOARD\n",__FILE__,__LINE__));
 }
 
 
 /**************************************************************
 Function:       CFlashMac::SetWriteData
-Description:    ÉèÖÃ·¢ËÍÍù¿ØÖÆÆ÷µÄÊı¾İÓÃÓÚ¿ØÖÆ¼ÓÈÈÉ¢ÈÈ×´Ì¬				
-Input:        	pTx  - ±£´æ·¢ËÍĞÅÏ¢ÄÚÈİµØÖ·			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®å‘é€å¾€æ§åˆ¶å™¨çš„æ•°æ®ç”¨äºæ§åˆ¶åŠ çƒ­æ•£çƒ­çŠ¶æ€				
+Input:        	pTx  - ä¿å­˜å‘é€ä¿¡æ¯å†…å®¹åœ°å€			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::SetWriteData(Byte* pTx)
 {
 	Byte ucTmp = 0;
 
-	if ( m_iTemperature < m_iMinTemperature )  //¼ÓÈÈ
+	if ( m_iTemperature < m_iMinTemperature )  //åŠ çƒ­
 	{
 		m_ucSetColdCnt       = 0;         
 		m_ucSetHotCnt++;        
 		m_ucSetNullFanCnt    = 0;  
 	}
-	else if ( m_iTemperature > m_iMaxTemperature ) //É¢ÈÈ
+	else if ( m_iTemperature > m_iMaxTemperature ) //æ•£çƒ­
 	{ 
 		m_ucSetColdCnt++;         
 		m_ucSetHotCnt        = 0;        
 		m_ucSetNullFanCnt    = 0;  
 	}
-	else   //²»²Ù×÷
+	else   //ä¸æ“ä½œ
 	{
-		if ( ( m_bGetHotFan && m_iTemperature > UP_NORMAL_TEMPERATURE ) //µ±Ç°·çÉÈ´¦ÓÚ¼ÓÈÈÇÒÒÑ¾­¼Óµ½Õı³£ÎÂ¶È  Í£Ö¹¼ÓÈÈ·çÉÈ
-			|| (m_bGetColdFan && m_iTemperature < DROP_NORMAL_TEMPERATURE ) )  //·çÉÈ´¦ÓÚ½µÎÂÇÒÒÑ¾­½µµ½Õı³£µÄÎÂ¶È Í£Ö¹½µÎÂ
+		if ( ( m_bGetHotFan && m_iTemperature > UP_NORMAL_TEMPERATURE ) //å½“å‰é£æ‰‡å¤„äºåŠ çƒ­ä¸”å·²ç»åŠ åˆ°æ­£å¸¸æ¸©åº¦  åœæ­¢åŠ çƒ­é£æ‰‡
+			|| (m_bGetColdFan && m_iTemperature < DROP_NORMAL_TEMPERATURE ) )  //é£æ‰‡å¤„äºé™æ¸©ä¸”å·²ç»é™åˆ°æ­£å¸¸çš„æ¸©åº¦ åœæ­¢é™æ¸©
 		{
 			m_ucSetColdCnt       = 0;         
 			m_ucSetHotCnt        = 0;        
@@ -446,12 +446,12 @@ void CFlashMac::SetWriteData(Byte* pTx)
 		}
 	}
 
-	if ( m_bSetHardwareFlash )  //Ó²¼ş»ÆÉÁ
+	if ( m_bSetHardwareFlash )  //ç¡¬ä»¶é»„é—ª
 	{
 		ucTmp |= 1;
 	}
 	
-	if (  m_pTscCfg->sSpecFun[FUN_TEMPERATURE].ucValue != 0 )  //ÎÂ¶È¼Æ
+	if (  m_pTscCfg->sSpecFun[FUN_TEMPERATURE].ucValue != 0 )  //æ¸©åº¦è®¡
 	{
 		if ( m_ucSetColdCnt > MAX_WORK_TIME ) 
 		{
@@ -480,47 +480,47 @@ void CFlashMac::SetWriteData(Byte* pTx)
 
 	switch ( m_ucSetFanSts )
 	{
-		case FAN_COLD:    //´ò¿ªÉ¢·çÉÈ
+		case FAN_COLD:    //æ‰“å¼€æ•£é£æ‰‡
 			ucTmp |= 1<<1;
 			break;
-		case FAN_HOT:     //´ò¿ª¼ÓÈÈ·çÉÈ
+		case FAN_HOT:     //æ‰“å¼€åŠ çƒ­é£æ‰‡
 			ucTmp |= 1<<2;
 			break;
-		case FAN_NULL:  //ÎŞ
+		case FAN_NULL:  //æ— 
 			break;
 		default:
 			break;
 	}
-	pTx[0] = ucTmp;    //ÃüÁî×Ö
-	pTx[1] = 0x55;     //±£Áô
-	pTx[2] = 0xff;     //±£Áô	
-	pTx[3] = pTx[0] + pTx[1] + pTx[2];    //¼ìÑéÂë
+	pTx[0] = ucTmp;    //å‘½ä»¤å­—
+	pTx[1] = 0x55;     //ä¿ç•™
+	pTx[2] = 0xff;     //ä¿ç•™	
+	pTx[3] = pTx[0] + pTx[1] + pTx[2];    //æ£€éªŒç 
 }
 
 
 /**************************************************************
 Function:       CFlashMac::ResolveReadData
-Description:    ½âÎö´Ó¿ØÖÆÆ÷»ñÈ¡µ½µÄ»·¾³Êı¾İ				
-Input:        	pTx  - »ñÈ¡µ½µÄÄÚÈİ»º´æµØÖ·			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è§£æä»æ§åˆ¶å™¨è·å–åˆ°çš„ç¯å¢ƒæ•°æ®				
+Input:        	pTx  - è·å–åˆ°çš„å†…å®¹ç¼“å­˜åœ°å€			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::ResolveReadData(Byte* pTx)
 {
-	if ( pTx[0] & 0x80 )  //¹©µçÀàĞÍ
+	if ( pTx[0] & 0x80 )  //ä¾›ç”µç±»å‹
 	{
-		m_bPowerType = true;  //½»Á÷µç
+		m_bPowerType = true;  //äº¤æµç”µ
 		m_iVoltage   = (pTx[0] & 0x7F) + 150;
 	}
 	else
 	{
-		m_bPowerType = false; //Ì«ÑôÄÜ
+		m_bPowerType = false; //å¤ªé˜³èƒ½
 		m_iVoltage   = (pTx[0] & 0xF) + 150;
 	}
 
-	m_iTemperature = pTx[1];  //ÎÂ¶È
+	m_iTemperature = pTx[1];  //æ¸©åº¦
 	
-	/*Ó²¼ş»ÆÉÁ*/
+	/*ç¡¬ä»¶é»„é—ª*/
 	if ( pTx[2] & 0x1 )  
 	{
 		m_bGetHardwareFlash = true;
@@ -530,7 +530,7 @@ void CFlashMac::ResolveReadData(Byte* pTx)
 		m_bGetHardwareFlash = false;
 	}
 	
-	/*É¢ÈÈ·çÉÈ*/
+	/*æ•£çƒ­é£æ‰‡*/
 	if ( pTx[2] & 0x2 )
 	{
 		m_bGetColdFan = true;
@@ -540,7 +540,7 @@ void CFlashMac::ResolveReadData(Byte* pTx)
 		m_bGetColdFan = false;
 	}
 	
-	/*¼ÓÈÈ·çÉÈ*/
+	/*åŠ çƒ­é£æ‰‡*/
 	if ( pTx[2] & 0x4 )
 	{
 		m_bGetHotFan = true;
@@ -550,7 +550,7 @@ void CFlashMac::ResolveReadData(Byte* pTx)
 		m_bGetHotFan = false;
 	}
 
-	/*Ç°ÃÅ´ò¿ª*/
+	/*å‰é—¨æ‰“å¼€*/
 	if ( pTx[2] & 0x8 )
 	{
 		m_bGetForDoor = true;
@@ -560,7 +560,7 @@ void CFlashMac::ResolveReadData(Byte* pTx)
 		m_bGetForDoor = false;
 	}
 
-	/*ºóÃÅ´ò¿ª*/
+	/*åé—¨æ‰“å¼€*/
 	if ( pTx[2] & 0x10 )
 	{
 		m_bGetAfterDoor = true;
@@ -573,11 +573,11 @@ void CFlashMac::ResolveReadData(Byte* pTx)
 
 /**************************************************************
 Function:       CFlashMac::SetMaxMinTemperature
-Description:    ÉèÖÃÔÊĞíµÄ×î¸ßÎÂ¶ÈºÍ×îµÍÎÂ¶È				
-Input:        	iMaxTpt - ÔÊĞí×î¸ßÎÂ¶È
-				iMinTpt - ÔÊĞí×îµÍÎÂ¶È			      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è®¾ç½®å…è®¸çš„æœ€é«˜æ¸©åº¦å’Œæœ€ä½æ¸©åº¦				
+Input:        	iMaxTpt - å…è®¸æœ€é«˜æ¸©åº¦
+				iMinTpt - å…è®¸æœ€ä½æ¸©åº¦			      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::SetMaxMinTemperature(int iMaxTpt,int iMinTpt)
 {
@@ -588,10 +588,10 @@ void CFlashMac::SetMaxMinTemperature(int iMaxTpt,int iMinTpt)
 
 /**************************************************************
 Function:       CFlashMac::RecvFlashCan
-Description:    ½âÎö´Ó»ÆÉÁÆ÷·¢¹ıÀ´µÄ¸÷ÀàCanÊı¾İ²¢´¦Àí				
-Input:        	sRecvCanTmp - ½ÓÊÕµ½µÄCanÊı¾İ°ü						      
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    è§£æä»é»„é—ªå™¨å‘è¿‡æ¥çš„å„ç±»Canæ•°æ®å¹¶å¤„ç†				
+Input:        	sRecvCanTmp - æ¥æ”¶åˆ°çš„Canæ•°æ®åŒ…						      
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CFlashMac::RecvFlashCan(SCanFrame sRecvCanTmp)
 {

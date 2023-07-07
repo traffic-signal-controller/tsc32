@@ -7,7 +7,7 @@
 #define WINDOWS
 #endif
 
-/*Êı¾İÀàĞÍ¶¨Òå*/
+/*æ•°æ®ç±»å‹å®šä¹‰*/
 #ifndef Byte
 typedef unsigned char Byte;   
 #endif
@@ -37,17 +37,17 @@ typedef unsigned int Uint32;
 #endif 
 
 #define DB_NAME "./GbAitonTsc.db"
-//#define SERIAL0  "/dev/ttySAC0"    //´®¿Ú1
-//#define SERIAL1  "/dev/ttySAC1"    //´®¿Ú2
-//#define SERIAL2  "/dev/ttySAC2"    //´®¿Ú3
-//#define SERIAL3  "/dev/ttySAC3"    //rs485¿Ú
-//#define RS485    "/dev/rs485io"   //rs485Çı¶¯
+//#define SERIAL0  "/dev/ttySAC0"    //ä¸²å£1
+//#define SERIAL1  "/dev/ttySAC1"    //ä¸²å£2
+//#define SERIAL2  "/dev/ttySAC2"    //ä¸²å£3
+//#define SERIAL3  "/dev/ttySAC3"    //rs485å£
+//#define RS485    "/dev/rs485io"   //rs485é©±åŠ¨
 
 #define DEV_RTC "/dev/rtc0"
 #define RTC_RD_TIME  0x80247009  // ioctl code to do Read RTC time
 #define RTC_SET_TIME 0x4024700a  // ioctl code to do Set RTC time
 
-#define GA_COUNT_DOWN   //¹ú±êµ¹¼ÆÊ±Ğ­Òé
+#define GA_COUNT_DOWN   //å›½æ ‡å€’è®¡æ—¶åè®®
 
 //#define SPECIAL_CNTDOWN 
 #endif  //__DEFINE__H__

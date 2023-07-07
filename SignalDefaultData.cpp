@@ -59,7 +59,7 @@ void SignalDefaultData::InsertGbDefaultData()
 	GBT_DB::ChannelChk    sChannelChk;
 
 
-	/********************Í¨µÀµÆÅİ¼ì²âÅäÖÃ±í*****************************/
+	/********************é€šé“ç¯æ³¡æ£€æµ‹é…ç½®è¡¨*****************************/
 	(CDbInstance::m_cGbtTscDb).QueryChannelChk(tblChannelChk);
 	if(0 == tblChannelChk.GetCount())
 	{
@@ -70,7 +70,7 @@ void SignalDefaultData::InsertGbDefaultData()
 			(CDbInstance::m_cGbtTscDb).AddChannelChk(sChannelChk.ucSubChannelId,sChannelChk);
 		}
 	}
-	/**************Ìí¼ÓÄ¬ÈÏµ÷¶È¼Æ»®²ÎÊı***********/
+	/**************æ·»åŠ é»˜è®¤è°ƒåº¦è®¡åˆ’å‚æ•°***********/
 	(CDbInstance::m_cGbtTscDb).QueryPlan(tblPlan);
 	if ( 0 == tblPlan.GetCount() )
 	{
@@ -83,7 +83,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddPlan(1,sPlan);   
 	}
 
-	/**************Ìí¼ÓÄ¬ÈÏÊ±¶Î±íÊı¾İ***********/
+	/**************æ·»åŠ é»˜è®¤æ—¶æ®µè¡¨æ•°æ®***********/
 	(CDbInstance::m_cGbtTscDb).QuerySchedule(tblSchedule);
 	if ( 0 == tblSchedule.GetCount() )
 	{
@@ -91,15 +91,15 @@ void SignalDefaultData::InsertGbDefaultData()
 		sSchedule.ucEvtId      = 1;                     
 		sSchedule.ucBgnHour    = 8;                   
 		sSchedule.ucBgnMinute  = 0;                
-		sSchedule.ucCtrlMode   = 0;  //0:×ÔÖ÷   1:¹ØµÆ 2:ÉÁ¹â 3:È«ºì  4£ºÖ÷Ïß°ë¸ĞÓ¦ 5:´ÎÏß°ë¸ĞÓ¦ 6:È«¸ĞÓ¦
-		                             //7:ÎŞµçÏßÀÂ 8:×ÔÊÊÓ¦¿ØÖÆ  12:ÁªÍø
+		sSchedule.ucCtrlMode   = 0;  //0:è‡ªä¸»   1:å…³ç¯ 2:é—ªå…‰ 3:å…¨çº¢  4ï¼šä¸»çº¿åŠæ„Ÿåº” 5:æ¬¡çº¿åŠæ„Ÿåº” 6:å…¨æ„Ÿåº”
+		                             //7:æ— ç”µçº¿ç¼† 8:è‡ªé€‚åº”æ§åˆ¶  12:è”ç½‘
 		sSchedule.ucPatternNo  = 1;              
 		sSchedule.ucAuxOut     = 0;                   
 		sSchedule.ucSpecialOut = 0;               
 		(CDbInstance::m_cGbtTscDb).AddSchedule(sSchedule.ucScheduleId,sSchedule.ucEvtId,sSchedule);
 	}
 
-		/**************ÅäÊ±·½°¸±í***********/
+		/**************é…æ—¶æ–¹æ¡ˆè¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryPattern(tblPattern);
 	if ( 0 == tblPattern.GetCount() )
 	{
@@ -119,8 +119,8 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddPattern(sPattern.ucPatternId,sPattern);
 	}
 
-#if 1  //ÆÕÍ¨ÏàÎ»¶àÊ±¶Î
-	/**************½×¶ÎÅäÊ±·½°¸±í***********/
+#if 1  //æ™®é€šç›¸ä½å¤šæ—¶æ®µ
+	/**************é˜¶æ®µé…æ—¶æ–¹æ¡ˆè¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryStagePattern(tblStage);
 	if ( 0 == tblStage.GetCount() )
 	{
@@ -153,7 +153,7 @@ void SignalDefaultData::InsertGbDefaultData()
 			sStage.ucStageNo, sStage);
 	}
 
-	/**************ÏàÎ»±í***********/
+	/**************ç›¸ä½è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryPhase(tblPhase);
 	if ( 0 == tblPhase.GetCount() )
 	{
@@ -166,9 +166,9 @@ void SignalDefaultData::InsertGbDefaultData()
 		sPhase.ucMaxGreen2       = 60;                
 		sPhase.ucFixGreen        = 12;                 
 		sPhase.ucGreenFlash      = 3; 
-		//sPhase.ucPhaseTypeFlag   = 0x40;    //´ı¶¨ÏàÎ»
-		//sPhase.ucPhaseTypeFlag   = 0x80;  //¹Ì¶¨ÏàÎ»
-		sPhase.ucPhaseTypeFlag   = 32;    //µ¯ĞÔÏàÎ»
+		//sPhase.ucPhaseTypeFlag   = 0x40;    //å¾…å®šç›¸ä½
+		//sPhase.ucPhaseTypeFlag   = 0x80;  //å›ºå®šç›¸ä½
+		sPhase.ucPhaseTypeFlag   = 32;    //å¼¹æ€§ç›¸ä½
 		sPhase.ucPhaseOption     = 0;               
 		sPhase.ucExtend          = 0;
 		sPhase.ucPedestrianGreen = 0; 
@@ -178,7 +178,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		{
 			sPhase.ucPhaseId = i; 
 
-			if (sPhase.ucPhaseId%4 == 0 ) //Ä¬ÈÏ±»4Õû³ıµÄÏàÎ»ÎªĞĞÈËÏàÎ»
+			if (sPhase.ucPhaseId%4 == 0 ) //é»˜è®¤è¢«4æ•´é™¤çš„ç›¸ä½ä¸ºè¡Œäººç›¸ä½
 			{
 				sPhase.ucPhaseOption = 2; 
 			}
@@ -191,7 +191,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		}
 	}
 
-	/**************¸úËæÏàÎ»±í***********/
+	/**************è·Ÿéšç›¸ä½è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryOverlapPhase(tblOverlapPhase);
 	ACE_OS::memset(&sOverlapPhase,0,sizeof(GBT_DB::OverlapPhase));
 	if ( 0 == tblOverlapPhase.GetCount() )
@@ -206,7 +206,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddOverlapPhase(sOverlapPhase.ucOverlapPhaseId,sOverlapPhase);
 	}
 
-	/**************³åÍ»ÏàÎ»±í***********/
+	/**************å†²çªç›¸ä½è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryCollision(tblCollision);
 	ACE_OS::memset(&sCollision , 0 , sizeof(GBT_DB::Collision) );
 	if ( 0 == tblCollision.GetCount() )
@@ -219,7 +219,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		}
 	}
 	
-	/**************Í¨µÀ±í***********/
+	/**************é€šé“è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryChannel(tblChannel);
 	ACE_OS::memset(&sChannel,0,sizeof(GBT_DB::Channel));
 	sChannel.ucCtrlType = 1;
@@ -236,9 +236,9 @@ void SignalDefaultData::InsertGbDefaultData()
 			(CDbInstance::m_cGbtTscDb).AddChannel(sChannel.ucChannelId,sChannel);
 		}
 	}
-#else  //¸úËæÏàÎ»
+#else  //è·Ÿéšç›¸ä½
 
-	/**************Ìí¼ÓÄ¬ÈÏ½×¶ÎÅäÊ±±í***********/
+	/**************æ·»åŠ é»˜è®¤é˜¶æ®µé…æ—¶è¡¨***********/
 	(CDbInstance::m_cGbtTscDb).QueryStagePattern(tblStage);
 	if ( 0 == tblStage.GetCount() )
 	{
@@ -265,7 +265,7 @@ void SignalDefaultData::InsertGbDefaultData()
 			sStage.ucStageNo, sStage);
 	}
 
-	/**************Ìí¼ÓÏàÎ»²ÎÊı***********/
+	/**************æ·»åŠ ç›¸ä½å‚æ•°***********/
 	(CDbInstance::m_cGbtTscDb).QueryPhase(tblPhase);
 	if ( 0 == tblPhase.GetCount() )
 	{
@@ -289,7 +289,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		}
 	}
 
-	/**************Ìí¼ÓÄ¬ÈÏ¸úËæÏàÎ»²ÎÊı***********/
+	/**************æ·»åŠ é»˜è®¤è·Ÿéšç›¸ä½å‚æ•°***********/
 	(CDbInstance::m_cGbtTscDb).QueryOverlapPhase(tblOverlapPhase);
 	ACE_OS::memset(&sOverlapPhase,0,sizeof(GBT_DB::OverlapPhase));
 	if ( 0 == tblOverlapPhase.GetCount() )
@@ -314,7 +314,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddOverlapPhase(sOverlapPhase.ucOverlapPhaseId,sOverlapPhase);
 	}
 
-	/**************Ìí¼ÓÄ¬ÈÏÏàÎ»³åÍ»²ÎÊı***********/
+	/**************æ·»åŠ é»˜è®¤ç›¸ä½å†²çªå‚æ•°***********/
 	(CDbInstance::m_cGbtTscDb).QueryCollision(tblCollision);
 	ACE_OS::memset(&sCollision , 0 , sizeof(GBT_DB::Collision) );
 	if ( 0 == tblCollision.GetCount() )
@@ -327,7 +327,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		*/
 	}
 	
-	/**************Ìí¼ÓÄ¬ÈÏÍ¨µÀ²ÎÊı***********/
+	/**************æ·»åŠ é»˜è®¤é€šé“å‚æ•°***********/
 	(CDbInstance::m_cGbtTscDb).QueryChannel(tblChannel);
 	ACE_OS::memset(&sChannel,0,sizeof(GBT_DB::Channel));
 	sChannel.ucCtrlType = 1;
@@ -352,7 +352,7 @@ void SignalDefaultData::InsertGbDefaultData()
 	}
 #endif
 	
-	/**************************Ìí¼ÓÄ¬ÈÏÓ²¼şÄ£¿é************************/
+	/**************************æ·»åŠ é»˜è®¤ç¡¬ä»¶æ¨¡å—************************/
 	(CDbInstance::m_cGbtTscDb).QueryModule(tblModule);
 
 	if ( 0 == tblModule.GetCount() )
@@ -385,7 +385,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).ModModule(sModule.ucModuleId,  sModule);
 	}
 
-	/************************Ìí¼ÓÄ¬ÈÏÌØ¶¨¹¦ÄÜ**************************/
+	/************************æ·»åŠ é»˜è®¤ç‰¹å®šåŠŸèƒ½**************************/
 	(CDbInstance::m_cGbtTscDb).QuerySpecFun(tblSpecFun);
 
 	if ( tblSpecFun.GetCount() == 0 )
@@ -425,17 +425,17 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).ModSpecFun((FUN_CNTTYPE      + 1) , 3);
 	}
 
-	/*******************Ìí¼ÓÄ¬ÈÏ¼ì²âÆ÷²ÎÊı*******************/
+	/*******************æ·»åŠ é»˜è®¤æ£€æµ‹å™¨å‚æ•°*******************/
 	(CDbInstance::m_cGbtTscDb).QueryDetector(tblDetector);
 	if ( tblDetector.GetCount() == 0 )
 	{
 		//for(Byte index = 0 ;index<32 ;index++)
 		//{
 			//sDetector.ucDetectorId = index+1;
-			(CDbInstance::m_cGbtTscDb).AddDetector(1,sDetector); // Ä¬ÈÏÌí¼ÓÒ»¸ö¼ì²âÆ÷
+			(CDbInstance::m_cGbtTscDb).AddDetector(1,sDetector); // é»˜è®¤æ·»åŠ ä¸€ä¸ªæ£€æµ‹å™¨
 		//}
 	}
-	/*******************Ìí¼ÓÄ¬ÈÏ¼ì²âÆ÷À©Õ¹²ÎÊı*******************/
+	/*******************æ·»åŠ é»˜è®¤æ£€æµ‹å™¨æ‰©å±•å‚æ•°*******************/
 	(CDbInstance::m_cGbtTscDb).QueryDetExtend(tblDetExtend);
 
 	if ( tblDetExtend.GetCount() == 0 )
@@ -457,16 +457,16 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddDetExtend(sDetExtend);
 	}
 
-	/*******************¡¤Ìí¼ÓÄ¬ÈÏ·½ÏòÓÚÏàÎ»¶ÔÓ¦²ÎÊı*******************/
+	/*******************Â·æ·»åŠ é»˜è®¤æ–¹å‘äºç›¸ä½å¯¹åº”å‚æ•°*******************/
 	(CDbInstance::m_cGbtTscDb).QueryPhaseToDirec(tblPhaseToDirec);
 
 	if ( tblPhaseToDirec.GetCount() == 0 )
 	{
 		Byte tmp[16] = { 
-						 1,2,4,8,         //±±   Ä¬ÈÏ³õÊ¼ËÄ¸ö·½ÏòµÄ×ó Ö± ÓÒ ÈËĞĞ
-						 65,66,68,72,     //¶«
-						 129,130,132,136, //ÄÏ
-						193,194,196,200   //Î÷           
+						 1,2,4,8,         //åŒ—   é»˜è®¤åˆå§‹å››ä¸ªæ–¹å‘çš„å·¦ ç›´ å³ äººè¡Œ
+						 65,66,68,72,     //ä¸œ
+						 129,130,132,136, //å—
+						193,194,196,200   //è¥¿           
 		                }; 	
 		for (Byte i=0; i<16; i++)
 		{
@@ -478,7 +478,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		}
 	}
 
-	/*******************¡ÁÌí¼Ó×ÔÊÊÓ¦²ÎÊı*******************/
+	/*******************Ã—æ·»åŠ è‡ªé€‚åº”å‚æ•°*******************/
 	(CDbInstance::m_cGbtTscDb).QueryAdaptPara(tblAdaptPara);
 
 	if ( tblAdaptPara.GetCount() == 0 )
@@ -494,7 +494,7 @@ void SignalDefaultData::InsertGbDefaultData()
 		(CDbInstance::m_cGbtTscDb).AddAdaptPara(sAdaptPara);
 	}
 
-	/*******************Ìí¼Óµ¹¼ÆÊ±Éè±¸²ÎÊı*******************/
+	/*******************æ·»åŠ å€’è®¡æ—¶è®¾å¤‡å‚æ•°*******************/
 	(CDbInstance::m_cGbtTscDb).QueryCntDownDev(tblCntDownDev);
 
 	if ( tblCntDownDev.GetCount() == 0 )

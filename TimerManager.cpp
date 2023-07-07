@@ -1,11 +1,11 @@
 #include "TimerManager.h"
 #include "ComFunc.h"
 
-//¶¨Ê±Æ÷ÏÂ±ê
+//å®šæ—¶å™¨ä¸‹æ ‡
 enum 
 {
-	TIMER_TSC_INDEX    = 0,  //ĞÅºÅ»ú¿ØÖÆÄ£¿éµÄ¶¨Ê±Æ÷
-	TIMER_GBT_INDEX    = 1,  //Í¨ĞÅĞ­ÒéÄ£¿éµÄ¶¨Ê±Æ÷
+	TIMER_TSC_INDEX    = 0,  //ä¿¡å·æœºæ§åˆ¶æ¨¡å—çš„å®šæ—¶å™¨
+	TIMER_GBT_INDEX    = 1,  //é€šä¿¡åè®®æ¨¡å—çš„å®šæ—¶å™¨
 };
 
 
@@ -40,11 +40,11 @@ CTimerManager* CTimerManager::CreateInstance()
 {
 	static CTimerManager tTimerManager;
 
-	return &tTimerManager;   //×Ô¶¯Îö¹¹
+	return &tTimerManager;   //è‡ªåŠ¨ææ„
 }
 
 /*
-*Æô¶¯ËùÓĞµÄ¶¨Ê±Æ÷
+*å¯åŠ¨æ‰€æœ‰çš„å®šæ—¶å™¨
 */
 void CTimerManager::CreateAllTimer()
 {
@@ -52,17 +52,17 @@ void CTimerManager::CreateAllTimer()
 	ACE_DEBUG((LM_DEBUG,"%s:%d***CreateAllTimer*** Delay 3 seconds to boot all timers!\n",__FILE__,__LINE__));
 	
     const ACE_Time_Value curr_tv = getCurrTime();
-	//100ºÁÃë¶¨Ê±Æ÷,ÑÓ³Ù3ÃëÆô¶¯
+	//100æ¯«ç§’å®šæ—¶å™¨,å»¶è¿Ÿ3ç§’å¯åŠ¨
 	m_lTimerId[TIMER_TSC_INDEX] = m_tActiveTimer.schedule(m_pTscTimer,NULL,curr_tv+ACE_Time_Value(1),ACE_Time_Value(0,100*1000)); 
 
-	//100ºÁÃë¾«È·¶¨Ê±Æ÷£¬²ÉÓÃosÏà¶ÔÊ±¼ä
+	//100æ¯«ç§’ç²¾ç¡®å®šæ—¶å™¨ï¼Œé‡‡ç”¨osç›¸å¯¹æ—¶é—´
 	//m_lTimerId[TIMER_TSC_INDEX ] =  m_tActiveTimer.schedule(m_pTscTimer,  NULL,GetCurTime(),ACE_Time_Value(0,100*1000)); 
 
 	m_lTimerId[TIMER_GBT_INDEX] = m_tActiveTimer.schedule(m_pGbtTimer,NULL,curr_tv+ACE_Time_Value(1),ACE_Time_Value(0,100*1000)); 
 }
 
 /*
-*¹Ø±ÕËùÓĞµÄ¶¨Ê±Æ÷
+*å…³é—­æ‰€æœ‰çš„å®šæ—¶å™¨
 */
 void CTimerManager::CloseAllTimer()
 {
@@ -76,27 +76,27 @@ void CTimerManager::CloseAllTimer()
 }
 
 /*
-*¿ªÆôËùÓĞµÄ¶¨Ê±Æ÷
+*å¼€å¯æ‰€æœ‰çš„å®šæ—¶å™¨
 */
 void CTimerManager::StartAllTimer()
 {
-	//100ºÁÃë¶¨Ê±Æ÷,,Á¢ÂíÆô¶¯
+	//100æ¯«ç§’å®šæ—¶å™¨,,ç«‹é©¬å¯åŠ¨
 	m_lTimerId[TIMER_TSC_INDEX] = m_tActiveTimer.schedule(m_pTscTimer,NULL,getCurrTime(),ACE_Time_Value(0,100*1000)); 
 
 	m_lTimerId[TIMER_GBT_INDEX] = m_tActiveTimer.schedule(m_pGbtTimer,NULL,getCurrTime(),ACE_Time_Value(0,100*1000)); 
 }
 
 /*
-*¿ªÆôTscÄ£¿éµÄ¶¨Ê±Æ÷
+*å¼€å¯Tscæ¨¡å—çš„å®šæ—¶å™¨
 */
 void CTimerManager::StartTscTimer()
 {
-	m_lTimerId[TIMER_TSC_INDEX] =   //100ºÁÃë¶¨Ê±Æ÷,Á¢ÂíÆô¶¯
+	m_lTimerId[TIMER_TSC_INDEX] =   //100æ¯«ç§’å®šæ—¶å™¨,ç«‹é©¬å¯åŠ¨
 		m_tActiveTimer.schedule(m_pTscTimer,NULL,getCurrTime(),ACE_Time_Value(0,100*1000)); 
 }
 
 /*
-*¹Ø±ÕTscÄ£¿éµÄ¶¨Ê±Æ÷
+*å…³é—­Tscæ¨¡å—çš„å®šæ—¶å™¨
 */
 void CTimerManager::CloseTscTimer()
 {

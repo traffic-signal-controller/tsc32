@@ -3,7 +3,7 @@ Copyright(c) 2013  AITON. All rights reserved.
 Author:     AITON
 FileName:   SerialCtrl.cpp
 Date:       2013-9-13
-Description:´®¿Ú´¦Àí²Ù×÷Àà
+Description:ä¸²å£å¤„ç†æ“ä½œç±»
 Version:    V1.0
 History:    
 ***************************************************************/
@@ -62,10 +62,10 @@ static void     set_parity (char parity);
 
 /**************************************************************
 Function:       CSerialCtrl::CSerialCtrl
-Description:    CSerialCtrlÀà¹¹Ôìº¯Êı£¬ÓÃÓÚÀà³õÊ¼»¯´®¿Ú				
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CSerialCtrlç±»æ„é€ å‡½æ•°ï¼Œç”¨äºç±»åˆå§‹åŒ–ä¸²å£				
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CSerialCtrl::CSerialCtrl()
 {
@@ -80,10 +80,10 @@ CSerialCtrl::CSerialCtrl()
 
 /**************************************************************
 Function:       CSerialCtrl::~CSerialCtrl
-Description:    CSerialCtrlÀàÎö¹¹º¯Êı	
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CSerialCtrlç±»ææ„å‡½æ•°	
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CSerialCtrl::~CSerialCtrl()
 {
@@ -117,10 +117,10 @@ CSerialCtrl::~CSerialCtrl()
 
 /**************************************************************
 Function:       CSerialCtrl::CreateInstance
-Description:    ´´½¨	CSerialCtrl¾²Ì¬¶ÔÏó
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»º	CSerialCtrlé™æ€å¯¹è±¡
+Input:          æ—               
+Output:         æ— 
+Return:         é™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CSerialCtrl* CSerialCtrl::CreateInstance()
 {
@@ -131,10 +131,10 @@ CSerialCtrl* CSerialCtrl::CreateInstance()
 
 /**************************************************************
 Function:       CSerialCtrl::OpenComPort
-Description:    ´ò¿ª´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CSerialCtrl::OpenComPort (INT32 ComPort, INT32 baudrate, INT32 databit,const char *stopbit, char parity)
 {    
@@ -218,10 +218,10 @@ int CSerialCtrl::getPortFd()
 }
 /**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CSerialCtrl::ReadComPort (Byte *data, INT32 datalength)
 {    
@@ -254,10 +254,10 @@ INT32 CSerialCtrl::ReadComPort (Byte *data, INT32 datalength)
 }
 /**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CSerialCtrl::ReadComPortBySerial1(Byte *data, INT32 datalength)
 {    
@@ -290,10 +290,10 @@ INT32 CSerialCtrl::ReadComPortBySerial1(Byte *data, INT32 datalength)
 }
 /**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CSerialCtrl::ReadComPortBySerial2 (Byte *data, INT32 datalength)
 {    
@@ -326,10 +326,10 @@ INT32 CSerialCtrl::ReadComPortBySerial2 (Byte *data, INT32 datalength)
 }
 /**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CSerialCtrl::ReadComPortBySerial3 (Byte *data, INT32 datalength)
 {    
@@ -362,10 +362,10 @@ INT32 CSerialCtrl::ReadComPortBySerial3 (Byte *data, INT32 datalength)
 }
 /**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CSerialCtrl::ReadComPortBySerial4 (Byte *data, INT32 datalength)
 {    
@@ -397,10 +397,10 @@ INT32 CSerialCtrl::ReadComPortBySerial4 (Byte *data, INT32 datalength)
 	}
 }/**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 INT32 CSerialCtrl::ReadComPortBySerial5 (Byte *data, INT32 datalength)
 {    
@@ -454,7 +454,7 @@ INT32 ReadComPortA (Byte *data, INT32 datalength)
 		retval = select (fd + 1, &fs_read, NULL, NULL, &tv_timeout);        
 		if ( retval >0 ) 
 		{   
-			//void * ½øĞĞÔËËã²úÉúwarning ²»Ó°Ïì³ÌĞòÔËĞĞ
+			//void * è¿›è¡Œè¿ç®—äº§ç”Ÿwarning ä¸å½±å“ç¨‹åºè¿è¡Œ
 			readlen = read (fd, (data+bytes_read), datalength);            
 			bytes_read += readlen;        
 		} 
@@ -466,11 +466,11 @@ INT32 ReadComPortA (Byte *data, INT32 datalength)
 
 /**************************************************************
 Function:        CSerialCtrl::WriteComPortBySerial3    
-Description:     Í¨¹ı´®¿Ú3¶ÁÈ¡Ğ´ÈëÊı¾İ	
-Input:        	data  - Êı¾İÄÚÈİ
-				datalength  - ÏûÏ¢ÄÚÈİ³¤¶È		      
-Output:         ÎŞ
-Return:         0 -´íÎó  1-ÕıÈ·
+Description:     é€šè¿‡ä¸²å£3è¯»å–å†™å…¥æ•°æ®	
+Input:        	data  - æ•°æ®å†…å®¹
+				datalength  - æ¶ˆæ¯å†…å®¹é•¿åº¦		      
+Output:         æ— 
+Return:         0 -é”™è¯¯  1-æ­£ç¡®
 ***************************************************************/
 INT32 CSerialCtrl::WriteComPortBySerial1(Byte * data, INT32 datalength)
 {
@@ -502,11 +502,11 @@ INT32 CSerialCtrl::WriteComPortBySerial1(Byte * data, INT32 datalength)
 
 /**************************************************************
 Function:        CSerialCtrl::WriteComPortBySerial3    
-Description:     Í¨¹ı´®¿Ú3¶ÁÈ¡Ğ´ÈëÊı¾İ	
-Input:        	data  - Êı¾İÄÚÈİ
-				datalength  - ÏûÏ¢ÄÚÈİ³¤¶È		      
-Output:         ÎŞ
-Return:         0 -´íÎó  1-ÕıÈ·
+Description:     é€šè¿‡ä¸²å£3è¯»å–å†™å…¥æ•°æ®	
+Input:        	data  - æ•°æ®å†…å®¹
+				datalength  - æ¶ˆæ¯å†…å®¹é•¿åº¦		      
+Output:         æ— 
+Return:         0 -é”™è¯¯  1-æ­£ç¡®
 ***************************************************************/
 INT32 CSerialCtrl::WriteComPortBySerial2(Byte * data, INT32 datalength)
 {
@@ -538,11 +538,11 @@ INT32 CSerialCtrl::WriteComPortBySerial2(Byte * data, INT32 datalength)
 
 /**************************************************************
 Function:        CSerialCtrl::WriteComPortBySerial3    
-Description:     Í¨¹ı´®¿Ú3¶ÁÈ¡Ğ´ÈëÊı¾İ	
-Input:        	data  - Êı¾İÄÚÈİ
-				datalength  - ÏûÏ¢ÄÚÈİ³¤¶È		      
-Output:         ÎŞ
-Return:         0 -´íÎó  1-ÕıÈ·
+Description:     é€šè¿‡ä¸²å£3è¯»å–å†™å…¥æ•°æ®	
+Input:        	data  - æ•°æ®å†…å®¹
+				datalength  - æ¶ˆæ¯å†…å®¹é•¿åº¦		      
+Output:         æ— 
+Return:         0 -é”™è¯¯  1-æ­£ç¡®
 ***************************************************************/
 INT32 CSerialCtrl::WriteComPortBySerial3(Byte * data, INT32 datalength)
 {
@@ -574,11 +574,11 @@ INT32 CSerialCtrl::WriteComPortBySerial3(Byte * data, INT32 datalength)
 
 /**************************************************************
 Function:        CSerialCtrl::WriteComPortBySerial3    
-Description:     Í¨¹ı´®¿Ú3¶ÁÈ¡Ğ´ÈëÊı¾İ	
-Input:        	data  - Êı¾İÄÚÈİ
-				datalength  - ÏûÏ¢ÄÚÈİ³¤¶È		      
-Output:         ÎŞ
-Return:         0 -´íÎó  1-ÕıÈ·
+Description:     é€šè¿‡ä¸²å£3è¯»å–å†™å…¥æ•°æ®	
+Input:        	data  - æ•°æ®å†…å®¹
+				datalength  - æ¶ˆæ¯å†…å®¹é•¿åº¦		      
+Output:         æ— 
+Return:         0 -é”™è¯¯  1-æ­£ç¡®
 ***************************************************************/
 INT32 CSerialCtrl::WriteComPortBySerial4(Byte * data, INT32 datalength)
 {
@@ -609,11 +609,11 @@ INT32 CSerialCtrl::WriteComPortBySerial4(Byte * data, INT32 datalength)
 }
 /**************************************************************
 Function:        CSerialCtrl::WriteComPortBySerial3    
-Description:     Í¨¹ı´®¿Ú3¶ÁÈ¡Ğ´ÈëÊı¾İ	
-Input:        	data  - Êı¾İÄÚÈİ
-				datalength  - ÏûÏ¢ÄÚÈİ³¤¶È		      
-Output:         ÎŞ
-Return:         0 -´íÎó  1-ÕıÈ·
+Description:     é€šè¿‡ä¸²å£3è¯»å–å†™å…¥æ•°æ®	
+Input:        	data  - æ•°æ®å†…å®¹
+				datalength  - æ¶ˆæ¯å†…å®¹é•¿åº¦		      
+Output:         æ— 
+Return:         0 -é”™è¯¯  1-æ­£ç¡®
 ***************************************************************/
 INT32 CSerialCtrl::WriteComPortBySerial5(Byte * data, INT32 datalength)
 {
@@ -882,10 +882,10 @@ static INT32 Bxx2baudrate (INT32 _baudrate)
 
 /**************************************************************
 Function:       CSerialCtrl::OpenALLSerial
-Description:    ´ò¿ªËùÓĞ´®¿ÚÉè±¸ÎÄ¼ş
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    æ‰“å¼€æ‰€æœ‰ä¸²å£è®¾å¤‡æ–‡ä»¶
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 void CSerialCtrl::OpenALLSerial()
 {
@@ -929,10 +929,10 @@ void CSerialCtrl::OpenALLSerial()
 
 /**************************************************************
 Function:       CSerialCtrl::GetSerialFd1
-Description:    »ñÈ¡´®¿ÚÉè±¸¾ä±ú
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ´®¿ÚÉè±¸¾ä±ú
+Description:    è·å–ä¸²å£è®¾å¤‡å¥æŸ„
+Input:          æ—               
+Output:         æ— 
+Return:         ä¸²å£è®¾å¤‡å¥æŸ„
 ***************************************************************/
 int CSerialCtrl::GetSerialFd1()
 {
@@ -941,10 +941,10 @@ int CSerialCtrl::GetSerialFd1()
 }
 /**************************************************************
 Function:       CSerialCtrl::GetSerialFd1
-Description:    »ñÈ¡´®¿ÚÉè±¸¾ä±ú
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ´®¿ÚÉè±¸¾ä±ú
+Description:    è·å–ä¸²å£è®¾å¤‡å¥æŸ„
+Input:          æ—               
+Output:         æ— 
+Return:         ä¸²å£è®¾å¤‡å¥æŸ„
 ***************************************************************/
 int CSerialCtrl::GetSerialFd2()
 {
@@ -954,10 +954,10 @@ int CSerialCtrl::GetSerialFd2()
 
 /**************************************************************
 Function:       CSerialCtrl::GetSerialFd1
-Description:    »ñÈ¡´®¿ÚÉè±¸¾ä±ú
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ´®¿ÚÉè±¸¾ä±ú
+Description:    è·å–ä¸²å£è®¾å¤‡å¥æŸ„
+Input:          æ—               
+Output:         æ— 
+Return:         ä¸²å£è®¾å¤‡å¥æŸ„
 ***************************************************************/
 int CSerialCtrl::GetSerialFd3()
 {
@@ -966,10 +966,10 @@ int CSerialCtrl::GetSerialFd3()
 }
 /**************************************************************
 Function:       CSerialCtrl::GetSerialFd1
-Description:    »ñÈ¡´®¿ÚÉè±¸¾ä±ú
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ´®¿ÚÉè±¸¾ä±ú
+Description:    è·å–ä¸²å£è®¾å¤‡å¥æŸ„
+Input:          æ—               
+Output:         æ— 
+Return:         ä¸²å£è®¾å¤‡å¥æŸ„
 ***************************************************************/
 int CSerialCtrl::GetSerialFd4()
 {
@@ -978,10 +978,10 @@ int CSerialCtrl::GetSerialFd4()
 }
 /**************************************************************
 Function:       CSerialCtrl::GetSerialFd1
-Description:    »ñÈ¡´®¿ÚÉè±¸¾ä±ú
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ´®¿ÚÉè±¸¾ä±ú
+Description:    è·å–ä¸²å£è®¾å¤‡å¥æŸ„
+Input:          æ—               
+Output:         æ— 
+Return:         ä¸²å£è®¾å¤‡å¥æŸ„
 ***************************************************************/
 int CSerialCtrl::GetSerialFd5()
 {

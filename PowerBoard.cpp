@@ -18,34 +18,34 @@
 #endif
 
 /*
-µçÔ´Ä£¿é¹¦ÄÜÀàĞÍÃ¶¾Ù
+ç”µæºæ¨¡å—åŠŸèƒ½ç±»å‹æšä¸¾
 */
 enum
 {
-	POWER_HEAD_ENV      = 0x02 ,  //µçÑ¹Êı¾İ£¬µçÑ¹×´Ì¬
-	POWER_HEAD_CFG_GET  = 0x03 ,  //ÇëÇóµçÔ´Ä£¿éÅäÖÃÊı¾İ£¬°üÀ¨µçÑ¹¸ßµÍÑ¹Ô¤¾¯µçÑ¹ÖµÒÔ¼°Ç¿Èõµç¿ØÖÆÔ¤°¸
-    POWER_HEAD_CFG_SET  = 0x04 ,  //·¢ËÍµçÔ´Ä£¿éÅäÖÃÊı¾İ
-	POWER_HEAD_HEARBEAT = 0x05 , //ĞÄÌø°ü
-	POWER_HEAD_VER      = 0xff  //³ÌĞò°æ±¾
+	POWER_HEAD_ENV      = 0x02 ,  //ç”µå‹æ•°æ®ï¼Œç”µå‹çŠ¶æ€
+	POWER_HEAD_CFG_GET  = 0x03 ,  //è¯·æ±‚ç”µæºæ¨¡å—é…ç½®æ•°æ®ï¼ŒåŒ…æ‹¬ç”µå‹é«˜ä½å‹é¢„è­¦ç”µå‹å€¼ä»¥åŠå¼ºå¼±ç”µæ§åˆ¶é¢„æ¡ˆ
+    POWER_HEAD_CFG_SET  = 0x04 ,  //å‘é€ç”µæºæ¨¡å—é…ç½®æ•°æ®
+	POWER_HEAD_HEARBEAT = 0x05 , //å¿ƒè·³åŒ…
+	POWER_HEAD_VER      = 0xff  //ç¨‹åºç‰ˆæœ¬
 };
 
 /*
-µçÔ´Ä£¿éÔ¤°¸¹¦ÄÜÀàĞÍÃ¶¾Ù
+ç”µæºæ¨¡å—é¢„æ¡ˆåŠŸèƒ½ç±»å‹æšä¸¾
 */
 enum
 {
-	PLAN_KEEP  = 0 ,  //Ô¤°¸·½Ê½²»±ä
-	PLAN_ON    = 1 ,  //±£»¤¿ªÆô
-	PLAN_OFF   = 2 ,  //±£»¤¹Ø±Õ
-	PLAN_OTHER = 3    //±¸ÓÃ
+	PLAN_KEEP  = 0 ,  //é¢„æ¡ˆæ–¹å¼ä¸å˜
+	PLAN_ON    = 1 ,  //ä¿æŠ¤å¼€å¯
+	PLAN_OFF   = 2 ,  //ä¿æŠ¤å…³é—­
+	PLAN_OTHER = 3    //å¤‡ç”¨
 };
 
 /**************************************************************
 Function:       CPowerBoard::CPowerBoard
-Description:    CPowerBoardÀà¹¹Ôìº¯Êı		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CPowerBoardç±»æ„é€ å‡½æ•°		
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CPowerBoard::CPowerBoard()
 {
@@ -59,10 +59,10 @@ Byte CPowerBoard::iHeartBeat = 0;
 
 /**************************************************************
 Function:       CPowerBoard::~CPowerBoard
-Description:    CPowerBoardÀàÎö¹¹º¯Êı		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         ÎŞ
+Description:    CPowerBoardç±»ææ„å‡½æ•°		
+Input:          æ—               
+Output:         æ— 
+Return:         æ— 
 ***************************************************************/
 CPowerBoard::~CPowerBoard()
 {	
@@ -72,10 +72,10 @@ CPowerBoard::~CPowerBoard()
 
 /**************************************************************
 Function:       CPowerBoard::CreateInstance
-Description:    ´´½¨µçÔ´°åÀà¾²Ì¬¶ÔÏó		
-Input:          ÎŞ              
-Output:         ÎŞ
-Return:         CPowerBoard¾²Ì¬¶ÔÏóÖ¸Õë
+Description:    åˆ›å»ºç”µæºæ¿ç±»é™æ€å¯¹è±¡		
+Input:          æ—               
+Output:         æ— 
+Return:         CPowerBoardé™æ€å¯¹è±¡æŒ‡é’ˆ
 ***************************************************************/
 CPowerBoard* CPowerBoard::CreateInstance()
 {
@@ -86,9 +86,9 @@ CPowerBoard* CPowerBoard::CreateInstance()
 
 /**************************************************************
 Function:       CPowerBoard::GetPowerBoardCfg
-Description:    Ö÷¿Ø°åÇëÇóµçÔ´Ä£¿é·¢ËÍµçÑ¹Êı¾İ£¬µçÑ¹×´Ì¬		
-Input:          ÎŞ              
-Output:         ÎŞ
+Description:    ä¸»æ§æ¿è¯·æ±‚ç”µæºæ¨¡å—å‘é€ç”µå‹æ•°æ®ï¼Œç”µå‹çŠ¶æ€		
+Input:          æ—               
+Output:         æ— 
 Return:         0
 ***************************************************************/
 void CPowerBoard::CheckVoltage()
@@ -106,10 +106,10 @@ void CPowerBoard::CheckVoltage()
 
 /**************************************************************
 Function:       CPowerBoard::GetPowerBoardCfg
-Description:    Ö÷¿Ø°åÇëÇóµçÔ´Ä£¿é·¢ËÍÅäÖÃÊı¾İ£¬°üÀ¨µçÑ¹¸ßµÍÑ¹Ô¤
-				¾¯µçÑ¹ÖµÒÔ¼°Ç¿Èõµã¿ØÖÆÔ¤°¸			
-Input:          ÎŞ              
-Output:         ÎŞ
+Description:    ä¸»æ§æ¿è¯·æ±‚ç”µæºæ¨¡å—å‘é€é…ç½®æ•°æ®ï¼ŒåŒ…æ‹¬ç”µå‹é«˜ä½å‹é¢„
+				è­¦ç”µå‹å€¼ä»¥åŠå¼ºå¼±ç‚¹æ§åˆ¶é¢„æ¡ˆ			
+Input:          æ—               
+Output:         æ— 
 Return:         0
 ***************************************************************/
 void CPowerBoard::GetPowerBoardCfg()
@@ -134,9 +134,9 @@ void CPowerBoard::GetPowerBoardCfg()
 
 /**************************************************************
 Function:       CPowerBoard::SetPowerBoardCfg
-Description:    Ö÷¿Ø°åÉèÖÃµçÔ´°åÅäÖÃÊı¾İ				
-Input:          ÎŞ              
-Output:         ÎŞ
+Description:    ä¸»æ§æ¿è®¾ç½®ç”µæºæ¿é…ç½®æ•°æ®				
+Input:          æ—               
+Output:         æ— 
 Return:         0
 ***************************************************************/
 void CPowerBoard::SetPowerBoardCfg()
@@ -166,11 +166,11 @@ void CPowerBoard::SetPowerBoardCfg()
 }
 /**************************************************************
 Function:       CPowerBoard::SetPowerCfgData
-Description:    Ö÷¿Ø°åÉèÖÃµçÔ´°åÅäÖÃÊı¾İ²ÎÊı				
-Input:          WarnHighVol -¸ßµçÑ¹Ô¤¾¯Öµ
-		     WarnLowVol  -µÍµçÑ¹Ô¤¾¯Öµ
-		     VolPlan         -µçÑ¹¿ØÖÆ·½°¸
-		     Output:         ÎŞ
+Description:    ä¸»æ§æ¿è®¾ç½®ç”µæºæ¿é…ç½®æ•°æ®å‚æ•°				
+Input:          WarnHighVol -é«˜ç”µå‹é¢„è­¦å€¼
+		     WarnLowVol  -ä½ç”µå‹é¢„è­¦å€¼
+		     VolPlan         -ç”µå‹æ§åˆ¶æ–¹æ¡ˆ
+		     Output:         æ— 
 Return:         0
 ***************************************************************/
 
@@ -188,10 +188,10 @@ void CPowerBoard::SetPowerCfgData(Byte m_ucWarnHighVol,Byte m_ucWarnLowVol,Byte 
 
 /**************************************************************
 Function:       CPowerBoard::HeartBeat
-Description:    µçÔ´°å·¢ËÍ¹ã²¥ĞÄÌøCanÊı¾İ°ü£¬ÓÃÓÚ±£³ÖÖ÷°åºÍ²¿¼şµÄ
-				Á¬½Ó×´Ì¬
-Input:          ÎŞ              
-Output:         ÎŞ
+Description:    ç”µæºæ¿å‘é€å¹¿æ’­å¿ƒè·³Canæ•°æ®åŒ…ï¼Œç”¨äºä¿æŒä¸»æ¿å’Œéƒ¨ä»¶çš„
+				è¿æ¥çŠ¶æ€
+Input:          æ—               
+Output:         æ— 
 Return:         0
 ***************************************************************/
 void CPowerBoard::HeartBeat()
@@ -209,10 +209,10 @@ void CPowerBoard::HeartBeat()
 
 /**************************************************************
 Function:        CPowerBoard::RecvPowerCan
-Description:    Ö÷¿Ø°å½ÓÊÕµçÔ´°å·µ»ØCanÊı¾İ°ü£¬½âÎö²¢´¦Àí¡£				
-Input:          ucBoardAddr  µçÔ´°åµØÖ·
-				sRecvCanTmp  CanÊı¾İ°ü              
-Output:         ÎŞ
+Description:    ä¸»æ§æ¿æ¥æ”¶ç”µæºæ¿è¿”å›Canæ•°æ®åŒ…ï¼Œè§£æå¹¶å¤„ç†ã€‚				
+Input:          ucBoardAddr  ç”µæºæ¿åœ°å€
+				sRecvCanTmp  Canæ•°æ®åŒ…              
+Output:         æ— 
 Return:         0
 ***************************************************************/
 void CPowerBoard::RecvPowerCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
@@ -227,13 +227,13 @@ void CPowerBoard::RecvPowerCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 		switch(ucType)
 		{
 		case POWER_HEAD_ENV :	
-			m_iStongVoltage = sRecvCanTmp.pCanData[1] + 150;  //Ç¿µçµçÑ¹		
-			m_iWeakVoltage  = 0;  //ÈõµçµçÑ¹
+			m_iStongVoltage = sRecvCanTmp.pCanData[1] + 150;  //å¼ºç”µç”µå‹		
+			m_iWeakVoltage  = 0;  //å¼±ç”µç”µå‹
 			m_iWeakVoltage  = (sRecvCanTmp.pCanData[2] & 0xf)  << 8;
 			m_iWeakVoltage  = m_iWeakVoltage | sRecvCanTmp.pCanData[3];
 				
 			m_iWeakVoltage  = m_iWeakVoltage / 500;		
-			m_iBusVoltage   = 0;  //×ÜÏßµçÑ¹
+			m_iBusVoltage   = 0;  //æ€»çº¿ç”µå‹
 			m_iBusVoltage   = (sRecvCanTmp.pCanData[4] & 0xf)  << 8;
 			m_iBusVoltage  = m_iBusVoltage | sRecvCanTmp.pCanData[5];
 			m_iBusVoltage  = m_iBusVoltage / 500;
@@ -273,10 +273,10 @@ void CPowerBoard::RecvPowerCan(Byte ucBoardAddr,SCanFrame sRecvCanTmp)
 
 /**************************************************************
 Function:        CPowerBoard::GetStongVoltage
-Description:    »ñÈ¡Ç¿µçµçÑ¹ÊôĞÔÖµ£¬ÓÃÓÚ¿ØÖÆÆ÷LCDµçÑ¹ÏÔÊ¾¡£				
-Input:          ÎŞ
-Output:         ÎŞ
-Return:         Ç¿µçµçÑ¹
+Description:    è·å–å¼ºç”µç”µå‹å±æ€§å€¼ï¼Œç”¨äºæ§åˆ¶å™¨LCDç”µå‹æ˜¾ç¤ºã€‚				
+Input:          æ— 
+Output:         æ— 
+Return:         å¼ºç”µç”µå‹
 ***************************************************************/
 int  CPowerBoard::GetStongVoltage()
 {

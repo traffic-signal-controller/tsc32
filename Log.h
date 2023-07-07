@@ -10,8 +10,8 @@
 #include "ComStruct.h"
 
 /*
-*ÈÕÖ¾¼ÇÂ¼ ²ÉÈ¡ÃüÁîÉè¼ÆÄ£Ê½ 
-*·ÀÖ¹¼ÇÂ¼ÈÕÖ¾ÏûºÄÊ±¼ä¹ı¶àÓ°Ïìµ½¹¤×÷Ïß³Ì
+*æ—¥å¿—è®°å½• é‡‡å–å‘½ä»¤è®¾è®¡æ¨¡å¼ 
+*é˜²æ­¢è®°å½•æ—¥å¿—æ¶ˆè€—æ—¶é—´è¿‡å¤šå½±å“åˆ°å·¥ä½œçº¿ç¨‹
 */
 class CLogger:public ACE_Task<ACE_MT_SYNCH>
 {
@@ -23,10 +23,10 @@ public:
 	void SetMaxMinId(Uint ucMaxId,Uint ucMinId);
 
 public:
-	Uint m_uiLogMaxId;   //µ±Ç°ÈÕÖ¾×î´óĞĞÊıid
-	Uint m_uiLogMinId;   //µ±Ç°ÈÕÖ¾×îĞ¡ĞĞÊıid
+	Uint m_uiLogMaxId;   //å½“å‰æ—¥å¿—æœ€å¤§è¡Œæ•°id
+	Uint m_uiLogMinId;   //å½“å‰æ—¥å¿—æœ€å°è¡Œæ•°id
 private:
-	ACE_Activation_Queue m_queCmd;    //ÃüÁî¶ÓÁĞ
+	ACE_Activation_Queue m_queCmd;    //å‘½ä»¤é˜Ÿåˆ—
 };
 
 class CLogCmd:public ACE_Method_Request
@@ -36,8 +36,8 @@ public:
 	int call();
 
 private:
-	Byte m_ucEvtType;   //ÊÂ¼şÀàĞÍ
-	Uint m_uiEvtValue;  //ÊÂ¼şÖµ
+	Byte m_ucEvtType;   //äº‹ä»¶ç±»å‹
+	Uint m_uiEvtValue;  //äº‹ä»¶å€¼
 	CLogger* m_pLog;   
 };
 

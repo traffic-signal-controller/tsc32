@@ -10,16 +10,16 @@ class CMacControl
 public:
 	static CMacControl* CreateInstance();
 
-	//Ö÷¿Ø°åÇëÇó¿ØÖÆÄ£¿é·¢ËÍ»·¾³Êı¾İ
+	//ä¸»æ§æ¿è¯·æ±‚æ§åˆ¶æ¨¡å—å‘é€ç¯å¢ƒæ•°æ®
 	void GetEnvSts();
 
-	//Ö÷¿Ø°å·¢ËÍ¸ø¿ØÖÆÄ£¿éÅäÖÃÊı¾İ
+	//ä¸»æ§æ¿å‘é€ç»™æ§åˆ¶æ¨¡å—é…ç½®æ•°æ®
 	void SetCfg1();
 
-	//Ö÷¿Ø°å·¢ËÍ¸ø¿ØÖÆÄ£¿éÅäÖÃÊı¾İ
+	//ä¸»æ§æ¿å‘é€ç»™æ§åˆ¶æ¨¡å—é…ç½®æ•°æ®
 	void SetCfg2();
 
-	//Ö÷¿Ø°åÖ±½Ó¿ØÖÆÄ£¿éÖĞÉè±¸
+	//ä¸»æ§æ¿ç›´æ¥æ§åˆ¶æ¨¡å—ä¸­è®¾å¤‡
 	void MainBoardCtrl();
 	void RecvMacCan(SCanFrame sRecvCanTmp); //ADD 20130815 0850
 	void SndLcdShow() ; //ADD 201309101706
@@ -30,15 +30,15 @@ private:
 	CMacControl();
 	~CMacControl();
 		
-	Byte LcdCtrlMod ;          //µ±Ç°¿ØÖÆÄ£Ê½×´Ì¬
+	Byte LcdCtrlMod ;          //å½“å‰æ§åˆ¶æ¨¡å¼çŠ¶æ€
 	
-	int m_iSetAddHotTemp;  //¼ÓÈÈÆ÷¿ªÆôµÄÎÂ¶ÈÖµ
-	int m_iSetReduHotTemp; //É¢ÈÈÆ÷¿ªÆôµÄÎÂ¶ÈÖµ
-	Byte m_ucSetHumWarn;     //Êª¶ÈÔ¤¾¯ÊıÖµ Êµ¼ÊµÄ°Ù·Ö±ÈÊıÖµ
-	Byte m_ucSetAddHotPlan;  //¼ÓÈÈÆ÷Ô¤°¸ 0-±£³Ö 1-×Ô¶¯¿ØÖÆ 2-ÊÜÖ÷°å¿ØÖÆ 
-	Byte m_ucSetReduHotPlan; //É¢ÈÈÆ÷Ô¤°¸ 0-±£³Ö 1-×Ô¶¯¿ØÖÆ 2-ÊÜÖ÷°å¿ØÖÆ
-	Byte m_ucSetCabinetWarn; //»úÆ÷Õğ¶¯   0-±£³Ö 1-Õğ¶¯±¨¾¯´ò¿ª 2-Õğ¶¯±¨¾¯¹Ø±Õ
-	Byte m_ucSetHumPlan;     //Êª¶ÈÔ¤°¸   0-±£³Ö 1-×Ô¶¯´ò¿ªÉ¢ÈÈ 2-×Ô¶¯´ò¿ª¼ÓÈÈ 3-±£Áô
+	int m_iSetAddHotTemp;  //åŠ çƒ­å™¨å¼€å¯çš„æ¸©åº¦å€¼
+	int m_iSetReduHotTemp; //æ•£çƒ­å™¨å¼€å¯çš„æ¸©åº¦å€¼
+	Byte m_ucSetHumWarn;     //æ¹¿åº¦é¢„è­¦æ•°å€¼ å®é™…çš„ç™¾åˆ†æ¯”æ•°å€¼
+	Byte m_ucSetAddHotPlan;  //åŠ çƒ­å™¨é¢„æ¡ˆ 0-ä¿æŒ 1-è‡ªåŠ¨æ§åˆ¶ 2-å—ä¸»æ¿æ§åˆ¶ 
+	Byte m_ucSetReduHotPlan; //æ•£çƒ­å™¨é¢„æ¡ˆ 0-ä¿æŒ 1-è‡ªåŠ¨æ§åˆ¶ 2-å—ä¸»æ¿æ§åˆ¶
+	Byte m_ucSetCabinetWarn; //æœºå™¨éœ‡åŠ¨   0-ä¿æŒ 1-éœ‡åŠ¨æŠ¥è­¦æ‰“å¼€ 2-éœ‡åŠ¨æŠ¥è­¦å…³é—­
+	Byte m_ucSetHumPlan;     //æ¹¿åº¦é¢„æ¡ˆ   0-ä¿æŒ 1-è‡ªåŠ¨æ‰“å¼€æ•£çƒ­ 2-è‡ªåŠ¨æ‰“å¼€åŠ çƒ­ 3-ä¿ç•™
 
 	int m_iGetAddHotTemp; 
 	int m_iGetReduHotTemp;  
@@ -49,10 +49,10 @@ private:
 	Byte m_ucGetHumPlan; 
 
 	//in
-	Byte m_ucSetLightPlan;  //ÕÕÃ÷µÆ¿ª¹ØÔ¤°¸
-	Byte m_ucSetDoorPlan;   //ÃÅ¿ª¹Ø
-	Byte m_ucSetLedLight;   //LCD±³¹â
-	Byte m_ucSetLedDisplay; //LCDÏÔÊ¾
+	Byte m_ucSetLightPlan;  //ç…§æ˜ç¯å¼€å…³é¢„æ¡ˆ
+	Byte m_ucSetDoorPlan;   //é—¨å¼€å…³
+	Byte m_ucSetLedLight;   //LCDèƒŒå…‰
+	Byte m_ucSetLedDisplay; //LCDæ˜¾ç¤º
 
 	Byte m_ucGetLightPlan;  
 	Byte m_ucGetDoorPlan;    
@@ -60,12 +60,12 @@ private:
 	Byte m_ucGettLedDisplay; 
 
 	//in
-	Byte m_ucSetMainAddHot;  //¼ÓÈÈÆ÷
-	Byte m_ucSetMainReduHot; //É¢ÈÈÆ÷
-	Byte m_ucSetMainWarn;    //±¾µØ±¨¾¯Æ÷
-	Byte m_ucSetMainLight;   //ÕÕÃ÷Éè±¸
-	Byte m_ucSetFarIo1;      //Ô¶³Ì1
-	Byte m_ucSetFarIo2;      //Ô¶³Ì2
+	Byte m_ucSetMainAddHot;  //åŠ çƒ­å™¨
+	Byte m_ucSetMainReduHot; //æ•£çƒ­å™¨
+	Byte m_ucSetMainWarn;    //æœ¬åœ°æŠ¥è­¦å™¨
+	Byte m_ucSetMainLight;   //ç…§æ˜è®¾å¤‡
+	Byte m_ucSetFarIo1;      //è¿œç¨‹1
+	Byte m_ucSetFarIo2;      //è¿œç¨‹2
 
 	Byte m_ucGetMainAddHot;   
 	Byte m_ucGetMainReduHot; 
@@ -73,7 +73,7 @@ private:
 	Byte m_ucGetMainLight;    
 	Byte m_ucGetFarIo1;       
 	Byte m_ucGetFarIo2;      
-	bool bSendCtrlOk ; //ÅĞ¶ÏÊÇ·ñ¿ØÖÆ·¢ËÍLCDÏÔÊ¾³É¹¦
+	bool bSendCtrlOk ; //åˆ¤æ–­æ˜¯å¦æ§åˆ¶å‘é€LCDæ˜¾ç¤ºæˆåŠŸ
 
 	Byte uiOldLcdCtrl ;
 	Byte uiOldPatternNo  ;
@@ -82,26 +82,26 @@ private:
 		
 public:
 	//out
-	//Byte m_ucManualSts;  //ÊÖ¿Ø×´Ì¬
-	//Byte m_ucManual;     //0×Ô¶¯ÔËĞĞ 1ÊÖ¶¯¿ØÖÆ
-	Byte m_ucDoorFront;  //Ç°ÃÅ 0¹Ø±Õ 1´ò¿ª
-	Byte m_ucDoorBack;   //ºóÃÅ
-	Byte m_ucLightDev;   //ÕÕÃ÷Éè±¸
-	Byte m_ucWarnDev;    //±¾µØ±¨¾¯Æ÷
+	//Byte m_ucManualSts;  //æ‰‹æ§çŠ¶æ€
+	//Byte m_ucManual;     //0è‡ªåŠ¨è¿è¡Œ 1æ‰‹åŠ¨æ§åˆ¶
+	Byte m_ucDoorFront;  //å‰é—¨ 0å…³é—­ 1æ‰“å¼€
+	Byte m_ucDoorBack;   //åé—¨
+	Byte m_ucLightDev;   //ç…§æ˜è®¾å¤‡
+	Byte m_ucWarnDev;    //æœ¬åœ°æŠ¥è­¦å™¨
 
-	Byte m_ucTemp;   //µ±Ç°ÎÂ¶È
-	Byte m_ucHum;    //µ±Ç°Êª¶È
+	Byte m_ucTemp;   //å½“å‰æ¸©åº¦
+	Byte m_ucHum;    //å½“å‰æ¹¿åº¦
 
-	Byte m_ucFarOut1;  //Ô¶³ÌÊä³ö¿Ú1
-	Byte m_ucFarOut2;  //Ô¶³ÌÊä³ö¿Ú2
-	Byte m_ucFarIn1;   //Ô¶³ÌÊäÈë¿Ú1
-	Byte m_ucFarIn2;   //Ô¶³ÌÊäÈë¿Ú2
+	Byte m_ucFarOut1;  //è¿œç¨‹è¾“å‡ºå£1
+	Byte m_ucFarOut2;  //è¿œç¨‹è¾“å‡ºå£2
+	Byte m_ucFarIn1;   //è¿œç¨‹è¾“å…¥å£1
+	Byte m_ucFarIn2;   //è¿œç¨‹è¾“å…¥å£2
 
-	Byte m_ucAddHot;   //¼ÓÈÈÆ÷
-	Byte m_ucReduHot;  //É¢ÈÈÆ÷
-	Byte m_ucCabinet;  //»ú¹ñ  0¾²Ö¹ 1Õğ¶¯
-	Byte m_ucMacContolVer[5]; // ¿ØÖÆÆ÷³ÌĞò°æ±¾
-	Byte m_ucPsc ;  //ĞĞÈË°´Å¥Öµ
+	Byte m_ucAddHot;   //åŠ çƒ­å™¨
+	Byte m_ucReduHot;  //æ•£çƒ­å™¨
+	Byte m_ucCabinet;  //æœºæŸœ  0é™æ­¢ 1éœ‡åŠ¨
+	Byte m_ucMacContolVer[5]; // æ§åˆ¶å™¨ç¨‹åºç‰ˆæœ¬
+	Byte m_ucPsc ;  //è¡ŒäººæŒ‰é’®å€¼
 	
 	
 };

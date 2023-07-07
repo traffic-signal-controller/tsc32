@@ -8,7 +8,7 @@
 
 #define CPSCMODE_FILE "CPscMode.cpp"
 
-const int MAX_PUSHS = 8;   //×î´óµÄĞĞÈË°´Å¥Êı
+const int MAX_PUSHS = 8;   //æœ€å¤§çš„è¡ŒäººæŒ‰é’®æ•°
 
 /***********************************************************************
 CROSS1 running:
@@ -26,7 +26,7 @@ Time is over                Condiction Match
 *************************************************************************/	
 
 /*
-*ĞÅºÅ»úpscÄ£Ê½
+*ä¿¡å·æœºpscæ¨¡å¼
 */
 class CPscMode
 {
@@ -42,16 +42,16 @@ private:
 	CPscMode();
 	~CPscMode();
 
-	bool m_bStartCntCown;         //ÊÇ·ñ¿ªÊ¼µ¹¼ÆÊ±
-	bool m_bStep1ToStep2;         //²½·¥1µ½²½·¥2 true:²½·¥++ false£º²½·¥--
-	bool m_bCrossStage1First;     //ĞĞÈË½×¶ÎÔÚÇ°
-	bool m_bBoxPush[MAX_PUSHS];  //¸÷¸ö°´Å¥×´Ì¬
-	Byte m_ucPscStatus;    //PSC ÔËĞĞ×´Ì¬
-	Byte m_ucCurStep;      //ĞÅºÅ»úµ±Ç°²½·¥ºÅ
-	Byte m_ucStandStep;    //±ê×¼²½·¥ºÅ
-	Byte m_ucCrossStep1;   //ĞĞÈËÍ¨¹ı²½·¥ºÅ1
-	Byte m_ucCrossStep2;   //ĞĞÈËÍ¨¹ı²½·¥ºÅ2
-	time_t m_ucNextTime ;   //ÓÃÓÚ¼ÇÂ¼ĞĞÈËÍ¨ĞĞ½áÊøÊ±¼ä£¬ÓÃÓÚ¼ÆËãÁ½´ÎĞĞÈË°´Å¥ÉúĞ§¼ä¸ôÊ±¼ä¡£
+	bool m_bStartCntCown;         //æ˜¯å¦å¼€å§‹å€’è®¡æ—¶
+	bool m_bStep1ToStep2;         //æ­¥ä¼1åˆ°æ­¥ä¼2 true:æ­¥ä¼++ falseï¼šæ­¥ä¼--
+	bool m_bCrossStage1First;     //è¡Œäººé˜¶æ®µåœ¨å‰
+	bool m_bBoxPush[MAX_PUSHS];  //å„ä¸ªæŒ‰é’®çŠ¶æ€
+	Byte m_ucPscStatus;    //PSC è¿è¡ŒçŠ¶æ€
+	Byte m_ucCurStep;      //ä¿¡å·æœºå½“å‰æ­¥ä¼å·
+	Byte m_ucStandStep;    //æ ‡å‡†æ­¥ä¼å·
+	Byte m_ucCrossStep1;   //è¡Œäººé€šè¿‡æ­¥ä¼å·1
+	Byte m_ucCrossStep2;   //è¡Œäººé€šè¿‡æ­¥ä¼å·2
+	time_t m_ucNextTime ;   //ç”¨äºè®°å½•è¡Œäººé€šè¡Œç»“æŸæ—¶é—´ï¼Œç”¨äºè®¡ç®—ä¸¤æ¬¡è¡ŒäººæŒ‰é’®ç”Ÿæ•ˆé—´éš”æ—¶é—´ã€‚
 	Byte m_psc_intervaltime ;
 	CManaKernel* m_pWorkParaManager;
 };
